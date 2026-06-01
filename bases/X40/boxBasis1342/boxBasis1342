@@ -1,0 +1,1996 @@
+BasisDirectory[boxBasis1342] = StringDrop[DirectoryName[$Input], -1]
+boxBasis1342 /: BasisSectors[boxBasis1342] := 
+  {js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 0]}
+boxBasis1342 /: CurrentState[boxBasis1342] := <|NewDsBasis -> True, 
+   GenerateIBP -> True, AnalyzeSectors -> True, FindSymmetries -> False|>
+boxBasis1342 /: CutDs[boxBasis1342] := {1, 1, 1, 1, 0, 0, 0, 0, 0}
+boxBasis1342 /: Definitions[boxBasis1342] := 
+  {Hold[MetricTensor[] === d, SetDim[d]], Hold[VecQ[p1], 
+    Declare[p1, Vector]], Hold[VecQ[p2], Declare[p2, Vector]], 
+   Hold[VecQ[p3], Declare[p3, Vector]], Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[q, q] === q2, sp[q, q] = q2]}
+boxBasis1342 /: Ds[boxBasis1342] := {sp[p1, p1], sp[p2, p2], sp[p3, p3], 
+   sp[-p1 - p2 - p3 + q, -p1 - p2 - p3 + q], sp[p1 + p3, p1 + p3], 
+   sp[-p1 - p2 + q, -p1 - p2 + q], sp[-p1 - p3 + q, -p1 - p3 + q], 
+   sp[p1 + p2, p1 + p2], sp[-p2 - p3 + q, -p2 - p3 + q]}
+boxBasis1342 /: DsBasisQ[boxBasis1342] := True
+boxBasis1342 /: EMs[boxBasis1342] := {q}
+boxBasis1342 /: ExtMappedSectors[boxBasis1342] := {}
+boxBasis1342 /: ExtSectorsMappings[boxBasis1342] := {}
+boxBasis1342 /: IBP[boxBasis1342] := 
+  {-(#8*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, #9]) - 
+     2*#7*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     2*#6*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     #5*j[boxBasis1342, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #4*j[boxBasis1342, -1 + #1, #2, #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #8*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, 1 + #8, #9] - 
+     #7*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     #6*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, #9] + 
+     #5*j[boxBasis1342, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #7*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, 1 + #7, #8, #9] - 
+     #6*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, #9] + 
+     #6*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, 1 + #6, #7, #8, #9] + 
+     (d - 2*#1 - #4 - #5 - #8)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 
+       #8, #9] + #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, -1 + #8, 
+       #9] + #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, #8, 
+       -1 + #9] + #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       -1 + #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, #7, #8, 
+       -1 + #9], #9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 
+       1 + #9] - #8*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, 
+       #9] - 2*#6*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       #9] - #4*j[boxBasis1342, -1 + #1, #2, #3, 1 + #4, #5, #6, #7, #8, 
+       #9] + #2*j[boxBasis1342, -1 + #1, 1 + #2, #3, #4, #5, #6, #7, #8, 
+       #9] + #8*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, 1 + #8, 
+       #9] - #6*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, 
+       #9] - #9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 
+       1 + #9] - #6*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, 
+       #9] + #6*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, 1 + #6, #7, #8, 
+       #9] + (#2 - #4 - #8 + #9)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 
+       #8, #9] + #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       -1 + #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, #7, #8, 
+       -1 + #9] - #2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, #6, #7, -1 + #8, 
+       #9], #9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     2*#7*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     #5*j[boxBasis1342, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #4*j[boxBasis1342, -1 + #1, #2, #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #3*j[boxBasis1342, -1 + #1, #2, 1 + #3, #4, #5, #6, #7, #8, #9] - 
+     #7*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, #9] + 
+     #5*j[boxBasis1342, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] - 
+     #7*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, 1 + #7, #8, #9] + 
+     (#3 - #4 - #5 + #9)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, #8, 
+       #9] + #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, -1 + #8, 
+       #9] + #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, #8, 
+       -1 + #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, #7, #8, 
+       -1 + #9] - #3*j[boxBasis1342, #1, #2, 1 + #3, #4, -1 + #5, #6, #7, #8, 
+       #9], #8*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, #9] + 
+     2*#6*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     #5*j[boxBasis1342, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #8*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, 1 + #8, #9] + 
+     #7*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     #4*j[boxBasis1342, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #6*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     #5*j[boxBasis1342, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #7*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, 1 + #7, #8, #9] + 
+     #6*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, #9] - 
+     2*#5*j[boxBasis1342, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, #8, #9] - 
+     #6*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, 1 + #6, #7, #8, #9] + 
+     (#1 - #4 + #5 - #6 + #7 - #8)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 
+       #7, #8, #9] - #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, 
+       -1 + #8, #9] - #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       -1 + #9] + #6*q2*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, -1 + #6, #7, #8, 
+       #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, -1 + #7, #8, 
+       #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, #7, #8, 
+       -1 + #9] - #5*q2*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, #7, #8, 
+       #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, -1 + #7, #8, 
+       #9] + #1*j[boxBasis1342, 1 + #1, -1 + #2, #3, #4, #5, #6, #7, #8, 
+       #9] - #1*j[boxBasis1342, 1 + #1, #2, #3, #4, #5, #6, #7, -1 + #8, #9], 
+    -(#9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9]) + 
+     #8*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, #9] + 
+     2*#6*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #8*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, 1 + #8, #9] - 
+     #4*j[boxBasis1342, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #6*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     #9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] + 
+     #6*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, #9] - 
+     #6*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, 1 + #6, #7, #8, #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (d - 2*#2 - #4 - #6 - #8)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 
+       #8, #9] - #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, -1 + #8, 
+       #9] - #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       -1 + #9] + #6*q2*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, -1 + #7, #8, #9], 
+    -(#9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9]) - 
+     #5*j[boxBasis1342, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     2*#3*j[boxBasis1342, -1 + #1, #2, 1 + #3, #4, #5, #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #7*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     #4*j[boxBasis1342, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #3*j[boxBasis1342, #1, -1 + #2, 1 + #3, #4, #5, #6, #7, #8, #9] - 
+     #5*j[boxBasis1342, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] - 
+     #7*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, 1 + #7, #8, #9] - 
+     2*#5*j[boxBasis1342, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, #8, #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (-#3 - #4 + #5 + #7)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, #8, 
+       #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, -1 + #6, #7, #8, 
+       #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, -1 + #7, #8, 
+       #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, #7, #8, 
+       -1 + #9] - #5*q2*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, #7, #8, 
+       #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, -1 + #7, #8, 
+       #9] - 2*#3*j[boxBasis1342, #1, #2, 1 + #3, -1 + #4, #5, #6, #7, #8, 
+       #9] + #3*j[boxBasis1342, #1, #2, 1 + #3, #4, -1 + #5, #6, #7, #8, 
+       #9] + #3*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, -1 + #6, #7, #8, 
+       #9] + #3*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, -1 + #7, #8, 
+       #9] + #3*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, #7, -1 + #8, 
+       #9] + #3*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, #7, #8, 
+       -1 + #9] - #3*q2*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, #7, #8, 
+       #9], -(#8*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, 
+        #9]) + 2*#7*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, 1 + #7, #8, 
+       #9] + #5*j[boxBasis1342, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, 
+       #9] - #8*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, 1 + #8, 
+       #9] + #7*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, 
+       #9] + #6*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, 
+       #9] - #5*j[boxBasis1342, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, 
+       #9] - #4*j[boxBasis1342, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, 
+       #9] - 2*#8*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, 1 + #8, 
+       #9] + #7*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, 1 + #7, #8, 
+       #9] - #6*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, 
+       #9] - #7*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, 1 + #7, #8, 
+       #9] + #8*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, 1 + #8, 
+       #9] + #8*j[boxBasis1342, #1, #2, #3, #4, #5, #6, -1 + #7, 1 + #8, 
+       #9] + (#1 - #4 - #5 + #6 - #7 + #8)*j[boxBasis1342, #1, #2, #3, #4, 
+       #5, #6, #7, #8, #9] + #8*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 
+       1 + #8, -1 + #9] - #8*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 
+       1 + #8, #9] - #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, 
+       -1 + #8, #9] - #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, #8, 
+       -1 + #9] + #7*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, #8, 
+       #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, -1 + #6, #7, #8, 
+       #9] + #1*j[boxBasis1342, 1 + #1, #2, -1 + #3, #4, #5, #6, #7, #8, 
+       #9] - #1*j[boxBasis1342, 1 + #1, #2, #3, #4, -1 + #5, #6, #7, #8, #9], 
+    -(#9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9]) - 
+     #8*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, #9] - 
+     2*#2*j[boxBasis1342, -1 + #1, 1 + #2, #3, #4, #5, #6, #7, #8, #9] - 
+     #8*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, 1 + #8, #9] - 
+     2*#9*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #6*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     #4*j[boxBasis1342, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] - 
+     2*#8*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, 1 + #8, #9] - 
+     #6*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 1 + #9] + 
+     #8*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, 1 + #8, #9] + 
+     #8*j[boxBasis1342, #1, #2, #3, #4, #5, #6, -1 + #7, 1 + #8, #9] + 
+     (-#2 - #4 + #6 + #8)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, #8, 
+       #9] + #8*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 1 + #8, 
+       -1 + #9] - #8*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 1 + #8, 
+       #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, -1 + #6, #7, #8, 
+       #9] - #2*j[boxBasis1342, #1, 1 + #2, -1 + #3, #4, #5, #6, #7, #8, 
+       #9] - 2*#2*j[boxBasis1342, #1, 1 + #2, #3, -1 + #4, #5, #6, #7, #8, 
+       #9] + #2*j[boxBasis1342, #1, 1 + #2, #3, #4, -1 + #5, #6, #7, #8, 
+       #9] + #2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, -1 + #6, #7, #8, 
+       #9] + #2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, #6, -1 + #7, #8, 
+       #9] + #2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, #6, #7, -1 + #8, 
+       #9] + #2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, #6, #7, #8, 
+       -1 + #9] - #2*q2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, #6, #7, #8, 
+       #9], -(#9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 
+        1 + #9]) + 2*#7*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, 1 + #7, 
+       #8, #9] + #5*j[boxBasis1342, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, 
+       #9] + #7*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, 
+       #9] - 2*#9*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 
+       1 + #9] - #5*j[boxBasis1342, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, 
+       #9] - #4*j[boxBasis1342, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, 
+       #9] - #9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 
+       1 + #9] + #7*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, 1 + #7, #8, 
+       #9] + #9*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 
+       1 + #9] - #7*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, 1 + #7, #8, 
+       #9] + #9*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 
+       1 + #9] + (d - 2*#3 - #4 - #5 - #7)*j[boxBasis1342, #1, #2, #3, #4, 
+       #5, #6, #7, #8, #9] - #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 
+       1 + #7, -1 + #8, #9] - #7*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 
+       1 + #7, #8, -1 + #9] + #7*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 
+       1 + #7, #8, #9] + #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, -1 + #6, 
+       #7, #8, #9], -(#4*j[boxBasis1342, -1 + #1, #2, #3, 1 + #4, #5, #6, #7, 
+        #8, #9]) - #4*j[boxBasis1342, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, 
+       #8, #9] - #4*j[boxBasis1342, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, 
+       #9] - #7*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, 1 + #7, #8, 
+       #9] + #8*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, 1 + #8, 
+       #9] + (#1 - #4 - #5 + #6 + #7 - #8)*j[boxBasis1342, #1, #2, #3, #4, 
+       #5, #6, #7, #8, #9] - #8*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 
+       #7, 1 + #8, #9] + #7*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 
+       1 + #7, #8, #9] - #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, 
+       -1 + #8, #9] + #6*q2*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, 
+       #8, #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, -1 + #7, #8, 
+       #9] - #5*q2*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, -1 + #6, #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, -1 + #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, #7, #8, -1 + #9] + 
+     #1*j[boxBasis1342, 1 + #1, -1 + #2, #3, #4, #5, #6, #7, #8, #9] + 
+     #1*j[boxBasis1342, 1 + #1, #2, -1 + #3, #4, #5, #6, #7, #8, #9] + 
+     #1*j[boxBasis1342, 1 + #1, #2, #3, -1 + #4, #5, #6, #7, #8, #9] - 
+     #1*j[boxBasis1342, 1 + #1, #2, #3, #4, -1 + #5, #6, #7, #8, #9] - 
+     #1*j[boxBasis1342, 1 + #1, #2, #3, #4, #5, #6, #7, -1 + #8, #9] - 
+     #1*j[boxBasis1342, 1 + #1, #2, #3, #4, #5, #6, #7, #8, -1 + #9], 
+    -2*#9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #4*j[boxBasis1342, -1 + #1, #2, #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #2*j[boxBasis1342, -1 + #1, 1 + #2, #3, #4, #5, #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #4*j[boxBasis1342, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #4*j[boxBasis1342, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 1 + #9] + 
+     #8*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, 1 + #8, #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (-#2 - #4 + #6 - #8 + 2*#9)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 
+       #8, #9] - #8*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 1 + #8, 
+       #9] - #6*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, -1 + #8, 
+       #9] + #6*q2*j[boxBasis1342, #1, #2, #3, #4, #5, 1 + #6, #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, -1 + #6, #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, -1 + #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, #7, #8, -1 + #9] - 
+     #2*j[boxBasis1342, #1, 1 + #2, -1 + #3, #4, #5, #6, #7, #8, #9] - 
+     #2*j[boxBasis1342, #1, 1 + #2, #3, -1 + #4, #5, #6, #7, #8, #9] + 
+     #2*j[boxBasis1342, #1, 1 + #2, #3, #4, -1 + #5, #6, #7, #8, #9] + 
+     #2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, -1 + #6, #7, #8, #9] + 
+     #2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, #6, #7, #8, -1 + #9] - 
+     #2*q2*j[boxBasis1342, #1, 1 + #2, #3, #4, #5, #6, #7, #8, #9], 
+    -2*#9*j[boxBasis1342, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #4*j[boxBasis1342, -1 + #1, #2, #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #3*j[boxBasis1342, -1 + #1, #2, 1 + #3, #4, #5, #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #4*j[boxBasis1342, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #3*j[boxBasis1342, #1, -1 + #2, 1 + #3, #4, #5, #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #4*j[boxBasis1342, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     2*#9*j[boxBasis1342, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 1 + #9] - 
+     #7*j[boxBasis1342, #1, #2, #3, #4, -1 + #5, #6, 1 + #7, #8, #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] + 
+     #9*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (-#3 - #4 - #5 + #7 + 2*#9)*j[boxBasis1342, #1, #2, #3, #4, #5, #6, #7, 
+       #8, #9] + #7*q2*j[boxBasis1342, #1, #2, #3, #4, #5, #6, 1 + #7, #8, 
+       #9] + #5*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, -1 + #7, #8, 
+       #9] - #5*q2*j[boxBasis1342, #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, -1 + #6, #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, -1 + #7, #8, #9] + 
+     #4*j[boxBasis1342, #1, #2, #3, 1 + #4, #5, #6, #7, #8, -1 + #9] - 
+     #3*j[boxBasis1342, #1, #2, 1 + #3, -1 + #4, #5, #6, #7, #8, #9] + 
+     #3*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, -1 + #7, #8, #9] + 
+     #3*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, #7, -1 + #8, #9] + 
+     #3*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, #7, #8, -1 + #9] - 
+     #3*q2*j[boxBasis1342, #1, #2, 1 + #3, #4, #5, #6, #7, #8, #9]} & 
+boxBasis1342 /: Information[boxBasis1342] := 
+  (If[ValueQ[boxBasis1342::usage], Information[boxBasis1342, 
+     LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[
+         First /@ UpValues[boxBasis1342] /. HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[boxBasis1342, __]]] :> 
+           HoldForm[LiteRed`Private`f$[boxBasis1342, "\[Ellipsis]"]]}, {1}], 
+        {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[
+              boxBasis1342, ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  boxBasis1342], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 1]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n2, n4, n3, n1, 0, n5, n9, n7, n8]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 0, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n4, n3, n1, n2, n9, n8, 0, n6, n7]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 0, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n4, n2, n3, n1, n6, n5, n8, n7, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n2, n4, n3, n1, 0, n5, n9, n7, n8]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 1]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n4, n2, n1, n3, n9, n5, 0, n7, n6]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 0]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n4, n3, n1, n2, n9, n8, 0, n6, n7]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 1]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n4, n3, n1, n2, n9, n8, 0, n6, n7]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 1]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n3, n4, n2, n1, 0, n8, n9, n6, n5]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n1, n3, n2, n4, n8, n7, n6, n5, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 1, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n1, n3, n4, n2, n9, n7, 0, n5, n8]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 1, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n4, n2, n3, n1, n6, n5, n8, n7, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n4, n2, n3, n1, n6, n5, n8, n7, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 1, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n2, n4, n3, n1, 0, n5, n9, n7, n8]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 1, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?Positive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n4, n2, n3, n1, n6, n5, n8, n7, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n3, n4, n2, n1, 0, n8, n9, n6, n5]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n3, n4, n2, n1, 0, n8, n9, n6, n5]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 0] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[boxBasis1342, n4, n2, n1, n3, n9, n5, 0, n7, n6]/
+      (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+        2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+         0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+         0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+        j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 1] := 
+  {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[boxBasis1342, n1, n3, n2, n4, n8, n7, n6, n5, n9]]}
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 0]"}]]
+boxBasis1342 /: jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], 
+     "jRules[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 1]"}]]
+boxBasis1342 /: jsOrder[boxBasis1342] := {"np", "cp", "-ds", "-ns"}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  {{-1, 1, 1, 1, -1, -1, -1, -1, -1}, {-1, 0, 0, 0, -1, -1, -1, -1, -1}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  {{-1, 1, 1, 1, -1, -1, -1, -1, 1}, {-1, 0, 0, 0, -1, -1, -1, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  {{-1, 1, 1, 1, -1, -1, -1, 1, 1}, {-1, 0, 0, 0, -1, -1, -1, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  {{-1, 1, 1, 1, -1, -1, 1, 1, 1}, {-1, 0, 0, 0, -1, -1, 0, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 0, 1, 0, 1, 0] := 
+  {{-1, 1, 1, 1, -1, 1, -1, 1, -1}, {-1, 0, 0, 0, -1, 0, -1, 0, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  {{-1, 1, 1, 1, -1, 1, 1, -1, 1}, {-1, 0, 0, 0, -1, 0, 0, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, -1, 1, 1, 1, 1}, {-1, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  {{-1, 1, 1, 1, 1, 1, 1, 1, -1}, {-1, 0, 0, 0, 0, 0, 0, 0, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 0, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 0, 0, 0, 0] := 
+  {{1, -1, 1, 1, -1, -1, -1, -1, -1}, {0, -1, 0, 0, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 0, 0, 0, 1] := 
+  {{1, -1, 1, 1, -1, -1, -1, -1, 1}, {0, -1, 0, 0, -1, -1, -1, -1, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 0, 0, 1, 1] := 
+  {{1, -1, 1, 1, -1, -1, -1, 1, 1}, {0, -1, 0, 0, -1, -1, -1, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 0, 1, 1, 1] := 
+  {{1, -1, 1, 1, -1, -1, 1, 1, 1}, {0, -1, 0, 0, -1, -1, 0, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 1, 0, 1, 0] := 
+  {{1, -1, 1, 1, -1, 1, -1, 1, -1}, {0, -1, 0, 0, -1, 0, -1, 0, -1}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 1, 0, 1, 1] := 
+  {{1, -1, 1, 1, -1, 1, -1, 1, 1}, {0, -1, 0, 0, -1, 0, -1, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 1, 1, 0, 1] := 
+  {{1, -1, 1, 1, -1, 1, 1, -1, 1}, {0, -1, 0, 0, -1, 0, 0, -1, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 0, 1, 1, 1, 1] := 
+  {{1, -1, 1, 1, -1, 1, 1, 1, 1}, {0, -1, 0, 0, -1, 0, 0, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 1, 1, 1, 1, 0] := 
+  {{1, -1, 1, 1, 1, 1, 1, 1, -1}, {0, -1, 0, 0, 0, 0, 0, 0, -1}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 0, 1, 1, 1, 1, 1, 1, 1] := 
+  {{1, -1, 1, 1, 1, 1, 1, 1, 1}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 0, 0, 0, 0] := 
+  {{1, 1, -1, 1, -1, -1, -1, -1, -1}, {0, 0, -1, 0, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 0, 0, 0, 1] := 
+  {{1, 1, -1, 1, -1, -1, -1, -1, 1}, {0, 0, -1, 0, -1, -1, -1, -1, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 0, 0, 1, 1] := 
+  {{1, 1, -1, 1, -1, -1, -1, 1, 1}, {0, 0, -1, 0, -1, -1, -1, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 0, 1, 1, 1] := 
+  {{1, 1, -1, 1, -1, -1, 1, 1, 1}, {0, 0, -1, 0, -1, -1, 0, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 1, 0, 1, 0] := 
+  {{1, 1, -1, 1, -1, 1, -1, 1, -1}, {0, 0, -1, 0, -1, 0, -1, 0, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 1, 0, 1, 1] := 
+  {{1, 1, -1, 1, -1, 1, -1, 1, 1}, {0, 0, -1, 0, -1, 0, -1, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 1, 1, 0, 1] := 
+  {{1, 1, -1, 1, -1, 1, 1, -1, 1}, {0, 0, -1, 0, -1, 0, 0, -1, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 0, 1, 1, 1, 1] := 
+  {{1, 1, -1, 1, -1, 1, 1, 1, 1}, {0, 0, -1, 0, -1, 0, 0, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 1, 1, 1, 1, 0] := 
+  {{1, 1, -1, 1, 1, 1, 1, 1, -1}, {0, 0, -1, 0, 0, 0, 0, 0, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 0, 1, 1, 1, 1, 1, 1] := 
+  {{1, 1, -1, 1, 1, 1, 1, 1, 1}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 0, 0, 0, 0, 0] := 
+  {{1, 1, 1, -1, -1, -1, -1, -1, -1}, {0, 0, 0, -1, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 0, 0, 0, 0, 1] := 
+  {{1, 1, 1, -1, -1, -1, -1, -1, 1}, {0, 0, 0, -1, -1, -1, -1, -1, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 0, 0, 0, 1, 1] := 
+  {{1, 1, 1, -1, -1, -1, -1, 1, 1}, {0, 0, 0, -1, -1, -1, -1, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 0, 0, 1, 1, 1] := 
+  {{1, 1, 1, -1, -1, -1, 1, 1, 1}, {0, 0, 0, -1, -1, -1, 0, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 0, 1, 0, 1, 0] := 
+  {{1, 1, 1, -1, -1, 1, -1, 1, -1}, {0, 0, 0, -1, -1, 0, -1, 0, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 0, 1, 0, 1, 1] := 
+  {{1, 1, 1, -1, -1, 1, -1, 1, 1}, {0, 0, 0, -1, -1, 0, -1, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 1, 1, 1, 1, 0] := 
+  {{1, 1, 1, -1, 1, 1, 1, 1, -1}, {0, 0, 0, -1, 0, 0, 0, 0, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 0, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, -1, 1, 1, 1, 1, 1}, {0, 0, 0, -1, 0, 0, 0, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  {{1, 1, 1, 1, -1, -1, -1, -1, -1}, {0, 0, 0, 0, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  {{1, 1, 1, 1, -1, -1, -1, -1, 1}, {0, 0, 0, 0, -1, -1, -1, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 0] := 
+  {{1, 1, 1, 1, -1, -1, -1, 1, -1}, {0, 0, 0, 0, -1, -1, -1, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  {{1, 1, 1, 1, -1, -1, -1, 1, 1}, {0, 0, 0, 0, -1, -1, -1, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 0] := 
+  {{1, 1, 1, 1, -1, -1, 1, 1, -1}, {0, 0, 0, 0, -1, -1, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  {{1, 1, 1, 1, -1, -1, 1, 1, 1}, {0, 0, 0, 0, -1, -1, 0, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 0] := 
+  {{1, 1, 1, 1, -1, 1, -1, -1, -1}, {0, 0, 0, 0, -1, 0, -1, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 1] := 
+  {{1, 1, 1, 1, -1, 1, -1, -1, 1}, {0, 0, 0, 0, -1, 0, -1, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 0] := 
+  {{1, 1, 1, 1, -1, 1, -1, 1, -1}, {0, 0, 0, 0, -1, 0, -1, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1] := 
+  {{1, 1, 1, 1, -1, 1, -1, 1, 1}, {0, 0, 0, 0, -1, 0, -1, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 0] := 
+  {{1, 1, 1, 1, -1, 1, 1, -1, -1}, {0, 0, 0, 0, -1, 0, 0, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  {{1, 1, 1, 1, -1, 1, 1, -1, 1}, {0, 0, 0, 0, -1, 0, 0, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 0] := 
+  {{1, 1, 1, 1, -1, 1, 1, 1, -1}, {0, 0, 0, 0, -1, 0, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, -1, 1, 1, 1, 1}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 1, 0] := 
+  {{1, 1, 1, 1, 1, -1, -1, 1, -1}, {0, 0, 0, 0, 0, -1, -1, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 0] := 
+  {{1, 1, 1, 1, 1, -1, 1, -1, -1}, {0, 0, 0, 0, 0, -1, 0, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 1, 0] := 
+  {{1, 1, 1, 1, 1, -1, 1, 1, -1}, {0, 0, 0, 0, 0, -1, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 0] := 
+  {{1, 1, 1, 1, 1, 1, -1, -1, -1}, {0, 0, 0, 0, 0, 0, -1, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 0] := 
+  {{1, 1, 1, 1, 1, 1, -1, 1, -1}, {0, 0, 0, 0, 0, 0, -1, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 0] := 
+  {{1, 1, 1, 1, 1, 1, 1, -1, -1}, {0, 0, 0, 0, 0, 0, 0, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  {{1, 1, 1, 1, 1, 1, 1, 1, -1}, {0, 0, 0, 0, 0, 0, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}}
+boxBasis1342 /: jsOrder[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 0, 0, 0, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n2, n4, n3, n9, n6, 0, n8, n5]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n3, n2, n4, n8, n7, n6, n5, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n3, n4, n2, n9, n7, 0, n5, n8]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n4, n2, n3, n8, 0, n6, n9, n5]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n4, n3, n2, n5, 0, n7, n9, n8]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n1, n3, n4, 0, n6, n9, n8, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n1, n4, n3, n7, n6, n5, n8, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n3, n1, n4, n8, n9, n6, 0, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n3, n4, n1, n7, n9, n5, 0, n8]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n4, n1, n3, n8, n5, n6, n7, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n4, n3, n1, 0, n5, n9, n7, n8]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n1, n2, n4, 0, n7, n9, n5, n6]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n1, n4, n2, n6, n7, n8, n5, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n2, n1, n4, n5, n9, n7, 0, n6]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n2, n4, n1, n6, n9, n8, 0, n5]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n4, n1, n2, n5, n8, n7, n6, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n4, n2, n1, 0, n8, n9, n6, n5]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n1, n2, n3, n7, 0, n5, n9, n6]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n1, n3, n2, n6, 0, n8, n9, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n2, n1, n3, n9, n5, 0, n7, n6]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n2, n3, n1, n6, n5, n8, n7, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n3, n1, n2, n9, n8, 0, n6, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n1, n3, n2, n4, n8, n7, n6, n5, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n4, n2, n3, n1, n6, n5, n8, n7, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n1, n4, n3, n2, n5, 0, n7, n9, n8]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n1, n2, n3, 
+       n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n1, n4, n3, n2, n5, 0, n7, n9, n8]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n4, n2, n3, 
+       n1, n6, n5, n8, n7, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n4, n1, n3, n2, n6, 0, n8, n9, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n2, n4, n3, n1, 0, n5, n9, n7, n8]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n2, n1, n3, n4, 0, n6, n9, n8, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 0] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n4, n1, n2, n5, n8, n7, n6, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n2, n4, n3, n9, n6, 0, n8, n5]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n3, n1, n2, n9, n8, 0, n6, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n1, n3, n4, 0, n6, n9, n8, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n4, n2, n1, 0, n8, n9, n6, n5]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n1, n4, n3, n7, n6, n5, n8, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n1, n2, n3, 
+       n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n4, n3, n2, 
+       n1, n7, n8, n5, n6, n9]]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n1, n3, n2, n4, n8, n7, n6, n5, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n3, n1, n2, n4, 0, n7, n9, n5, n6]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n2, n1, n3, n4, 0, n6, n9, n8, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n2, n3, n1, n4, n8, n9, n6, 0, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n3, n2, n1, n4, n5, n9, n7, 0, n6]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n1, n2, n3, 
+       n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[boxBasis1342, n2, n1, n3, n4, 0, n6, n9, n8, n7]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n4, n1, n3, n8, n5, n6, n7, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n2, n1, n4, n3, n7, n6, n5, n8, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n1, n3, n2, n4, n8, n7, n6, n5, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n4, n1, n2, n5, n8, n7, n6, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n2, n3, n1, n6, n5, n8, n7, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n4, n3, n2, n1, n7, n8, n5, n6, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[boxBasis1342, n3, n1, n4, n2, n6, n7, n8, n5, 0]/
+       (2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 
+          0, 0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 
+          0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - 
+         j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9]}}
+boxBasis1342 /: jSymmetries[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  {{j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n1, n2, n3, 
+       n4, n5, n6, n7, n8, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n1, n3, n2, 
+       n4, n8, n7, n6, n5, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n4, n2, n3, 
+       n1, n6, n5, n8, n7, n9]]}, 
+   {j[boxBasis1342, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[boxBasis1342, n4, n3, n2, 
+       n1, n7, n8, n5, n6, n9]]}}
+boxBasis1342 /: LI[boxBasis1342] := {} & 
+boxBasis1342 /: LMs[boxBasis1342] := {p1, p2, p3}
+boxBasis1342 /: MappedSectors[boxBasis1342] := 
+  {js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 1, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 1]}
+boxBasis1342 /: MIs[boxBasis1342] := 
+  {j[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0], j[boxBasis1342, 1, 1, 1, 1, 1, 
+    1, 1, 1, 0]}
+boxBasis1342 /: NDs[boxBasis1342] := 9
+boxBasis1342 /: NonZeroSectors[boxBasis1342] := 
+  {js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 0, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 1, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1]}
+boxBasis1342 /: Parameters[boxBasis1342] := {q2, d}
+boxBasis1342 /: PowerShifts[boxBasis1342] := {0, 0, 0, 0, 0, 0, 0, 0, 0}
+boxBasis1342 /: SectorsMappings[boxBasis1342] := 
+  {js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 1, 1] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 1] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 1] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 1, 1] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 1] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 1, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 1, 0] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 1, 0] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 1, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 1, 0] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 0, 0] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 1, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 1] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 1, 0, 0] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 0, 1] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 1] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 1] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 1, 0] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 0] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 1, 0] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 0, 0, 0] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 0] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 0, 1, 0, 0] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 0, 0] -> js[boxBasis1342, 1, 1, 1, 
+     1, 0, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 0, 0, 0, 0] -> 
+    js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 1]}
+boxBasis1342 /: SectorsPattern[boxBasis1342] := {___}
+boxBasis1342 /: SimpleSectors[boxBasis1342] := 
+  {js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0]}
+boxBasis1342 /: SPs[boxBasis1342] := {sp[p1, p1], sp[p1, p2], sp[p1, p3], 
+   sp[p1, q], sp[p2, p2], sp[p2, p3], sp[p2, q], sp[p3, p3], sp[p3, q]}
+boxBasis1342 /: SR[boxBasis1342] := 
+  Get[FileNameJoin[{BasisDirectory[boxBasis1342], "SR[boxBasis1342]"}]]
+boxBasis1342 /: Toj[boxBasis1342] := 
+  {sp[p1, p1] -> j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0], 
+   sp[p1, p2] -> (-j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+      j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, 0, 
+       0, 0, 0, 0, -1, 0])/2, sp[p1, p3] -> 
+    (-j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, -1, 
+       0, 0, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0])/2, 
+   sp[p1, q] -> (-j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+      j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, -1, 
+       0, 0, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+      j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, 0, 
+       0, 0, 0, 0, -1, 0] + j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1])/2, 
+   sp[p2, p2] -> j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0], 
+   sp[p2, p3] -> (q2 + 2*j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+      j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, -1, 
+       0, 0, 0, 0, 0, 0] + 2*j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+      j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 
+       0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+      j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, -1, 0] - j[boxBasis1342, 0, 0, 0, 
+       0, 0, 0, 0, 0, -1])/2, sp[p2, q] -> 
+    (q2 + j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+      j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, -1, 
+       0, 0, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+      j[boxBasis1342, 0, 0, 0, 0, -1, 0, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 
+       0, 0, -1, 0, 0, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1])/2, 
+   sp[p3, p3] -> j[boxBasis1342, 0, 0, -1, 0, 0, 0, 0, 0, 0], 
+   sp[p3, q] -> (q2 + j[boxBasis1342, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+      j[boxBasis1342, 0, -1, 0, 0, 0, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, -1, 
+       0, 0, 0, 0, 0, 0] + j[boxBasis1342, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+      j[boxBasis1342, 0, 0, 0, 0, 0, 0, -1, 0, 0] - j[boxBasis1342, 0, 0, 0, 
+       0, 0, 0, 0, -1, 0] - j[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, -1])/2}
+boxBasis1342 /: UniqueSectors[boxBasis1342] := 
+  {js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 1, 0, 1, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 1, 
+    0, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+boxBasis1342 /: ZerojRule[boxBasis1342] := 
+  LiteRed`Private`jjj:j[boxBasis1342, __] :> 
+   0 /; Module[{LiteRed`Private`jjs = 
+       Rest[List @@ jSector[LiteRed`Private`jjj]]}, 
+     Or @@ (BitOr[LiteRed`Private`jjs, #1] === #1 & ) /@ 
+       {{1, 1, 1, 0, 1, 1, 1, 1, 1}, {1, 1, 0, 1, 1, 1, 1, 1, 1}, 
+        {1, 0, 1, 1, 1, 1, 1, 1, 1}, {0, 1, 1, 1, 1, 1, 1, 1, 1}}]
+boxBasis1342 /: ZeroSectors[boxBasis1342] := 
+  {js[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 0, 0, 0, 0, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 0, 0, 0, 0, 0, 1, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 0, 0, 0, 1, 0, 0, 0, 0, 0], js[boxBasis1342, 0, 0, 1, 0, 
+    0, 0, 0, 0, 0], js[boxBasis1342, 0, 1, 0, 0, 0, 0, 0, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 0, 0, 0, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    0, 0, 0, 1, 1], js[boxBasis1342, 0, 0, 0, 0, 0, 0, 1, 0, 1], 
+   js[boxBasis1342, 0, 0, 0, 0, 0, 0, 1, 1, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    0, 1, 0, 0, 1], js[boxBasis1342, 0, 0, 0, 0, 0, 1, 0, 1, 0], 
+   js[boxBasis1342, 0, 0, 0, 0, 0, 1, 1, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    1, 0, 0, 0, 1], js[boxBasis1342, 0, 0, 0, 0, 1, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 0, 0, 0, 1, 0, 1, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    1, 1, 0, 0, 0], js[boxBasis1342, 0, 0, 0, 1, 0, 0, 0, 0, 1], 
+   js[boxBasis1342, 0, 0, 0, 1, 0, 0, 0, 1, 0], js[boxBasis1342, 0, 0, 0, 1, 
+    0, 0, 1, 0, 0], js[boxBasis1342, 0, 0, 0, 1, 0, 1, 0, 0, 0], 
+   js[boxBasis1342, 0, 0, 0, 1, 1, 0, 0, 0, 0], js[boxBasis1342, 0, 0, 1, 0, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 0, 0, 1, 0, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 0, 1, 0, 0, 0, 1, 0, 0], js[boxBasis1342, 0, 0, 1, 0, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 0, 0, 1, 0, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 0, 0, 1, 1, 0, 0, 0, 0, 0], js[boxBasis1342, 0, 1, 0, 0, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 0, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 0, 0, 1, 0, 0], js[boxBasis1342, 0, 1, 0, 0, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 0, 1, 0, 0, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 0, 1, 0, 1, 0, 0, 0, 0, 0], js[boxBasis1342, 0, 1, 1, 0, 
+    0, 0, 0, 0, 0], js[boxBasis1342, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
+   js[boxBasis1342, 1, 0, 0, 0, 0, 0, 0, 1, 0], js[boxBasis1342, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0], js[boxBasis1342, 1, 0, 0, 0, 0, 1, 0, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 1, 0, 0, 0, 0], js[boxBasis1342, 1, 0, 0, 1, 
+    0, 0, 0, 0, 0], js[boxBasis1342, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 0, 0, 0, 0, 0, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 0, 0, 0, 0, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 0, 0, 0, 1, 1, 0, 1], js[boxBasis1342, 0, 0, 0, 0, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 0, 0, 0, 0, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 0, 0, 1, 0, 1, 0, 1], js[boxBasis1342, 0, 0, 0, 0, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 0, 0, 0, 0, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 0, 0, 0, 0, 1, 1, 0, 1, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 0, 0, 0, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 0, 1, 0, 0, 1, 0, 1], js[boxBasis1342, 0, 0, 0, 1, 
+    0, 0, 1, 1, 0], js[boxBasis1342, 0, 0, 0, 1, 0, 1, 0, 0, 1], 
+   js[boxBasis1342, 0, 0, 0, 1, 0, 1, 0, 1, 0], js[boxBasis1342, 0, 0, 0, 1, 
+    0, 1, 1, 0, 0], js[boxBasis1342, 0, 0, 0, 1, 1, 0, 0, 0, 1], 
+   js[boxBasis1342, 0, 0, 0, 1, 1, 0, 0, 1, 0], js[boxBasis1342, 0, 0, 0, 1, 
+    1, 0, 1, 0, 0], js[boxBasis1342, 0, 0, 0, 1, 1, 1, 0, 0, 0], 
+   js[boxBasis1342, 0, 0, 1, 0, 0, 0, 0, 1, 1], js[boxBasis1342, 0, 0, 1, 0, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 0, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 0, 0, 1, 0, 0, 1, 0, 0, 1], js[boxBasis1342, 0, 0, 1, 0, 
+    0, 1, 0, 1, 0], js[boxBasis1342, 0, 0, 1, 0, 0, 1, 1, 0, 0], 
+   js[boxBasis1342, 0, 0, 1, 0, 1, 0, 0, 0, 1], js[boxBasis1342, 0, 0, 1, 0, 
+    1, 0, 0, 1, 0], js[boxBasis1342, 0, 0, 1, 0, 1, 0, 1, 0, 0], 
+   js[boxBasis1342, 0, 0, 1, 0, 1, 1, 0, 0, 0], js[boxBasis1342, 0, 0, 1, 1, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 0, 0, 1, 1, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 0, 1, 1, 0, 0, 1, 0, 0], js[boxBasis1342, 0, 0, 1, 1, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 0, 0, 1, 1, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 0, 0, 0, 1, 1], js[boxBasis1342, 0, 1, 0, 0, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 0, 1, 0, 0, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 0, 1, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 0, 
+    0, 1, 0, 1, 0], js[boxBasis1342, 0, 1, 0, 0, 0, 1, 1, 0, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 1, 0, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 0, 
+    1, 0, 0, 1, 0], js[boxBasis1342, 0, 1, 0, 0, 1, 0, 1, 0, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 1, 1, 0, 0, 0], js[boxBasis1342, 0, 1, 0, 1, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 1, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 1, 0, 0, 1, 0, 0], js[boxBasis1342, 0, 1, 0, 1, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 0, 1, 0, 1, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 0, 1, 1, 0, 0, 0, 0, 0, 1], js[boxBasis1342, 0, 1, 1, 0, 
+    0, 0, 0, 1, 0], js[boxBasis1342, 0, 1, 1, 0, 0, 0, 1, 0, 0], 
+   js[boxBasis1342, 0, 1, 1, 0, 0, 1, 0, 0, 0], js[boxBasis1342, 0, 1, 1, 0, 
+    1, 0, 0, 0, 0], js[boxBasis1342, 0, 1, 1, 1, 0, 0, 0, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 0, 0, 0, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 1, 0, 0, 0, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 0, 1, 0, 0, 1], js[boxBasis1342, 1, 0, 0, 0, 
+    0, 1, 0, 1, 0], js[boxBasis1342, 1, 0, 0, 0, 0, 1, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 1, 0, 0, 0, 1], js[boxBasis1342, 1, 0, 0, 0, 
+    1, 0, 0, 1, 0], js[boxBasis1342, 1, 0, 0, 0, 1, 0, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 1, 1, 0, 0, 0], js[boxBasis1342, 1, 0, 0, 1, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 1, 0, 0, 1, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 1, 0, 0, 1, 0, 0, 1, 0, 0], js[boxBasis1342, 1, 0, 0, 1, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 1, 0, 0, 1, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 1, 0, 1, 0, 0, 0, 0, 0, 1], js[boxBasis1342, 1, 0, 1, 0, 
+    0, 0, 0, 1, 0], js[boxBasis1342, 1, 0, 1, 0, 0, 0, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 1, 0, 0, 1, 0, 0, 0], js[boxBasis1342, 1, 0, 1, 0, 
+    1, 0, 0, 0, 0], js[boxBasis1342, 1, 0, 1, 1, 0, 0, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 0, 0, 0, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 0, 0, 
+    0, 0, 0, 1, 0], js[boxBasis1342, 1, 1, 0, 0, 0, 0, 1, 0, 0], 
+   js[boxBasis1342, 1, 1, 0, 0, 0, 1, 0, 0, 0], js[boxBasis1342, 1, 1, 0, 0, 
+    1, 0, 0, 0, 0], js[boxBasis1342, 1, 1, 0, 1, 0, 0, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 0, 0, 0, 0, 0], js[boxBasis1342, 0, 0, 0, 0, 
+    0, 1, 1, 1, 1], js[boxBasis1342, 0, 0, 0, 0, 1, 0, 1, 1, 1], 
+   js[boxBasis1342, 0, 0, 0, 0, 1, 1, 0, 1, 1], js[boxBasis1342, 0, 0, 0, 0, 
+    1, 1, 1, 0, 1], js[boxBasis1342, 0, 0, 0, 0, 1, 1, 1, 1, 0], 
+   js[boxBasis1342, 0, 0, 0, 1, 0, 0, 1, 1, 1], js[boxBasis1342, 0, 0, 0, 1, 
+    0, 1, 0, 1, 1], js[boxBasis1342, 0, 0, 0, 1, 0, 1, 1, 0, 1], 
+   js[boxBasis1342, 0, 0, 0, 1, 0, 1, 1, 1, 0], js[boxBasis1342, 0, 0, 0, 1, 
+    1, 0, 0, 1, 1], js[boxBasis1342, 0, 0, 0, 1, 1, 0, 1, 0, 1], 
+   js[boxBasis1342, 0, 0, 0, 1, 1, 0, 1, 1, 0], js[boxBasis1342, 0, 0, 0, 1, 
+    1, 1, 0, 0, 1], js[boxBasis1342, 0, 0, 0, 1, 1, 1, 0, 1, 0], 
+   js[boxBasis1342, 0, 0, 0, 1, 1, 1, 1, 0, 0], js[boxBasis1342, 0, 0, 1, 0, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 0, 0, 1, 0, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 1, 0, 0, 1, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 0, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 0, 0, 1, 0, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 1, 0, 1, 0, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 0, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 0, 0, 1, 0, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 0, 0, 1, 0, 1, 1, 0, 1, 0], js[boxBasis1342, 0, 0, 1, 0, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 0, 0, 1, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 1, 1, 0, 0, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 1, 
+    0, 0, 1, 1, 0], js[boxBasis1342, 0, 0, 1, 1, 0, 1, 0, 0, 1], 
+   js[boxBasis1342, 0, 0, 1, 1, 0, 1, 0, 1, 0], js[boxBasis1342, 0, 0, 1, 1, 
+    0, 1, 1, 0, 0], js[boxBasis1342, 0, 0, 1, 1, 1, 0, 0, 0, 1], 
+   js[boxBasis1342, 0, 0, 1, 1, 1, 0, 0, 1, 0], js[boxBasis1342, 0, 0, 1, 1, 
+    1, 0, 1, 0, 0], js[boxBasis1342, 0, 0, 1, 1, 1, 1, 0, 0, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 0, 0, 1, 1, 1], js[boxBasis1342, 0, 1, 0, 0, 
+    0, 1, 0, 1, 1], js[boxBasis1342, 0, 1, 0, 0, 0, 1, 1, 0, 1], 
+   js[boxBasis1342, 0, 1, 0, 0, 0, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 0, 0, 
+    1, 0, 0, 1, 1], js[boxBasis1342, 0, 1, 0, 0, 1, 0, 1, 0, 1], 
+   js[boxBasis1342, 0, 1, 0, 0, 1, 0, 1, 1, 0], js[boxBasis1342, 0, 1, 0, 0, 
+    1, 1, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 0, 1, 1, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 1, 1, 1, 0, 0], js[boxBasis1342, 0, 1, 0, 1, 
+    0, 0, 0, 1, 1], js[boxBasis1342, 0, 1, 0, 1, 0, 0, 1, 0, 1], 
+   js[boxBasis1342, 0, 1, 0, 1, 0, 0, 1, 1, 0], js[boxBasis1342, 0, 1, 0, 1, 
+    0, 1, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 1, 0, 1, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 1, 0, 1, 1, 0, 0], js[boxBasis1342, 0, 1, 0, 1, 
+    1, 0, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 1, 1, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 1, 1, 0, 1, 0, 0], js[boxBasis1342, 0, 1, 0, 1, 
+    1, 1, 0, 0, 0], js[boxBasis1342, 0, 1, 1, 0, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 0, 1, 1, 0, 0, 0, 1, 0, 1], js[boxBasis1342, 0, 1, 1, 0, 
+    0, 0, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 0, 0, 1, 0, 0, 1], 
+   js[boxBasis1342, 0, 1, 1, 0, 0, 1, 0, 1, 0], js[boxBasis1342, 0, 1, 1, 0, 
+    0, 1, 1, 0, 0], js[boxBasis1342, 0, 1, 1, 0, 1, 0, 0, 0, 1], 
+   js[boxBasis1342, 0, 1, 1, 0, 1, 0, 0, 1, 0], js[boxBasis1342, 0, 1, 1, 0, 
+    1, 0, 1, 0, 0], js[boxBasis1342, 0, 1, 1, 0, 1, 1, 0, 0, 0], 
+   js[boxBasis1342, 0, 1, 1, 1, 0, 0, 0, 0, 1], js[boxBasis1342, 0, 1, 1, 1, 
+    0, 0, 0, 1, 0], js[boxBasis1342, 0, 1, 1, 1, 0, 0, 1, 0, 0], 
+   js[boxBasis1342, 0, 1, 1, 1, 0, 1, 0, 0, 0], js[boxBasis1342, 0, 1, 1, 1, 
+    1, 0, 0, 0, 0], js[boxBasis1342, 1, 0, 0, 0, 0, 0, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 0, 0, 0, 1, 0, 1, 1], js[boxBasis1342, 1, 0, 0, 0, 
+    0, 1, 1, 0, 1], js[boxBasis1342, 1, 0, 0, 0, 0, 1, 1, 1, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 1, 0, 0, 1, 1], js[boxBasis1342, 1, 0, 0, 0, 
+    1, 0, 1, 0, 1], js[boxBasis1342, 1, 0, 0, 0, 1, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 0, 0, 0, 1, 1, 0, 0, 1], js[boxBasis1342, 1, 0, 0, 0, 
+    1, 1, 0, 1, 0], js[boxBasis1342, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 1, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 0, 0, 1, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 1, 0, 0, 1, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 0, 0, 1, 0, 1, 0, 0, 1], js[boxBasis1342, 1, 0, 0, 1, 
+    0, 1, 0, 1, 0], js[boxBasis1342, 1, 0, 0, 1, 0, 1, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 1, 1, 0, 0, 0, 1], js[boxBasis1342, 1, 0, 0, 1, 
+    1, 0, 0, 1, 0], js[boxBasis1342, 1, 0, 0, 1, 1, 0, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 0, 1, 1, 1, 0, 0, 0], js[boxBasis1342, 1, 0, 1, 0, 
+    0, 0, 0, 1, 1], js[boxBasis1342, 1, 0, 1, 0, 0, 0, 1, 0, 1], 
+   js[boxBasis1342, 1, 0, 1, 0, 0, 0, 1, 1, 0], js[boxBasis1342, 1, 0, 1, 0, 
+    0, 1, 0, 0, 1], js[boxBasis1342, 1, 0, 1, 0, 0, 1, 0, 1, 0], 
+   js[boxBasis1342, 1, 0, 1, 0, 0, 1, 1, 0, 0], js[boxBasis1342, 1, 0, 1, 0, 
+    1, 0, 0, 0, 1], js[boxBasis1342, 1, 0, 1, 0, 1, 0, 0, 1, 0], 
+   js[boxBasis1342, 1, 0, 1, 0, 1, 0, 1, 0, 0], js[boxBasis1342, 1, 0, 1, 0, 
+    1, 1, 0, 0, 0], js[boxBasis1342, 1, 0, 1, 1, 0, 0, 0, 0, 1], 
+   js[boxBasis1342, 1, 0, 1, 1, 0, 0, 0, 1, 0], js[boxBasis1342, 1, 0, 1, 1, 
+    0, 0, 1, 0, 0], js[boxBasis1342, 1, 0, 1, 1, 0, 1, 0, 0, 0], 
+   js[boxBasis1342, 1, 0, 1, 1, 1, 0, 0, 0, 0], js[boxBasis1342, 1, 1, 0, 0, 
+    0, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 0, 0, 0, 0, 1, 0, 1], 
+   js[boxBasis1342, 1, 1, 0, 0, 0, 0, 1, 1, 0], js[boxBasis1342, 1, 1, 0, 0, 
+    0, 1, 0, 0, 1], js[boxBasis1342, 1, 1, 0, 0, 0, 1, 0, 1, 0], 
+   js[boxBasis1342, 1, 1, 0, 0, 0, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 0, 0, 
+    1, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 0, 0, 1, 0, 0, 1, 0], 
+   js[boxBasis1342, 1, 1, 0, 0, 1, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 0, 0, 
+    1, 1, 0, 0, 0], js[boxBasis1342, 1, 1, 0, 1, 0, 0, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 0, 0, 0, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 
+    0, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 0, 1, 0, 1, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 0, 1, 1, 0, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 0, 
+    0, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 0, 0, 0, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 0, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 0, 
+    0, 1, 0, 0, 0], js[boxBasis1342, 1, 1, 1, 0, 1, 0, 0, 0, 0], 
+   js[boxBasis1342, 0, 0, 0, 0, 1, 1, 1, 1, 1], js[boxBasis1342, 0, 0, 0, 1, 
+    0, 1, 1, 1, 1], js[boxBasis1342, 0, 0, 0, 1, 1, 0, 1, 1, 1], 
+   js[boxBasis1342, 0, 0, 0, 1, 1, 1, 0, 1, 1], js[boxBasis1342, 0, 0, 0, 1, 
+    1, 1, 1, 0, 1], js[boxBasis1342, 0, 0, 0, 1, 1, 1, 1, 1, 0], 
+   js[boxBasis1342, 0, 0, 1, 0, 0, 1, 1, 1, 1], js[boxBasis1342, 0, 0, 1, 0, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 0, 0, 1, 0, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 1, 0, 1, 1, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 0, 
+    1, 1, 1, 1, 0], js[boxBasis1342, 0, 0, 1, 1, 0, 0, 1, 1, 1], 
+   js[boxBasis1342, 0, 0, 1, 1, 0, 1, 0, 1, 1], js[boxBasis1342, 0, 0, 1, 1, 
+    0, 1, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 1, 0, 1, 1, 1, 0], 
+   js[boxBasis1342, 0, 0, 1, 1, 1, 0, 0, 1, 1], js[boxBasis1342, 0, 0, 1, 1, 
+    1, 0, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 1, 1, 0, 1, 1, 0], 
+   js[boxBasis1342, 0, 0, 1, 1, 1, 1, 0, 0, 1], js[boxBasis1342, 0, 0, 1, 1, 
+    1, 1, 0, 1, 0], js[boxBasis1342, 0, 0, 1, 1, 1, 1, 1, 0, 0], 
+   js[boxBasis1342, 0, 1, 0, 0, 0, 1, 1, 1, 1], js[boxBasis1342, 0, 1, 0, 0, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 0, 1, 0, 0, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 1, 0, 0, 1, 1, 1, 0, 1], js[boxBasis1342, 0, 1, 0, 0, 
+    1, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 0, 1, 0, 0, 1, 1, 1], 
+   js[boxBasis1342, 0, 1, 0, 1, 0, 1, 0, 1, 1], js[boxBasis1342, 0, 1, 0, 1, 
+    0, 1, 1, 0, 1], js[boxBasis1342, 0, 1, 0, 1, 0, 1, 1, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 1, 1, 0, 0, 1, 1], js[boxBasis1342, 0, 1, 0, 1, 
+    1, 0, 1, 0, 1], js[boxBasis1342, 0, 1, 0, 1, 1, 0, 1, 1, 0], 
+   js[boxBasis1342, 0, 1, 0, 1, 1, 1, 0, 0, 1], js[boxBasis1342, 0, 1, 0, 1, 
+    1, 1, 0, 1, 0], js[boxBasis1342, 0, 1, 0, 1, 1, 1, 1, 0, 0], 
+   js[boxBasis1342, 0, 1, 1, 0, 0, 0, 1, 1, 1], js[boxBasis1342, 0, 1, 1, 0, 
+    0, 1, 0, 1, 1], js[boxBasis1342, 0, 1, 1, 0, 0, 1, 1, 0, 1], 
+   js[boxBasis1342, 0, 1, 1, 0, 0, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 0, 
+    1, 0, 0, 1, 1], js[boxBasis1342, 0, 1, 1, 0, 1, 0, 1, 0, 1], 
+   js[boxBasis1342, 0, 1, 1, 0, 1, 0, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 0, 
+    1, 1, 0, 0, 1], js[boxBasis1342, 0, 1, 1, 0, 1, 1, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 1, 0, 1, 1, 1, 0, 0], js[boxBasis1342, 0, 1, 1, 1, 
+    0, 0, 0, 1, 1], js[boxBasis1342, 0, 1, 1, 1, 0, 0, 1, 0, 1], 
+   js[boxBasis1342, 0, 1, 1, 1, 0, 0, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 1, 
+    0, 1, 0, 0, 1], js[boxBasis1342, 0, 1, 1, 1, 0, 1, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 1, 1, 0, 1, 1, 0, 0], js[boxBasis1342, 0, 1, 1, 1, 
+    1, 0, 0, 0, 1], js[boxBasis1342, 0, 1, 1, 1, 1, 0, 0, 1, 0], 
+   js[boxBasis1342, 0, 1, 1, 1, 1, 0, 1, 0, 0], js[boxBasis1342, 0, 1, 1, 1, 
+    1, 1, 0, 0, 0], js[boxBasis1342, 1, 0, 0, 0, 0, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 0, 0, 1, 0, 1, 1, 1], js[boxBasis1342, 1, 0, 0, 0, 
+    1, 1, 0, 1, 1], js[boxBasis1342, 1, 0, 0, 0, 1, 1, 1, 0, 1], 
+   js[boxBasis1342, 1, 0, 0, 0, 1, 1, 1, 1, 0], js[boxBasis1342, 1, 0, 0, 1, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 1, 0, 0, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 0, 0, 1, 0, 1, 1, 0, 1], js[boxBasis1342, 1, 0, 0, 1, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 1, 0, 0, 1, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 0, 0, 1, 1, 0, 1, 0, 1], js[boxBasis1342, 1, 0, 0, 1, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 1, 0, 0, 1, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 1, 0, 0, 1, 1, 1, 0, 1, 0], js[boxBasis1342, 1, 0, 0, 1, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 1, 0, 1, 0, 0, 0, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 1, 0, 0, 1, 0, 1, 1], js[boxBasis1342, 1, 0, 1, 0, 
+    0, 1, 1, 0, 1], js[boxBasis1342, 1, 0, 1, 0, 0, 1, 1, 1, 0], 
+   js[boxBasis1342, 1, 0, 1, 0, 1, 0, 0, 1, 1], js[boxBasis1342, 1, 0, 1, 0, 
+    1, 0, 1, 0, 1], js[boxBasis1342, 1, 0, 1, 0, 1, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 0, 1, 0, 1, 1, 0, 0, 1], js[boxBasis1342, 1, 0, 1, 0, 
+    1, 1, 0, 1, 0], js[boxBasis1342, 1, 0, 1, 0, 1, 1, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 1, 1, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 0, 1, 1, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 1, 0, 1, 1, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 0, 1, 1, 0, 1, 0, 0, 1], js[boxBasis1342, 1, 0, 1, 1, 
+    0, 1, 0, 1, 0], js[boxBasis1342, 1, 0, 1, 1, 0, 1, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 1, 1, 1, 0, 0, 0, 1], js[boxBasis1342, 1, 0, 1, 1, 
+    1, 0, 0, 1, 0], js[boxBasis1342, 1, 0, 1, 1, 1, 0, 1, 0, 0], 
+   js[boxBasis1342, 1, 0, 1, 1, 1, 1, 0, 0, 0], js[boxBasis1342, 1, 1, 0, 0, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 0, 0, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 0, 0, 0, 1, 1, 0, 1], js[boxBasis1342, 1, 1, 0, 0, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 1, 1, 0, 0, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 0, 0, 1, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 0, 0, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 1, 1, 0, 0, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 0, 0, 1, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 0, 0, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 0, 1, 0, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 0, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 0, 1, 
+    0, 0, 1, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 0, 1, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 0, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 
+    0, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 0, 1, 1, 0, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 1, 0, 0, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 
+    1, 0, 1, 0, 0], js[boxBasis1342, 1, 1, 0, 1, 1, 1, 0, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 0, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    0, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 0, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 0, 1, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    0, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 0, 0, 1, 1, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 1, 0, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    1, 0, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 0, 1, 0, 1, 0, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 1, 1, 0, 0, 0], js[boxBasis1342, 0, 0, 0, 1, 
+    1, 1, 1, 1, 1], js[boxBasis1342, 0, 0, 1, 0, 1, 1, 1, 1, 1], 
+   js[boxBasis1342, 0, 0, 1, 1, 0, 1, 1, 1, 1], js[boxBasis1342, 0, 0, 1, 1, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 0, 0, 1, 1, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 0, 1, 1, 1, 1, 1, 0, 1], js[boxBasis1342, 0, 0, 1, 1, 
+    1, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 0, 0, 1, 1, 1, 1, 1], 
+   js[boxBasis1342, 0, 1, 0, 1, 0, 1, 1, 1, 1], js[boxBasis1342, 0, 1, 0, 1, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 0, 1, 0, 1, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 1, 0, 1, 1, 1, 1, 0, 1], js[boxBasis1342, 0, 1, 0, 1, 
+    1, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 0, 0, 1, 1, 1, 1], 
+   js[boxBasis1342, 0, 1, 1, 0, 1, 0, 1, 1, 1], js[boxBasis1342, 0, 1, 1, 0, 
+    1, 1, 0, 1, 1], js[boxBasis1342, 0, 1, 1, 0, 1, 1, 1, 0, 1], 
+   js[boxBasis1342, 0, 1, 1, 0, 1, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 1, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 0, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 1, 1, 1, 0, 1, 1, 0, 1], js[boxBasis1342, 0, 1, 1, 1, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 1, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 0, 1, 1, 1, 1, 0, 1, 0, 1], js[boxBasis1342, 0, 1, 1, 1, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 1, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 0, 1, 1, 1, 1, 1, 0, 1, 0], js[boxBasis1342, 0, 1, 1, 1, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 1, 0, 0, 0, 1, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 0, 1, 0, 1, 1, 1, 1], js[boxBasis1342, 1, 0, 0, 1, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 1, 0, 0, 1, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 0, 0, 1, 1, 1, 1, 0, 1], js[boxBasis1342, 1, 0, 0, 1, 
+    1, 1, 1, 1, 0], js[boxBasis1342, 1, 0, 1, 0, 0, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 1, 0, 1, 0, 1, 1, 1], js[boxBasis1342, 1, 0, 1, 0, 
+    1, 1, 0, 1, 1], js[boxBasis1342, 1, 0, 1, 0, 1, 1, 1, 0, 1], 
+   js[boxBasis1342, 1, 0, 1, 0, 1, 1, 1, 1, 0], js[boxBasis1342, 1, 0, 1, 1, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 1, 0, 1, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 0, 1, 1, 0, 1, 1, 0, 1], js[boxBasis1342, 1, 0, 1, 1, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 1, 0, 1, 1, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 0, 1, 1, 1, 0, 1, 0, 1], js[boxBasis1342, 1, 0, 1, 1, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 1, 0, 1, 1, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 1, 0, 1, 1, 1, 1, 0, 1, 0], js[boxBasis1342, 1, 0, 1, 1, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 0, 0, 0, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 1, 0, 0, 1, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 0, 0, 
+    1, 1, 0, 1, 1], js[boxBasis1342, 1, 1, 0, 0, 1, 1, 1, 0, 1], 
+   js[boxBasis1342, 1, 1, 0, 0, 1, 1, 1, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 
+    0, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 0, 1, 0, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 0, 1, 1, 0, 1], js[boxBasis1342, 1, 1, 0, 1, 
+    0, 1, 1, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 1, 0, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 1, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 0, 1, 
+    1, 0, 1, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 1, 1, 0, 0, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 1, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 0, 1, 
+    1, 1, 1, 0, 0], js[boxBasis1342, 1, 1, 1, 0, 0, 0, 1, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 0, 0, 1, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    0, 1, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 0, 1, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 1, 0, 0, 1, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    1, 0, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 1, 0, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 1, 1, 0, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    1, 1, 0, 1, 0], js[boxBasis1342, 1, 1, 1, 0, 1, 1, 1, 0, 0], 
+   js[boxBasis1342, 0, 0, 1, 1, 1, 1, 1, 1, 1], js[boxBasis1342, 0, 1, 0, 1, 
+    1, 1, 1, 1, 1], js[boxBasis1342, 0, 1, 1, 0, 1, 1, 1, 1, 1], 
+   js[boxBasis1342, 0, 1, 1, 1, 0, 1, 1, 1, 1], js[boxBasis1342, 0, 1, 1, 1, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 0, 1, 1, 1, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 0, 1, 1, 1, 1, 1, 1, 0, 1], js[boxBasis1342, 0, 1, 1, 1, 
+    1, 1, 1, 1, 0], js[boxBasis1342, 1, 0, 0, 1, 1, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 1, 0, 1, 1, 1, 1, 1], js[boxBasis1342, 1, 0, 1, 1, 
+    0, 1, 1, 1, 1], js[boxBasis1342, 1, 0, 1, 1, 1, 0, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 1, 1, 1, 1, 0, 1, 1], js[boxBasis1342, 1, 0, 1, 1, 
+    1, 1, 1, 0, 1], js[boxBasis1342, 1, 0, 1, 1, 1, 1, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 0, 0, 1, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 0, 1, 
+    0, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 0, 1, 1, 0, 1, 1, 1], 
+   js[boxBasis1342, 1, 1, 0, 1, 1, 1, 0, 1, 1], js[boxBasis1342, 1, 1, 0, 1, 
+    1, 1, 1, 0, 1], js[boxBasis1342, 1, 1, 0, 1, 1, 1, 1, 1, 0], 
+   js[boxBasis1342, 1, 1, 1, 0, 0, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    1, 0, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 0, 1, 1, 0, 1, 1], 
+   js[boxBasis1342, 1, 1, 1, 0, 1, 1, 1, 0, 1], js[boxBasis1342, 1, 1, 1, 0, 
+    1, 1, 1, 1, 0], js[boxBasis1342, 0, 1, 1, 1, 1, 1, 1, 1, 1], 
+   js[boxBasis1342, 1, 0, 1, 1, 1, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 0, 1, 
+    1, 1, 1, 1, 1], js[boxBasis1342, 1, 1, 1, 0, 1, 1, 1, 1, 1]}
+boxBasis1342 /: SectorsMappings[boxBasis1342, LiteRed`Private`ns$:
+    (0 | 1)..] := Cases[SectorsMappings[boxBasis1342], 
+   HoldPattern[js[boxBasis1342, LiteRed`Private`ns$] -> _]]
+boxBasis1342::usage = "3-loop basis with 1 external momenta.\nUse \
+Information[boxBasis1342] to get basis summary.\nThis string can be redefined \
+by setting boxBasis1342::usage=\"\[Ellipsis]\""; 
+ Information[boxBasis1342, LongForm -> False]; 
+LiteRed`Private`CheckDefs[boxBasis1342]
+BasisDirectory[boxBasis1342]

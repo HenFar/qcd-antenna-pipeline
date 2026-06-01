@@ -1,0 +1,5 @@
+{j[basis, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, (n4_)?Positive, 
+   (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive] :> 
+  Expand[j[basis, n5, n6, n4, n3, n1, n2, 0]/
+    (-2*j[basis, -1, 0, 0, 0, 0, 0, 0] + 2*j[basis, 0, 0, 0, 0, -1, 0, 0] + 
+      j[basis, 0, 0, 0, 0, 0, 0, -1])^n7]}

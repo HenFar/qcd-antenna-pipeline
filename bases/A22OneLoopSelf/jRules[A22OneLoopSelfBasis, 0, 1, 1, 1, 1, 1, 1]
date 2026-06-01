@@ -1,0 +1,9 @@
+Last[{{{-1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}}, 
+  {j[A22OneLoopSelfBasis, (n1_)?NonPositive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive] /; 
+     True :> (n4*j[A22OneLoopSelfBasis, n1, n2, n3, 1 + n4, -1 + n5, n6, n7])/
+      (d - n2 - n3 - n5 - n6 - n7) + 
+     (n1*j[A22OneLoopSelfBasis, 1 + n1, -1 + n2, n3, n4, n5, n6, n7])/
+      (d - n2 - n3 - n5 - n6 - n7)}}]

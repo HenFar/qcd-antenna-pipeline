@@ -1,0 +1,241 @@
+Options[InterfereMAmplitudes] = {ApplyCasimirSubstitution -> True, ApplyDimReg
+   -> True, AntennaType -> A};
+
+InterfereMAmplitudes[MAmp1_, MAmp2_, numFinalParticles_, OptionsPattern[
+  ]] :=
+  Module[{ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt,
+     colourCounts1, colourCounts2, interference},
+    ApplyCasimirSubstitutionOpt = OptionValue["ApplyCasimirSubstitution"
+      ];
+    ApplyDimRegOpt = OptionValue["ApplyDimReg"];
+    AntennaTypeOpt = OptionValue["AntennaType"];
+    colourCounts1 = ColourTensorCounter[MAmp1];
+    colourCounts2 = ColourTensorCounter[MAmp2];
+    If[MAmp1 == MAmp2,
+      Which[
+        colourCounts1 == 1,
+          interference = InterfereMAmp1Count[MAmp1, MAmp2, numFinalParticles,
+             ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt]
+        ,
+        colourCounts1 == 2,
+          interference = InterfereMAmp2Count[MAmp1, MAmp2, numFinalParticles,
+             ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt]
+        ,
+        Default,
+          Print["Input M amplitudes have a maximum of ", Max[colourCounts1,
+             colourCounts2], " colour tensors in their individual definitions. In the present version of this software, only amplitudes with up to 2 colour tensors are accepted. Aborting..."
+            ];
+          $Failed
+      ]
+      ,
+      Print["The input M amplitudes are not equal. This is not yet implemented in the present version. Aborting..."
+        ];
+      $Failed
+    ]
+  ];
+
+InterfereMAmplitudesPair[MAmp1_, MAmp2_, numFinalParticles_, OptionsPattern[
+  InterfereMAmplitudes]] :=
+  Module[{ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt,
+     colourCounts1, colourCounts2, interference},
+    ApplyCasimirSubstitutionOpt = OptionValue["ApplyCasimirSubstitution"
+      ];
+    ApplyDimRegOpt = OptionValue["ApplyDimReg"];
+    AntennaTypeOpt = OptionValue["AntennaType"];
+    colourCounts1 = ColourTensorCounter[MAmp1];
+    colourCounts2 = ColourTensorCounter[MAmp2];
+    Which[
+      colourCounts1 == 1 && colourCounts2 == 1,
+        interference = InterfereMAmp1Count[MAmp1, MAmp2, numFinalParticles,
+           ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt]
+      ,
+      colourCounts1 <= 2 && colourCounts2 <= 2,
+        interference = InterfereMAmp2Count[MAmp1, MAmp2, numFinalParticles,
+           ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt]
+      ,
+      True,
+        Print["Pair interference received unsupported colour tensor counts ",
+           {colourCounts1, colourCounts2}, ". Aborting..."];
+        interference = $Failed
+    ];
+    interference
+  ];
+
+SymmetrizedInterference[amp1_, amp2_, numFinalParticles_, antennaType_
+  ] :=
+  Module[{leftRight, rightLeft, output},
+    leftRight = InterfereMAmplitudesPair[amp1, amp2, numFinalParticles,
+       AntennaType -> antennaType];
+    rightLeft = InterfereMAmplitudesPair[amp2, amp1, numFinalParticles,
+       AntennaType -> antennaType];
+    If[MemberQ[{leftRight, rightLeft}, $Failed],
+      output = $Failed
+      ,
+      output =
+        leftRight + rightLeft //
+        Simplify //
+        Expand
+    ];
+    output
+  ];
+
+InterfereMAmp1Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution_,
+   ApplyDimReg_, AntennaType_] :=
+  Module[{interfBare, interfSimp, interfNumPart, interfDiracSimp, interfCalc,
+     interfFinal, output},
+    KinematicRules[numFinalParticles];
+    interfBare = ComplexConjugate[MAmp1] * MAmp2;
+    interfSimp =
+      interfBare //
+      SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
+      FermionSpinSum //
+      DoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
+    If[AntennaType === A,
+      Which[
+        numFinalParticles == 2,
+          interfNumPart = interfSimp
+        ,
+        numFinalParticles == 3,
+          interfNumPart = interfSimp // DoPolarizationSums[#, k3, 0, 
+            VirtualBoson -> True]&
+        ,
+        numFinalParticles == 4,
+          interfNumPart =
+            interfSimp //
+            DoPolarizationSums[#, k3, k4]& //
+            DoPolarizationSums[#, k4, k3]&
+      ]
+      ,
+      interfNumPart = interfSimp;
+    ];
+    interfDiracSimp = interfNumPart // DiracSimplify;
+    interfCalc = Calc[interfDiracSimp];
+    interfFinal = interfCalc // ApplyFeynCalcRules[#, numFinalParticles
+      ]&;
+    If[ApplyCasimirSubstitution === True,
+      interfFinal = interfFinal /. CasimirSubs
+    ];
+    If[ApplyDimReg === True,
+      interfFinal = interfFinal /. D -> 4 - 2 Epsilon
+    ];
+    output = interfFinal // Simplify;
+    output
+  ];
+
+InterfereMAmp2Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution_,
+   ApplyDimReg_, AntennaType_] :=
+  Module[{listTermsMAmp1, listTermsMAmp2, terms, C1, S1, C2, S2, CCouples,
+     SCouples, MixedCouples, interference, output},
+    KinematicRules[numFinalParticles];
+    listTermsMAmp1 = ReturnColourSpinCouples[MAmp1];
+    listTermsMAmp2 = ReturnColourSpinCouples[MAmp2];
+    C1 = ConstantArray[0, listTermsMAmp1 // Length];
+    C2 = ConstantArray[0, listTermsMAmp2 // Length];
+    S1 = ConstantArray[0, listTermsMAmp1 // Length];
+    S2 = ConstantArray[0, listTermsMAmp2 // Length];
+    Do[
+      terms = listTermsMAmp1[[i]];
+      C1[[i]] = terms[[1]];
+      S1[[i]] = terms[[2]];
+      ,
+      {i, listTermsMAmp1 // Length}
+    ];
+    Do[
+      terms = listTermsMAmp2[[i]];
+      C2[[i]] = terms[[1]];
+      S2[[i]] = terms[[2]];
+      ,
+      {i, listTermsMAmp2 // Length}
+    ];
+    CCouples = {};
+    SCouples = {};
+    Do[
+      Do[
+        AppendTo[CCouples, ComplexConjugate[C1[[i]]] C2[[j]] // SUNSimplify
+          ];
+        AppendTo[
+          SCouples
+          ,
+          ComplexConjugate[S1[[i]]] S2[[j]] //
+          SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
+          FermionSpinSum //
+          DoPolarizationSums[#, p, 0, VirtualBoson -> True]&
+        ]
+        ,
+        {j, C2 // Length}
+      ]
+      ,
+      {i, C1 // Length}
+    ];
+    (* B and C antennae dont require gluon polarization sums *)
+    If[AntennaType === A,
+      (* for A type antennae *)
+      Which[
+        numFinalParticles == 2,
+          Do[
+            SCouples[[i]] =
+              SCouples[[i]] //
+              DiracSimplify //
+              Simplify //
+              Calc
+            ,
+            {i, SCouples // Length}
+          ]
+        ,
+        numFinalParticles == 3,
+          Do[
+            SCouples[[i]] =
+              SCouples[[i]] //
+              DoPolarizationSums[#, k3, 0, VirtualBoson -> True]& //
+              DiracSimplify //
+              Simplify //
+              Calc
+            ,
+            {i, SCouples // Length}
+          ]
+        ,
+        numFinalParticles == 4,
+          Do[
+            SCouples[[i]] =
+              SCouples[[i]] //
+              DoPolarizationSums[#, k3, k4]& //
+              DoPolarizationSums[#, k4, k3]& //
+              DiracSimplify //
+              Simplify //
+              Calc
+            ,
+            {i, SCouples // Length}
+          ]
+        ,
+        Default,
+          Print["numFinalParticles < 2 or > 4 are not yet implemented. Aborting..."
+            ];
+          $Failed
+      ]
+      ,
+      (* for B and C type antennae *)
+      Do[
+        SCouples[[i]] =
+          SCouples[[i]] //
+          DiracSimplify //
+          Simplify //
+          Calc;
+        ,
+        {i, SCouples // Length}
+      ]
+    ];
+    MixedCouples = {};
+    Do[AppendTo[MixedCouples, CCouples[[i]] SCouples[[i]]], {i, CCouples
+       // Length}];
+    interference = Total[MixedCouples];
+    interference = interference // ApplyFeynCalcRules[#, numFinalParticles
+      ]&;
+    If[ApplyCasimirSubstitution === True,
+      interference = interference /. CasimirSubs
+    ];
+    If[ApplyDimReg === True,
+      interference = interference /. D -> 4 - 2 Epsilon
+    ];
+    output = interference // Simplify;
+    output
+  ];

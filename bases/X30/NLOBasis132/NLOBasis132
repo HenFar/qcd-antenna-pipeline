@@ -1,0 +1,244 @@
+BasisDirectory[NLOBasis132] = StringDrop[DirectoryName[$Input], -1]
+NLOBasis132 /: BasisSectors[NLOBasis132] := {js[NLOBasis132, 1, 1, 1, 0, 0], 
+   js[NLOBasis132, 1, 1, 1, 0, 1], js[NLOBasis132, 1, 1, 1, 1, 0]}
+NLOBasis132 /: CurrentState[NLOBasis132] := <|NewDsBasis -> True, 
+   GenerateIBP -> True, AnalyzeSectors -> True, FindSymmetries -> False|>
+NLOBasis132 /: CutDs[NLOBasis132] := {1, 1, 1, 0, 0}
+NLOBasis132 /: Definitions[NLOBasis132] := 
+  {Hold[MetricTensor[] === d, SetDim[d]], Hold[VecQ[p1], 
+    Declare[p1, Vector]], Hold[VecQ[p2], Declare[p2, Vector]], 
+   Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[q, q] === q2, sp[q, q] = q2]}
+NLOBasis132 /: Ds[NLOBasis132] := {sp[p1, p1], sp[p2, p2], 
+   sp[-p1 - p2 + q, -p1 - p2 + q], sp[p1 + p2, p1 + p2], sp[-p1 + q, -p1 + q]}
+NLOBasis132 /: DsBasisQ[NLOBasis132] := True
+NLOBasis132 /: EMs[NLOBasis132] := {q}
+NLOBasis132 /: ExtMappedSectors[NLOBasis132] := {}
+NLOBasis132 /: ExtSectorsMappings[NLOBasis132] := {}
+NLOBasis132 /: IBP[NLOBasis132] := 
+  {-(#5*j[NLOBasis132, -1 + #1, #2, #3, #4, 1 + #5]) - 
+     #4*j[NLOBasis132, -1 + #1, #2, #3, 1 + #4, #5] + 
+     #4*j[NLOBasis132, #1, -1 + #2, #3, 1 + #4, #5] + 
+     #3*j[NLOBasis132, #1, -1 + #2, 1 + #3, #4, #5] + 
+     (d - 2*#1 - #4 - #5)*j[NLOBasis132, #1, #2, #3, #4, #5] + 
+     #5*q2*j[NLOBasis132, #1, #2, #3, #4, 1 + #5] - 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, -1 + #4, #5] - 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, #4, -1 + #5] + 
+     #3*q2*j[NLOBasis132, #1, #2, 1 + #3, #4, #5], 
+    -(#4*j[NLOBasis132, -1 + #1, #2, #3, 1 + #4, #5]) + 
+     #2*j[NLOBasis132, -1 + #1, 1 + #2, #3, #4, #5] + 
+     #4*j[NLOBasis132, #1, -1 + #2, #3, 1 + #4, #5] + 
+     #3*j[NLOBasis132, #1, -1 + #2, 1 + #3, #4, #5] + 
+     (#2 - #4)*j[NLOBasis132, #1, #2, #3, #4, #5] - 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, -1 + #4, #5] - 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, #4, -1 + #5] + 
+     #3*q2*j[NLOBasis132, #1, #2, 1 + #3, #4, #5] - 
+     #2*j[NLOBasis132, #1, 1 + #2, #3, -1 + #4, #5], 
+    #4*j[NLOBasis132, -1 + #1, #2, #3, 1 + #4, #5] + 
+     #5*j[NLOBasis132, #1, -1 + #2, #3, #4, 1 + #5] - 
+     #4*j[NLOBasis132, #1, -1 + #2, #3, 1 + #4, #5] - 
+     #3*j[NLOBasis132, #1, -1 + #2, 1 + #3, #4, #5] - 
+     #5*j[NLOBasis132, #1, #2, -1 + #3, #4, 1 + #5] + 
+     (#1 - #3 - #4 + #5)*j[NLOBasis132, #1, #2, #3, #4, #5] + 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, #4, -1 + #5] + 
+     #1*j[NLOBasis132, 1 + #1, -1 + #2, #3, #4, #5] - 
+     #1*j[NLOBasis132, 1 + #1, #2, #3, -1 + #4, #5], 
+    #4*j[NLOBasis132, -1 + #1, #2, #3, 1 + #4, #5] - 
+     #4*j[NLOBasis132, #1, -1 + #2, #3, 1 + #4, #5] - 
+     #3*j[NLOBasis132, #1, -1 + #2, 1 + #3, #4, #5] + 
+     (d - 2*#2 - #3 - #4)*j[NLOBasis132, #1, #2, #3, #4, #5] + 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, #4, -1 + #5], 
+    -(#5*j[NLOBasis132, -1 + #1, #2, #3, #4, 1 + #5]) + 
+     #4*j[NLOBasis132, #1, #2, -1 + #3, 1 + #4, #5] + 
+     (-#1 + #3 - #4 + #5)*j[NLOBasis132, #1, #2, #3, #4, #5] + 
+     #5*q2*j[NLOBasis132, #1, #2, #3, #4, 1 + #5] - 
+     #4*q2*j[NLOBasis132, #1, #2, #3, 1 + #4, #5] - 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, -1 + #4, #5] + 
+     #3*q2*j[NLOBasis132, #1, #2, 1 + #3, #4, #5] + 
+     #1*j[NLOBasis132, 1 + #1, #2, #3, #4, -1 + #5] - 
+     #1*q2*j[NLOBasis132, 1 + #1, #2, #3, #4, #5], 
+    #2*j[NLOBasis132, -1 + #1, 1 + #2, #3, #4, #5] + 
+     #4*j[NLOBasis132, #1, #2, -1 + #3, 1 + #4, #5] + 
+     (#3 - #4)*j[NLOBasis132, #1, #2, #3, #4, #5] - 
+     #4*q2*j[NLOBasis132, #1, #2, #3, 1 + #4, #5] - 
+     #3*j[NLOBasis132, #1, #2, 1 + #3, -1 + #4, #5] + 
+     #3*q2*j[NLOBasis132, #1, #2, 1 + #3, #4, #5] + 
+     #2*j[NLOBasis132, #1, 1 + #2, -1 + #3, #4, #5] - 
+     #2*j[NLOBasis132, #1, 1 + #2, #3, -1 + #4, #5] - 
+     #2*j[NLOBasis132, #1, 1 + #2, #3, #4, -1 + #5]} & 
+NLOBasis132 /: Information[NLOBasis132] := 
+  (If[ValueQ[NLOBasis132::usage], Information[NLOBasis132, 
+     LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[
+         First /@ UpValues[NLOBasis132] /. HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[NLOBasis132, __]]] :> 
+           HoldForm[LiteRed`Private`f$[NLOBasis132, "\[Ellipsis]"]]}, {1}], 
+        {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[
+              NLOBasis132, ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  NLOBasis132], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+NLOBasis132 /: jRules[NLOBasis132, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[NLOBasis132], 
+     "jRules[NLOBasis132, 1, 1, 1, 0, 0]"}]]
+NLOBasis132 /: jRules[NLOBasis132, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[NLOBasis132], 
+     "jRules[NLOBasis132, 1, 1, 1, 0, 1]"}]]
+NLOBasis132 /: jRules[NLOBasis132, 1, 1, 1, 1, 0] := 
+  {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive] :> 
+    Expand[j[NLOBasis132, n3, n2, n1, n5, n4]]}
+NLOBasis132 /: jRules[NLOBasis132, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[NLOBasis132], 
+     "jRules[NLOBasis132, 1, 1, 1, 1, 1]"}]]
+NLOBasis132 /: jsOrder[NLOBasis132] := {"np", "cp", "-ds", "-ns"}
+NLOBasis132 /: jsOrder[NLOBasis132, 0, 1, 1, 0, 0] := 
+  {{-1, 1, 1, -1, -1}, {-1, 0, 0, -1, -1}, {0, -1, 0, 0, 0}, {1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 0, 1, 1, 0, 1] := 
+  {{-1, 1, 1, -1, 1}, {-1, 0, 0, -1, 0}, {0, 1, 1, 0, 0}, {0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 0, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0}, {0, 1, 1, 0, 0}, {0, -1, 0, 0, 0}, 
+   {0, 0, 0, -1, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 0, 1, 0, 0] := 
+  {{1, -1, 1, -1, -1}, {0, -1, 0, -1, -1}, {-1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 0, 1, 0, 1] := 
+  {{1, -1, 1, -1, 1}, {0, -1, 0, -1, 0}, {1, 0, 1, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 1, 0, 0, 0] := 
+  {{1, 1, -1, -1, -1}, {0, 0, -1, -1, -1}, {-1, 0, 0, 0, 0}, {0, 0, 1, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 1, 0, 0, 1] := 
+  {{1, 1, -1, -1, 1}, {0, 0, -1, -1, 0}, {1, 1, 0, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 1, 0, 1, 1] := 
+  {{1, 1, -1, 1, 1}, {0, 0, -1, 0, 0}, {1, 1, 0, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 1, 1, 0, 0] := 
+  {{1, 1, 1, -1, -1}, {0, 0, 0, -1, -1}, {-1, 0, 0, 0, 0}, {0, -1, 0, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 1, 1, 0, 1] := 
+  {{1, 1, 1, -1, 1}, {0, 0, 0, -1, 0}, {1, 1, 1, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0}}
+NLOBasis132 /: jsOrder[NLOBasis132, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1}, {1, 1, 1, 0, 0}, {-1, 0, 0, 0, 0}, {0, -1, 0, 0, 0}, 
+   {0, 0, 0, -1, 0}}
+NLOBasis132 /: jSymmetries[NLOBasis132, 1, 1, 1, 0, 0] := 
+  {{j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?NonPositive] :> 
+     Expand[j[NLOBasis132, n1, n2, n3, n4, n5]]}, 
+   {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?NonPositive] :> 
+     Expand[j[NLOBasis132, n1, n3, n2, 0, n5]/
+       (j[NLOBasis132, -1, 0, 0, 0, 0] + j[NLOBasis132, 0, -1, 0, 0, 0] + 
+         j[NLOBasis132, 0, 0, -1, 0, 0] - j[NLOBasis132, 0, 0, 0, -1, 0] - 
+         j[NLOBasis132, 0, 0, 0, 0, -1] + q2*j[NLOBasis132, 0, 0, 0, 0, 0])^
+        n4]}, {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?NonPositive] :> 
+     Expand[j[NLOBasis132, n2, n1, n3, n4, 0]/
+       (j[NLOBasis132, -1, 0, 0, 0, 0] + j[NLOBasis132, 0, -1, 0, 0, 0] + 
+         j[NLOBasis132, 0, 0, -1, 0, 0] - j[NLOBasis132, 0, 0, 0, -1, 0] - 
+         j[NLOBasis132, 0, 0, 0, 0, -1] + q2*j[NLOBasis132, 0, 0, 0, 0, 0])^
+        n5]}, {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?NonPositive] :> 
+     Expand[j[NLOBasis132, n2, n3, n1, n5, 0]/
+       (j[NLOBasis132, -1, 0, 0, 0, 0] + j[NLOBasis132, 0, -1, 0, 0, 0] + 
+         j[NLOBasis132, 0, 0, -1, 0, 0] - j[NLOBasis132, 0, 0, 0, -1, 0] - 
+         j[NLOBasis132, 0, 0, 0, 0, -1] + q2*j[NLOBasis132, 0, 0, 0, 0, 0])^
+        n4]}, {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?NonPositive] :> 
+     Expand[j[NLOBasis132, n3, n1, n2, 0, n4]/
+       (j[NLOBasis132, -1, 0, 0, 0, 0] + j[NLOBasis132, 0, -1, 0, 0, 0] + 
+         j[NLOBasis132, 0, 0, -1, 0, 0] - j[NLOBasis132, 0, 0, 0, -1, 0] - 
+         j[NLOBasis132, 0, 0, 0, 0, -1] + q2*j[NLOBasis132, 0, 0, 0, 0, 0])^
+        n5]}, {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?NonPositive] :> 
+     Expand[j[NLOBasis132, n3, n2, n1, n5, n4]]}}
+NLOBasis132 /: jSymmetries[NLOBasis132, 1, 1, 1, 0, 1] := 
+  {{j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?Positive] :> 
+     Expand[j[NLOBasis132, n1, n2, n3, n4, n5]]}, 
+   {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?NonPositive, (n5_)?Positive] :> 
+     Expand[j[NLOBasis132, n1, n3, n2, 0, n5]/
+       (j[NLOBasis132, -1, 0, 0, 0, 0] + j[NLOBasis132, 0, -1, 0, 0, 0] + 
+         j[NLOBasis132, 0, 0, -1, 0, 0] - j[NLOBasis132, 0, 0, 0, -1, 0] - 
+         j[NLOBasis132, 0, 0, 0, 0, -1] + q2*j[NLOBasis132, 0, 0, 0, 0, 0])^
+        n4]}}
+NLOBasis132 /: jSymmetries[NLOBasis132, 1, 1, 1, 1, 1] := 
+  {{j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive] :> Expand[j[NLOBasis132, n1, n2, n3, 
+       n4, n5]]}, {j[NLOBasis132, (n1_)?Positive, (n2_)?Positive, 
+      (n3_)?Positive, (n4_)?Positive, (n5_)?Positive] :> 
+     Expand[j[NLOBasis132, n3, n2, n1, n5, n4]]}}
+NLOBasis132 /: LI[NLOBasis132] := {} & 
+NLOBasis132 /: LMs[NLOBasis132] := {p1, p2}
+NLOBasis132 /: MappedSectors[NLOBasis132] := {js[NLOBasis132, 1, 1, 1, 1, 0]}
+NLOBasis132 /: MIs[NLOBasis132] := {j[NLOBasis132, 1, 1, 1, 0, 0]}
+NLOBasis132 /: NDs[NLOBasis132] := 5
+NLOBasis132 /: NonZeroSectors[NLOBasis132] := 
+  {js[NLOBasis132, 1, 1, 1, 0, 0], js[NLOBasis132, 1, 1, 1, 0, 1], 
+   js[NLOBasis132, 1, 1, 1, 1, 0], js[NLOBasis132, 1, 1, 1, 1, 1]}
+NLOBasis132 /: Parameters[NLOBasis132] := {q2, d}
+NLOBasis132 /: PowerShifts[NLOBasis132] := {0, 0, 0, 0, 0}
+NLOBasis132 /: SectorsMappings[NLOBasis132] := 
+  {js[NLOBasis132, 1, 1, 1, 1, 0] -> js[NLOBasis132, 1, 1, 1, 0, 1]}
+NLOBasis132 /: SectorsPattern[NLOBasis132] := {___}
+NLOBasis132 /: SimpleSectors[NLOBasis132] := {js[NLOBasis132, 1, 1, 1, 0, 0]}
+NLOBasis132 /: SPs[NLOBasis132] := {sp[p1, p1], sp[p1, p2], sp[p1, q], 
+   sp[p2, p2], sp[p2, q]}
+NLOBasis132 /: SR[NLOBasis132] := 
+  Get[FileNameJoin[{BasisDirectory[NLOBasis132], "SR[NLOBasis132]"}]]
+NLOBasis132 /: Toj[NLOBasis132] := 
+  {sp[p1, p1] -> j[NLOBasis132, -1, 0, 0, 0, 0], 
+   sp[p1, p2] -> (-j[NLOBasis132, -1, 0, 0, 0, 0] - j[NLOBasis132, 0, -1, 0, 
+       0, 0] + j[NLOBasis132, 0, 0, 0, -1, 0])/2, 
+   sp[p1, q] -> (q2 + j[NLOBasis132, -1, 0, 0, 0, 0] - 
+      j[NLOBasis132, 0, 0, 0, 0, -1])/2, sp[p2, p2] -> 
+    j[NLOBasis132, 0, -1, 0, 0, 0], sp[p2, q] -> 
+    (-j[NLOBasis132, -1, 0, 0, 0, 0] - j[NLOBasis132, 0, 0, -1, 0, 0] + 
+      j[NLOBasis132, 0, 0, 0, -1, 0] + j[NLOBasis132, 0, 0, 0, 0, -1])/2}
+NLOBasis132 /: UniqueSectors[NLOBasis132] := {js[NLOBasis132, 1, 1, 1, 0, 0], 
+   js[NLOBasis132, 1, 1, 1, 0, 1], js[NLOBasis132, 1, 1, 1, 1, 1]}
+NLOBasis132 /: ZerojRule[NLOBasis132] := 
+  LiteRed`Private`jjj:j[NLOBasis132, __] :> 
+   0 /; Module[{LiteRed`Private`jjs = 
+       Rest[List @@ jSector[LiteRed`Private`jjj]]}, 
+     Or @@ (BitOr[LiteRed`Private`jjs, #1] === #1 & ) /@ 
+       {{1, 1, 0, 1, 1}, {1, 0, 1, 1, 1}, {0, 1, 1, 1, 1}}]
+NLOBasis132 /: ZeroSectors[NLOBasis132] := {js[NLOBasis132, 0, 0, 0, 0, 0], 
+   js[NLOBasis132, 0, 0, 0, 0, 1], js[NLOBasis132, 0, 0, 0, 1, 0], 
+   js[NLOBasis132, 0, 0, 1, 0, 0], js[NLOBasis132, 0, 1, 0, 0, 0], 
+   js[NLOBasis132, 1, 0, 0, 0, 0], js[NLOBasis132, 0, 0, 0, 1, 1], 
+   js[NLOBasis132, 0, 0, 1, 0, 1], js[NLOBasis132, 0, 0, 1, 1, 0], 
+   js[NLOBasis132, 0, 1, 0, 0, 1], js[NLOBasis132, 0, 1, 0, 1, 0], 
+   js[NLOBasis132, 0, 1, 1, 0, 0], js[NLOBasis132, 1, 0, 0, 0, 1], 
+   js[NLOBasis132, 1, 0, 0, 1, 0], js[NLOBasis132, 1, 0, 1, 0, 0], 
+   js[NLOBasis132, 1, 1, 0, 0, 0], js[NLOBasis132, 0, 0, 1, 1, 1], 
+   js[NLOBasis132, 0, 1, 0, 1, 1], js[NLOBasis132, 0, 1, 1, 0, 1], 
+   js[NLOBasis132, 0, 1, 1, 1, 0], js[NLOBasis132, 1, 0, 0, 1, 1], 
+   js[NLOBasis132, 1, 0, 1, 0, 1], js[NLOBasis132, 1, 0, 1, 1, 0], 
+   js[NLOBasis132, 1, 1, 0, 0, 1], js[NLOBasis132, 1, 1, 0, 1, 0], 
+   js[NLOBasis132, 0, 1, 1, 1, 1], js[NLOBasis132, 1, 0, 1, 1, 1], 
+   js[NLOBasis132, 1, 1, 0, 1, 1]}
+NLOBasis132 /: SectorsMappings[NLOBasis132, LiteRed`Private`ns$:(0 | 1)..] := 
+  Cases[SectorsMappings[NLOBasis132], 
+   HoldPattern[js[NLOBasis132, LiteRed`Private`ns$] -> _]]
+NLOBasis132::usage = "2-loop basis with 1 external momenta.\nUse \
+Information[NLOBasis132] to get basis summary.\nThis string can be redefined \
+by setting NLOBasis132::usage=\"\[Ellipsis]\""; 
+ Information[NLOBasis132, LongForm -> False]; 
+LiteRed`Private`CheckDefs[NLOBasis132]
+BasisDirectory[NLOBasis132]

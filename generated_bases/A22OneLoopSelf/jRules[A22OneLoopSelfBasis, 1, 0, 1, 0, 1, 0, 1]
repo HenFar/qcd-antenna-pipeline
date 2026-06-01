@@ -1,0 +1,3 @@
+{j[A22OneLoopSelfBasis, (n1_)?Positive, (n2_)?NonPositive, (n3_)?Positive, 
+   (n4_)?NonPositive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive] :> 
+  Expand[j[A22OneLoopSelfBasis, n6, n5, n4, n3, n2, n1, n7]]}

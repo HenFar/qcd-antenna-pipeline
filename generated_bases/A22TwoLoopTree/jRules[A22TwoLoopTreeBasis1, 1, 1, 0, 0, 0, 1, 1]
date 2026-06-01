@@ -1,0 +1,8 @@
+{j[A22TwoLoopTreeBasis1, (n1_)?Positive, (n2_)?Positive, (n3_)?NonPositive, 
+   (n4_)?NonPositive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive] :> 
+  Expand[j[A22TwoLoopTreeBasis1, n7, n3, n2, 0, n5, n6, n1]/
+    (-j[A22TwoLoopTreeBasis1, 0, -1, 0, 0, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis1, 0, 0, -1, 0, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis1, 0, 0, 0, -1, 0, 0, 0] + 
+      j[A22TwoLoopTreeBasis1, 0, 0, 0, 0, -1, 0, 0] + 
+      j[A22TwoLoopTreeBasis1, 0, 0, 0, 0, 0, -1, 0])^n4]}

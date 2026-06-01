@@ -1,0 +1,282 @@
+(*************************************************)
+
+(*
+  Integrated antenna extraction.
+  IBP and PaVe backends integrate the objects they are given.  For some
+  antennae the integrated object is naturally a colour bracket in a T-function,
+  not yet the final integrated antenna quoted in the subtraction literature.
+  This layer applies those T-to-antenna formulae explicitly.
+*)
+
+(*************************************************)
+
+Options[IntegratedAntennaTTerms] = {ExpansionOrder -> 0, Component -> All};
+
+Options[ExtractIntegratedAntenna] = {ExpansionOrder -> 0};
+
+A31PaperConventionFactor[] :=
+  2 Pi^2;
+
+IntegratedAntennaSeries[expr_, order_Integer] :=
+  Module[{eps},
+    eps = FeynCalc`Epsilon;
+    Normal[Series[expr, {eps, 0, order}]] //
+      FullSimplify //
+      Collect[#, eps]&
+  ];
+
+IntegratedAntennaDependencyExpansionOrder[order_Integer] :=
+  order + 2;
+
+IntegratedA21SubtractionSeries[order_Integer] :=
+  Module[{eps, series},
+    eps = FeynCalc`Epsilon;
+    series =
+      -1/eps^2 - 3/(2 eps) - 4 + 7 Pi^2/12 +
+        eps (-8 + 7 Pi^2/8 + 7 Zeta[3]/3) +
+        eps^2 (-16 + 7 Pi^2/3 + 7 Zeta[3]/2 - 73 Pi^4/1440);
+    IntegratedAntennaSeries[series, order]
+  ];
+
+IntegratedA30SubtractionSeries[order_Integer] :=
+  Module[{eps, series},
+    eps = FeynCalc`Epsilon;
+    series =
+      1/eps^2 + 3/(2 eps) + 19/4 - 7 Pi^2/12 +
+        eps (109/8 - 7 Pi^2/8 - 25 Zeta[3]/3) +
+        eps^2 (639/16 - 133 Pi^2/48 - 25 Zeta[3]/2 -
+          71 Pi^4/1440);
+    IntegratedAntennaSeries[series, order]
+  ];
+
+IntegratedLowerAntenna[{a_Symbol /; SymbolName[a] === "A", 2, 1}, order_Integer] :=
+  IntegratedLowerAntenna[{a, 2, 1}, order] =
+    IntegratedA21SubtractionSeries[order];
+
+IntegratedLowerAntenna[{a_Symbol /; SymbolName[a] === "A", 3, 0}, order_Integer] :=
+  IntegratedLowerAntenna[{a, 3, 0}, order] =
+    IntegratedA30SubtractionSeries[order];
+
+IntegratedAntennaSeriesSafe[expr_, order_Integer] :=
+  If[expr === $Failed,
+    $Failed
+    ,
+    IntegratedAntennaSeries[expr, order]
+  ];
+
+IntegratedAntennaTTerms[{a_Symbol /; SymbolName[a] === "A", 3, 1}, integratedRaw_List, OptionsPattern[]] :=
+  Module[{eps, order, dependencyOrder, integratedA30, rawPaper, tTerms},
+    eps = FeynCalc`Epsilon;
+    order = OptionValue["ExpansionOrder"];
+    dependencyOrder = IntegratedAntennaDependencyExpansionOrder[order];
+    integratedA30 = IntegratedLowerAntenna[{a, 3, 0}, dependencyOrder];
+    rawPaper = A31PaperConventionFactor[] integratedRaw;
+    tTerms = {
+      rawPaper[[1]] - 11/(6 eps) integratedA30,
+      rawPaper[[2]],
+      rawPaper[[3]] - (-2/(6 eps)) integratedA30
+    };
+    IntegratedAntennaSeries[#, order]& /@ tTerms
+  ];
+
+(* A22 TwoLoopTree: {Leading, Subleading, Nf} list from a combined run.
+   UV coupling renormalization: T_ren = T_bare - (beta0/eps) * A21, decomposed by colour.
+   Leading gets -(11/6)/eps, Subleading gets nothing, Nf gets +(1/3)/eps. *)
+IntegratedAntennaTTerms[{a_Symbol /; SymbolName[a] === "A", 2, 2}, integratedRaw_List, OptionsPattern[]] :=
+  Module[{eps, order, dependencyOrder, intA21, tTerms},
+    eps = FeynCalc`Epsilon;
+    order = OptionValue["ExpansionOrder"];
+    dependencyOrder = IntegratedAntennaDependencyExpansionOrder[order];
+    intA21 = IntegratedLowerAntenna[{a, 2, 1}, dependencyOrder];
+    Which[
+      Length[integratedRaw] === 3,
+        tTerms = {
+          integratedRaw[[1]] - 11/(6 eps) intA21,
+          integratedRaw[[2]],
+          integratedRaw[[3]] - (-2/(6 eps)) intA21
+        };
+        IntegratedAntennaSeriesSafe[#, order]& /@ tTerms
+      ,
+      Length[integratedRaw] === 4,
+        tTerms = {
+          If[integratedRaw[[1]] === $Failed, $Failed,
+            integratedRaw[[1]] - 11/(6 eps) intA21],
+          integratedRaw[[2]],
+          If[integratedRaw[[3]] === $Failed, $Failed,
+            integratedRaw[[3]] - (-2/(6 eps)) intA21],
+          integratedRaw[[4]]
+        };
+        IntegratedAntennaSeriesSafe[#, order]& /@ tTerms
+      ,
+      True,
+        integratedRaw
+    ]
+  ];
+
+(* A22 TwoLoopTree scalar route: a single component reduced in isolation.
+   The Component option identifies which colour bracket and applies its counterterm. *)
+IntegratedAntennaTTerms[{a_Symbol /; SymbolName[a] === "A", 2, 2}, integratedRaw_, OptionsPattern[]] :=
+  Module[{eps, order, dependencyOrder, intA21, component},
+    eps = FeynCalc`Epsilon;
+    order = OptionValue["ExpansionOrder"];
+    component = CanonicalAntennaComponentName[OptionValue["Component"]];
+    dependencyOrder = IntegratedAntennaDependencyExpansionOrder[order];
+    intA21 = IntegratedLowerAntenna[{a, 2, 1}, dependencyOrder];
+    Switch[component,
+      "Leading",
+        IntegratedAntennaSeries[integratedRaw - 11/(6 eps) intA21, order]
+      ,
+      "Nf",
+        IntegratedAntennaSeries[integratedRaw - (-2/(6 eps)) intA21, order]
+      ,
+      _,
+        integratedRaw
+    ]
+  ];
+
+IntegratedAntennaTTerms[key_, integratedRaw_, OptionsPattern[]] :=
+  integratedRaw;
+
+ExtractIntegratedAntenna[{a_Symbol /; SymbolName[a] === "A", 3, 1}, tTerms_List, OptionsPattern[]] :=
+  Module[{order, dependencyOrder, integratedA21, integratedA30, product,
+     finalAntennae},
+    order = OptionValue["ExpansionOrder"];
+    dependencyOrder = IntegratedAntennaDependencyExpansionOrder[order];
+    integratedA21 = IntegratedLowerAntenna[{a, 2, 1}, dependencyOrder];
+    integratedA30 = IntegratedLowerAntenna[{a, 3, 0}, dependencyOrder];
+    product = IntegratedAntennaSeries[integratedA21 integratedA30, order];
+    finalAntennae = {
+      tTerms[[1]] - product,
+      -(tTerms[[2]] + product),
+      tTerms[[3]]
+    };
+    IntegratedAntennaSeries[#, order]& /@ finalAntennae
+  ];
+
+(* For A22 the matched colour-bracket objects are already the final public
+   integrated antenna components in this project:
+   {A22, tildeA22, hatA22} come from the tree/two-loop T object, while
+   breveA22 comes from the separate one-loop-self T object.  The extraction
+   layer therefore preserves the component values but makes the routing
+   explicit so the public API can return the full four-slot object by default. *)
+ExtractIntegratedAntenna[{a_Symbol /; SymbolName[a] === "A", 2, 2}, tTerms_List, OptionsPattern[]] :=
+  tTerms;
+
+ExtractIntegratedAntenna[{a_Symbol /; SymbolName[a] === "A", 2, 2}, tTerm_, OptionsPattern[]] :=
+  tTerm;
+
+ExtractIntegratedAntenna[key_, tTerms_, OptionsPattern[]] :=
+  tTerms;
+
+(*************************************************)
+
+(* Reference targets for integrated A31 diagnostics *)
+
+A31TTermTargets[order_Integer] :=
+  Module[{eps, targets},
+    eps = FeynCalc`Epsilon;
+    targets = {
+      -5/(4 eps^4) - 67/(12 eps^3) +
+        (-141/8 + 13 Pi^2/8)/eps^2 +
+        (-1481/24 + 107 Pi^2/18 + 55 Zeta[3]/3)/eps +
+        (-10385/48 + 64 Pi^2/3 + 1265 Zeta[3]/18 - 41 Pi^4/96),
+      1/eps^4 + 3/eps^3 + (93/8 - 4 Pi^2/3)/eps^2 +
+        (79/2 - 15 Pi^2/4 - 53 Zeta[3]/3)/eps +
+        (1069/8 - 697 Pi^2/48 - 91 Zeta[3]/2 + 19 Pi^4/72),
+      1/(3 eps^3) + 1/(2 eps^2) +
+        (19/12 - 7 Pi^2/36)/eps +
+        (109/24 - 7 Pi^2/24 - 25 Zeta[3]/9)
+    };
+    IntegratedAntennaSeries[#, order]& /@ targets
+  ];
+
+A31IntegratedAntennaTargets[order_Integer] :=
+  Module[{eps, targets},
+    eps = FeynCalc`Epsilon;
+    targets = {
+      -1/(4 eps^4) - 31/(12 eps^3) +
+        (-53/8 + 11 Pi^2/24)/eps^2 +
+        (-647/24 + 22 Pi^2/9 + 23 Zeta[3]/3)/eps +
+        (-5231/48 + 17 Pi^2/2 + 689 Zeta[3]/18 - 41 Pi^4/480),
+      (-5/8 + Pi^2/6)/eps^2 +
+        (-19/4 + Pi^2/4 + 7 Zeta[3])/eps +
+        (-105/4 + 27 Pi^2/16 + 27 Zeta[3]/2 + 7 Pi^4/90),
+      1/(3 eps^3) + 1/(2 eps^2) +
+        (19/12 - 7 Pi^2/36)/eps +
+        (109/24 - 7 Pi^2/24 - 25 Zeta[3]/9)
+    };
+    IntegratedAntennaSeries[#, order]& /@ targets
+  ];
+
+A31IntegratedResiduals[result_List, targets_List] :=
+  MapThread[FullSimplify[#1 - #2]&, {result, targets}];
+
+(*************************************************)
+
+(* Reference targets for integrated A22 T-object diagnostics *)
+
+A22TTermTargets[order_Integer] :=
+  Module[{eps, targets},
+    eps = FeynCalc`Epsilon;
+    targets = {
+      1/(4 eps^4) + 17/(8 eps^3) +
+        (433/144 - Pi^2/2)/eps^2 +
+        (4045/864 - 83 Pi^2/48 + 7 Zeta[3]/12)/eps +
+        (-9083/5184 - 2153 Pi^2/864 + 13 Zeta[3]/9 +
+          263 Pi^4/1440),
+      -1/(4 eps^4) - 3/(4 eps^3) +
+        (-41/16 + 13 Pi^2/24)/eps^2 +
+        (-221/32 + 3 Pi^2/2 + 8 Zeta[3]/3)/eps +
+        (-1151/64 + 475 Pi^2/96 + 29 Zeta[3]/4 -
+          59 Pi^4/288),
+      -1/(4 eps^3) - 1/(9 eps^2) +
+        (65/216 + Pi^2/24)/eps +
+        (4085/1296 - 91 Pi^2/216 + Zeta[3]/18),
+      1/(4 eps^4) + 3/(4 eps^3) +
+        (41/16 - Pi^2/24)/eps^2 +
+        (7 - Pi^2/8 + 7 Zeta[3]/6)/eps +
+        (18 - 41 Pi^2/96 - 7 Zeta[3]/2 - 7 Pi^4/480)
+    };
+    IntegratedAntennaSeries[#, order]& /@ targets
+  ];
+
+A22TTermTargetForComponent[component_, order_Integer] :=
+  Module[{componentName, position},
+    componentName = CanonicalAntennaComponentName[component];
+    position =
+      FirstPosition[
+        CanonicalAntennaComponentName /@ {Leading, Subleading, Nf, Breve},
+        componentName,
+        Missing["UnknownComponent"]
+      ];
+    If[position === Missing["UnknownComponent"],
+      Missing["UnknownA22Component", component]
+      ,
+      A22TTermTargets[order][[position[[1]]]]
+    ]
+  ];
+
+A22ResidualSimplify[expr_] :=
+  FullSimplify[FunctionExpand[expr]];
+
+A22TTermResiduals[result_List, order_Integer] :=
+  MapThread[
+    A22ResidualSimplify[#1 - #2]&,
+    {result, A22TTermTargets[order]}
+  ];
+
+A22TTermResiduals[result_, component_, order_Integer] :=
+  Module[{target},
+    target = A22TTermTargetForComponent[component, order];
+    If[MissingQ[target],
+      target
+      ,
+      A22ResidualSimplify[result - target]
+    ]
+  ];
+
+A22IntegratedResiduals[result_List, order_Integer] :=
+  A22TTermResiduals[result, order];
+
+A22IntegratedResiduals[result_, component_, order_Integer] :=
+  A22TTermResiduals[result, component, order];

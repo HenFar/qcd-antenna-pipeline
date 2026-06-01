@@ -1,0 +1,472 @@
+BasisDirectory[A22OneLoopSelfBasis] = StringDrop[DirectoryName[$Input], -1]
+A22OneLoopSelfBasis /: BasisSectors[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "BasisSectors[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: CurrentState[A22OneLoopSelfBasis] := 
+  <|NewDsBasis -> True, GenerateIBP -> True, AnalyzeSectors -> True, 
+   FindSymmetries -> False|>
+A22OneLoopSelfBasis /: CutDs[A22OneLoopSelfBasis] := {0, 0, 0, 0, 0, 0, 0}
+A22OneLoopSelfBasis /: Definitions[A22OneLoopSelfBasis] := 
+  {Hold[MetricTensor[] === d, SetDim[d]], Hold[VecQ[l1], 
+    Declare[l1, Vector]], Hold[VecQ[l2], Declare[l2, Vector]], 
+   Hold[VecQ[k1], Declare[k1, Vector]], Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[k1] === LiteRed`Private`ExpresionType[
+      k1], Declare[k1, LiteRed`Private`ExpresionType[k1]]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[k1, k1] === 0, sp[k1, k1] = 0], Hold[sp[q, q] === q2, 
+    sp[q, q] = q2], Hold[sp[k1, q] === q2/2, sp[k1, q] = q2/2]}
+A22OneLoopSelfBasis /: Ds[A22OneLoopSelfBasis] := 
+  {sp[l1, l1], sp[-k1 + l1, -k1 + l1], sp[l1 - q, l1 - q], sp[l2, l2], 
+   sp[-k1 + l2, -k1 + l2], sp[l2 - q, l2 - q], sp[l1 - l2, l1 - l2]}
+A22OneLoopSelfBasis /: DsBasisQ[A22OneLoopSelfBasis] := True
+A22OneLoopSelfBasis /: EMs[A22OneLoopSelfBasis] := {k1, q}
+A22OneLoopSelfBasis /: ExtMappedSectors[A22OneLoopSelfBasis] := {}
+A22OneLoopSelfBasis /: ExtSectorsMappings[A22OneLoopSelfBasis] := {}
+A22OneLoopSelfBasis /: IBP[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "IBP[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: Information[A22OneLoopSelfBasis] := 
+  (If[ValueQ[A22OneLoopSelfBasis::usage], Information[A22OneLoopSelfBasis, 
+     LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[
+         First /@ UpValues[A22OneLoopSelfBasis] /. HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[A22OneLoopSelfBasis, 
+              __]]] :> HoldForm[LiteRed`Private`f$[A22OneLoopSelfBasis, 
+             "\[Ellipsis]"]]}, {1}], 
+        {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[
+              A22OneLoopSelfBasis, ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  A22OneLoopSelfBasis], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 1, 0, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 0, 0, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 0, 0, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 0, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 0, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 0, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 0, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 0, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 0, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 0]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 0]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 0, 0, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 0, 0, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 0, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 0, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 0, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 0, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 0, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 0, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 1, 0]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 0]"}]]
+A22OneLoopSelfBasis /: jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jRules[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis] := 
+  {"np", "cp", "-ds", "-ns"}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 0, 1, 0, 0, 1] := 
+  {{-1, -1, -1, 1, -1, -1, 1}, {-1, -1, -1, 0, -1, -1, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 0, 1, 0, 1, 1] := 
+  {{-1, -1, -1, 1, -1, 1, 1}, {-1, -1, -1, 0, -1, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 0, 1, 1, 0, 1] := 
+  {{-1, -1, -1, 1, 1, -1, 1}, {-1, -1, -1, 0, 0, -1, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 0, 0, 0, 1] := 
+  {{-1, -1, 1, -1, -1, -1, 1}, {-1, -1, 0, -1, -1, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 0, 0, 1, 1] := 
+  {{-1, -1, 1, -1, -1, 1, 1}, {-1, -1, 0, -1, -1, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 0, 1, 0, 1] := 
+  {{-1, -1, 1, -1, 1, -1, 1}, {-1, -1, 0, -1, 0, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 0, 0] := 
+  {{-1, -1, 1, 1, -1, -1, -1}, {-1, -1, 0, 0, -1, -1, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 0, 1] := 
+  {{-1, -1, 1, 1, -1, -1, 1}, {-1, -1, 0, 0, -1, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 0] := 
+  {{-1, -1, 1, 1, -1, 1, -1}, {-1, -1, 0, 0, -1, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 1] := 
+  {{-1, -1, 1, 1, -1, 1, 1}, {-1, -1, 0, 0, -1, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 0] := 
+  {{-1, -1, 1, 1, 1, -1, -1}, {-1, -1, 0, 0, 0, -1, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 1] := 
+  {{-1, -1, 1, 1, 1, -1, 1}, {-1, -1, 0, 0, 0, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 0] := 
+  {{-1, -1, 1, 1, 1, 1, -1}, {-1, -1, 0, 0, 0, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 1] := 
+  {{-1, -1, 1, 1, 1, 1, 1}, {-1, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 0, 0, 0, 1, 1] := 
+  {{-1, 1, -1, -1, -1, 1, 1}, {-1, 0, -1, -1, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 0, 1] := 
+  {{-1, 1, -1, 1, -1, -1, 1}, {-1, 0, -1, 0, -1, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 1, 0] := 
+  {{-1, 1, -1, 1, -1, 1, -1}, {-1, 0, -1, 0, -1, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 1, 1] := 
+  {{-1, 1, -1, 1, -1, 1, 1}, {-1, 0, -1, 0, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 0, 1, 1, 1, 1] := 
+  {{-1, 1, -1, 1, 1, 1, 1}, {-1, 0, -1, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 1, 0, 0, 1, 1] := 
+  {{-1, 1, 1, -1, -1, 1, 1}, {-1, 0, 0, -1, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 0, 1] := 
+  {{-1, 1, 1, 1, -1, -1, 1}, {-1, 0, 0, 0, -1, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 0] := 
+  {{-1, 1, 1, 1, -1, 1, -1}, {-1, 0, 0, 0, -1, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 1] := 
+  {{-1, 1, 1, 1, -1, 1, 1}, {-1, 0, 0, 0, -1, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 0, 1] := 
+  {{-1, 1, 1, 1, 1, -1, 1}, {-1, 0, 0, 0, 0, -1, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 0, 1, 0, 1, 0] := 
+  {{1, -1, -1, 1, -1, 1, -1}, {0, -1, -1, 0, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 0, 1, 0, 1, 1] := 
+  {{1, -1, -1, 1, -1, 1, 1}, {0, -1, -1, 0, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 0, 1, 1, 1, 0] := 
+  {{1, -1, -1, 1, 1, 1, -1}, {0, -1, -1, 0, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 0, 0, 1, 0] := 
+  {{1, -1, 1, -1, -1, 1, -1}, {0, -1, 0, -1, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 0, 0, 1, 1] := 
+  {{1, -1, 1, -1, -1, 1, 1}, {0, -1, 0, -1, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 0, 1, 1, 0] := 
+  {{1, -1, 1, -1, 1, 1, -1}, {0, -1, 0, -1, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 0, 0] := 
+  {{1, -1, 1, 1, -1, -1, -1}, {0, -1, 0, 0, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 0, 1] := 
+  {{1, -1, 1, 1, -1, -1, 1}, {0, -1, 0, 0, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 0] := 
+  {{1, -1, 1, 1, -1, 1, -1}, {0, -1, 0, 0, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 1] := 
+  {{1, -1, 1, 1, -1, 1, 1}, {0, -1, 0, 0, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 0, 0] := 
+  {{1, -1, 1, 1, 1, -1, -1}, {0, -1, 0, 0, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 0] := 
+  {{1, -1, 1, 1, 1, 1, -1}, {0, -1, 0, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 1] := 
+  {{1, -1, 1, 1, 1, 1, 1}, {0, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 0] := 
+  {{1, 1, 1, 1, 1, 1, -1}, {0, 0, 0, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}}
+A22OneLoopSelfBasis /: jsOrder[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 0, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 0, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 1, 0, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 1, 0, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 0, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 0, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 0]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 0]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 0]"}]]
+A22OneLoopSelfBasis /: jSymmetries[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "jSymmetries[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 1, 1]"}]]
+A22OneLoopSelfBasis /: LI[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "LI[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: LMs[A22OneLoopSelfBasis] := {l1, l2}
+A22OneLoopSelfBasis /: MappedSectors[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "MappedSectors[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: MIs[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "MIs[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: NDs[A22OneLoopSelfBasis] := 7
+A22OneLoopSelfBasis /: NonZeroSectors[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "NonZeroSectors[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: Parameters[A22OneLoopSelfBasis] := {q2, d}
+A22OneLoopSelfBasis /: PowerShifts[A22OneLoopSelfBasis] := 
+  {0, 0, 0, 0, 0, 0, 0}
+A22OneLoopSelfBasis /: SectorsMappings[A22OneLoopSelfBasis] := 
+  {js[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 0, 1, 1, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 1, 0, 1, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 1, 1, 1, 0, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 1, 0] -> 
+    js[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 1, 0], 
+   js[A22OneLoopSelfBasis, 1, 1, 0, 0, 1, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 1, 1, 1, 0, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 1, 0, 1, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 1, 1, 1, 0, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 0, 1, 0, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 1, 0, 1, 0, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 0, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 0, 1, 1, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 1, 0, 0, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 1, 1, 0, 0, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 1, 1], 
+   js[A22OneLoopSelfBasis, 0, 1, 1, 1, 0, 0, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 0, 0, 1, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 1], 
+   js[A22OneLoopSelfBasis, 1, 1, 0, 0, 0, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 1, 0, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 0, 1, 0, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 1, 0, 0, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 1, 1, 0, 0, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 1, 0, 1, 0, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 1, 0, 1, 0, 1, 1], 
+   js[A22OneLoopSelfBasis, 1, 0, 0, 0, 0, 1, 1] -> 
+    js[A22OneLoopSelfBasis, 0, 0, 1, 1, 0, 0, 1]}
+A22OneLoopSelfBasis /: SectorsPattern[A22OneLoopSelfBasis] := {___}
+A22OneLoopSelfBasis /: SimpleSectors[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "SimpleSectors[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: SPs[A22OneLoopSelfBasis] := 
+  {sp[k1, l1], sp[k1, l2], sp[l1, l1], sp[l1, l2], sp[l1, q], sp[l2, l2], 
+   sp[l2, q]}
+A22OneLoopSelfBasis /: SR[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "SR[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: Toj[A22OneLoopSelfBasis] := 
+  {sp[k1, l1] -> (j[A22OneLoopSelfBasis, -1, 0, 0, 0, 0, 0, 0] - 
+      j[A22OneLoopSelfBasis, 0, -1, 0, 0, 0, 0, 0])/2, 
+   sp[k1, l2] -> (j[A22OneLoopSelfBasis, 0, 0, 0, -1, 0, 0, 0] - 
+      j[A22OneLoopSelfBasis, 0, 0, 0, 0, -1, 0, 0])/2, 
+   sp[l1, l1] -> j[A22OneLoopSelfBasis, -1, 0, 0, 0, 0, 0, 0], 
+   sp[l1, l2] -> (j[A22OneLoopSelfBasis, -1, 0, 0, 0, 0, 0, 0] + 
+      j[A22OneLoopSelfBasis, 0, 0, 0, -1, 0, 0, 0] - 
+      j[A22OneLoopSelfBasis, 0, 0, 0, 0, 0, 0, -1])/2, 
+   sp[l1, q] -> (q2 + j[A22OneLoopSelfBasis, -1, 0, 0, 0, 0, 0, 0] - 
+      j[A22OneLoopSelfBasis, 0, 0, -1, 0, 0, 0, 0])/2, 
+   sp[l2, l2] -> j[A22OneLoopSelfBasis, 0, 0, 0, -1, 0, 0, 0], 
+   sp[l2, q] -> (q2 + j[A22OneLoopSelfBasis, 0, 0, 0, -1, 0, 0, 0] - 
+      j[A22OneLoopSelfBasis, 0, 0, 0, 0, 0, -1, 0])/2}
+A22OneLoopSelfBasis /: UniqueSectors[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "UniqueSectors[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: ZerojRule[A22OneLoopSelfBasis] := 
+  LiteRed`Private`jjj:j[A22OneLoopSelfBasis, __] :> 
+   0 /; Module[{LiteRed`Private`jjs = 
+       Rest[List @@ jSector[LiteRed`Private`jjj]]}, 
+     Or @@ (BitOr[LiteRed`Private`jjs, #1] === #1 & ) /@ 
+       {{1, 1, 1, 1, 1, 0, 0}, {0, 0, 0, 1, 1, 1, 1}, {1, 1, 1, 0, 1, 1, 0}, 
+        {1, 1, 1, 0, 0, 0, 1}, {1, 1, 0, 1, 1, 1, 0}, {1, 1, 0, 1, 1, 0, 1}, 
+        {0, 1, 1, 0, 1, 1, 1}, {0, 1, 1, 1, 1, 1, 0}}]
+A22OneLoopSelfBasis /: ZeroSectors[A22OneLoopSelfBasis] := 
+  Get[FileNameJoin[{BasisDirectory[A22OneLoopSelfBasis], 
+     "ZeroSectors[A22OneLoopSelfBasis]"}]]
+A22OneLoopSelfBasis /: SectorsMappings[A22OneLoopSelfBasis, 
+   LiteRed`Private`ns$:(0 | 1)..] := 
+  Cases[SectorsMappings[A22OneLoopSelfBasis], 
+   HoldPattern[js[A22OneLoopSelfBasis, LiteRed`Private`ns$] -> _]]
+A22OneLoopSelfBasis::usage = "2-loop basis with 2 external momenta.\nUse \
+Information[A22OneLoopSelfBasis] to get basis summary.\nThis string can be \
+redefined by setting A22OneLoopSelfBasis::usage=\"\[Ellipsis]\""; 
+ Information[A22OneLoopSelfBasis, LongForm -> False]; 
+LiteRed`Private`CheckDefs[A22OneLoopSelfBasis]
+BasisDirectory[A22OneLoopSelfBasis]

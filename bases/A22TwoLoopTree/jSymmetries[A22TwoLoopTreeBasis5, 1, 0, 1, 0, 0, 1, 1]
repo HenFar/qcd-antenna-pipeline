@@ -1,0 +1,54 @@
+{{j[A22TwoLoopTreeBasis5, (n1_)?Positive, (n2_)?NonPositive, (n3_)?Positive, 
+    (n4_)?NonPositive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive] :> 
+   Expand[j[A22TwoLoopTreeBasis5, n1, n2, n3, n4, n5, n6, n7]]}, 
+ {j[A22TwoLoopTreeBasis5, (n1_)?Positive, (n2_)?NonPositive, (n3_)?Positive, 
+    (n4_)?NonPositive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive] :> 
+   Expand[j[A22TwoLoopTreeBasis5, n1, 0, n3, 0, 0, n6, n7]/
+     ((-j[A22TwoLoopTreeBasis5, -1, 0, 0, 0, 0, 0, 0] - 
+        2*j[A22TwoLoopTreeBasis5, 0, -1, 0, 0, 0, 0, 0] - 
+        2*j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, -1, 0, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, -1, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, -1, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, -1])^n2*
+      (j[A22TwoLoopTreeBasis5, -1, 0, 0, 0, 0, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] - 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, -1, 0, 0, 0] - 
+        q2*j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, 0])^n4*
+      (-2*j[A22TwoLoopTreeBasis5, -1, 0, 0, 0, 0, 0, 0] - 
+        3*j[A22TwoLoopTreeBasis5, 0, -1, 0, 0, 0, 0, 0] - 
+        3*j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] + 
+        3*j[A22TwoLoopTreeBasis5, 0, 0, 0, -1, 0, 0, 0] + 
+        2*j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, -1, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, -1, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, -1] + 
+        q2*j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, 0])^n5)]}, 
+ {j[A22TwoLoopTreeBasis5, (n1_)?Positive, (n2_)?NonPositive, (n3_)?Positive, 
+    (n4_)?NonPositive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive] :> 
+   Expand[j[A22TwoLoopTreeBasis5, n1, 0, n3, 0, 0, n7, n6]/
+     ((3*j[A22TwoLoopTreeBasis5, 0, -1, 0, 0, 0, 0, 0] + 
+        6*j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] - 
+        2*j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, -1, 0, 0])^n5*
+      (2*j[A22TwoLoopTreeBasis5, 0, -1, 0, 0, 0, 0, 0] + 
+        2*j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] - 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, -1, 0, 0])^n2*
+      (j[A22TwoLoopTreeBasis5, -1, 0, 0, 0, 0, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] - 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, -1, 0, 0, 0] - 
+        q2*j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, 0])^n4)]}, 
+ {j[A22TwoLoopTreeBasis5, (n1_)?Positive, (n2_)?NonPositive, (n3_)?Positive, 
+    (n4_)?NonPositive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive] :> 
+   Expand[j[A22TwoLoopTreeBasis5, n1, 0, n3, n4, 0, n7, n6]/
+     ((j[A22TwoLoopTreeBasis5, -1, 0, 0, 0, 0, 0, 0] + 
+        6*j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] - 
+        3*j[A22TwoLoopTreeBasis5, 0, 0, 0, -1, 0, 0, 0] - 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, -1, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, -1, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, -1] - 
+        2*q2*j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, 0])^n5*
+      (-j[A22TwoLoopTreeBasis5, 0, -1, 0, 0, 0, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, -1, 0, 0, 0, 0] - 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, -1, 0, 0, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, -1, 0] + 
+        j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, -1] - 
+        q2*j[A22TwoLoopTreeBasis5, 0, 0, 0, 0, 0, 0, 0])^n2)]}}

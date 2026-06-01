@@ -1,0 +1,745 @@
+Last[{{{-1, -1, -1, 1, 1, 1, 1}, {-1, -1, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}, 
+  {j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /;  !(n1 == 0 || n5 == 1) :> 
+    -1/2*(n4*j[A22TwoLoopTreeBasis1, n1, n2, n3, 1 + n4, -1 + n5, n6, n7])/
+       (-1 + n5) - (n2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, n3, n4, -1 + n5, 
+        n6, n7])/(2*(-1 + n5)) + (n4*j[A22TwoLoopTreeBasis1, 1 + n1, -1 + n2, 
+        n3, 1 + n4, -1 + n5, n6, n7])/(2*(-1 + n5)) + 
+     (n4*j[A22TwoLoopTreeBasis1, 1 + n1, n2, -1 + n3, 1 + n4, -1 + n5, n6, 
+        n7])/(2*(-1 + n5)) + ((-3 - d - n1 + n3 + n4 + 2*n5 + 2*n7)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, n4, -1 + n5, n6, n7])/
+      (2*(-1 + n5)) + j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, n4, n5, n6, 
+      -1 + n7] - (n4*j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, 1 + n4, -1 + n5, 
+        -1 + n6, n7])/(2*(-1 + n5)) + 
+     (n4*q2*j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, 1 + n4, -1 + n5, n6, n7])/
+      (2*(-1 + n5)) + (n3*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 1 + n3, n4, 
+        -1 + n5, n6, -1 + n7])/(2*(-1 + n5)) - 
+     (n2*j[A22TwoLoopTreeBasis1, 1 + n1, 1 + n2, -1 + n3, n4, -1 + n5, n6, 
+        n7])/(2*(-1 + n5)) + (n2*j[A22TwoLoopTreeBasis1, 1 + n1, 1 + n2, n3, 
+        n4, -2 + n5, n6, n7])/(2*(-1 + n5)) + 
+     ((1 + n1)*j[A22TwoLoopTreeBasis1, 2 + n1, n2, n3, n4, -2 + n5, n6, n7])/
+      (2*(-1 + n5)) + ((-1 - n1)*j[A22TwoLoopTreeBasis1, 2 + n1, n2, n3, n4, 
+        -1 + n5, n6, -1 + n7])/(2*(-1 + n5)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 &&  !(n2 == 0 || n5 == 1) :> 
+    (n4*j[A22TwoLoopTreeBasis1, 0, 1 + n2, -1 + n3, 1 + n4, -1 + n5, n6, n7])/
+      (2*(-1 + n5)) - j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, -1 + n4, n5, n6, 
+      n7] + ((-3 + d - 2*n2 - n4 + n5 - 2*n6)*j[A22TwoLoopTreeBasis1, 0, 
+        1 + n2, n3, n4, -1 + n5, n6, n7])/(2*(-1 + n5)) + 
+     j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, n4, n5, -1 + n6, n7]/2 - 
+     (n4*j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, 1 + n4, -1 + n5, -1 + n6, 
+        n7])/(2*(-1 + n5)) + ((-1 - n2)*j[A22TwoLoopTreeBasis1, 0, 2 + n2, 
+        -1 + n3, n4, -1 + n5, n6, n7])/(2*(-1 + n5)) + 
+     ((-1 - n2)*j[A22TwoLoopTreeBasis1, 0, 2 + n2, n3, -1 + n4, -1 + n5, n6, 
+        n7])/(2*(-1 + n5)) + ((1 + n2)*j[A22TwoLoopTreeBasis1, 0, 2 + n2, n3, 
+        n4, -2 + n5, n6, n7])/(2*(-1 + n5)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n5 == 1 &&  !(n1 == 0 || n6 == 1) :> 
+    -1/2*(n4*j[A22TwoLoopTreeBasis1, n1, n2, n3, 1 + n4, 1, -1 + n6, n7])/
+       (-1 + n6) - (n2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, n3, n4, 1, 
+        -1 + n6, n7])/(2*(-1 + n6)) + j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, 
+       n4, 0, n6, n7]/2 + ((-3 + 2*d - 2*n1 - n2 - n3 - n4 - n6 - 2*n7)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, n4, 1, -1 + n6, n7])/
+      (2*(-1 + n6)) - j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, n4, 1, n6, 
+      -1 + n7] + q2*j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, n4, 1, n6, n7] + 
+     (n4*q2*j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, 1 + n4, 1, -1 + n6, n7])/
+      (2*(-1 + n6)) - (n3*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 1 + n3, n4, 1, 
+        -1 + n6, -1 + n7])/(2*(-1 + n6)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n2 == 0 &&  !(n3 == 0 || n5 == 1) :> 
+    -j[A22TwoLoopTreeBasis1, 0, 0, 1 + n3, -1 + n4, n5, n6, n7] + 
+     ((-1 + d - n3 - n4 - n6 - n7)*j[A22TwoLoopTreeBasis1, 0, 0, 1 + n3, n4, 
+        -1 + n5, n6, n7])/(2*(-1 + n5)) + 
+     j[A22TwoLoopTreeBasis1, 0, 0, 1 + n3, n4, n5, -1 + n6, n7]/2, 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n5 == 1 &&  !(n2 == 0 || n6 == 1) :> 
+    -1/2*(n4*j[A22TwoLoopTreeBasis1, 0, n2, n3, 1 + n4, 1, -1 + n6, n7])/
+       (-1 + n6) - (n4*j[A22TwoLoopTreeBasis1, 0, 1 + n2, -1 + n3, 1 + n4, 1, 
+        -1 + n6, n7])/(2*(-1 + n6)) - j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, 
+      -1 + n4, 1, n6, n7] + j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, n4, 0, n6, 
+       n7]/2 + ((-4 + d - n2 - 2*n4 + n6)*j[A22TwoLoopTreeBasis1, 0, 1 + n2, 
+        n3, n4, 1, -1 + n6, n7])/(2*(-1 + n6)) + 
+     (n4*j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, 1 + n4, 1, -2 + n6, n7])/
+      (2*(-1 + n6)) + ((1 + n2)*j[A22TwoLoopTreeBasis1, 0, 2 + n2, -1 + n3, 
+        n4, 1, -1 + n6, n7])/(2*(-1 + n6)) + 
+     ((-1 - n2)*j[A22TwoLoopTreeBasis1, 0, 2 + n2, n3, n4, 0, -1 + n6, n7])/
+      (2*(-1 + n6)), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n5 == 1 && n6 == 1 && 
+       !(n1 == 0 || n7 == 1) :> 
+    (n4*j[A22TwoLoopTreeBasis1, 1 + n1, -1 + n2, n3, 1 + n4, 1, 1, -1 + n7])/
+      (-1 + n7) - (n3*j[A22TwoLoopTreeBasis1, 1 + n1, -1 + n2, 1 + n3, n4, 1, 
+        1, -1 + n7])/(-1 + n7) + (n4*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 
+        -1 + n3, 1 + n4, 1, 1, -1 + n7])/(-1 + n7) + 
+     j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, n4, 0, 1, n7] + 
+     ((4 - 2*d + n1 + n2 + n3 + 2*n4 + n7)*j[A22TwoLoopTreeBasis1, 1 + n1, 
+        n2, n3, n4, 1, 1, -1 + n7])/(-1 + n7) - 
+     (n4*j[A22TwoLoopTreeBasis1, 1 + n1, n2, n3, 1 + n4, 1, 0, -1 + n7])/
+      (-1 + n7) + (n3*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 1 + n3, n4, 0, 1, 
+        -1 + n7])/(-1 + n7) - (n2*j[A22TwoLoopTreeBasis1, 1 + n1, 1 + n2, 
+        -1 + n3, n4, 1, 1, -1 + n7])/(-1 + n7) + 
+     (n2*j[A22TwoLoopTreeBasis1, 1 + n1, 1 + n2, n3, n4, 0, 1, -1 + n7])/
+      (-1 + n7) + ((1 + n1)*j[A22TwoLoopTreeBasis1, 2 + n1, n2, n3, n4, 0, 1, 
+        -1 + n7])/(-1 + n7) + ((-1 - n1)*j[A22TwoLoopTreeBasis1, 2 + n1, n2, 
+        n3, n4, 1, 1, -2 + n7])/(-1 + n7), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n2 == 0 && n3 == 0 && 
+       !(n5 == 1 || n7 == 1) :> 
+    ((-1 + d - n4 - n6 - n7)*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 
+        -1 + n5, n6, n7])/(2*(-1 + n5)) + 
+     j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, n5, -1 + n6, n7]/2 + 
+     ((1 - d + n4 + n5 + n6)*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, n5, n6, 
+        -1 + n7])/(-1 + n7), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n1 == 0 && n2 == 0 && n5 == 1 && 
+       !(n3 == 0 || n6 == 1) :> 
+    (n4*j[A22TwoLoopTreeBasis1, 0, 0, n3, 1 + n4, 1, -1 + n6, n7])/
+      (2*(-1 + n6)) + j[A22TwoLoopTreeBasis1, 0, 0, 1 + n3, -1 + n4, 1, n6, 
+      n7] + ((1 - n3 + 2*n4 - n6 - n7)*j[A22TwoLoopTreeBasis1, 0, 0, 1 + n3, 
+        n4, 1, -1 + n6, n7])/(2*(-1 + n6)) - 
+     (n4*j[A22TwoLoopTreeBasis1, 0, 0, 1 + n3, 1 + n4, 1, -2 + n6, n7])/
+      (2*(-1 + n6)), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n1 == 0 && n5 == 1 && n6 == 1 && 
+       !(n2 == 0 || n7 == 1) :> 
+    (n4*j[A22TwoLoopTreeBasis1, 0, n2, n3, 1 + n4, 1, 1, -1 + n7])/
+      (-1 + n7) - (n3*j[A22TwoLoopTreeBasis1, 0, n2, 1 + n3, n4, 1, 1, 
+        -1 + n7])/(-1 + n7) - j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, -1 + n4, 
+      1, 1, n7] + j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, n4, 0, 1, n7] + 
+     j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, n4, 1, 0, n7] + 
+     ((9 - 4*d + 3*n2 + 2*n3 + 3*n4 + 2*n7)*j[A22TwoLoopTreeBasis1, 0, 
+        1 + n2, n3, n4, 1, 1, -1 + n7])/(-1 + n7) - 
+     q2*j[A22TwoLoopTreeBasis1, 0, 1 + n2, n3, n4, 1, 1, n7] - 
+     (n3*j[A22TwoLoopTreeBasis1, 0, 1 + n2, 1 + n3, -1 + n4, 1, 1, -1 + n7])/
+      (-1 + n7) + (n3*j[A22TwoLoopTreeBasis1, 0, 1 + n2, 1 + n3, n4, 0, 1, 
+        -1 + n7])/(-1 + n7) + (n3*j[A22TwoLoopTreeBasis1, 0, 1 + n2, 1 + n3, 
+        n4, 1, 0, -1 + n7])/(-1 + n7) + 
+     ((1 + n2)*j[A22TwoLoopTreeBasis1, 0, 2 + n2, n3, -1 + n4, 1, 1, 
+        -1 + n7])/(-1 + n7), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n5 == 1 && n6 == 1 && n7 == 1 && 
+       !(n3 == -1 || n3 == 0 || n4 == 1) :> 
+    (-2*j[A22TwoLoopTreeBasis1, n1, -1 + n2, 2 + n3, -2 + n4, 2, 1, 1])/
+      (-1 + n4) + ((-3 + d - n1 - n3 - n4)*j[A22TwoLoopTreeBasis1, n1, 
+        -1 + n2, 2 + n3, -1 + n4, 1, 1, 1])/(-1 + n4) + 
+     j[A22TwoLoopTreeBasis1, n1, -1 + n2, 2 + n3, -1 + n4, 2, 0, 1]/
+      (-1 + n4) + (2*j[A22TwoLoopTreeBasis1, n1, n2, 1 + n3, -2 + n4, 2, 1, 
+        1])/(-1 + n4) + ((-d + n1 + 2*n2 + n4)*j[A22TwoLoopTreeBasis1, n1, 
+        n2, 1 + n3, -1 + n4, 1, 1, 1])/(-1 + n4) + 
+     j[A22TwoLoopTreeBasis1, n1, n2, 1 + n3, -1 + n4, 2, 0, 1]/(1 - n4) + 
+     j[A22TwoLoopTreeBasis1, n1, n2, 1 + n3, n4, 1, 0, 1] + 
+     ((1 - n2)*j[A22TwoLoopTreeBasis1, n1, n2, 2 + n3, -2 + n4, 1, 1, 1])/
+      (-1 + n4) + (n2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, n3, -1 + n4, 1, 1, 
+        1])/(-1 + n4) + (n2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 1 + n3, 
+        -2 + n4, 1, 1, 1])/(-1 + n4) - 
+     (n2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 1 + n3, -1 + n4, 0, 1, 1])/
+      (-1 + n4) + (n1*j[A22TwoLoopTreeBasis1, 1 + n1, -2 + n2, 2 + n3, 
+        -1 + n4, 1, 1, 1])/(-1 + n4) + 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, -1 + n2, 1 + n3, -1 + n4, 1, 1, 1])/
+      (-1 + n4) - (n1*j[A22TwoLoopTreeBasis1, 1 + n1, -1 + n2, 2 + n3, 
+        -2 + n4, 1, 1, 1])/(-1 + n4) + 
+     (n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, -1 + n2, 2 + n3, -1 + n4, 1, 1, 
+        1])/(-1 + n4) + (n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 1 + n3, 
+        -2 + n4, 1, 1, 1])/(-1 + n4) - 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 1 + n3, -1 + n4, 0, 1, 1])/
+      (-1 + n4) + (n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 1 + n3, -1 + n4, 1, 
+        1, 0])/(-1 + n4) - (n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 1 + n3, 
+        -1 + n4, 1, 1, 1])/(-1 + n4), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n2 == 0 && n3 == 0 && n7 == 1 && 
+       !(n5 == 1 || n6 == 1) :> 
+    ((2 - 3*d + 2*n4 + 2*n5 + 2*n6)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 
+        -1 + n5, n6, 1])/(4*(-1 + n5)*q2) + 
+     ((2 - 3*d + 2*n4 + 2*n5 + 2*n6)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, n5, 
+        -1 + n6, 1])/(4*(-1 + n6)*q2) + 
+     (2*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, n5, n6, 0])/q2 + 
+     ((2*n4 - 3*d*n4 + 2*n4^2 + 2*n4*n5 + 2*n4*n6)*j[A22TwoLoopTreeBasis1, 0, 
+        0, 0, 1 + n4, -1 + n5, -1 + n6, 1])/(4*(-1 + n5)*(-1 + n6)*q2) + 
+     (n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, -1 + n5, n6, 0])/
+      (2*(-1 + n5)*q2) + (n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, n5, 
+        -1 + n6, 0])/(2*(-1 + n6)*q2) - 
+     (n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, n5, -1 + n6, 1])/
+      (2*(-1 + n6)), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n1 == 0 && n2 == 0 && n3 == 0 && 
+      n5 == 1 && n7 != 1 :> 
+    (-2*(2*n6 - d*n6 + 2*n6^2)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 1, 
+        1 + n6, -1 + n7])/((d - 2*n7)*(-1 + n7)) + 
+     (2*(-4 + d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 2, n6, -1 + n7])/
+      ((d - 2*n7)*(-1 + n7)) + ((2*n4 - d*n4 + 2*n4^2)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 1, n6, -1 + n7])/
+      ((d - 2*n7)*(-1 + n7)), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n1 == 0 && n2 == 0 && n5 == 1 && 
+      n6 == 1 &&  !(n3 == 0 || n7 == 1) :> 
+    ((-3 + d - n3 - n4)*j[A22TwoLoopTreeBasis1, 0, 0, 1 + n3, n4, 1, 1, 
+       -1 + n7])/(-1 + n7), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n3 == -1 && n5 == 1 && n6 == 1 && 
+      n7 == 1 &&  !(n2 == 0 || n4 == 1) :> 
+    j[A22TwoLoopTreeBasis1, -1 + n1, n2, 0, n4, 1, 1, 1] + 
+     j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, -1, n4, 1, 1, 1] - 
+     (2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, -2 + n4, 2, 1, 1])/
+      (-1 + n4) + ((-1 + d - n1 - n2 - n4)*j[A22TwoLoopTreeBasis1, -1 + n1, 
+        1 + n2, 0, -1 + n4, 1, 1, 1])/(-1 + n4) + 
+     j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, -1 + n4, 2, 0, 1]/
+      (-1 + n4) - j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, n4, 1, 0, 1] + 
+     ((-1 - n2)*j[A22TwoLoopTreeBasis1, -1 + n1, 2 + n2, -1, -1 + n4, 1, 1, 
+        1])/(-1 + n4) + ((-1 - n2)*j[A22TwoLoopTreeBasis1, -1 + n1, 2 + n2, 
+        0, -2 + n4, 1, 1, 1])/(-1 + n4) + 
+     ((1 + n2)*j[A22TwoLoopTreeBasis1, -1 + n1, 2 + n2, 0, -1 + n4, 0, 1, 1])/
+      (-1 + n4) - j[A22TwoLoopTreeBasis1, n1, -1 + n2, 0, n4, 1, 1, 1] + 
+     ((-2 + d - n4)*j[A22TwoLoopTreeBasis1, n1, n2, 0, -1 + n4, 1, 1, 1])/
+      (-1 + n4) - (2*j[A22TwoLoopTreeBasis1, n1, n2, 0, -1 + n4, 2, 1, 0])/
+      (-1 + n4) + j[A22TwoLoopTreeBasis1, n1, n2, 0, n4, 1, 0, 1] - 
+     q2*j[A22TwoLoopTreeBasis1, n1, n2, 0, n4, 1, 1, 1] + 
+     (n2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, -1, -1 + n4, 1, 1, 1])/
+      (-1 + n4) + ((1 - n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -2 + n4, 
+        1, 1, 1])/(-1 + n4) + ((-1 + n1 - n2)*j[A22TwoLoopTreeBasis1, n1, 
+        1 + n2, 0, -1 + n4, 0, 1, 1])/(-1 + n4) + 
+     ((1 - n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -1 + n4, 1, 1, 0])/
+      (-1 + n4) + ((-1 + n1)*q2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 
+        -1 + n4, 1, 1, 1])/(-1 + n4) - 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 0, 1, 1])/
+      (-1 + n4) + (n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 1, 1, 
+        0])/(-1 + n4), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n3 == 0 && n5 == 1 && n6 == 1 && 
+      n7 == 1 &&  !(n2 == 0 || n4 == 1) :> 
+    ((-4 + d + n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -2 + n4, 1, 1, 2])/
+      ((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) - 
+     (2*(-4 + d + n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -2 + n4, 1, 2, 
+        1])/((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) - 
+     (2*(-4 + d + n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -2 + n4, 2, 1, 
+        1])/((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) + 
+     ((4 - d - n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -1 + n4, 0, 1, 2])/
+      ((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) + 
+     ((-4 + d + n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -1 + n4, 0, 2, 1])/
+      ((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) + 
+     ((4 - d - n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -1 + n4, 1, 0, 2])/
+      ((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) + 
+     ((48 - 36*d + 6*d^2 + 4*n1 + 2*d*n1 - 4*n1^2 + 24*n2 - 7*d*n2 - 
+        2*n1*n2 + 2*n2^2 + 24*n4 - 6*d*n4 - 6*n1*n4 + 2*n2*n4)*
+       j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -1 + n4, 1, 1, 1])/
+      ((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) + 
+     ((-4 + d + n1)*q2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -1 + n4, 1, 1, 
+        2])/((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) + 
+     ((-4 + d + n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, -1 + n4, 2, 0, 1])/
+      ((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*(-1 + n4)) - 
+     (2*(-4 + d + n1 - 4*n2 + d*n2 + n1*n2)*j[A22TwoLoopTreeBasis1, n1, 
+        2 + n2, 0, -2 + n4, 1, 1, 1])/((-8 + 3*d - 2*n1 - 2*n2 - 2*n4)*
+       (-1 + n4)) - (n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 0, 1, 
+        2])/((-1 + n4)*(8 - 3*d + 2*n1 + 2*n2 + 2*n4)) + 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 0, 2, 1])/
+      ((-1 + n4)*(8 - 3*d + 2*n1 + 2*n2 + 2*n4)) - 
+     (2*n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 1, 1, 1])/
+      (-1 + n4) - (2*n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 1, 2, 
+        0])/((-1 + n4)*(8 - 3*d + 2*n1 + 2*n2 + 2*n4)) + 
+     (2*n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 1, 2, 1])/
+      ((-1 + n4)*(8 - 3*d + 2*n1 + 2*n2 + 2*n4)) + 
+     (2*n1*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, -1 + n4, 2, 1, 0])/
+      ((-1 + n4)*(8 - 3*d + 2*n1 + 2*n2 + 2*n4)) + 
+     (4*n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, n2, 0, n4, 1, 1, 1])/
+      (8 - 3*d + 2*n1 + 2*n2 + 2*n4) + (2*(-4*n1 + d*n1 + n1^2)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, 1 + n2, 0, -2 + n4, 1, 1, 1])/
+      ((-1 + n4)*(8 - 3*d + 2*n1 + 2*n2 + 2*n4)) - 
+     (2*(-4*n1*q2 + d*n1*q2 + n1^2*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 
+        1 + n2, 0, -1 + n4, 1, 1, 1])/((-1 + n4)*(8 - 3*d + 2*n1 + 2*n2 + 
+        2*n4)), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n4 == 1 && n5 == 1 && n6 == 1 && n7 == 1 && 
+      n3 != 0 :> (2*(-4 + d - n2)*j[A22TwoLoopTreeBasis1, -1 + n1, n2, 
+        1 + n3, 0, 1, 2, 1])/((-1 + n1)*(2 - d + 2*n1 + n2)) + 
+     (2*j[A22TwoLoopTreeBasis1, -1 + n1, n2, 1 + n3, 0, 2, 1, 1])/(-1 + n1) + 
+     ((-2 + d - 2*n1 + n2)*j[A22TwoLoopTreeBasis1, -1 + n1, n2, 1 + n3, 1, 1, 
+        1, 1])/(-2 + d - 2*n1 - n2) + j[A22TwoLoopTreeBasis1, -1 + n1, n2, 
+       1 + n3, 1, 2, 0, 1]/(1 - n1) + 
+     ((4 - d + n2)*j[A22TwoLoopTreeBasis1, -1 + n1, n2, 1 + n3, 2, 1, 0, 1])/
+      ((-1 + n1)*(2 - d + 2*n1 + n2)) - 
+     (2*n2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, n3, 0, 1, 2, 1])/
+      ((-1 + n1)*(2 - d + 2*n1 + n2)) - 
+     (2*n2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, n3, 0, 2, 1, 1])/
+      ((-1 + n1)*(2 - d + 2*n1 + n2)) + 
+     (n2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, n3, 1, 0, 2, 1])/
+      ((-1 + n1)*(2 - d + 2*n1 + n2)) - 
+     (2*n2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, n3, 1, 1, 1, 1])/
+      (2 - d + 2*n1 + n2) + (n2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, n3, 
+        1, 2, 0, 1])/((-1 + n1)*(2 - d + 2*n1 + n2)) + 
+     (n2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 1 + n3, 0, 1, 1, 1])/
+      (-1 + n1) + ((-4*n2 + d*n2 - n2^2)*j[A22TwoLoopTreeBasis1, -1 + n1, 
+        1 + n2, 1 + n3, 1, 0, 1, 1])/((-1 + n1)*(2 - d + 2*n1 + n2)) + 
+     ((-n2 - n2^2)*j[A22TwoLoopTreeBasis1, -1 + n1, 2 + n2, n3, 0, 1, 1, 1])/
+      ((-1 + n1)*(2 - d + 2*n1 + n2)) + 
+     ((4 - 2*d + 4*n1 + n2)*j[A22TwoLoopTreeBasis1, n1, -1 + n2, 1 + n3, 1, 
+        1, 1, 1])/(-2 + d - 2*n1 - n2) + 
+     (2*j[A22TwoLoopTreeBasis1, n1, n2, n3, 1, 0, 1, 2])/
+      (-2 + d - 2*n1 - n2) - (4*j[A22TwoLoopTreeBasis1, n1, n2, n3, 1, 2, 1, 
+        0])/(-2 + d - 2*n1 - n2) + j[A22TwoLoopTreeBasis1, n1, n2, 1 + n3, 0, 
+      1, 1, 1] + ((4 - d + n2 + 2*n3)*j[A22TwoLoopTreeBasis1, n1, n2, 1 + n3, 
+        1, 0, 1, 1])/(-2 + d - 2*n1 - n2) + 
+     ((-4 + d - n2 - 2*n3)*j[A22TwoLoopTreeBasis1, n1, n2, 1 + n3, 1, 1, 1, 
+        0])/(-2 + d - 2*n1 - n2) - q2*j[A22TwoLoopTreeBasis1, n1, n2, 1 + n3, 
+       1, 1, 1, 1] - (n2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, n3, 0, 1, 1, 1])/
+      (2 - d + 2*n1 + n2) + (n2*q2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, n3, 1, 
+        1, 1, 1])/(2 - d + 2*n1 + n2), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n2 == 0 && n3 == 0 && n6 == 1 && 
+      n7 == 1 && n5 != 1 :> -(j[A22TwoLoopTreeBasis1, -1, 0, 0, n4, n5, 0, 2]/
+       ((-2 + 3*d - 2*n4 - 4*n5)*q2)) + (n5*(11 - 10*d + 5*n4 + 9*n5)*
+       j[A22TwoLoopTreeBasis1, -1, 0, 0, n4, 1 + n5, 0, 1])/
+      ((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)*q2) + 
+     (2*n4*(4 - 3*d + 2*n4 + 2*n5)*j[A22TwoLoopTreeBasis1, -1, 0, 0, 1 + n4, 
+        n5, 0, 1])/((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)*q2) + 
+     (2*(-1 + 2*d + n4 - 3*n5)*j[A22TwoLoopTreeBasis1, 0, -1, 0, n4, n5, 2, 
+        0])/((-2 + 3*d - 2*n4 - 4*n5)*(-3 + 2*d - n4 - n5)*q2) - 
+     (n5*(7 - 6*d + 3*n4 + 5*n5)*j[A22TwoLoopTreeBasis1, 0, -1, 0, n4, 
+        1 + n5, 0, 1])/((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)*q2) + 
+     (2*n5*j[A22TwoLoopTreeBasis1, 0, -1, 0, n4, 1 + n5, 1, 0])/
+      ((2 - 3*d + 2*n4 + 4*n5)*q2) - (n4*(7 - 6*d + 3*n4 + 5*n5)*
+       j[A22TwoLoopTreeBasis1, 0, -1, 0, 1 + n4, n5, 0, 1])/
+      ((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)*q2) + 
+     (4*(-3 + 3*d - n4 - 3*n5)*j[A22TwoLoopTreeBasis1, 0, 0, -1, n4, n5, 2, 
+        0])/((-2 + 3*d - 2*n4 - 4*n5)*(-3 + 2*d - n4 - n5)*q2) + 
+     (n5*(7 - 6*d + 3*n4 + 5*n5)*j[A22TwoLoopTreeBasis1, 0, 0, -1, n4, 
+        1 + n5, 0, 1])/((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)*q2) - 
+     (4*n5*(7 - 6*d + 3*n4 + 5*n5)*j[A22TwoLoopTreeBasis1, 0, 0, -1, n4, 
+        1 + n5, 1, 0])/((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)*q2) + 
+     (2*(-4 + 3*d - 2*n4 - 2*n5)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 
+        n5, 1, 1])/((-2 + 3*d - 2*n4 - 4*n5)*q2) - 
+     (2*(-5 + 4*d - 3*n4 - 3*n5)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 
+        n5, 2, 0])/((-2 + 3*d - 2*n4 - 4*n5)*(-3 + 2*d - n4 - n5)*q2) - 
+     (2*n5*(11 - 10*d + 5*n4 + 9*n5)*j[A22TwoLoopTreeBasis1, 0, 0, 0, 
+        -1 + n4, 1 + n5, 1, 0])/((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)*
+       q2) + j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, -1 + n5, 0, 2]/
+      ((-2 + 3*d - 2*n4 - 4*n5)*q2) + 
+     ((-12 + 17*d - 6*d^2 - 14*n4 + 10*d*n4 - 4*n4^2 - 10*n5 + 7*d*n5 - 
+        6*n4*n5 - 2*n5^2)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, -1 + n5, 1, 
+        1])/((-2 + 3*d - 2*n4 - 4*n5)*(-1 + n5)*q2) + 
+     ((1 - 2*d - n4 + 3*n5)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, -1 + n5, 2, 
+        0])/((-2 + 3*d - 2*n4 - 4*n5)*(-3 + 2*d - n4 - n5)*q2) + 
+     ((-21 + 32*d - 12*d^2 - 12*n4 + 8*d*n4 - n4^2 - 29*n5 + 22*d*n5 - 
+        7*n4*n5 - 10*n5^2)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, n5, 0, 1])/
+      ((-2 + 3*d - 2*n4 - 4*n5)*(-3 + 2*d - n4 - n5)*q2) + 
+     ((11 - 10*d + 5*n4 + 10*n5 - 2*d*n5 - n4*n5 + 3*n5^2)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, n5, 1, 0])/
+      ((-2 + 3*d - 2*n4 - 4*n5)*(-3 + 2*d - n4 - n5)*q2) + 
+     (n4*(3 - d + n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, -1 + n5, 1, 
+        1])/((-1 + n5)*(2 - 3*d + 2*n4 + 4*n5)) - 
+     (n4*(5 - 4*d + 3*n4 + 3*n5)*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, n5, 
+        0, 1])/((3 - 2*d + n4 + n5)*(2 - 3*d + 2*n4 + 4*n5)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n2 == 0 && n3 == 0 && n5 == 1 && 
+      n7 == 1 &&  !(n6 == 2 || n6 == 1) :> 
+    ((-4 + d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 0, -1 + n6, 2])/
+      (4*(d - 2*n6)*(-1 + n6)*q2) - ((-4 + d)*(-4 + 2*d - n4 - n6)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 1, -2 + n6, 2])/
+      (4*(d - 2*n6)*(-2 + n6)*(-1 + n6)*q2) - 
+     ((-4 + d)*(-3 + d - n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 1, -1 + n6, 
+        1])/(2*(d - 2*n6)*(-1 + n6)*q2) + 
+     ((-4 + d)*(-4 + 2*d - n4 - n6)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 2, 
+        -2 + n6, 1])/(2*(d - 2*n6)*(-2 + n6)*(-1 + n6)*q2) - 
+     (2*(-4 + d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 2, -1 + n6, 0])/
+      ((d - 2*n6)*(-1 + n6)*q2) + ((-4 + d)*n4*j[A22TwoLoopTreeBasis1, 0, 0, 
+        0, 1 + n4, 0, -2 + n6, 2])/(4*(d - 2*n6)*(-2 + n6)*(-1 + n6)*q2) + 
+     ((-4 + d)*n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 0, -1 + n6, 1])/
+      (4*(d - 2*n6)*(-1 + n6)*q2) + ((-4 + d)*(-n4 + d*n4 - n4*n6)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 1, -2 + n6, 1])/
+      (4*(d - 2*n6)*(-2 + n6)*(-1 + n6)*q2) - 
+     ((-4 + d)*n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 1, -2 + n6, 2])/
+      (4*(d - 2*n6)*(-2 + n6)*(-1 + n6)) - 
+     ((-4 + d)*n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 1, -1 + n6, 0])/
+      (2*(d - 2*n6)*(-1 + n6)*q2) + ((-2*n4 + d*n4 - 2*n4^2)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 1, -1 + n6, 1])/
+      (2*(d - 2*n6)*(-1 + n6)) - ((-4 + d)*n4*j[A22TwoLoopTreeBasis1, 0, 0, 
+        0, 1 + n4, 2, -2 + n6, 0])/(2*(d - 2*n6)*(-2 + n6)*(-1 + n6)*q2) + 
+     ((-4 + d)*n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 2, -2 + n6, 1])/
+      (2*(d - 2*n6)*(-2 + n6)*(-1 + n6)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n2 == 0 && n3 == -1 && n5 == 1 && n6 == 1 && 
+      n7 == 1 &&  !(n4 == 2 || n4 == 1) :> 
+    (-2*(1 - d - n1 + n4)*j[A22TwoLoopTreeBasis1, n1, 0, 0, -2 + n4, 1, 2, 
+        1])/((-2 + n4)*(-1 + n4)) - (2*(5 - 2*d + 2*n1 + n4)*
+       j[A22TwoLoopTreeBasis1, n1, 0, 0, -2 + n4, 2, 1, 1])/
+      ((-2 + n4)*(-1 + n4)) - (8*j[A22TwoLoopTreeBasis1, n1, 0, 0, -2 + n4, 
+        2, 2, 0])/((-2 + n4)*(-1 + n4)) + 
+     (4*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, -2 + n4, 2, 2, 1])/
+      ((-2 + n4)*(-1 + n4)) + ((-3 + 2*d - 2*n4)*j[A22TwoLoopTreeBasis1, n1, 
+        0, 0, -1 + n4, 1, 1, 1])/(-1 + n4) - 
+     (2*j[A22TwoLoopTreeBasis1, n1, 0, 0, -1 + n4, 1, 2, 0])/(-1 + n4) - 
+     (2*j[A22TwoLoopTreeBasis1, n1, 0, 0, -1 + n4, 2, 1, 0])/(-1 + n4) + 
+     (2*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, -1 + n4, 2, 1, 1])/(-1 + n4) + 
+     j[A22TwoLoopTreeBasis1, n1, 0, 0, n4, 1, 0, 1] - 
+     (2*n1*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -2 + n4, 0, 2, 1])/
+      ((-2 + n4)*(-1 + n4)) + (2*n1*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 
+        -2 + n4, 1, 2, 0])/((-2 + n4)*(-1 + n4)) - 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 0, 1, 1])/(-1 + n4) + 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 1, 1, 0])/(-1 + n4), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n2 == 0 && n3 == 0 && n5 == 1 && n6 == 1 && 
+      n7 == 1 &&  !(n1 == 0 || n4 == 1) :> 
+    ((4 - d)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 0, 1, 2])/
+      ((-8 + 3*d - 2*n1 - 2*n4)*(-1 + n4)) + 
+     ((-4 + d)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 0, 2, 1])/
+      ((-8 + 3*d - 2*n1 - 2*n4)*(-1 + n4)) + 
+     ((-4 + d - n1)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 1, 1, 1])/
+      (-1 + n4) - (2*(-4 + d)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 
+        1, 2, 0])/((-8 + 3*d - 2*n1 - 2*n4)*(-1 + n4)) - 
+     (2*(-4*q2 + d*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 1, 2, 
+        1])/((-1 + n4)*(8 - 3*d + 2*n1 + 2*n4)) + 
+     (2*(-4 + d)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, -1 + n4, 2, 1, 0])/
+      ((-8 + 3*d - 2*n1 - 2*n4)*(-1 + n4)) + 
+     (2*(-4*q2 + d*q2 - n1*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, n4, 1, 
+        1, 1])/(-8 + 3*d - 2*n1 - 2*n4), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n3 == 0 && n4 == 1 && n5 == 1 && n6 == 1 && 
+      n7 == 1 &&  !(n2 == -1 || n2 == 0 || n2 == -1) :> 
+    (-2*(-3 + d)*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, 0, 1, 2, 1])/
+      ((-6 + 2*d - 2*n1 - n2)*(1 + n2)) - 
+     (2*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, 0, 2, 1, 1])/(1 + n2) + 
+     ((-2*n1 - n2)*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, 1, 0, 2, 1])/
+      ((1 + n2)*(6 - 2*d + 2*n1 + n2)) + 
+     ((-9 + 3*d - 2*n1 - n2)*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, 1, 
+        1, 1, 1])/(-6 + 2*d - 2*n1 - n2) + 
+     j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, 1, 2, 0, 1]/(1 + n2) + 
+     ((-3 + d)*j[A22TwoLoopTreeBasis1, -1 + n1, 1 + n2, 0, 2, 1, 0, 1])/
+      ((-6 + 2*d - 2*n1 - n2)*(1 + n2)) + 
+     (2*(-3 + d)*j[A22TwoLoopTreeBasis1, -1 + n1, 2 + n2, -1, 1, 1, 1, 1])/
+      (-6 + 2*d - 2*n1 - n2) - j[A22TwoLoopTreeBasis1, -1 + n1, 2 + n2, 0, 0, 
+      1, 1, 1] + ((3 - d)*j[A22TwoLoopTreeBasis1, -1 + n1, 2 + n2, 0, 1, 0, 
+        1, 1])/(-6 + 2*d - 2*n1 - n2) + 
+     ((2*n1 + n2)*j[A22TwoLoopTreeBasis1, n1, n2, 0, 1, 0, 2, 1])/
+      ((1 + n2)*(6 - 2*d + 2*n1 + n2)) + 
+     (2*(2*n1 + n2)*j[A22TwoLoopTreeBasis1, n1, n2, 0, 1, 1, 2, 0])/
+      ((-6 + 2*d - 2*n1 - n2)*(1 + n2)) + 
+     j[A22TwoLoopTreeBasis1, n1, 1 + n2, -1, 1, 0, 1, 2]/(1 + n2) + 
+     ((-3 + d - 2*n1 - n2)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, -1, 1, 0, 2, 
+        1])/((-6 + 2*d - 2*n1 - n2)*(1 + n2)) - 
+     (2*(-3 + d - 2*n1 - n2)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, -1, 1, 1, 2, 
+        0])/((-6 + 2*d - 2*n1 - n2)*(1 + n2)) - 
+     (2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, -1, 1, 2, 1, 0])/(1 + n2) + 
+     ((1 - n1)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 0, 1, 1, 1])/(1 + n2) + 
+     (2*(-3 + d)*q2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 0, 1, 2, 1])/
+      ((-6 + 2*d - 2*n1 - n2)*(1 + n2)) + 
+     ((3 - d + 5*n1 - d*n1 + n2)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 1, 0, 
+        1, 1])/((-6 + 2*d - 2*n1 - n2)*(1 + n2)) - 
+     ((2*n1 + n2)*q2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 1, 0, 2, 1])/
+      ((-6 + 2*d - 2*n1 - n2)*(1 + n2)) + 
+     ((-6 + 2*d - 7*n1 + d*n1 - 2*n2)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 
+        1, 1, 1, 0])/((-6 + 2*d - 2*n1 - n2)*(1 + n2)) + 
+     ((3*q2 - d*q2 + 2*n1*q2 + n2*q2)*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 
+        1, 1, 1, 1])/(-6 + 2*d - 2*n1 - n2) - 
+     ((-3 + d)*q2*j[A22TwoLoopTreeBasis1, n1, 1 + n2, 0, 2, 1, 0, 1])/
+      ((-6 + 2*d - 2*n1 - n2)*(1 + n2)) + 
+     ((3*q2 - d*q2)*j[A22TwoLoopTreeBasis1, n1, 2 + n2, -1, 1, 1, 1, 1])/
+      (-6 + 2*d - 2*n1 - n2) + ((-3*q2 + d*q2)*j[A22TwoLoopTreeBasis1, n1, 
+        2 + n2, 0, 1, 0, 1, 1])/(-6 + 2*d - 2*n1 - n2) + 
+     ((-3*n1*q2 + d*n1*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 1 + n2, 0, 1, 0, 
+        1, 1])/((-6 + 2*d - 2*n1 - n2)*(1 + n2)) + 
+     ((3*n1*q2 - d*n1*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 1 + n2, 0, 1, 1, 1, 
+        0])/((-6 + 2*d - 2*n1 - n2)*(1 + n2)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n2 == 0 && n3 == 0 && n5 == 1 && 
+      n6 == 2 && n7 == 1 :> 
+    ((8 - 3*d + 2*n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 1, 2, 1])/
+      ((-3 + d - n4)*q2) + ((8 - 3*d + 2*n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, 
+        -1 + n4, 2, 1, 1])/((-3 + d - n4)*q2) + 
+     (8*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 2, 2, 0])/
+      ((-3 + d - n4)*q2) + ((-8 + 3*d + 6*n4 - 3*d*n4 + 2*n4^2)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 1, 1, 1])/((-3 + d - n4)*q2) + 
+     (2*(-1 + n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 1, 2, 0])/
+      ((-3 + d - n4)*q2) + (2*(-1 + n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 
+        2, 1, 0])/((-3 + d - n4)*q2) + 
+     ((-1 + n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 2, 1, 1])/(3 - d + n4) + 
+     (n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 1, 1, 1])/2 - 
+     (n4*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1 + n4, 2, 0, 1])/
+      (2*(-3 + d - n4)), j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, 
+      (n2_)?NonPositive, (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, 
+      (n6_)?Positive, (n7_)?Positive] /; n1 == 0 && n2 == 0 && n3 == 0 && 
+      n5 == 1 && n6 == 1 && n7 == 1 &&  !(n4 == 2 || n4 == 1) :> 
+    ((4 - d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -2 + n4, 0, 2, 2])/
+      (4*(-2 + d - n4)*(2 - 3*n4 + n4^2)*q2) + 
+     ((-4 + d)*(8 - 5*d + 2*n4 + 2*d*n4 - 2*n4^2)*j[A22TwoLoopTreeBasis1, 0, 
+        0, 0, -2 + n4, 1, 1, 2])/(4*(-2 + d - n4)^2*(2 - 3*n4 + n4^2)*q2) + 
+     ((-4 + d)*(32 - 32*d + 9*d^2 + 24*n4 - 16*d*n4 + 8*n4^2)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, -2 + n4, 1, 2, 1])/
+      (4*(-2 + d - n4)^2*(2 - 3*n4 + n4^2)*q2) + 
+     ((-4 + d)*(-2 + 2*d - 3*n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -2 + n4, 2, 
+        0, 2])/(4*(-2 + d - n4)^2*(2 - 3*n4 + n4^2)*q2) - 
+     ((-4 + d)*(16 - 28*d + 9*d^2 + 40*n4 - 20*d*n4 + 8*n4^2)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, -2 + n4, 2, 1, 1])/
+      (4*(-2 + d - n4)^2*(2 - 3*n4 + n4^2)*q2) - 
+     (4*(-4 + d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -2 + n4, 2, 2, 0])/
+      ((-2 + d - n4)*(2 - 3*n4 + n4^2)*q2) + 
+     ((4 - d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 0, 1, 2])/
+      (4*(-2 + d - n4)*(-1 + n4)*q2) + 
+     ((4 - d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 0, 2, 1])/
+      (4*(-2 + d - n4)*(-1 + n4)*q2) + ((-4 + d)*(-2 + 2*d - 3*n4)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 1, 0, 2])/
+      (4*(-2 + d - n4)^2*(-1 + n4)*q2) + 
+     ((-4 + d)*(20 - 20*d + 6*d^2 + 14*n4 - 11*d*n4 + 6*n4^2)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 1, 1, 1])/
+      (4*(-2 + d - n4)^2*(-1 + n4)*q2) + 
+     ((4 - d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 1, 2, 0])/
+      ((-2 + d - n4)*(-1 + n4)*q2) + ((-4 + d)*(-2 + 2*d - 3*n4)*
+       j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 2, 0, 1])/
+      (4*(-2 + d - n4)^2*(-1 + n4)*q2) - 
+     ((-4 + d)*(-2 + 2*d - 3*n4)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 2, 
+        0, 2])/(4*(-2 + d - n4)^2*(2 - 3*n4 + n4^2)) + 
+     ((4 - d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, -1 + n4, 2, 1, 0])/
+      ((-2 + d - n4)*(-1 + n4)*q2) + 
+     ((-4 + d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 1, 0, 2])/
+      (4*(-2 + d - n4)*(-2 + n4)) + 
+     ((-4 + d)*j[A22TwoLoopTreeBasis1, 0, 0, 0, n4, 2, 0, 1])/
+      (4*(-2 + d - n4)*(-2 + n4)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n2 == 0 && n3 == -1 && n4 == 2 && n5 == 1 && 
+      n6 == 1 && n7 == 1 :> 
+    (-8*j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 0, 2, 2, 1])/(-1 + n1) - 
+     (2*(-3 + d - n1)*j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 2, 1, 1, 1])/
+      (-1 + n1) + j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 2, 2, 0, 1]/
+      (-1 + n1) - 2*j[A22TwoLoopTreeBasis1, n1, -1, 0, 2, 1, 1, 1] - 
+     4*j[A22TwoLoopTreeBasis1, n1, 0, 0, 0, 1, 2, 1] + 
+     ((-4 + d)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 0, 2, 1])/(-1 + n1) + 
+     ((22 - 13*d + 2*d^2 + 9*n1 - 3*d*n1 + n1^2)*j[A22TwoLoopTreeBasis1, n1, 
+        0, 0, 1, 1, 1, 1])/(-1 + n1) - 
+     (2*(-3 + d - n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 1, 2, 0])/
+      (-1 + n1) + (2*(-4 + d)*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 1, 2, 
+        1])/(-1 + n1) + 2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 2, 1, 0] + 
+     j[A22TwoLoopTreeBasis1, n1, 0, 0, 2, 1, 0, 1] - 
+     ((2 - d + 2*n1)*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 2, 1, 1, 1])/
+      (-1 + n1) - n1*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 0, 1, 1] + 
+     n1*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 1, 1, 0], 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n2 == -1 && n3 == 0 && n4 == 1 && n5 == 1 && 
+      n6 == 1 && n7 == 1 && n1 != 0 :> 
+    j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 0, 1, 1, 2]/(-8 + 3*d - 2*n1) - 
+     (2*j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 0, 1, 2, 1])/
+      (-8 + 3*d - 2*n1) - (2*j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 0, 2, 1, 
+        1])/(-8 + 3*d - 2*n1) + j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 1, 0, 
+       1, 2]/(8 - 3*d + 2*n1) + j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 1, 0, 
+       2, 1]/(-8 + 3*d - 2*n1) + j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 1, 1, 
+       0, 2]/(8 - 3*d + 2*n1) + 2*j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 1, 
+       1, 1, 1] + j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 1, 2, 0, 1]/
+      (-8 + 3*d - 2*n1) + j[A22TwoLoopTreeBasis1, n1, -1, 0, 1, 0, 1, 2]/
+      (-8 + 3*d - 2*n1) + j[A22TwoLoopTreeBasis1, n1, -1, 0, 1, 0, 2, 1]/
+      (8 - 3*d + 2*n1) + (2*j[A22TwoLoopTreeBasis1, n1, -1, 0, 1, 1, 2, 0])/
+      (-8 + 3*d - 2*n1) - (2*j[A22TwoLoopTreeBasis1, n1, -1, 0, 1, 2, 1, 0])/
+      (-8 + 3*d - 2*n1) - (2*(-1 + n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 0, 
+        1, 1, 1])/(-8 + 3*d - 2*n1) - 
+     (2*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 0, 1, 2, 1])/(-8 + 3*d - 2*n1) + 
+     (q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 0, 1, 2])/(-8 + 3*d - 2*n1) + 
+     (q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 0, 2, 1])/(-8 + 3*d - 2*n1) - 
+     ((d - 2*n1)*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 1, 1, 1])/
+      (-8 + 3*d - 2*n1) - (2*q2*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 0, 
+        2, 1])/(-8 + 3*d - 2*n1) - (2*(-7 + 2*d - 2*n1)*q2*
+       j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 1, 1, 1])/
+      (-8 + 3*d - 2*n1) + (4*q2*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 1, 
+        2, 0])/(-8 + 3*d - 2*n1) - 
+     (4*q2^2*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 1, 2, 1])/
+      (-8 + 3*d - 2*n1) - (2*q2^2*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 2, 
+        1, 1, 1])/(-8 + 3*d - 2*n1), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n2 == 0 && n3 == 0 && n4 == 1 && n5 == 1 && 
+      n6 == 1 && n7 == 1 && n1 != 0 :> 
+    j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 2, 0, 1, 2]/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((1 - d + 3*n1)*j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 2, 0, 2, 1])/
+      (6*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 2, 1, 0, 2]/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (5*j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 2, 2, 0, 1])/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     j[A22TwoLoopTreeBasis1, -1 + n1, 0, 0, 3, 1, 0, 1]/
+      (3*(-3 + d - n1)*(-7 + 2*d - n1)) - 
+     j[A22TwoLoopTreeBasis1, n1, -1, 0, 2, 0, 1, 2]/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-1 + d - 3*n1)*j[A22TwoLoopTreeBasis1, n1, -1, 0, 2, 0, 2, 1])/
+      (6*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((1 - d + 3*n1)*j[A22TwoLoopTreeBasis1, n1, -1, 0, 2, 1, 2, 0])/
+      (3*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     j[A22TwoLoopTreeBasis1, n1, -1, 0, 2, 2, 0, 1]/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     j[A22TwoLoopTreeBasis1, n1, -1, 0, 2, 2, 1, 0]/
+      (3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     j[A22TwoLoopTreeBasis1, n1, -1, 0, 3, 1, 0, 1]/(-70 + 41*d - 6*d^2 - 
+       24*n1 + 7*d*n1 - 2*n1^2) + ((-1 + n1)*j[A22TwoLoopTreeBasis1, n1, 0, 
+        -1, 2, 0, 2, 1])/(6*(3 - d + n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + ((8 - 3*d + 4*n1)*j[A22TwoLoopTreeBasis1, n1, 0, 
+        -1, 2, 1, 2, 0])/(3*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + j[A22TwoLoopTreeBasis1, n1, 0, -1, 2, 2, 0, 1]/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (2*j[A22TwoLoopTreeBasis1, n1, 0, -1, 2, 2, 1, 0])/
+      (70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2) + 
+     ((28 - 8*d + 5*n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 0, 1, 1, 2])/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (4*(-3 + d)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 0, 1, 2, 1])/
+      (3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (2*(-14 + 4*d - n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 0, 2, 1, 1])/
+      (3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (16*(4*q2 - d*q2 + 2*n1*q2)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 0, 2, 2, 
+        1])/(3*n1*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-29 + 8*d - 5*n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 0, 1, 2])/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((34 - 23*d + 4*d^2 + 10*n1 - 4*d*n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 
+        1, 0, 2, 1])/(6*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) + ((-28 + 8*d - 5*n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 
+        1, 0, 2])/(6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 1, 2, 0]/(3*(-10 + 3*d - 2*n1)*
+       (-3 + d - n1)) + ((14 - 4*d + n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 
+        2, 0, 1])/(3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (3*(-4 + d - 2*n1)*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 2, 0, 2])/
+      (2*(-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (5*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 2, 1, 0])/
+      (3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (12*(-4*q2 + d*q2 - 2*n1*q2)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 1, 2, 2, 
+        0])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) + ((-1 + 11*n1 - 3*d*n1 + 2*n1^2)*j[A22TwoLoopTreeBasis1, 
+        n1, 0, 0, 2, 0, 1, 1])/(6*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) - (q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 2, 0, 1, 
+        2])/(6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-1 + d - 3*n1)*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 2, 0, 2, 1])/
+      (6*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-37 + 12*d - 2*n1)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 2, 1, 0, 1])/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (3*(-4 + d - 2*n1)*q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 2, 1, 0, 2])/
+      (2*(-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-16 + 6*d - 18*n1 + 3*d*n1 - 2*n1^2)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 
+        2, 1, 1, 0])/(6*(-3 + d - n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) + (3*(-4*q2 + d*q2 - 2*n1*q2)*j[A22TwoLoopTreeBasis1, n1, 0, 
+        0, 2, 1, 2, 0])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + ((192*q2 - 96*d*q2 + 12*d^2*q2 + 164*n1*q2 - 
+        41*d*n1*q2 + 34*n1^2*q2)*j[A22TwoLoopTreeBasis1, n1, 0, 0, 2, 2, 0, 
+        1])/(6*(-12 + 3*d - 2*n1)*n1*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) + (3*(-4*q2 + d*q2 - 2*n1*q2)*j[A22TwoLoopTreeBasis1, n1, 0, 
+        0, 2, 2, 1, 0])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) - (q2*j[A22TwoLoopTreeBasis1, n1, 0, 0, 3, 1, 0, 
+        1])/(3*(-3 + d - n1)*(-7 + 2*d - n1)) + 
+     ((28 - 8*d + 5*n1)*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 0, 1, 2])/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (2*(-3 + d)*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 0, 2, 1])/
+      (3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (4*(-3 + d)*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 1, 2, 0])/
+      (3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (2*(-14 + 4*d - n1)*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 1, 2, 1, 0])/
+      (3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 2, 0, 1, 1])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 2, 1, 0, 1])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (n1*j[A22TwoLoopTreeBasis1, 1 + n1, -1, 0, 2, 1, 1, 0])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-56*n1 + 16*d*n1 - 7*n1^2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 0, 1, 
+        1, 1])/(6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (4*(-5*q2 + d*q2 - 4*n1*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 0, 1, 
+        2, 1])/(3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((17*n1 - 6*d*n1 + n1^2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 0, 1, 
+        1])/(3*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-512*q2 + 384*d*q2 - 96*d^2*q2 + 8*d^3*q2 - 512*n1*q2 + 268*d*n1*q2 - 
+        35*d^2*n1*q2 - 8*n1^2*q2 + 4*d*n1^2*q2 + 8*n1^3*q2)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 0, 1, 2])/
+      (6*(-12 + 3*d - 2*n1)*n1*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) + ((-256*q2 + 192*d*q2 - 48*d^2*q2 + 4*d^3*q2 - 432*n1*q2 + 
+        228*d*n1*q2 - 30*d^2*n1*q2 - 188*n1^2*q2 + 49*d*n1^2*q2 - 18*n1^3*q2)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 0, 2, 1])/
+      (6*(-12 + 3*d - 2*n1)*n1*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) - (3*(-4 + d - 2*n1)*n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, 
+        0, 0, 1, 1, 0, 2])/(2*(-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + ((-37*n1 + 12*d*n1 - 2*n1^2)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 1, 1, 0])/
+      (6*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-16*q2 + 8*d*q2 - d^2*q2 - 12*n1*q2 + 3*d*n1*q2 + 2*n1^2*q2)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 1, 1, 1])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (3*(-4 + d - 2*n1)*(1 + n1)*q2^2*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 
+        1, 1, 1, 2])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) - (2*(-128*q2 + 96*d*q2 - 24*d^2*q2 + 2*d^3*q2 - 
+        240*n1*q2 + 120*d*n1*q2 - 15*d^2*n1*q2 - 128*n1^2*q2 + 32*d*n1^2*q2 - 
+        8*n1^3*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 1, 2, 0])/
+      (3*(-12 + 3*d - 2*n1)*n1*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) + ((256*q2^2 - 192*d*q2^2 + 48*d^2*q2^2 - 4*d^3*q2^2 + 
+        144*n1*q2^2 - 72*d*n1*q2^2 + 9*d^2*n1*q2^2 + 56*n1^2*q2^2 - 
+        14*d*n1^2*q2^2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 1, 2, 1])/
+      (3*n1*(12 - 3*d + 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) - (3*(-4 + d - 2*n1)*n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, 
+        0, 0, 1, 2, 0, 1])/(2*(-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + ((512*q2 - 384*d*q2 + 96*d^2*q2 - 8*d^3*q2 + 
+        752*n1*q2 - 376*d*n1*q2 + 47*d^2*n1*q2 + 264*n1^2*q2 - 66*d*n1^2*q2 + 
+        16*n1^3*q2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 2, 1, 0])/
+      (3*(-12 + 3*d - 2*n1)*n1*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) - (6*(-5 + d - n1)*(-4*q2^2 + d*q2^2 - 2*n1*q2^2)*
+       j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 1, 2, 1, 1])/
+      ((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (6*(-4*q2^2 + d*q2^2 - 2*n1*q2^2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 
+        1, 2, 2, 0])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + (n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 2, 
+        0, 1, 1])/(6*(-3 + d - n1)*(-7 + 2*d - n1)) + 
+     (n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 2, 1, 0, 1])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (n1*q2*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 2, 1, 1, 0])/
+      (6*(-3 + d - n1)*(-7 + 2*d - n1)) + 
+     ((-256*q2^2 + 192*d*q2^2 - 48*d^2*q2^2 + 4*d^3*q2^2 - 792*n1*q2^2 + 
+        378*d*n1*q2^2 - 45*d^2*n1*q2^2 - 356*n1^2*q2^2 + 80*d*n1^2*q2^2 - 
+        36*n1^3*q2^2)*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 0, 2, 1, 1, 1])/
+      (6*n1*(12 - 3*d + 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) - (3*(-4 + d - 2*n1)*q2^2*j[A22TwoLoopTreeBasis1, 1 + n1, 0, 
+        0, 2, 1, 2, 0])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) - (3*(-4 + d - 2*n1)*q2^2*j[A22TwoLoopTreeBasis1, 
+        1 + n1, 0, 0, 2, 2, 1, 0])/((-12 + 3*d - 2*n1)*
+       (70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     (n1*(1 + n1)*j[A22TwoLoopTreeBasis1, 2 + n1, -1, 0, 1, 0, 1, 1])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (n1*(1 + n1)*j[A22TwoLoopTreeBasis1, 2 + n1, -1, 0, 1, 1, 1, 0])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) + 
+     ((-(n1*q2) - n1^2*q2)*j[A22TwoLoopTreeBasis1, 2 + n1, 0, 0, 1, 0, 1, 1])/
+      (2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (3*(-4 + d - 2*n1)*(1 + n1)*q2^2*j[A22TwoLoopTreeBasis1, 2 + n1, 0, 0, 
+        1, 0, 2, 1])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + ((n1*q2 + n1^2*q2)*j[A22TwoLoopTreeBasis1, 
+        2 + n1, 0, 0, 1, 1, 1, 0])/(2*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 
+        2*n1^2)) + (3*(-4 + d - 2*n1)*(1 + n1)*q2^2*j[A22TwoLoopTreeBasis1, 
+        2 + n1, 0, 0, 1, 1, 2, 0])/((-12 + 3*d - 2*n1)*
+       (70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)) - 
+     (3*(-4 + d - 2*n1)*(1 + n1)*q2^2*j[A22TwoLoopTreeBasis1, 2 + n1, 0, 0, 
+        1, 2, 1, 0])/((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 
+        7*d*n1 + 2*n1^2)) + (3*(-4 + d - 2*n1)*(1 + n1)*q2^3*
+       j[A22TwoLoopTreeBasis1, 2 + n1, 0, 0, 2, 1, 1, 1])/
+      ((-12 + 3*d - 2*n1)*(70 - 41*d + 6*d^2 + 24*n1 - 7*d*n1 + 2*n1^2)), 
+   j[A22TwoLoopTreeBasis1, (n1_)?NonPositive, (n2_)?NonPositive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, 
+      (n7_)?Positive] /; n1 == 0 && n2 == -1 && n3 == 0 && n4 == 1 && 
+      n5 == 1 && n6 == 1 && n7 == 1 :> 
+    (-4*j[A22TwoLoopTreeBasis1, -1, 0, 0, 0, 1, 2, 1])/(3*(-5 + 2*d)) - 
+     (4*j[A22TwoLoopTreeBasis1, -1, 0, 0, 0, 2, 1, 1])/(3*(-8 + 3*d)) + 
+     (2*j[A22TwoLoopTreeBasis1, -1, 0, 0, 1, 1, 1, 1])/3 + 
+     (2*j[A22TwoLoopTreeBasis1, -1, 0, 0, 1, 2, 0, 1])/(3*(-8 + 3*d)) + 
+     (2*j[A22TwoLoopTreeBasis1, -1, 0, 0, 2, 1, 0, 1])/(3*(-5 + 2*d)) + 
+     (2*j[A22TwoLoopTreeBasis1, 0, -1, 0, 0, 1, 2, 1])/(3*(-8 + 3*d)) + 
+     (2*j[A22TwoLoopTreeBasis1, 0, -1, 0, 0, 2, 1, 1])/(3*(-8 + 3*d)) - 
+     j[A22TwoLoopTreeBasis1, 0, -1, 0, 1, 2, 0, 1]/(3*(-8 + 3*d)) - 
+     j[A22TwoLoopTreeBasis1, 0, -1, 0, 2, 1, 0, 1]/(3*(-8 + 3*d)) + 
+     (2*j[A22TwoLoopTreeBasis1, 0, 0, -1, 0, 1, 2, 1])/(3*(-8 + 3*d)) - 
+     (2*j[A22TwoLoopTreeBasis1, 0, 0, -1, 0, 2, 1, 1])/(3*(-8 + 3*d)) + 
+     j[A22TwoLoopTreeBasis1, 0, 0, -1, 1, 2, 0, 1]/(3*(-8 + 3*d)) + 
+     j[A22TwoLoopTreeBasis1, 0, 0, 0, 0, 1, 1, 1]/(3*(-8 + 3*d)) + 
+     (4*q2*j[A22TwoLoopTreeBasis1, 0, 0, 0, 0, 1, 2, 1])/(3*(-5 + 2*d)) - 
+     (2*(-5*q2 + 2*d*q2)*j[A22TwoLoopTreeBasis1, 0, 0, 0, 1, 1, 1, 1])/
+      (3*(-8 + 3*d)) - (2*q2*j[A22TwoLoopTreeBasis1, 0, 0, 0, 2, 1, 0, 1])/
+      (3*(-5 + 2*d))}}]

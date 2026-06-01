@@ -1,0 +1,2766 @@
+BasisDirectory[hybridBasis4123] = StringDrop[DirectoryName[$Input], -1]
+hybridBasis4123 /: BasisSectors[hybridBasis4123] := 
+  {js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 0]}
+hybridBasis4123 /: CurrentState[hybridBasis4123] := 
+  <|NewDsBasis -> True, GenerateIBP -> True, AnalyzeSectors -> True, 
+   FindSymmetries -> False|>
+hybridBasis4123 /: CutDs[hybridBasis4123] := {1, 1, 1, 1, 0, 0, 0, 0, 0}
+hybridBasis4123 /: Definitions[hybridBasis4123] := 
+  {Hold[MetricTensor[] === d, SetDim[d]], Hold[VecQ[p1], 
+    Declare[p1, Vector]], Hold[VecQ[p2], Declare[p2, Vector]], 
+   Hold[VecQ[p3], Declare[p3, Vector]], Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[q, q] === q2, sp[q, q] = q2]}
+hybridBasis4123 /: Ds[hybridBasis4123] := {sp[p1, p1], sp[p2, p2], 
+   sp[p3, p3], sp[-p1 - p2 - p3 + q, -p1 - p2 - p3 + q], 
+   sp[-p1 - p3 + q, -p1 - p3 + q], sp[-p1 - p2 + q, -p1 - p2 + q], 
+   sp[p1 + p2, p1 + p2], sp[-p1 + q, -p1 + q], sp[p1 + p2 + p3, p1 + p2 + p3]}
+hybridBasis4123 /: DsBasisQ[hybridBasis4123] := True
+hybridBasis4123 /: EMs[hybridBasis4123] := {q}
+hybridBasis4123 /: ExtMappedSectors[hybridBasis4123] := {}
+hybridBasis4123 /: ExtSectorsMappings[hybridBasis4123] := {}
+hybridBasis4123 /: IBP[hybridBasis4123] := 
+  {-(#9*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9]) - 
+     #8*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, #9] - 
+     #7*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     #5*j[hybridBasis4123, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #7*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, #9] + 
+     #6*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, 1 + #6, #7, #8, #9] + 
+     #4*j[hybridBasis4123, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #5*j[hybridBasis4123, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, #9] + 
+     #4*j[hybridBasis4123, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] + 
+     #5*j[hybridBasis4123, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, #8, #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 1 + #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 1 + #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (d - 2*#1 + #4 - #5 - #7 - #8 - #9)*j[hybridBasis4123, #1, #2, #3, #4, 
+       #5, #6, #7, #8, #9] + #8*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, 
+       #7, 1 + #8, #9] - #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, 
+       -1 + #7, #8, #9] - #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, 
+       #7, -1 + #8, #9] + #6*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       1 + #6, #7, #8, #9] - #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, 
+       -1 + #6, #7, #8, #9] + #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, 
+       #6, -1 + #7, #8, #9] - #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, 
+       #6, #7, #8, -1 + #9] + #5*q2*j[hybridBasis4123, #1, #2, #3, #4, 
+       1 + #5, #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, 
+       -1 + #5, #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, 
+       #5, -1 + #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, 
+       #5, #6, #7, #8, -1 + #9] + #4*q2*j[hybridBasis4123, #1, #2, #3, 
+       1 + #4, #5, #6, #7, #8, #9], 
+    -(#9*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9]) - 
+     #7*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, 1 + #7, #8, #9] + 
+     #2*j[hybridBasis4123, -1 + #1, 1 + #2, #3, #4, #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #7*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, #9] + 
+     #6*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, 1 + #6, #7, #8, #9] + 
+     #4*j[hybridBasis4123, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #4*j[hybridBasis4123, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 1 + #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 1 + #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (#2 + #4 - #7 - #9)*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, #8, 
+       #9] - #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, -1 + #7, #8, 
+       #9] - #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, #7, -1 + #8, 
+       #9] + #6*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, -1 + #5, #6, #7, #8, 
+       #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, -1 + #6, #7, #8, 
+       #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, #6, #7, #8, 
+       -1 + #9] + #4*q2*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, #6, #7, 
+       #8, #9] - #2*j[hybridBasis4123, #1, 1 + #2, #3, #4, #5, #6, -1 + #7, 
+       #8, #9], -(#9*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 
+        1 + #9]) - #5*j[hybridBasis4123, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, 
+       #8, #9] + #9*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 
+       1 + #9] + #4*j[hybridBasis4123, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, 
+       #8, #9] + #9*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 
+       1 + #9] + #5*j[hybridBasis4123, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, 
+       #8, #9] + #4*j[hybridBasis4123, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, 
+       #8, #9] + #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 
+       1 + #9] + #5*j[hybridBasis4123, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, 
+       #8, #9] - #9*j[hybridBasis4123, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 
+       1 + #9] - #9*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 
+       1 + #9] + #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 
+       1 + #9] + (#3 + #4 - #5 - #9)*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       #6, #7, #8, #9] - #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, 
+       -1 + #6, #7, #8, #9] + #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, 
+       #6, -1 + #7, #8, #9] - #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, 
+       #6, #7, #8, -1 + #9] + #5*q2*j[hybridBasis4123, #1, #2, #3, #4, 
+       1 + #5, #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, 
+       -1 + #5, #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, 
+       #5, -1 + #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, 
+       #5, #6, #7, #8, -1 + #9] + #4*q2*j[hybridBasis4123, #1, #2, #3, 
+       1 + #4, #5, #6, #7, #8, #9] + #3*j[hybridBasis4123, #1, #2, 1 + #3, 
+       -1 + #4, #5, #6, #7, #8, #9] - #3*j[hybridBasis4123, #1, #2, 1 + #3, 
+       #4, -1 + #5, #6, #7, #8, #9] - #3*j[hybridBasis4123, #1, #2, 1 + #3, 
+       #4, #5, -1 + #6, #7, #8, #9] + #3*j[hybridBasis4123, #1, #2, 1 + #3, 
+       #4, #5, #6, -1 + #7, #8, #9] + #3*j[hybridBasis4123, #1, #2, 1 + #3, 
+       #4, #5, #6, #7, -1 + #8, #9] - #3*j[hybridBasis4123, #1, #2, 1 + #3, 
+       #4, #5, #6, #7, #8, -1 + #9], 
+    #9*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #7*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     #9*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #8*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, #7, 1 + #8, #9] - 
+     #7*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, 1 + #7, #8, #9] - 
+     #6*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, 1 + #6, #7, #8, #9] + 
+     #5*j[hybridBasis4123, #1, -1 + #2, #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #4*j[hybridBasis4123, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] - 
+     #5*j[hybridBasis4123, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 1 + #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 1 + #9] - 
+     #8*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, #7, 1 + #8, #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (#1 - #4 + #5 - #6 - #7 + #8)*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, 
+       #7, #8, #9] + #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, #7, 
+       -1 + #8, #9] + #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, -1 + #5, #6, 
+       #7, #8, #9] + #1*j[hybridBasis4123, 1 + #1, -1 + #2, #3, #4, #5, #6, 
+       #7, #8, #9] - #1*j[hybridBasis4123, 1 + #1, #2, #3, #4, #5, #6, 
+       -1 + #7, #8, #9], #9*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, 
+       #7, #8, 1 + #9] + #7*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, 
+       1 + #7, #8, #9] - #9*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, 
+       #7, #8, 1 + #9] - #7*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, 
+       1 + #7, #8, #9] - #6*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, 
+       1 + #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, -1 + #2, #3, 1 + #4, 
+       #5, #6, #7, #8, #9] - #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, 
+       #6, #7, #8, 1 + #9] + #9*j[hybridBasis4123, #1, #2, #3, #4, -1 + #5, 
+       #6, #7, #8, 1 + #9] + #9*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       -1 + #6, #7, #8, 1 + #9] - #9*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       #6, -1 + #7, #8, 1 + #9] - #9*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       #6, #7, -1 + #8, 1 + #9] + (d - 2*#2 - #4 - #6 - #7)*
+      j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, #8, #9] + 
+     #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, #7, -1 + #8, #9] + 
+     #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, -1 + #5, #6, #7, #8, #9], 
+    #9*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #9*j[hybridBasis4123, #1, -1 + #2, #3, #4, #5, #6, #7, #8, 1 + #9] + 
+     #5*j[hybridBasis4123, #1, -1 + #2, #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #4*j[hybridBasis4123, #1, -1 + #2, #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] - 
+     #5*j[hybridBasis4123, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, -1 + #5, #6, #7, #8, 1 + #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, #7, #8, 1 + #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] - 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, -1 + #8, 1 + #9] + 
+     (-#4 + #5)*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, #8, #9] + 
+     #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, -1 + #5, #6, #7, #8, #9] - 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, -1 + #4, #5, #6, #7, #8, #9] + 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, #4, -1 + #5, #6, #7, #8, #9] + 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, #4, #5, -1 + #6, #7, #8, #9] - 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, #4, #5, #6, #7, -1 + #8, #9], 
+    -(#9*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 1 + #9]) + 
+     #8*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, #7, 1 + #8, #9] + 
+     #7*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, 1 + #7, #8, #9] + 
+     #6*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     #5*j[hybridBasis4123, #1, #2, -1 + #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #4*j[hybridBasis4123, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #6*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, #9] - 
+     #8*j[hybridBasis4123, #1, #2, #3, #4, -1 + #5, #6, #7, 1 + #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] + 
+     (-#4 - #5 + #6 + #7 + #8 - #9)*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       #6, #7, #8, #9] - #7*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, 
+       1 + #7, #8, -1 + #9] + #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, 
+       #6, #7, -1 + #8, #9] + #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, 
+       -1 + #6, #7, #8, #9] + #1*j[hybridBasis4123, 1 + #1, #2, -1 + #3, #4, 
+       #5, #6, #7, #8, #9] + #1*j[hybridBasis4123, 1 + #1, #2, #3, -1 + #4, 
+       #5, #6, #7, #8, #9] - #1*j[hybridBasis4123, 1 + #1, #2, #3, #4, 
+       -1 + #5, #6, #7, #8, #9] - #1*j[hybridBasis4123, 1 + #1, #2, #3, #4, 
+       #5, -1 + #6, #7, #8, #9] + #1*j[hybridBasis4123, 1 + #1, #2, #3, #4, 
+       #5, #6, -1 + #7, #8, #9] + #1*j[hybridBasis4123, 1 + #1, #2, #3, #4, 
+       #5, #6, #7, -1 + #8, #9] - #1*j[hybridBasis4123, 1 + #1, #2, #3, #4, 
+       #5, #6, #7, #8, -1 + #9], 
+    -(#9*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, #7, #8, 1 + #9]) + 
+     #7*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, 1 + #7, #8, #9] + 
+     #6*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, 1 + #6, #7, #8, #9] - 
+     #4*j[hybridBasis4123, #1, #2, -1 + #3, 1 + #4, #5, #6, #7, #8, #9] - 
+     #6*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, 1 + #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, -1 + #7, #8, 1 + #9] + 
+     (-#4 + #6 + #7 - #9)*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, #8, 
+       #9] - #7*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, 1 + #7, #8, 
+       -1 + #9] + #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, -1 + #6, #7, 
+       #8, #9] - #2*j[hybridBasis4123, #1, 1 + #2, #3, -1 + #4, #5, #6, #7, 
+       #8, #9] + #2*j[hybridBasis4123, #1, 1 + #2, #3, #4, -1 + #5, #6, #7, 
+       #8, #9] + #2*j[hybridBasis4123, #1, 1 + #2, #3, #4, #5, -1 + #6, #7, 
+       #8, #9] - #2*j[hybridBasis4123, #1, 1 + #2, #3, #4, #5, #6, #7, 
+       -1 + #8, #9], -(#9*j[hybridBasis4123, #1, #2, -1 + #3, #4, #5, #6, #7, 
+        #8, 1 + #9]) - #5*j[hybridBasis4123, #1, #2, -1 + #3, #4, 1 + #5, #6, 
+       #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, -1 + #3, 1 + #4, #5, #6, 
+       #7, #8, #9] + #9*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, -1 + #7, 
+       #8, 1 + #9] + (d - 2*#3 - #4 - #5 - #9)*j[hybridBasis4123, #1, #2, #3, 
+       #4, #5, #6, #7, #8, #9] + #5*j[hybridBasis4123, #1, #2, #3, #4, 
+       1 + #5, #6, #7, -1 + #8, #9] + #4*j[hybridBasis4123, #1, #2, #3, 
+       1 + #4, #5, -1 + #6, #7, #8, #9], 
+    -(#8*j[hybridBasis4123, -1 + #1, #2, #3, #4, #5, #6, #7, 1 + #8, #9]) - 
+     #5*j[hybridBasis4123, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] + 
+     #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] + 
+     #5*j[hybridBasis4123, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, #8, #9] + 
+     #7*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, 1 + #7, #8, #9] + 
+     (-#1 + #4 + #6 - #7 + #8 - #9)*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       #6, #7, #8, #9] - #9*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, 
+       #8, 1 + #9] + #8*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, 
+       1 + #8, #9] - #7*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, 1 + #7, 
+       #8, #9] - #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, -1 + #7, 
+       #8, #9] + #6*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, #7, #8, 
+       #9] - #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, -1 + #6, #7, #8, 
+       #9] + #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, -1 + #7, #8, 
+       #9] + #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, #7, -1 + #8, 
+       #9] - #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, #7, #8, 
+       -1 + #9] + #5*q2*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, #7, 
+       #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, #6, #7, #8, 
+       -1 + #9] + #4*q2*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, #6, #7, 
+       #8, #9] + #1*j[hybridBasis4123, 1 + #1, #2, #3, #4, #5, #6, #7, 
+       -1 + #8, #9] - #1*q2*j[hybridBasis4123, 1 + #1, #2, #3, #4, #5, #6, 
+       #7, #8, #9], #2*j[hybridBasis4123, -1 + #1, 1 + #2, #3, #4, #5, #6, 
+       #7, #8, #9] + #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, 
+       #8, 1 + #9] + #7*j[hybridBasis4123, #1, #2, #3, #4, #5, -1 + #6, 
+       1 + #7, #8, #9] + (#4 + #6 - #7 - #9)*j[hybridBasis4123, #1, #2, #3, 
+       #4, #5, #6, #7, #8, #9] - #9*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       #6, #7, #8, 1 + #9] - #7*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, 
+       1 + #7, #8, #9] - #6*j[hybridBasis4123, #1, #2, #3, #4, #5, 1 + #6, 
+       -1 + #7, #8, #9] + #6*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, 
+       1 + #6, #7, #8, #9] - #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, 
+       #6, #7, #8, -1 + #9] + #4*q2*j[hybridBasis4123, #1, #2, #3, 1 + #4, 
+       #5, #6, #7, #8, #9] + #2*j[hybridBasis4123, #1, 1 + #2, #3, #4, #5, 
+       -1 + #6, #7, #8, #9] - #2*j[hybridBasis4123, #1, 1 + #2, #3, #4, #5, 
+       #6, -1 + #7, #8, #9] - #2*j[hybridBasis4123, #1, 1 + #2, #3, #4, #5, 
+       #6, #7, -1 + #8, #9], 
+    -(#5*j[hybridBasis4123, -1 + #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9]) + 
+     #9*j[hybridBasis4123, #1, #2, #3, -1 + #4, #5, #6, #7, #8, 1 + #9] + 
+     #5*j[hybridBasis4123, #1, #2, #3, -1 + #4, 1 + #5, #6, #7, #8, #9] + 
+     (#4 - #9)*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, #8, #9] - 
+     #9*q2*j[hybridBasis4123, #1, #2, #3, #4, #5, #6, #7, #8, 1 + #9] - 
+     #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, -1 + #6, #7, #8, #9] + 
+     #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, -1 + #7, #8, #9] + 
+     #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, #7, -1 + #8, #9] - 
+     #5*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, #7, #8, -1 + #9] + 
+     #5*q2*j[hybridBasis4123, #1, #2, #3, #4, 1 + #5, #6, #7, #8, #9] - 
+     #4*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, #6, #7, #8, -1 + #9] + 
+     #4*q2*j[hybridBasis4123, #1, #2, #3, 1 + #4, #5, #6, #7, #8, #9] + 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, -1 + #4, #5, #6, #7, #8, #9] - 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, #4, #5, -1 + #6, #7, #8, #9] + 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, #4, #5, #6, -1 + #7, #8, #9] - 
+     #3*j[hybridBasis4123, #1, #2, 1 + #3, #4, #5, #6, #7, #8, -1 + #9]} & 
+hybridBasis4123 /: Information[hybridBasis4123] := 
+  (If[ValueQ[hybridBasis4123::usage], Information[hybridBasis4123, 
+     LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[
+         First /@ UpValues[hybridBasis4123] /. HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[hybridBasis4123, 
+              __]]] :> HoldForm[LiteRed`Private`f$[hybridBasis4123, 
+             "\[Ellipsis]"]]}, {1}], 
+        {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[
+              hybridBasis4123, ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  hybridBasis4123], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 1] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 1] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?Positive] :> 
+    Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 1] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?Positive] :> 
+    Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 1] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?NonPositive, 
+     (n8_)?Positive, (n9_)?Positive] :> 
+    Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+     (n8_)?Positive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+      (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+        j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 0] := 
+  {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+     (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+     (n8_)?NonPositive, (n9_)?NonPositive] :> 
+    Expand[j[hybridBasis4123, n3, n4, n1, n2, n5, n7, n6, 0, 0]/
+      ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9*
+       (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+         q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 1]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 0]"}]]
+hybridBasis4123 /: jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], 
+     "jRules[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 1]"}]]
+hybridBasis4123 /: jsOrder[hybridBasis4123] := {"np", "cp", "-ds", "-ns"}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  {{-1, 1, 1, 1, -1, -1, -1, -1, -1}, {-1, 0, 0, 0, -1, -1, -1, -1, -1}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  {{-1, 1, 1, 1, -1, -1, -1, -1, 1}, {-1, 0, 0, 0, -1, -1, -1, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  {{-1, 1, 1, 1, -1, -1, -1, 1, 1}, {-1, 0, 0, 0, -1, -1, -1, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 0, 0] := 
+  {{-1, 1, 1, 1, -1, -1, 1, -1, -1}, {-1, 0, 0, 0, -1, -1, 0, -1, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 0, 1] := 
+  {{-1, 1, 1, 1, -1, -1, 1, -1, 1}, {-1, 0, 0, 0, -1, -1, 0, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 1, 0] := 
+  {{-1, 1, 1, 1, -1, -1, 1, 1, -1}, {-1, 0, 0, 0, -1, -1, 0, 0, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  {{-1, 1, 1, 1, -1, -1, 1, 1, 1}, {-1, 0, 0, 0, -1, -1, 0, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 1, 1, 0, 0] := 
+  {{-1, 1, 1, 1, -1, 1, 1, -1, -1}, {-1, 0, 0, 0, -1, 0, 0, -1, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  {{-1, 1, 1, 1, -1, 1, 1, -1, 1}, {-1, 0, 0, 0, -1, 0, 0, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, -1, 1, 1, 1, 1}, {-1, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 0, 1, 0, 0] := 
+  {{-1, 1, 1, 1, 1, -1, 1, -1, -1}, {-1, 0, 0, 0, 0, -1, 0, -1, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 0, 1, 0, 1] := 
+  {{-1, 1, 1, 1, 1, -1, 1, -1, 1}, {-1, 0, 0, 0, 0, -1, 0, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 0, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1, -1, 1, 1, 1}, {-1, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 1, 0, 0, 1] := 
+  {{-1, 1, 1, 1, 1, 1, -1, -1, 1}, {-1, 0, 0, 0, 0, 0, -1, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 1, 0, 1, 0] := 
+  {{-1, 1, 1, 1, 1, 1, -1, 1, -1}, {-1, 0, 0, 0, 0, 0, -1, 0, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 1, 0, 1, 1] := 
+  {{-1, 1, 1, 1, 1, 1, -1, 1, 1}, {-1, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 0, 0] := 
+  {{-1, 1, 1, 1, 1, 1, 1, -1, -1}, {-1, 0, 0, 0, 0, 0, 0, -1, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 0, 1] := 
+  {{-1, 1, 1, 1, 1, 1, 1, -1, 1}, {-1, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  {{-1, 1, 1, 1, 1, 1, 1, 1, -1}, {-1, 0, 0, 0, 0, 0, 0, 0, -1}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 1, 1, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 0, 0, 0, 0] := 
+  {{1, -1, 1, 1, -1, -1, -1, -1, -1}, {0, -1, 0, 0, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 0, 0, 0, 1] := 
+  {{1, -1, 1, 1, -1, -1, -1, -1, 1}, {0, -1, 0, 0, -1, -1, -1, -1, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 0, 0, 1, 1] := 
+  {{1, -1, 1, 1, -1, -1, -1, 1, 1}, {0, -1, 0, 0, -1, -1, -1, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 0, 0] := 
+  {{1, -1, 1, 1, -1, -1, 1, -1, -1}, {0, -1, 0, 0, -1, -1, 0, -1, -1}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 0, 1] := 
+  {{1, -1, 1, 1, -1, -1, 1, -1, 1}, {0, -1, 0, 0, -1, -1, 0, -1, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 1, 0] := 
+  {{1, -1, 1, 1, -1, -1, 1, 1, -1}, {0, -1, 0, 0, -1, -1, 0, 0, -1}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 1, 1] := 
+  {{1, -1, 1, 1, -1, -1, 1, 1, 1}, {0, -1, 0, 0, -1, -1, 0, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 1, 1, 0, 0] := 
+  {{1, -1, 1, 1, -1, 1, 1, -1, -1}, {0, -1, 0, 0, -1, 0, 0, -1, -1}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 0, 1, 1, 0, 1] := 
+  {{1, -1, 1, 1, -1, 1, 1, -1, 1}, {0, -1, 0, 0, -1, 0, 0, -1, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 1, 0, 1, 0, 0] := 
+  {{1, -1, 1, 1, 1, -1, 1, -1, -1}, {0, -1, 0, 0, 0, -1, 0, -1, -1}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 1, 0, 1, 0, 1] := 
+  {{1, -1, 1, 1, 1, -1, 1, -1, 1}, {0, -1, 0, 0, 0, -1, 0, -1, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 1, 0, 1, 1, 1] := 
+  {{1, -1, 1, 1, 1, -1, 1, 1, 1}, {0, -1, 0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 1, 1, 0, 0, 1] := 
+  {{1, -1, 1, 1, 1, 1, -1, -1, 1}, {0, -1, 0, 0, 0, 0, -1, -1, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 1, 1, 0, 1, 0] := 
+  {{1, -1, 1, 1, 1, 1, -1, 1, -1}, {0, -1, 0, 0, 0, 0, -1, 0, -1}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 1, 1, 0, 1, 1] := 
+  {{1, -1, 1, 1, 1, 1, -1, 1, 1}, {0, -1, 0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 0, 1, 1, 1, 1, 1, 1, 1] := 
+  {{1, -1, 1, 1, 1, 1, 1, 1, 1}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {1, 0, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 0, 0, 0, 0] := 
+  {{1, 1, -1, 1, -1, -1, -1, -1, -1}, {0, 0, -1, 0, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 0, 0, 0, 1] := 
+  {{1, 1, -1, 1, -1, -1, -1, -1, 1}, {0, 0, -1, 0, -1, -1, -1, -1, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 0, 0, 1, 1] := 
+  {{1, 1, -1, 1, -1, -1, -1, 1, 1}, {0, 0, -1, 0, -1, -1, -1, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 0, 0] := 
+  {{1, 1, -1, 1, -1, -1, 1, -1, -1}, {0, 0, -1, 0, -1, -1, 0, -1, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 0, 1] := 
+  {{1, 1, -1, 1, -1, -1, 1, -1, 1}, {0, 0, -1, 0, -1, -1, 0, -1, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 1, 0] := 
+  {{1, 1, -1, 1, -1, -1, 1, 1, -1}, {0, 0, -1, 0, -1, -1, 0, 0, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 1, 1] := 
+  {{1, 1, -1, 1, -1, -1, 1, 1, 1}, {0, 0, -1, 0, -1, -1, 0, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 1, 1, 0, 0] := 
+  {{1, 1, -1, 1, -1, 1, 1, -1, -1}, {0, 0, -1, 0, -1, 0, 0, -1, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 0, 1, 1, 0, 1] := 
+  {{1, 1, -1, 1, -1, 1, 1, -1, 1}, {0, 0, -1, 0, -1, 0, 0, -1, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 0, 1, 0, 0] := 
+  {{1, 1, -1, 1, 1, -1, 1, -1, -1}, {0, 0, -1, 0, 0, -1, 0, -1, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 0, 1, 0, 1] := 
+  {{1, 1, -1, 1, 1, -1, 1, -1, 1}, {0, 0, -1, 0, 0, -1, 0, -1, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 0, 1, 1, 1] := 
+  {{1, 1, -1, 1, 1, -1, 1, 1, 1}, {0, 0, -1, 0, 0, -1, 0, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 1, 0, 0, 1] := 
+  {{1, 1, -1, 1, 1, 1, -1, -1, 1}, {0, 0, -1, 0, 0, 0, -1, -1, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 1, 0, 1, 0] := 
+  {{1, 1, -1, 1, 1, 1, -1, 1, -1}, {0, 0, -1, 0, 0, 0, -1, 0, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 1, 0, 1, 1] := 
+  {{1, 1, -1, 1, 1, 1, -1, 1, 1}, {0, 0, -1, 0, 0, 0, -1, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 1, 1, 0, 0] := 
+  {{1, 1, -1, 1, 1, 1, 1, -1, -1}, {0, 0, -1, 0, 0, 0, 0, -1, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 1, 1, 1, 0] := 
+  {{1, 1, -1, 1, 1, 1, 1, 1, -1}, {0, 0, -1, 0, 0, 0, 0, 0, -1}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 0, 1, 1, 1, 1, 1, 1] := 
+  {{1, 1, -1, 1, 1, 1, 1, 1, 1}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {1, 1, 0, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 0, 0, 0, 0] := 
+  {{1, 1, 1, -1, -1, -1, -1, -1, -1}, {0, 0, 0, -1, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 0, 0, 0, 1] := 
+  {{1, 1, 1, -1, -1, -1, -1, -1, 1}, {0, 0, 0, -1, -1, -1, -1, -1, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 0, 0, 1, 1] := 
+  {{1, 1, 1, -1, -1, -1, -1, 1, 1}, {0, 0, 0, -1, -1, -1, -1, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 0, 0] := 
+  {{1, 1, 1, -1, -1, -1, 1, -1, -1}, {0, 0, 0, -1, -1, -1, 0, -1, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 0, 1] := 
+  {{1, 1, 1, -1, -1, -1, 1, -1, 1}, {0, 0, 0, -1, -1, -1, 0, -1, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 1, 0] := 
+  {{1, 1, 1, -1, -1, -1, 1, 1, -1}, {0, 0, 0, -1, -1, -1, 0, 0, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 1, 1] := 
+  {{1, 1, 1, -1, -1, -1, 1, 1, 1}, {0, 0, 0, -1, -1, -1, 0, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 1, 1, 0, 0] := 
+  {{1, 1, 1, -1, -1, 1, 1, -1, -1}, {0, 0, 0, -1, -1, 0, 0, -1, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 1, 1, 0, 1] := 
+  {{1, 1, 1, -1, -1, 1, 1, -1, 1}, {0, 0, 0, -1, -1, 0, 0, -1, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 0, 1, 1, 1, 1] := 
+  {{1, 1, 1, -1, -1, 1, 1, 1, 1}, {0, 0, 0, -1, -1, 0, 0, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 0, 1, 0, 0] := 
+  {{1, 1, 1, -1, 1, -1, 1, -1, -1}, {0, 0, 0, -1, 0, -1, 0, -1, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 0, 1, 0, 1] := 
+  {{1, 1, 1, -1, 1, -1, 1, -1, 1}, {0, 0, 0, -1, 0, -1, 0, -1, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 0, 1, 1, 1] := 
+  {{1, 1, 1, -1, 1, -1, 1, 1, 1}, {0, 0, 0, -1, 0, -1, 0, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 1, 0, 0, 1] := 
+  {{1, 1, 1, -1, 1, 1, -1, -1, 1}, {0, 0, 0, -1, 0, 0, -1, -1, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 1, 0, 1, 0] := 
+  {{1, 1, 1, -1, 1, 1, -1, 1, -1}, {0, 0, 0, -1, 0, 0, -1, 0, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 1, 0, 1, 1] := 
+  {{1, 1, 1, -1, 1, 1, -1, 1, 1}, {0, 0, 0, -1, 0, 0, -1, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 1, 1, 1, 0] := 
+  {{1, 1, 1, -1, 1, 1, 1, 1, -1}, {0, 0, 0, -1, 0, 0, 0, 0, -1}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 0, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, -1, 1, 1, 1, 1, 1}, {0, 0, 0, -1, 0, 0, 0, 0, 0}, 
+   {1, 1, 1, 0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  {{1, 1, 1, 1, -1, -1, -1, -1, -1}, {0, 0, 0, 0, -1, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  {{1, 1, 1, 1, -1, -1, -1, -1, 1}, {0, 0, 0, 0, -1, -1, -1, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 0] := 
+  {{1, 1, 1, 1, -1, -1, -1, 1, -1}, {0, 0, 0, 0, -1, -1, -1, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  {{1, 1, 1, 1, -1, -1, -1, 1, 1}, {0, 0, 0, 0, -1, -1, -1, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0] := 
+  {{1, 1, 1, 1, -1, -1, 1, -1, -1}, {0, 0, 0, 0, -1, -1, 0, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1] := 
+  {{1, 1, 1, 1, -1, -1, 1, -1, 1}, {0, 0, 0, 0, -1, -1, 0, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0] := 
+  {{1, 1, 1, 1, -1, -1, 1, 1, -1}, {0, 0, 0, 0, -1, -1, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  {{1, 1, 1, 1, -1, -1, 1, 1, 1}, {0, 0, 0, 0, -1, -1, 0, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 0] := 
+  {{1, 1, 1, 1, -1, 1, -1, -1, -1}, {0, 0, 0, 0, -1, 0, -1, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 1] := 
+  {{1, 1, 1, 1, -1, 1, -1, -1, 1}, {0, 0, 0, 0, -1, 0, -1, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 1] := 
+  {{1, 1, 1, 1, -1, 1, -1, 1, 1}, {0, 0, 0, 0, -1, 0, -1, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 0] := 
+  {{1, 1, 1, 1, -1, 1, 1, -1, -1}, {0, 0, 0, 0, -1, 0, 0, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  {{1, 1, 1, 1, -1, 1, 1, -1, 1}, {0, 0, 0, 0, -1, 0, 0, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 0] := 
+  {{1, 1, 1, 1, -1, 1, 1, 1, -1}, {0, 0, 0, 0, -1, 0, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, -1, 1, 1, 1, 1}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 0] := 
+  {{1, 1, 1, 1, 1, -1, -1, -1, -1}, {0, 0, 0, 0, 0, -1, -1, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 1] := 
+  {{1, 1, 1, 1, 1, -1, -1, -1, 1}, {0, 0, 0, 0, 0, -1, -1, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 0] := 
+  {{1, 1, 1, 1, 1, -1, -1, 1, -1}, {0, 0, 0, 0, 0, -1, -1, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 1] := 
+  {{1, 1, 1, 1, 1, -1, -1, 1, 1}, {0, 0, 0, 0, 0, -1, -1, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 0] := 
+  {{1, 1, 1, 1, 1, -1, 1, -1, -1}, {0, 0, 0, 0, 0, -1, 0, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 1] := 
+  {{1, 1, 1, 1, 1, -1, 1, -1, 1}, {0, 0, 0, 0, 0, -1, 0, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 0] := 
+  {{1, 1, 1, 1, 1, -1, 1, 1, -1}, {0, 0, 0, 0, 0, -1, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1, -1, 1, 1, 1}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 0] := 
+  {{1, 1, 1, 1, 1, 1, -1, -1, -1}, {0, 0, 0, 0, 0, 0, -1, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 1] := 
+  {{1, 1, 1, 1, 1, 1, -1, -1, 1}, {0, 0, 0, 0, 0, 0, -1, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 0] := 
+  {{1, 1, 1, 1, 1, 1, -1, 1, -1}, {0, 0, 0, 0, 0, 0, -1, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 1] := 
+  {{1, 1, 1, 1, 1, 1, -1, 1, 1}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 0] := 
+  {{1, 1, 1, 1, 1, 1, 1, -1, -1}, {0, 0, 0, 0, 0, 0, 0, -1, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, 1, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 1] := 
+  {{1, 1, 1, 1, 1, 1, 1, -1, 1}, {0, 0, 0, 0, 0, 0, 0, -1, 0}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  {{1, 1, 1, 1, 1, 1, 1, 1, -1}, {0, 0, 0, 0, 0, 0, 0, 0, -1}, 
+   {1, 1, 1, 1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, -1, 0, 0}}
+hybridBasis4123 /: jsOrder[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 0, 0, 0, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, 0, 0, -1, 0}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n4, n3, 0, n6, n7, n8, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n3, n2, n4, n6, n5, 0, n8, n9]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n3, n4, n2, 0, n5, 0, n8, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n6*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n4, n2, n3, n6, 0, 0, n8, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n4, n3, n2, n5, 0, 0, n8, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n6*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n3, n4, 0, n6, n7, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n4, n3, 0, n6, n7, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n3, n1, n4, n6, 0, 0, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n3, n4, n1, 0, 0, 0, 0, n8]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n6*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n4, n1, n3, n6, 0, n5, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n4, n3, n1, 0, 0, n5, 0, n8]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n6*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n7)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n1, n2, n4, 0, n5, 0, 0, n9]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n1, n4, n2, n7, n5, 0, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n2, n1, n4, n5, 0, 0, 0, n9]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n2, n4, n1, n7, 0, 0, 0, n8]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n4, n1, n2, n5, n7, n6, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n4, n2, n1, 0, n7, n6, 0, n8]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n1, n2, n3, 0, 0, 0, n9, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n1, n3, n2, n7, 0, 0, n9, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n2, n1, n3, 0, 0, n5, n9, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n3, n1, n2, 0, n7, n6, n9, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n3, n2, n4, n6, n5, 0, n8, n9]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n3, n4, 0, n6, n7, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n2, n3, n1, n4, n6, 0, 0, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n3, n1, n2, n4, 0, n5, 0, 0, n9]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n3, n2, n1, n4, n5, 0, 0, 0, n9]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n7*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n6*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n3, n2, n4, n6, n5, 0, n8, n9]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, 
+      (n7_)?NonPositive, (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n4, n3, 0, n6, n7, n8, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n3, n4, 0, n6, n7, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n4, n3, 0, n6, n7, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n3, n4, 0, n6, n7, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5)]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n4, n3, 0, n6, n7, n8, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[hybridBasis4123, n1, n2, 
+       n3, n4, n5, n6, n7, n8, n9]]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n4, n3, 0, n6, n7, n8, 0]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n3, n4, 0, n6, n7, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n4, n3, 0, n6, n7, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n4, n2, n1, 0, n7, n6, 0, n8]/
+       ((j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])^n5*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n3, n1, n2, 0, n7, n6, n9, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n4, n1, n2, n5, n7, n6, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n2, n1, n3, n4, 0, n6, n7, 0, n9]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8*
+        (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          2*j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n5)]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[hybridBasis4123, n1, n2, 
+       n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n4, n3, n2, n1, 0, n7, n6, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n5]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[hybridBasis4123, n1, n2, 
+       n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?NonPositive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n4, n2, n3, n1, n7, 0, n5, n9, n8]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n6]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n3, n2, n4, n6, n5, 0, n8, n9]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n3, n2, n4, n6, n5, 0, n8, n9]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[hybridBasis4123, n1, n2, 
+       n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?NonPositive, 
+      (n8_)?Positive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n3, n2, n4, n6, n5, 0, n8, n9]/
+       (j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+         j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])^n7]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}, 
+   {j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n3, n4, n1, n2, n5, n7, n6, 0, 0]/
+       ((j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n9*
+        (j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+          j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1] + 
+          q2*j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0])^n8)]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?NonPositive, (n9_)?Positive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 0] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?NonPositive] :> 
+     Expand[j[hybridBasis4123, n1, n2, n3, n4, n5, n6, n7, n8, n9]]}}
+hybridBasis4123 /: jSymmetries[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 1] := 
+  {{j[hybridBasis4123, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive, (n6_)?Positive, (n7_)?Positive, 
+      (n8_)?Positive, (n9_)?Positive] :> Expand[j[hybridBasis4123, n1, n2, 
+       n3, n4, n5, n6, n7, n8, n9]]}}
+hybridBasis4123 /: LI[hybridBasis4123] := {} & 
+hybridBasis4123 /: LMs[hybridBasis4123] := {p1, p2, p3}
+hybridBasis4123 /: MappedSectors[hybridBasis4123] := 
+  {js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 0]}
+hybridBasis4123 /: MIs[hybridBasis4123] := 
+  {j[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0], 
+   j[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   j[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 1]}
+hybridBasis4123 /: NDs[hybridBasis4123] := 9
+hybridBasis4123 /: NonZeroSectors[hybridBasis4123] := 
+  {js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+hybridBasis4123 /: Parameters[hybridBasis4123] := {q2, d}
+hybridBasis4123 /: PowerShifts[hybridBasis4123] := {0, 0, 0, 0, 0, 0, 0, 0, 0}
+hybridBasis4123 /: SectorsMappings[hybridBasis4123] := 
+  {js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 1] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 1] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 1] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 1] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 1, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 1, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 0, 0, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 0, 0, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 0] -> 
+    js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1]}
+hybridBasis4123 /: SectorsPattern[hybridBasis4123] := {___}
+hybridBasis4123 /: SimpleSectors[hybridBasis4123] := 
+  {js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0]}
+hybridBasis4123 /: SPs[hybridBasis4123] := {sp[p1, p1], sp[p1, p2], 
+   sp[p1, p3], sp[p1, q], sp[p2, p2], sp[p2, p3], sp[p2, q], sp[p3, p3], 
+   sp[p3, q]}
+hybridBasis4123 /: SR[hybridBasis4123] := 
+  Get[FileNameJoin[{BasisDirectory[hybridBasis4123], "SR[hybridBasis4123]"}]]
+hybridBasis4123 /: Toj[hybridBasis4123] := 
+  {sp[p1, p1] -> j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0], 
+   sp[p1, p2] -> (-j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+      j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0])/2, 
+   sp[p1, p3] -> (-j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])/2, 
+   sp[p1, q] -> (q2 + j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])/2, 
+   sp[p2, p2] -> j[hybridBasis4123, 0, -1, 0, 0, 0, 0, 0, 0, 0], 
+   sp[p2, p3] -> (j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, 0, -1, 0, 0, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])/2, 
+   sp[p2, q] -> (-j[hybridBasis4123, -1, 0, 0, 0, 0, 0, 0, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, -1, 0])/2, 
+   sp[p3, p3] -> j[hybridBasis4123, 0, 0, -1, 0, 0, 0, 0, 0, 0], 
+   sp[p3, q] -> (-j[hybridBasis4123, 0, 0, 0, -1, 0, 0, 0, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, -1, 0, 0, 0] - 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, -1, 0, 0] + 
+      j[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, -1])/2}
+hybridBasis4123 /: UniqueSectors[hybridBasis4123] := 
+  {js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+hybridBasis4123 /: ZerojRule[hybridBasis4123] := 
+  LiteRed`Private`jjj:j[hybridBasis4123, __] :> 
+   0 /; Module[{LiteRed`Private`jjs = 
+       Rest[List @@ jSector[LiteRed`Private`jjj]]}, 
+     Or @@ (BitOr[LiteRed`Private`jjs, #1] === #1 & ) /@ 
+       {{1, 1, 1, 0, 1, 1, 1, 1, 1}, {1, 1, 0, 1, 1, 1, 1, 1, 1}, 
+        {1, 0, 1, 1, 1, 1, 1, 1, 1}, {0, 1, 1, 1, 1, 1, 1, 1, 1}}]
+hybridBasis4123 /: ZeroSectors[hybridBasis4123] := 
+  {js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 0, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 0, 0, 0], 
+   js[hybridBasis4123, 0, 0, 0, 1, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 0, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 0, 0, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 0, 0, 0, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 0, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 0, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 1, 0, 0], 
+   js[hybridBasis4123, 0, 0, 1, 1, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 0, 1, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 0, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 0, 0, 1, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 0, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 0, 0, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 1, 1, 1, 0, 0, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 0, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 0, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 1, 0, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 1, 1, 0], 
+   js[hybridBasis4123, 0, 1, 1, 1, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 0, 1, 1, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+   js[hybridBasis4123, 1, 1, 1, 0, 1, 1, 1, 1, 1]}
+hybridBasis4123 /: SectorsMappings[hybridBasis4123, 
+   LiteRed`Private`ns$:(0 | 1)..] := Cases[SectorsMappings[hybridBasis4123], 
+   HoldPattern[js[hybridBasis4123, LiteRed`Private`ns$] -> _]]
+hybridBasis4123::usage = "3-loop basis with 1 external momenta.\nUse \
+Information[hybridBasis4123] to get basis summary.\nThis string can be \
+redefined by setting hybridBasis4123::usage=\"\[Ellipsis]\""; 
+ Information[hybridBasis4123, LongForm -> False]; 
+LiteRed`Private`CheckDefs[hybridBasis4123]
+BasisDirectory[hybridBasis4123]

@@ -1,0 +1,16 @@
+Last[{{{-1, 1, -1, 1, -1, 1, 1}, {-1, 0, -1, 0, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}, 
+  {j[A22TwoLoopTreeBasis4, (n1_)?NonPositive, (n2_)?Positive, 
+      (n3_)?NonPositive, (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, 
+      (n7_)?Positive] /; True :> 
+    (n5*j[A22TwoLoopTreeBasis4, n1, n2, -1 + n3, n4, 1 + n5, n6, n7])/
+      (d - n1 - n3 - n4 - n6 - n7) + 
+     (n2*j[A22TwoLoopTreeBasis4, n1, 1 + n2, n3, -1 + n4, n5, n6, n7])/
+      (d - n1 - n3 - n4 - n6 - n7) + 
+     (n1*j[A22TwoLoopTreeBasis4, 1 + n1, -1 + n2, n3, n4, n5, n6, n7])/
+      (-d + n1 + n3 + n4 + n6 + n7) - 
+     (n1*j[A22TwoLoopTreeBasis4, 1 + n1, n2, n3, -1 + n4, n5, n6, n7])/
+      (-d + n1 + n3 + n4 + n6 + n7) + 
+     (n1*q2*j[A22TwoLoopTreeBasis4, 1 + n1, n2, n3, n4, n5, n6, n7])/
+      (-d + n1 + n3 + n4 + n6 + n7)}}]

@@ -1,0 +1,679 @@
+BasisDirectory[basis] = StringDrop[DirectoryName[$Input], -1]
+basis /: BasisSectors[basis] := 
+  Get[FileNameJoin[{BasisDirectory[basis], "BasisSectors[basis]"}]]
+basis /: CurrentState[basis] := <|NewDsBasis -> True, GenerateIBP -> True, 
+   AnalyzeSectors -> True, FindSymmetries -> False|>
+basis /: CutDs[basis] := {0, 0, 0, 0, 0, 0, 0}
+basis /: Definitions[basis] := {Hold[MetricTensor[] === d, SetDim[d]], 
+   Hold[VecQ[l1], Declare[l1, Vector]], Hold[VecQ[l2], Declare[l2, Vector]], 
+   Hold[VecQ[k1], Declare[k1, Vector]], Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[k1] === LiteRed`Private`ExpresionType[
+      k1], Declare[k1, LiteRed`Private`ExpresionType[k1]]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[k1, k1] === 0, sp[k1, k1] = 0], Hold[sp[q, q] === q2, 
+    sp[q, q] = q2], Hold[sp[k1, q] === q2/2, sp[k1, q] = q2/2]}
+basis /: Ds[basis] := {sp[l1, l1], sp[l2, l2], sp[-k1 + l2, -k1 + l2], 
+   sp[l1 + l2, l1 + l2], sp[l1 + q, l1 + q], sp[-k1 + l1 + l2 + q, 
+    -k1 + l1 + l2 + q], sp[-k1 + l1, -k1 + l1]}
+basis /: DsBasisQ[basis] := True
+basis /: EMs[basis] := {k1, q}
+basis /: ExtMappedSectors[basis] := {}
+basis /: ExtSectorsMappings[basis] := {}
+basis /: IBP[basis] := Get[FileNameJoin[{BasisDirectory[basis], 
+     "IBP[basis]"}]]
+basis /: Information[basis] := (If[ValueQ[basis::usage], 
+    Information[basis, LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[First /@ UpValues[basis] /. 
+          HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[basis, __]]] :> 
+           HoldForm[LiteRed`Private`f$[basis, "\[Ellipsis]"]]}, {1}], 
+        {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[basis, 
+              ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  basis], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+basis /: jRules[basis, 0, 0, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 0, 1, 0, 0, 1, 1]"}]]
+basis /: jRules[basis, 0, 0, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 0, 1, 0, 1, 1, 1]"}]]
+basis /: jRules[basis, 0, 0, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 0, 1, 1, 0, 1, 1]"}]]
+basis /: jRules[basis, 0, 0, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 0, 1, 1, 1, 0, 1]"}]]
+basis /: jRules[basis, 0, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 0, 1, 1, 1, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 0, 0, 0, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 0, 0, 1, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 0, 1, 0, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 0, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 0, 1, 1, 0, 0]"}]]
+basis /: jRules[basis, 0, 1, 0, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 0, 1, 1, 0, 1]"}]]
+basis /: jRules[basis, 0, 1, 0, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 0, 1, 1, 1, 0]"}]]
+basis /: jRules[basis, 0, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 0, 1, 1, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 1, 0, 0, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 1, 0, 1, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 1, 1, 0, 1, 1]"}]]
+basis /: jRules[basis, 0, 1, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 1, 1, 1, 0, 0]"}]]
+basis /: jRules[basis, 0, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 1, 1, 1, 0, 1]"}]]
+basis /: jRules[basis, 0, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 1, 1, 1, 1, 0]"}]]
+basis /: jRules[basis, 0, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 0, 1, 1, 1, 1, 1, 1]"}]]
+basis /: jRules[basis, 1, 0, 1, 0, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 0, 0, 1, 0]"}]]
+basis /: jRules[basis, 1, 0, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 0, 0, 1, 1]"}]]
+basis /: jRules[basis, 1, 0, 1, 0, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 0, 1, 1, 0]"}]]
+basis /: jRules[basis, 1, 0, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 0, 1, 1, 1]"}]]
+basis /: jRules[basis, 1, 0, 1, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 1, 0, 1, 0]"}]]
+basis /: jRules[basis, 1, 0, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 1, 0, 1, 1]"}]]
+basis /: jRules[basis, 1, 0, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 1, 1, 0, 0]"}]]
+basis /: jRules[basis, 1, 0, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 1, 1, 0, 1]"}]]
+basis /: jRules[basis, 1, 0, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 1, 1, 1, 0]"}]]
+basis /: jRules[basis, 1, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 0, 1, 1, 1, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 0, 0, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 0, 0, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 0, 1, 1, 0]"}]]
+basis /: jRules[basis, 1, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 0, 1, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 1, 0, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 0, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 1, 1, 0, 0]"}]]
+basis /: jRules[basis, 1, 1, 0, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 1, 1, 0, 1]"}]]
+basis /: jRules[basis, 1, 1, 0, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 1, 1, 1, 0]"}]]
+basis /: jRules[basis, 1, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 0, 1, 1, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 1, 0, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 0, 0, 1, 0]"}]]
+basis /: jRules[basis, 1, 1, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 0, 0, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 1, 0, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 0, 1, 1, 0]"}]]
+basis /: jRules[basis, 1, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 0, 1, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 1, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 1, 0, 1, 0]"}]]
+basis /: jRules[basis, 1, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 1, 0, 1, 1]"}]]
+basis /: jRules[basis, 1, 1, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 1, 1, 0, 0]"}]]
+basis /: jRules[basis, 1, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 1, 1, 0, 1]"}]]
+basis /: jRules[basis, 1, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 1, 1, 1, 0]"}]]
+basis /: jRules[basis, 1, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jRules[basis, 1, 1, 1, 1, 1, 1, 1]"}]]
+basis /: jsOrder[basis] := {"np", "cp", "-ds", "-ns"}
+basis /: jsOrder[basis, 0, 0, 0, 0, 0, 1, 1] := 
+  {{-1, -1, -1, -1, -1, 1, 1}, {-1, -1, -1, -1, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 0, 0, 1, 1, 1] := 
+  {{-1, -1, -1, -1, 1, 1, 1}, {-1, -1, -1, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 0, 1, 0, 1, 1] := 
+  {{-1, -1, -1, 1, -1, 1, 1}, {-1, -1, -1, 0, -1, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 0, 1, 1, 0, 1] := 
+  {{-1, -1, -1, 1, 1, -1, 1}, {-1, -1, -1, 0, 0, -1, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 0, 1, 1, 1, 1] := 
+  {{-1, -1, -1, 1, 1, 1, 1}, {-1, -1, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 0, 0, 0, 1] := 
+  {{-1, -1, 1, -1, -1, -1, 1}, {-1, -1, 0, -1, -1, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 0, 0, 1, 0] := 
+  {{-1, -1, 1, -1, -1, 1, -1}, {-1, -1, 0, -1, -1, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 0, 0, 1, 1] := 
+  {{-1, -1, 1, -1, -1, 1, 1}, {-1, -1, 0, -1, -1, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 0, 1, 0, 1] := 
+  {{-1, -1, 1, -1, 1, -1, 1}, {-1, -1, 0, -1, 0, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 0, 1, 1, 0] := 
+  {{-1, -1, 1, -1, 1, 1, -1}, {-1, -1, 0, -1, 0, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 0, 1, 1, 1] := 
+  {{-1, -1, 1, -1, 1, 1, 1}, {-1, -1, 0, -1, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 1, 0, 0, 1] := 
+  {{-1, -1, 1, 1, -1, -1, 1}, {-1, -1, 0, 0, -1, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 1, 0, 1, 0] := 
+  {{-1, -1, 1, 1, -1, 1, -1}, {-1, -1, 0, 0, -1, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 1, 0, 1, 1] := 
+  {{-1, -1, 1, 1, -1, 1, 1}, {-1, -1, 0, 0, -1, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 1, 1, 0, 0] := 
+  {{-1, -1, 1, 1, 1, -1, -1}, {-1, -1, 0, 0, 0, -1, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 1, 1, 0, 1] := 
+  {{-1, -1, 1, 1, 1, -1, 1}, {-1, -1, 0, 0, 0, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 1, 1, 1, 0] := 
+  {{-1, -1, 1, 1, 1, 1, -1}, {-1, -1, 0, 0, 0, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 0, 1, 1, 1, 1, 1] := 
+  {{-1, -1, 1, 1, 1, 1, 1}, {-1, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 0, 0, 0, 1] := 
+  {{-1, 1, -1, -1, -1, -1, 1}, {-1, 0, -1, -1, -1, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 0, 0, 1, 0] := 
+  {{-1, 1, -1, -1, -1, 1, -1}, {-1, 0, -1, -1, -1, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 0, 0, 1, 1] := 
+  {{-1, 1, -1, -1, -1, 1, 1}, {-1, 0, -1, -1, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 0, 1, 0, 1] := 
+  {{-1, 1, -1, -1, 1, -1, 1}, {-1, 0, -1, -1, 0, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 0, 1, 1, 0] := 
+  {{-1, 1, -1, -1, 1, 1, -1}, {-1, 0, -1, -1, 0, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 0, 1, 1, 1] := 
+  {{-1, 1, -1, -1, 1, 1, 1}, {-1, 0, -1, -1, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 1, 0, 0, 1] := 
+  {{-1, 1, -1, 1, -1, -1, 1}, {-1, 0, -1, 0, -1, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 1, 0, 1, 0] := 
+  {{-1, 1, -1, 1, -1, 1, -1}, {-1, 0, -1, 0, -1, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 1, 0, 1, 1] := 
+  {{-1, 1, -1, 1, -1, 1, 1}, {-1, 0, -1, 0, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 1, 1, 0, 1] := 
+  {{-1, 1, -1, 1, 1, -1, 1}, {-1, 0, -1, 0, 0, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 1, 1, 1, 0] := 
+  {{-1, 1, -1, 1, 1, 1, -1}, {-1, 0, -1, 0, 0, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 0, 1, 1, 1, 1] := 
+  {{-1, 1, -1, 1, 1, 1, 1}, {-1, 0, -1, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 0, 0, 0, 1] := 
+  {{-1, 1, 1, -1, -1, -1, 1}, {-1, 0, 0, -1, -1, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 0, 0, 1, 0] := 
+  {{-1, 1, 1, -1, -1, 1, -1}, {-1, 0, 0, -1, -1, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 0, 0, 1, 1] := 
+  {{-1, 1, 1, -1, -1, 1, 1}, {-1, 0, 0, -1, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 0, 1, 0, 1] := 
+  {{-1, 1, 1, -1, 1, -1, 1}, {-1, 0, 0, -1, 0, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 0, 1, 1, 0] := 
+  {{-1, 1, 1, -1, 1, 1, -1}, {-1, 0, 0, -1, 0, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 0, 1, 1, 1] := 
+  {{-1, 1, 1, -1, 1, 1, 1}, {-1, 0, 0, -1, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 1, 0, 0, 1] := 
+  {{-1, 1, 1, 1, -1, -1, 1}, {-1, 0, 0, 0, -1, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 1, 0, 1, 0] := 
+  {{-1, 1, 1, 1, -1, 1, -1}, {-1, 0, 0, 0, -1, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 1, 0, 1, 1] := 
+  {{-1, 1, 1, 1, -1, 1, 1}, {-1, 0, 0, 0, -1, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 1, 1, 0, 0] := 
+  {{-1, 1, 1, 1, 1, -1, -1}, {-1, 0, 0, 0, 0, -1, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 1, 1, 0, 1] := 
+  {{-1, 1, 1, 1, 1, -1, 1}, {-1, 0, 0, 0, 0, -1, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 1, 1, 1, 0] := 
+  {{-1, 1, 1, 1, 1, 1, -1}, {-1, 0, 0, 0, 0, 0, -1}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 0, 1, 1, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+basis /: jsOrder[basis, 1, 0, 0, 0, 1, 1, 0] := 
+  {{1, -1, -1, -1, 1, 1, -1}, {0, -1, -1, -1, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 0, 0, 1, 1, 1] := 
+  {{1, -1, -1, -1, 1, 1, 1}, {0, -1, -1, -1, 0, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 0, 1, 1, 0, 0] := 
+  {{1, -1, -1, 1, 1, -1, -1}, {0, -1, -1, 0, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 1, 0, 0, 1, 1, 0, 1] := 
+  {{1, -1, -1, 1, 1, -1, 1}, {0, -1, -1, 0, 0, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 0, 1, 1, 1, 0] := 
+  {{1, -1, -1, 1, 1, 1, -1}, {0, -1, -1, 0, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 0, 1, 1, 1, 1] := 
+  {{1, -1, -1, 1, 1, 1, 1}, {0, -1, -1, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 0, 0, 1, 0] := 
+  {{1, -1, 1, -1, -1, 1, -1}, {0, -1, 0, -1, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 0, 0, 1, 1] := 
+  {{1, -1, 1, -1, -1, 1, 1}, {0, -1, 0, -1, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 0, 1, 0, 0] := 
+  {{1, -1, 1, -1, 1, -1, -1}, {0, -1, 0, -1, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 0, 1, 0, 1] := 
+  {{1, -1, 1, -1, 1, -1, 1}, {0, -1, 0, -1, 0, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 0, 1, 1, 0] := 
+  {{1, -1, 1, -1, 1, 1, -1}, {0, -1, 0, -1, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 0, 1, 1, 1] := 
+  {{1, -1, 1, -1, 1, 1, 1}, {0, -1, 0, -1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 1, 0, 0, 0] := 
+  {{1, -1, 1, 1, -1, -1, -1}, {0, -1, 0, 0, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 1, 0, 0, 1] := 
+  {{1, -1, 1, 1, -1, -1, 1}, {0, -1, 0, 0, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 1, 1, 0, 0] := 
+  {{1, -1, 1, 1, 1, -1, -1}, {0, -1, 0, 0, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 1, 1, 0, 1] := 
+  {{1, -1, 1, 1, 1, -1, 1}, {0, -1, 0, 0, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 1, 1, 1, 0] := 
+  {{1, -1, 1, 1, 1, 1, -1}, {0, -1, 0, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 0, 1, 1, 1, 1, 1] := 
+  {{1, -1, 1, 1, 1, 1, 1}, {0, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 0, 0, 1, 1] := 
+  {{1, 1, -1, -1, -1, 1, 1}, {0, 0, -1, -1, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 0, 1, 0, 1] := 
+  {{1, 1, -1, -1, 1, -1, 1}, {0, 0, -1, -1, 0, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 0, 1, 1, 0] := 
+  {{1, 1, -1, -1, 1, 1, -1}, {0, 0, -1, -1, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 0, 1, 1, 1] := 
+  {{1, 1, -1, -1, 1, 1, 1}, {0, 0, -1, -1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 1, 0, 0, 1] := 
+  {{1, 1, -1, 1, -1, -1, 1}, {0, 0, -1, 0, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 1, 0, 1, 1] := 
+  {{1, 1, -1, 1, -1, 1, 1}, {0, 0, -1, 0, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 1, 1, 0, 0] := 
+  {{1, 1, -1, 1, 1, -1, -1}, {0, 0, -1, 0, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 1, 1, 0, 1] := 
+  {{1, 1, -1, 1, 1, -1, 1}, {0, 0, -1, 0, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 1, 1, 1, 0] := 
+  {{1, 1, -1, 1, 1, 1, -1}, {0, 0, -1, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 0, 1, 1, 1, 1] := 
+  {{1, 1, -1, 1, 1, 1, 1}, {0, 0, -1, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 0, 0, 0, 1] := 
+  {{1, 1, 1, -1, -1, -1, 1}, {0, 0, 0, -1, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 0, 0, 1, 0] := 
+  {{1, 1, 1, -1, -1, 1, -1}, {0, 0, 0, -1, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 0, 0, 1, 1] := 
+  {{1, 1, 1, -1, -1, 1, 1}, {0, 0, 0, -1, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 0, 1, 0, 1] := 
+  {{1, 1, 1, -1, 1, -1, 1}, {0, 0, 0, -1, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 0, 1, 1, 0] := 
+  {{1, 1, 1, -1, 1, 1, -1}, {0, 0, 0, -1, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 0, 1, 1, 1] := 
+  {{1, 1, 1, -1, 1, 1, 1}, {0, 0, 0, -1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 1, 0, 0, 1] := 
+  {{1, 1, 1, 1, -1, -1, 1}, {0, 0, 0, 0, -1, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 1, 0, 1, 0] := 
+  {{1, 1, 1, 1, -1, 1, -1}, {0, 0, 0, 0, -1, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 1, 0, 1, 1] := 
+  {{1, 1, 1, 1, -1, 1, 1}, {0, 0, 0, 0, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 1, 1, 0, 0] := 
+  {{1, 1, 1, 1, 1, -1, -1}, {0, 0, 0, 0, 0, -1, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 1, 1, 0, 1] := 
+  {{1, 1, 1, 1, 1, -1, 1}, {0, 0, 0, 0, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 1, 1, 1, 0] := 
+  {{1, 1, 1, 1, 1, 1, -1}, {0, 0, 0, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}}
+basis /: jsOrder[basis, 1, 1, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+basis /: jSymmetries[basis, 0, 0, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 0, 1, 0, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 0, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 0, 1, 0, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 0, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 0, 1, 1, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 0, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 0, 1, 1, 1, 0, 1]"}]]
+basis /: jSymmetries[basis, 0, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 0, 1, 1, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 0, 0, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 0, 0, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 0, 1, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 0, 1, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 1, 0, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 1, 0, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 1, 1, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 1, 1, 1, 0, 1]"}]]
+basis /: jSymmetries[basis, 0, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 1, 1, 1, 1, 0]"}]]
+basis /: jSymmetries[basis, 0, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 0, 1, 1, 1, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 0, 1, 0, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 0, 1, 0, 1, 1, 0]"}]]
+basis /: jSymmetries[basis, 1, 0, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 0, 1, 0, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 0, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 0, 1, 1, 1, 0, 0]"}]]
+basis /: jSymmetries[basis, 1, 0, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 0, 1, 1, 1, 0, 1]"}]]
+basis /: jSymmetries[basis, 1, 0, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 0, 1, 1, 1, 1, 0]"}]]
+basis /: jSymmetries[basis, 1, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 0, 1, 1, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 0, 0, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 0, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 0, 1, 1, 0, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 0, 1, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 1, 0, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 1, 0, 1, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 1, 1, 0, 1, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 1, 1, 1, 0, 1]"}]]
+basis /: jSymmetries[basis, 1, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 1, 1, 1, 1, 0]"}]]
+basis /: jSymmetries[basis, 1, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[basis], 
+     "jSymmetries[basis, 1, 1, 1, 1, 1, 1, 1]"}]]
+basis /: LI[basis] := Get[FileNameJoin[{BasisDirectory[basis], "LI[basis]"}]]
+basis /: LMs[basis] := {l1, l2}
+basis /: MappedSectors[basis] := 
+  Get[FileNameJoin[{BasisDirectory[basis], "MappedSectors[basis]"}]]
+basis /: MIs[basis] := Get[FileNameJoin[{BasisDirectory[basis], 
+     "MIs[basis]"}]]
+basis /: NDs[basis] := 7
+basis /: NonZeroSectors[basis] := 
+  Get[FileNameJoin[{BasisDirectory[basis], "NonZeroSectors[basis]"}]]
+basis /: Parameters[basis] := {q2, d}
+basis /: PowerShifts[basis] := {0, 0, 0, 0, 0, 0, 0}
+basis /: SectorsMappings[basis] := {js[basis, 1, 1, 0, 1, 1, 1, 0] -> 
+    js[basis, 1, 0, 1, 1, 1, 1, 0], js[basis, 1, 1, 1, 0, 1, 1, 0] -> 
+    js[basis, 1, 0, 1, 1, 1, 1, 0], js[basis, 1, 1, 1, 1, 1, 0, 0] -> 
+    js[basis, 1, 0, 1, 1, 1, 1, 0], js[basis, 1, 1, 1, 1, 0, 1, 0] -> 
+    js[basis, 0, 1, 1, 1, 1, 1, 0], js[basis, 1, 1, 0, 1, 0, 1, 1] -> 
+    js[basis, 0, 1, 1, 1, 1, 1, 0], js[basis, 1, 0, 1, 1, 0, 1, 1] -> 
+    js[basis, 0, 1, 1, 1, 0, 1, 1], js[basis, 1, 1, 0, 1, 1, 0, 0] -> 
+    js[basis, 1, 0, 1, 0, 1, 1, 0], js[basis, 1, 0, 1, 0, 0, 1, 1] -> 
+    js[basis, 0, 1, 1, 0, 0, 1, 1], js[basis, 1, 0, 1, 1, 0, 1, 0] -> 
+    js[basis, 0, 1, 0, 1, 0, 1, 1], js[basis, 0, 1, 0, 1, 1, 1, 0] -> 
+    js[basis, 0, 1, 0, 1, 0, 1, 1], js[basis, 0, 1, 1, 1, 1, 0, 0] -> 
+    js[basis, 0, 1, 0, 1, 0, 1, 1], js[basis, 1, 1, 0, 0, 0, 1, 1] -> 
+    js[basis, 0, 1, 0, 1, 0, 1, 1], js[basis, 1, 1, 1, 0, 0, 1, 0] -> 
+    js[basis, 0, 1, 0, 1, 0, 1, 1], js[basis, 0, 1, 0, 1, 1, 0, 1] -> 
+    js[basis, 0, 1, 0, 0, 1, 1, 1], js[basis, 1, 1, 0, 0, 1, 1, 0] -> 
+    js[basis, 1, 0, 1, 1, 1, 0, 0], js[basis, 1, 0, 1, 0, 0, 1, 0] -> 
+    js[basis, 0, 1, 0, 0, 0, 1, 1], js[basis, 0, 1, 0, 1, 1, 0, 0] -> 
+    js[basis, 0, 1, 0, 0, 0, 1, 1]}
+basis /: SectorsPattern[basis] := {___}
+basis /: SimpleSectors[basis] := 
+  Get[FileNameJoin[{BasisDirectory[basis], "SimpleSectors[basis]"}]]
+basis /: SPs[basis] := {sp[k1, l1], sp[k1, l2], sp[l1, l1], sp[l1, l2], 
+   sp[l1, q], sp[l2, l2], sp[l2, q]}
+basis /: SR[basis] := Get[FileNameJoin[{BasisDirectory[basis], "SR[basis]"}]]
+basis /: Toj[basis] := 
+  {sp[k1, l1] -> (j[basis, -1, 0, 0, 0, 0, 0, 0] - j[basis, 0, 0, 0, 0, 0, 0, 
+       -1])/2, sp[k1, l2] -> (j[basis, 0, -1, 0, 0, 0, 0, 0] - 
+      j[basis, 0, 0, -1, 0, 0, 0, 0])/2, sp[l1, l1] -> 
+    j[basis, -1, 0, 0, 0, 0, 0, 0], sp[l1, l2] -> 
+    (-j[basis, -1, 0, 0, 0, 0, 0, 0] - j[basis, 0, -1, 0, 0, 0, 0, 0] + 
+      j[basis, 0, 0, 0, -1, 0, 0, 0])/2, 
+   sp[l1, q] -> (-q2 - j[basis, -1, 0, 0, 0, 0, 0, 0] + 
+      j[basis, 0, 0, 0, 0, -1, 0, 0])/2, sp[l2, l2] -> 
+    j[basis, 0, -1, 0, 0, 0, 0, 0], sp[l2, q] -> 
+    (q2 + 2*j[basis, -1, 0, 0, 0, 0, 0, 0] + j[basis, 0, -1, 0, 0, 0, 0, 0] - 
+      j[basis, 0, 0, -1, 0, 0, 0, 0] - j[basis, 0, 0, 0, -1, 0, 0, 0] - 
+      j[basis, 0, 0, 0, 0, -1, 0, 0] + j[basis, 0, 0, 0, 0, 0, -1, 0] - 
+      j[basis, 0, 0, 0, 0, 0, 0, -1])/2}
+basis /: UniqueSectors[basis] := 
+  Get[FileNameJoin[{BasisDirectory[basis], "UniqueSectors[basis]"}]]
+basis /: ZerojRule[basis] := LiteRed`Private`jjj:j[basis, __] :> 
+   0 /; Module[{LiteRed`Private`jjs = 
+       Rest[List @@ jSector[LiteRed`Private`jjj]]}, 
+     Or @@ (BitOr[LiteRed`Private`jjs, #1] === #1 & ) /@ 
+       {{1, 1, 1, 1, 0, 0, 1}, {1, 1, 1, 0, 1, 0, 1}, {0, 0, 1, 1, 1, 1, 0}, 
+        {1, 1, 0, 1, 0, 1, 0}, {0, 1, 1, 0, 1, 1, 0}, {1, 0, 0, 1, 1, 1, 1}, 
+        {0, 1, 1, 1, 0, 1, 0}}]
+basis /: ZeroSectors[basis] := 
+  Get[FileNameJoin[{BasisDirectory[basis], "ZeroSectors[basis]"}]]
+basis /: SectorsMappings[basis, LiteRed`Private`ns$:(0 | 1)..] := 
+  Cases[SectorsMappings[basis], HoldPattern[js[basis, LiteRed`Private`ns$] -> 
+     _]]
+basis::usage = "2-loop basis with 2 external momenta.\nUse Information[basis] \
+to get basis summary.\nThis string can be redefined by setting \
+basis::usage=\"\[Ellipsis]\""; Information[basis, LongForm -> False]; 
+LiteRed`Private`CheckDefs[basis]
+BasisDirectory[basis]

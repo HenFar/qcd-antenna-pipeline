@@ -1,0 +1,27 @@
+Last[{{{1, 1, 1, 1, 1}, {1, 1, 1, 0, 0}, {-1, 0, 0, 0, 0}, {0, -1, 0, 0, 0}, 
+   {0, 0, 0, -1, 0}}, 
+  {j[NLOBasis213, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive] /; n1 != 1 :> 
+    -((n4*j[NLOBasis213, -1 + n1, -1 + n2, n3, 1 + n4, 1 + n5])/(-1 + n1)) + 
+     (n4*j[NLOBasis213, -1 + n1, n2, -1 + n3, 1 + n4, 1 + n5])/(-1 + n1) + 
+     ((-1 - d + n1 + 2*n3 + n4)*j[NLOBasis213, -1 + n1, n2, n3, n4, 1 + n5])/
+      (-1 + n1) + j[NLOBasis213, n1, n2, -1 + n3, n4, 1 + n5], 
+   j[NLOBasis213, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive] /; n1 == 1 && n2 != 1 :> 
+    -((n5*j[NLOBasis213, 0, -1 + n2, n3, 1 + n4, 1 + n5])/(-1 + n2)) + 
+     (n5*j[NLOBasis213, 1, -1 + n2, -1 + n3, 1 + n4, 1 + n5])/(-1 + n2) + 
+     ((-1 - d + n2 + 2*n3 + n5)*j[NLOBasis213, 1, -1 + n2, n3, 1 + n4, n5])/
+      (-1 + n2) + j[NLOBasis213, 1, n2, -1 + n3, 1 + n4, n5], 
+   j[NLOBasis213, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+      (n4_)?Positive, (n5_)?Positive] /; n1 == 1 && n2 == 1 && n4 != 1 :> 
+    j[NLOBasis213, 0, 1, n3, n4, n5]/q2 + 
+     (n3*j[NLOBasis213, 0, 1, 1 + n3, -1 + n4, n5])/((-1 + n4)*q2) + 
+     ((1 - d + n3 + n4)*j[NLOBasis213, 1, 1, n3, -1 + n4, n5])/
+      ((-1 + n4)*q2) - (n3*j[NLOBasis213, 1, 1, 1 + n3, -1 + n4, -1 + n5])/
+      ((-1 + n4)*q2), j[NLOBasis213, (n1_)?Positive, (n2_)?Positive, 
+      (n3_)?Positive, (n4_)?Positive, (n5_)?Positive] /; 
+     n1 == 1 && n2 == 1 && n4 == 1 :> 
+    (n5*j[NLOBasis213, 0, 1, n3, 1, 1 + n5])/(1 - d + 2*n3 + n5) - 
+     (n5*j[NLOBasis213, 1, 1, -1 + n3, 1, 1 + n5])/(1 - d + 2*n3 + n5) + 
+     j[NLOBasis213, 1, 2, -1 + n3, 1, n5]/(-1 + d - 2*n3 - n5) + 
+     j[NLOBasis213, 1, 2, n3, 0, n5]/(1 - d + 2*n3 + n5)}}]

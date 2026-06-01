@@ -1,0 +1,3 @@
+{j[A22TwoLoopTreeBasis9, (n1_)?Positive, (n2_)?NonPositive, (n3_)?Positive, 
+   (n4_)?Positive, (n5_)?NonPositive, (n6_)?Positive, (n7_)?Positive] :> 
+  Expand[j[A22TwoLoopTreeBasis9, n4, n2, n5, n1, n3, n7, n6]]}

@@ -1,0 +1,81 @@
+BasisDirectory[A31BasisSuper2] = StringDrop[DirectoryName[$Input], -1]
+A31BasisSuper2 /: CurrentState[A31BasisSuper2] := 
+  <|NewDsBasis -> True, GenerateIBP -> False, AnalyzeSectors -> False, 
+   FindSymmetries -> False|>
+A31BasisSuper2 /: CutDs[A31BasisSuper2] := {1, 1, 1, 0, 0, 0, 0, 0, 0}
+A31BasisSuper2 /: Definitions[A31BasisSuper2] := 
+  {Hold[MetricTensor[] === d, SetDim[d]], Hold[VecQ[l], Declare[l, Vector]], 
+   Hold[VecQ[k1], Declare[k1, Vector]], Hold[VecQ[k2], Declare[k2, Vector]], 
+   Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[q, q] === q2, sp[q, q] = q2]}
+A31BasisSuper2 /: Ds[A31BasisSuper2] := {sp[k1, k1], sp[k2, k2], sp[l, l], 
+   sp[-k2 + l, -k2 + l], sp[-k1 - k2 + l, -k1 - k2 + l], sp[l - q, l - q], 
+   sp[k1, k2], sp[k1, -k1 - k2 + q], sp[k2, -k1 - k2 + q]}
+A31BasisSuper2 /: DsBasisQ[A31BasisSuper2] := True
+A31BasisSuper2 /: EMs[A31BasisSuper2] := {q}
+A31BasisSuper2 /: ExtMappedSectors[A31BasisSuper2] := {}
+A31BasisSuper2 /: ExtSectorsMappings[A31BasisSuper2] := {}
+A31BasisSuper2 /: Information[A31BasisSuper2] := 
+  (If[ValueQ[A31BasisSuper2::usage], Information[A31BasisSuper2, 
+     LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[
+         First /@ UpValues[A31BasisSuper2] /. HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[A31BasisSuper2, __]]] :> 
+           HoldForm[LiteRed`Private`f$[A31BasisSuper2, "\[Ellipsis]"]]}, 
+         {1}], {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[
+              A31BasisSuper2, ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  A31BasisSuper2], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+A31BasisSuper2 /: jsOrder[A31BasisSuper2] := {"np", "cp", "-ds", "-ns"}
+A31BasisSuper2 /: LMs[A31BasisSuper2] := {l, k1, k2}
+A31BasisSuper2 /: MappedSectors[A31BasisSuper2] := 
+  Get[FileNameJoin[{BasisDirectory[A31BasisSuper2], 
+     "MappedSectors[A31BasisSuper2]"}]]
+A31BasisSuper2 /: MIs[A31BasisSuper2] := 
+  Get[FileNameJoin[{BasisDirectory[A31BasisSuper2], "MIs[A31BasisSuper2]"}]]
+A31BasisSuper2 /: NDs[A31BasisSuper2] := 9
+A31BasisSuper2 /: Parameters[A31BasisSuper2] := {q2, d}
+A31BasisSuper2 /: PowerShifts[A31BasisSuper2] := {0, 0, 0, 0, 0, 0, 0, 0, 0}
+A31BasisSuper2 /: SectorsMappings[A31BasisSuper2] := {}
+A31BasisSuper2 /: SectorsPattern[A31BasisSuper2] := {___}
+A31BasisSuper2 /: SPs[A31BasisSuper2] := {sp[k1, k1], sp[k1, k2], sp[k1, l], 
+   sp[k1, q], sp[k2, k2], sp[k2, l], sp[k2, q], sp[l, l], sp[l, q]}
+A31BasisSuper2 /: SR[A31BasisSuper2] := 
+  Get[FileNameJoin[{BasisDirectory[A31BasisSuper2], "SR[A31BasisSuper2]"}]]
+A31BasisSuper2 /: Toj[A31BasisSuper2] := 
+  {sp[k1, k1] -> j[A31BasisSuper2, -1, 0, 0, 0, 0, 0, 0, 0, 0], 
+   sp[k1, k2] -> j[A31BasisSuper2, 0, 0, 0, 0, 0, 0, -1, 0, 0], 
+   sp[k1, l] -> (j[A31BasisSuper2, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+      j[A31BasisSuper2, 0, 0, 0, -1, 0, 0, 0, 0, 0] - 
+      j[A31BasisSuper2, 0, 0, 0, 0, -1, 0, 0, 0, 0] + 
+      2*j[A31BasisSuper2, 0, 0, 0, 0, 0, 0, -1, 0, 0])/2, 
+   sp[k1, q] -> j[A31BasisSuper2, -1, 0, 0, 0, 0, 0, 0, 0, 0] + 
+     j[A31BasisSuper2, 0, 0, 0, 0, 0, 0, -1, 0, 0] + 
+     j[A31BasisSuper2, 0, 0, 0, 0, 0, 0, 0, -1, 0], 
+   sp[k2, k2] -> j[A31BasisSuper2, 0, -1, 0, 0, 0, 0, 0, 0, 0], 
+   sp[k2, l] -> (j[A31BasisSuper2, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+      j[A31BasisSuper2, 0, 0, -1, 0, 0, 0, 0, 0, 0] - 
+      j[A31BasisSuper2, 0, 0, 0, -1, 0, 0, 0, 0, 0])/2, 
+   sp[k2, q] -> j[A31BasisSuper2, 0, -1, 0, 0, 0, 0, 0, 0, 0] + 
+     j[A31BasisSuper2, 0, 0, 0, 0, 0, 0, -1, 0, 0] + 
+     j[A31BasisSuper2, 0, 0, 0, 0, 0, 0, 0, 0, -1], 
+   sp[l, l] -> j[A31BasisSuper2, 0, 0, -1, 0, 0, 0, 0, 0, 0], 
+   sp[l, q] -> (q2 + j[A31BasisSuper2, 0, 0, -1, 0, 0, 0, 0, 0, 0] - 
+      j[A31BasisSuper2, 0, 0, 0, 0, 0, -1, 0, 0, 0])/2}
+A31BasisSuper2::usage = "3-loop basis with 1 external momenta.\nUse \
+Information[A31BasisSuper2] to get basis summary.\nThis string can be \
+redefined by setting A31BasisSuper2::usage=\"\[Ellipsis]\""; 
+ Information[A31BasisSuper2, LongForm -> False]; 
+LiteRed`Private`CheckDefs[A31BasisSuper2]
+BasisDirectory[A31BasisSuper2]

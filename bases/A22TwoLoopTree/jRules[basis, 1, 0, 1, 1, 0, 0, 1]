@@ -1,0 +1,8 @@
+{j[basis, (n1_)?Positive, (n2_)?NonPositive, (n3_)?Positive, (n4_)?Positive, 
+   (n5_)?NonPositive, (n6_)?NonPositive, (n7_)?Positive] :> 
+  Expand[j[basis, n5, 0, n3, n7, n1, 0, n4]/
+    ((-j[basis, -1, 0, 0, 0, 0, 0, 0] + j[basis, 0, 0, 0, 0, 0, -1, 0] + 
+       j[basis, 0, 0, 0, 0, 0, 0, -1] - q2*j[basis, 0, 0, 0, 0, 0, 0, 0])^n2*
+     (j[basis, 0, -1, 0, 0, 0, 0, 0] - j[basis, 0, 0, 0, -1, 0, 0, 0] + 
+       j[basis, 0, 0, 0, 0, -1, 0, 0] + q2*j[basis, 0, 0, 0, 0, 0, 0, 0])^
+      n6)]}

@@ -1,0 +1,648 @@
+BasisDirectory[A22TwoLoopTreeBasis4] = StringDrop[DirectoryName[$Input], -1]
+A22TwoLoopTreeBasis4 /: BasisSectors[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "BasisSectors[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: CurrentState[A22TwoLoopTreeBasis4] := 
+  <|NewDsBasis -> True, GenerateIBP -> True, AnalyzeSectors -> True, 
+   FindSymmetries -> False|>
+A22TwoLoopTreeBasis4 /: CutDs[A22TwoLoopTreeBasis4] := {0, 0, 0, 0, 0, 0, 0}
+A22TwoLoopTreeBasis4 /: Definitions[A22TwoLoopTreeBasis4] := 
+  {Hold[MetricTensor[] === d, SetDim[d]], Hold[VecQ[l1], 
+    Declare[l1, Vector]], Hold[VecQ[l2], Declare[l2, Vector]], 
+   Hold[VecQ[k1], Declare[k1, Vector]], Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[k1] === LiteRed`Private`ExpresionType[
+      k1], Declare[k1, LiteRed`Private`ExpresionType[k1]]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[k1, k1] === 0, sp[k1, k1] = 0], Hold[sp[q, q] === q2, 
+    sp[q, q] = q2], Hold[sp[k1, q] === q2/2, sp[k1, q] = q2/2]}
+A22TwoLoopTreeBasis4 /: Ds[A22TwoLoopTreeBasis4] := 
+  {sp[l1, l1], sp[-k1 + l1, -k1 + l1], sp[l2, l2], sp[l1 - q, l1 - q], 
+   sp[k1 + l2 - q, k1 + l2 - q], sp[l1 + l2 - q, l1 + l2 - q], 
+   sp[-k1 + l2, -k1 + l2]}
+A22TwoLoopTreeBasis4 /: DsBasisQ[A22TwoLoopTreeBasis4] := True
+A22TwoLoopTreeBasis4 /: EMs[A22TwoLoopTreeBasis4] := {k1, q}
+A22TwoLoopTreeBasis4 /: ExtMappedSectors[A22TwoLoopTreeBasis4] := {}
+A22TwoLoopTreeBasis4 /: ExtSectorsMappings[A22TwoLoopTreeBasis4] := {}
+A22TwoLoopTreeBasis4 /: IBP[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "IBP[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: Information[A22TwoLoopTreeBasis4] := 
+  (If[ValueQ[A22TwoLoopTreeBasis4::usage], Information[A22TwoLoopTreeBasis4, 
+     LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[
+         First /@ UpValues[A22TwoLoopTreeBasis4] /. HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[A22TwoLoopTreeBasis4, 
+              __]]] :> HoldForm[LiteRed`Private`f$[A22TwoLoopTreeBasis4, 
+             "\[Ellipsis]"]]}, {1}], 
+        {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[
+              A22TwoLoopTreeBasis4, ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  A22TwoLoopTreeBasis4], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jRules[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4] := 
+  {"np", "cp", "-ds", "-ns"}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 0, 0, 0, 1, 1] := 
+  {{-1, -1, -1, -1, -1, 1, 1}, {-1, -1, -1, -1, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 0, 0, 1, 1, 1] := 
+  {{-1, -1, -1, -1, 1, 1, 1}, {-1, -1, -1, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 0, 1, 1] := 
+  {{-1, -1, -1, 1, -1, 1, 1}, {-1, -1, -1, 0, -1, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 0, 1] := 
+  {{-1, -1, -1, 1, 1, -1, 1}, {-1, -1, -1, 0, 0, -1, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 1, 0] := 
+  {{-1, -1, -1, 1, 1, 1, -1}, {-1, -1, -1, 0, 0, 0, -1}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 1, 1] := 
+  {{-1, -1, -1, 1, 1, 1, 1}, {-1, -1, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 1, 0, 0, 1, 0] := 
+  {{-1, -1, 1, -1, -1, 1, -1}, {-1, -1, 0, -1, -1, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 1, 0, 1, 1, 1] := 
+  {{-1, -1, 1, -1, 1, 1, 1}, {-1, -1, 0, -1, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 0, 1, 1] := 
+  {{-1, -1, 1, 1, -1, 1, 1}, {-1, -1, 0, 0, -1, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 1, 0, 1] := 
+  {{-1, -1, 1, 1, 1, -1, 1}, {-1, -1, 0, 0, 0, -1, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 1, 1, 0] := 
+  {{-1, -1, 1, 1, 1, 1, -1}, {-1, -1, 0, 0, 0, 0, -1}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 1, 1, 1] := 
+  {{-1, -1, 1, 1, 1, 1, 1}, {-1, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 0, 0, 1] := 
+  {{-1, 1, -1, -1, -1, -1, 1}, {-1, 0, -1, -1, -1, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 0, 1, 0] := 
+  {{-1, 1, -1, -1, -1, 1, -1}, {-1, 0, -1, -1, -1, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 0, 1, 1] := 
+  {{-1, 1, -1, -1, -1, 1, 1}, {-1, 0, -1, -1, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 1, 0, 1] := 
+  {{-1, 1, -1, -1, 1, -1, 1}, {-1, 0, -1, -1, 0, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 1, 1, 0] := 
+  {{-1, 1, -1, -1, 1, 1, -1}, {-1, 0, -1, -1, 0, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 1, 1, 1] := 
+  {{-1, 1, -1, -1, 1, 1, 1}, {-1, 0, -1, -1, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 0, 1, 1] := 
+  {{-1, 1, -1, 1, -1, 1, 1}, {-1, 0, -1, 0, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 0, 1] := 
+  {{-1, 1, -1, 1, 1, -1, 1}, {-1, 0, -1, 0, 0, -1, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 1, 0] := 
+  {{-1, 1, -1, 1, 1, 1, -1}, {-1, 0, -1, 0, 0, 0, -1}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 1, 1] := 
+  {{-1, 1, -1, 1, 1, 1, 1}, {-1, 0, -1, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 0, 1, 1] := 
+  {{-1, 1, 1, -1, -1, 1, 1}, {-1, 0, 0, -1, -1, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 1, 1, 1] := 
+  {{-1, 1, 1, -1, 1, 1, 1}, {-1, 0, 0, -1, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 0, 1, 1] := 
+  {{-1, 1, 1, 1, -1, 1, 1}, {-1, 0, 0, 0, -1, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 1, 0, 1] := 
+  {{-1, 1, 1, 1, 1, -1, 1}, {-1, 0, 0, 0, 0, -1, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 1, 1, 0] := 
+  {{-1, 1, 1, 1, 1, 1, -1}, {-1, 0, 0, 0, 0, 0, -1}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {1, 0, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 0, 0, 1, 0] := 
+  {{1, -1, -1, -1, -1, 1, -1}, {0, -1, -1, -1, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 0, 0, 1, 1] := 
+  {{1, -1, -1, -1, -1, 1, 1}, {0, -1, -1, -1, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 0, 1, 0, 1] := 
+  {{1, -1, -1, -1, 1, -1, 1}, {0, -1, -1, -1, 0, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 0, 1, 1, 1] := 
+  {{1, -1, -1, -1, 1, 1, 1}, {0, -1, -1, -1, 0, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 0, 1] := 
+  {{1, -1, -1, 1, -1, -1, 1}, {0, -1, -1, 0, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 1, 0] := 
+  {{1, -1, -1, 1, -1, 1, -1}, {0, -1, -1, 0, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 1, 1] := 
+  {{1, -1, -1, 1, -1, 1, 1}, {0, -1, -1, 0, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 0, 0] := 
+  {{1, -1, -1, 1, 1, -1, -1}, {0, -1, -1, 0, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 0, 1] := 
+  {{1, -1, -1, 1, 1, -1, 1}, {0, -1, -1, 0, 0, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 0] := 
+  {{1, -1, -1, 1, 1, 1, -1}, {0, -1, -1, 0, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 1] := 
+  {{1, -1, -1, 1, 1, 1, 1}, {0, -1, -1, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 0, 0] := 
+  {{1, -1, 1, -1, -1, -1, -1}, {0, -1, 0, -1, -1, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 0] := 
+  {{1, -1, 1, -1, -1, 1, -1}, {0, -1, 0, -1, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 1] := 
+  {{1, -1, 1, -1, -1, 1, 1}, {0, -1, 0, -1, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 0, 1] := 
+  {{1, -1, 1, -1, 1, -1, 1}, {0, -1, 0, -1, 0, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 0] := 
+  {{1, -1, 1, -1, 1, 1, -1}, {0, -1, 0, -1, 0, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 1] := 
+  {{1, -1, 1, -1, 1, 1, 1}, {0, -1, 0, -1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 0, 1] := 
+  {{1, -1, 1, 1, -1, -1, 1}, {0, -1, 0, 0, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 0] := 
+  {{1, -1, 1, 1, -1, 1, -1}, {0, -1, 0, 0, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 1] := 
+  {{1, -1, 1, 1, -1, 1, 1}, {0, -1, 0, 0, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 0, 0] := 
+  {{1, -1, 1, 1, 1, -1, -1}, {0, -1, 0, 0, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 0, 1] := 
+  {{1, -1, 1, 1, 1, -1, 1}, {0, -1, 0, 0, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 0] := 
+  {{1, -1, 1, 1, 1, 1, -1}, {0, -1, 0, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 1, 0, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 1] := 
+  {{1, -1, 1, 1, 1, 1, 1}, {0, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 0, 1, 1] := 
+  {{1, 1, -1, -1, -1, 1, 1}, {0, 0, -1, -1, -1, 0, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 1, 0, 1] := 
+  {{1, 1, -1, -1, 1, -1, 1}, {0, 0, -1, -1, 0, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 1, 1, 1] := 
+  {{1, 1, -1, -1, 1, 1, 1}, {0, 0, -1, -1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 0, 0, 1] := 
+  {{1, 1, -1, 1, -1, -1, 1}, {0, 0, -1, 0, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 0, 1, 0] := 
+  {{1, 1, -1, 1, -1, 1, -1}, {0, 0, -1, 0, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 0, 1, 1] := 
+  {{1, 1, -1, 1, -1, 1, 1}, {0, 0, -1, 0, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 0, 0] := 
+  {{1, 1, -1, 1, 1, -1, -1}, {0, 0, -1, 0, 0, -1, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 0, 1] := 
+  {{1, 1, -1, 1, 1, -1, 1}, {0, 0, -1, 0, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 0] := 
+  {{1, 1, -1, 1, 1, 1, -1}, {0, 0, -1, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 1, 0, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 1] := 
+  {{1, 1, -1, 1, 1, 1, 1}, {0, 0, -1, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 0, 1] := 
+  {{1, 1, 1, -1, -1, -1, 1}, {0, 0, 0, -1, -1, -1, 0}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 0] := 
+  {{1, 1, 1, -1, -1, 1, -1}, {0, 0, 0, -1, -1, 0, -1}, 
+   {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 1] := 
+  {{1, 1, 1, -1, -1, 1, 1}, {0, 0, 0, -1, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -1, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 0, 1] := 
+  {{1, 1, 1, -1, 1, -1, 1}, {0, 0, 0, -1, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 0] := 
+  {{1, 1, 1, -1, 1, 1, -1}, {0, 0, 0, -1, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 1, 0, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 1] := 
+  {{1, 1, 1, -1, 1, 1, 1}, {0, 0, 0, -1, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 0, 1] := 
+  {{1, 1, 1, 1, -1, -1, 1}, {0, 0, 0, 0, -1, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 0] := 
+  {{1, 1, 1, 1, -1, 1, -1}, {0, 0, 0, 0, -1, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 1] := 
+  {{1, 1, 1, 1, -1, 1, 1}, {0, 0, 0, 0, -1, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 0, 0] := 
+  {{1, 1, 1, 1, 1, -1, -1}, {0, 0, 0, 0, 0, -1, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, 0, 1, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 0, 1] := 
+  {{1, 1, 1, 1, 1, -1, 1}, {0, 0, 0, 0, 0, -1, 0}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 0] := 
+  {{1, 1, 1, 1, 1, 1, -1}, {0, 0, 0, 0, 0, 0, -1}, {-1, 0, 0, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0, 0, 0}, {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, 
+   {0, 0, 0, 0, -1, 0, 0}}
+A22TwoLoopTreeBasis4 /: jsOrder[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0, 0, 0}, {0, -1, 0, 0, 0, 0, 0}, 
+   {0, 0, -1, 0, 0, 0, 0}, {0, 0, 0, -1, 0, 0, 0}, {0, 0, 0, 0, -1, 0, 0}, 
+   {0, 0, 0, 0, 0, -1, 0}}
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 0, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 0, 1, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 0, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 0, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 0, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 0, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 0, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 0, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 0, 1]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 
+   0] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 0]"}]]
+A22TwoLoopTreeBasis4 /: jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 
+   1] := Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "jSymmetries[A22TwoLoopTreeBasis4, 1, 1, 1, 1, 1, 1, 1]"}]]
+A22TwoLoopTreeBasis4 /: LI[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "LI[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: LMs[A22TwoLoopTreeBasis4] := {l1, l2}
+A22TwoLoopTreeBasis4 /: MappedSectors[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "MappedSectors[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: MIs[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "MIs[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: NDs[A22TwoLoopTreeBasis4] := 7
+A22TwoLoopTreeBasis4 /: NonZeroSectors[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "NonZeroSectors[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: Parameters[A22TwoLoopTreeBasis4] := {q2, d}
+A22TwoLoopTreeBasis4 /: PowerShifts[A22TwoLoopTreeBasis4] := 
+  {0, 0, 0, 0, 0, 0, 0}
+A22TwoLoopTreeBasis4 /: SectorsMappings[A22TwoLoopTreeBasis4] := 
+  {js[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 1, 1, 0] -> 
+    js[A22TwoLoopTreeBasis4, 1, 0, 1, 1, 0, 1, 1], 
+   js[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 1, 1, 1] -> 
+    js[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 1, 1, 1], 
+   js[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 1, 1, 0] -> 
+    js[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 1], 
+   js[A22TwoLoopTreeBasis4, 1, 1, 1, 0, 0, 1, 0] -> 
+    js[A22TwoLoopTreeBasis4, 1, 0, 1, 0, 0, 1, 1], 
+   js[A22TwoLoopTreeBasis4, 1, 1, 0, 0, 0, 1, 1] -> 
+    js[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 0, 1, 1], 
+   js[A22TwoLoopTreeBasis4, 0, 1, 1, 0, 0, 1, 1] -> 
+    js[A22TwoLoopTreeBasis4, 0, 1, 0, 1, 0, 1, 1], 
+   js[A22TwoLoopTreeBasis4, 1, 0, 0, 0, 1, 1, 1] -> 
+    js[A22TwoLoopTreeBasis4, 0, 0, 0, 1, 1, 1, 1], 
+   js[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 1, 1, 0] -> 
+    js[A22TwoLoopTreeBasis4, 1, 0, 0, 1, 0, 1, 1]}
+A22TwoLoopTreeBasis4 /: SectorsPattern[A22TwoLoopTreeBasis4] := {___}
+A22TwoLoopTreeBasis4 /: SimpleSectors[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "SimpleSectors[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: SPs[A22TwoLoopTreeBasis4] := 
+  {sp[k1, l1], sp[k1, l2], sp[l1, l1], sp[l1, l2], sp[l1, q], sp[l2, l2], 
+   sp[l2, q]}
+A22TwoLoopTreeBasis4 /: SR[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "SR[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: Toj[A22TwoLoopTreeBasis4] := 
+  {sp[k1, l1] -> (j[A22TwoLoopTreeBasis4, -1, 0, 0, 0, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, -1, 0, 0, 0, 0, 0])/2, 
+   sp[k1, l2] -> (j[A22TwoLoopTreeBasis4, 0, 0, -1, 0, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, 0, 0, 0, -1])/2, 
+   sp[l1, l1] -> j[A22TwoLoopTreeBasis4, -1, 0, 0, 0, 0, 0, 0], 
+   sp[l1, l2] -> (j[A22TwoLoopTreeBasis4, 0, 0, -1, 0, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, -1, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, 0, -1, 0, 0] + 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, 0, 0, -1, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, 0, 0, 0, -1])/2, 
+   sp[l1, q] -> (q2 + j[A22TwoLoopTreeBasis4, -1, 0, 0, 0, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, -1, 0, 0, 0])/2, 
+   sp[l2, l2] -> j[A22TwoLoopTreeBasis4, 0, 0, -1, 0, 0, 0, 0], 
+   sp[l2, q] -> (2*j[A22TwoLoopTreeBasis4, 0, 0, -1, 0, 0, 0, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, 0, -1, 0, 0] - 
+      j[A22TwoLoopTreeBasis4, 0, 0, 0, 0, 0, 0, -1])/2}
+A22TwoLoopTreeBasis4 /: UniqueSectors[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "UniqueSectors[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: ZerojRule[A22TwoLoopTreeBasis4] := 
+  LiteRed`Private`jjj:j[A22TwoLoopTreeBasis4, __] :> 
+   0 /; Module[{LiteRed`Private`jjs = 
+       Rest[List @@ jSector[LiteRed`Private`jjj]]}, 
+     Or @@ (BitOr[LiteRed`Private`jjs, #1] === #1 & ) /@ 
+       {{1, 1, 1, 1, 1, 0, 0}, {1, 1, 1, 1, 0, 0, 1}, {0, 0, 1, 0, 1, 1, 1}, 
+        {1, 1, 1, 0, 1, 0, 1}, {0, 0, 1, 1, 0, 1, 1}, {1, 1, 0, 1, 0, 1, 0}, 
+        {1, 1, 0, 0, 1, 1, 0}, {1, 0, 0, 0, 0, 1, 1}, {0, 1, 1, 1, 1, 0, 1}, 
+        {0, 1, 1, 1, 1, 1, 0}}]
+A22TwoLoopTreeBasis4 /: ZeroSectors[A22TwoLoopTreeBasis4] := 
+  Get[FileNameJoin[{BasisDirectory[A22TwoLoopTreeBasis4], 
+     "ZeroSectors[A22TwoLoopTreeBasis4]"}]]
+A22TwoLoopTreeBasis4 /: SectorsMappings[A22TwoLoopTreeBasis4, 
+   LiteRed`Private`ns$:(0 | 1)..] := 
+  Cases[SectorsMappings[A22TwoLoopTreeBasis4], 
+   HoldPattern[js[A22TwoLoopTreeBasis4, LiteRed`Private`ns$] -> _]]
+A22TwoLoopTreeBasis4::usage = "2-loop basis with 2 external momenta.\nUse \
+Information[A22TwoLoopTreeBasis4] to get basis summary.\nThis string can be \
+redefined by setting A22TwoLoopTreeBasis4::usage=\"\[Ellipsis]\""; 
+ Information[A22TwoLoopTreeBasis4, LongForm -> False]; 
+LiteRed`Private`CheckDefs[A22TwoLoopTreeBasis4]
+BasisDirectory[A22TwoLoopTreeBasis4]
