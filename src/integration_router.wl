@@ -720,10 +720,10 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
           backend
       ];
     buildComponent =
-      If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] && OptionValue["Component"] =!= All,
-        OptionValue["Component"]
-        ,
+      If[OptionValue["Component"] === All,
         All
+        ,
+        OptionValue["Component"]
       ];
     selectionComponent =
       If[buildComponent === All,
@@ -736,6 +736,18 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
        "ApplyDimReg"], LoopMomentum -> OptionValue["LoopMomentum"],
       Component -> buildComponent, Contribution -> OptionValue[
        "Contribution"]];
+    If[antennaObject === $Failed,
+      Return[
+        If[OptionValue["ReturnDiagnostics"] === True,
+          {$Failed, <|"Failed" -> True,
+            "Reason" -> "InvalidComponentSelection",
+            "SelectedComponent" -> OptionValue["Component"],
+            "Contribution" -> OptionValue["Contribution"]|>}
+          ,
+          $Failed
+        ]
+      ]
+    ];
     IntegrateAntenna[antennaObject,
       ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
       ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
@@ -814,7 +826,7 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
         {a_Symbol /; SymbolName[a] === "A", 4, 0},
           <|"IntegratedBackendAvailable" -> True,
             "FinalAntennaExtractionImplemented" -> True,
-            "IntegratedComponentOrder" -> {Leading, Subleading, Nf},
+            "IntegratedComponentOrder" -> {Leading, Subleading},
             "PaperCheckAvailable" -> False,
             "Profile" -> profile|>
         ,

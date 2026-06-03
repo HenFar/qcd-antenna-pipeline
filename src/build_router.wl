@@ -337,13 +337,13 @@ Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
 Options[BuildAntennaObject] =
   Options[BuildAntenna];
 
-AntennaComponentOrder[{A, 4, 0}] :=
+AntennaComponentOrder[{a_Symbol /; SymbolName[a] === "A", 4, 0}] :=
+  {Leading, Subleading};
+
+AntennaComponentOrder[{a_Symbol /; SymbolName[a] === "A", 3, 1}] :=
   {Leading, Subleading, Nf};
 
-AntennaComponentOrder[{A, 3, 1}] :=
-  {Leading, Subleading, Nf};
-
-AntennaComponentOrder[{A, 2, 2}] :=
+AntennaComponentOrder[{a_Symbol /; SymbolName[a] === "A", 2, 2}] :=
   {Leading, Subleading, Nf, Breve};
 
 AntennaComponentOrder[_] :=
@@ -429,6 +429,9 @@ MakeAntennaObject[key_, data_Association, component_, contribution_] :=
   Module[{fullResult, selectedResult},
     fullResult = BuildAntennaResult[key, data];
     selectedResult = SelectAntennaComponent[fullResult, key, component];
+    If[selectedResult === $Failed,
+      Return[$Failed]
+    ];
     AntennaObject[
       <|
         "Key" -> key,
@@ -468,7 +471,7 @@ BuildAntennaResult[{A, 3, 0}, data_Association] :=
 
 BuildAntennaResult[{A, 4, 0}, data_Association] :=
   {data["Components"]["Antenna"], data["FullColorComponents"]["SubLead"
-    ], data["FullColorComponents"]["QuarkLoop"]};
+    ]};
 
 BuildAntennaResult[{B, 4, 0}, data_Association] :=
   data["Components"]["Antenna"];
@@ -564,6 +567,20 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       TrueQ[OptionValue["IntegrableForm"]] ||
       TrueQ[OptionValue["ReturnAntennaObject"]];
     If[integrableRequested,
+      If[antennaObject === $Failed,
+        diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
+          "RunPaperCheck"]];
+        Return[
+          If[OptionValue["ReturnDiagnostics"] === True,
+            {$Failed, Join[diagnostics, <|"SelectedComponent" ->
+                OptionValue["Component"], "Contribution" -> OptionValue[
+                "Contribution"], "Failed" -> True,
+                "Reason" -> "InvalidComponentSelection"|>]}
+            ,
+            $Failed
+          ]
+        ]
+      ];
       If[OptionValue["ReturnDiagnostics"] === True,
         diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
           "RunPaperCheck"]];

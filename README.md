@@ -36,11 +36,11 @@ Current project status against that target:
 
 ```text
 [done] Public package load via Get[".../AntennaPipeline.wl"]
-[done] Public unintegrated A-type tree antennae: A20, A30, A40, tildeA40, hatA40
+[done] Public unintegrated A-type tree antennae: A20, A30, A40, tildeA40
 [done] Public unintegrated B40 and C40
 [done] Public integrated A21
 [done] Public integrated A30
-[done] Public integrated X40-family route for A40 / tildeA40 / hatA40 / B40 / C40
+[done] Public integrated X40-family route for A40 / tildeA40 / B40 / C40
 [done] Public integrated A31, tildeA31, hatA31
 [done] Public integrated A22, tildeA22, hatA22, breveA22 via the stitched route
 [done] A22 matched to 0403057 through the real IBP path
@@ -73,7 +73,6 @@ A20                             yes     n/a         yes     yes     tree-level p
 A30                             yes     yes         yes     yes     integrated through X30 IBP
 A40                             yes     yes         yes*    partial X40 public route exists; full integration is heavy
 tildeA40                        yes     yes         yes*    partial X40 public route exists; run component by component
-hatA40                          yes     yes         partial partial X40 public route exists; paper-level integration signoff pending
 B40                             yes     yes         yes*    partial X40 public route exists; full integration is heavy
 C40                             yes     yes         yes*    partial X40 public route exists; full integration is heavy
 A21                             yes     yes         yes     yes     public PaVe/Package-X route
@@ -90,6 +89,94 @@ breveA22                        yes     yes         yes     yes     one-loop-sel
 the package and exposed through the existing diagnostics workflow; the
 remaining gap is the fully signed-off integrated/public package path for the
 full X40 family.
+
+## Roadmap
+
+The next work should be organized in this order.
+
+### Immediate Validation Queue
+
+```text
+1. Finish the remaining X40 public-route checks for B40 and C40 from a fresh
+   Mathematica kernel.
+2. Record those results in the release checklist before changing the status
+   bar again.
+```
+
+### Mandatory Package Milestones
+
+```text
+1. Performance / efficiency pass.
+   - Add a benchmark/timer suite covering all public antenna families.
+   - Measure build and integration times separately.
+   - Use the benchmark results to identify real bottlenecks before rewriting
+     internals blindly.
+
+2. Intermediate-step visibility.
+   - Keep the current public black-box workflow intact by default.
+   - Add options that expose intermediate stages for users who want to inspect
+     or debug the pipeline.
+   - Candidate stages include: built source, reduced terms, mapped masters,
+     T-terms, extracted integrated antennae, and final diagnostics.
+
+3. Prototype R-ratio driver.
+   - Add a public function that takes the antenna model
+     (for example `SMQCD`, `SUSY`, or `HEFT`) together with the quark-mass
+     assumptions and assembles the corresponding R-ratio ingredients.
+   - Initial scope: prototype only, massless `SMQCD` only.
+
+4. Wolfram-facing documentation polish.
+   - Add usage comments / inline function documentation so Mathematica
+     autocomplete and help popups expose meaningful summaries.
+   - Expand the README with reproducible examples, runtime expectations, and
+     staged validation commands.
+```
+
+### Thesis / Research Extensions
+
+```text
+1. Derive the 0403057 master integrals "by hand" as a thesis-methods layer,
+   even though the package can already substitute the validated master values.
+
+2. Extend beyond A-type into D-type and F-type antennae.
+   - First exploratory target: one example antenna in each model family,
+     such as `D30` and `F30`.
+   - Planned route: test `SUSY` and `HEFT` model support through FeynCalc /
+     FeynArts and use those examples to establish the multi-model workflow.
+```
+
+### Guiding Principle
+
+```text
+First make the current massless 0403057 A-type package robust, measurable, and
+inspectable.  Only then extend the physics scope to new models and new antenna
+families.
+```
+
+### Thesis Priority Tiers
+
+```text
+Tier 1: thesis-critical, must finish before defense preparation
+- Finish the remaining B40 and C40 public-route validation.
+- Add a timing / benchmark suite for the public antenna routes.
+- Add options to expose intermediate pipeline stages for debugging and
+  explanation.
+- Add a prototype public R-ratio driver for massless SMQCD only.
+- Improve function comments / usage text so Mathematica-side discoverability is
+  acceptable during the thesis and defense period.
+- Write the thesis around the validated massless A-type package story.
+
+Tier 2: thesis-useful, only if Tier 1 is stable
+- Work out at least one 0403057 master-integral derivation "by hand" for the
+  thesis narrative.
+- Try one exploratory beyond-A-type example such as D30 or F30.
+- Try one exploratory non-SMQCD model path such as SUSY or HEFT.
+
+Tier 3: post-defense / follow-up paper scope
+- Systematic D-type and F-type implementation.
+- Broader SUSY / HEFT support.
+- Full software-polish pass beyond thesis-critical usability.
+```
 
 ## Current Scope
 
@@ -133,7 +220,7 @@ topologies.  It classifies reduced masters into `R4`, `R6`, `R8a`, and `R8b`,
 then applies the finite-truncated master expansions and the four-particle
 global normalization used in the X40 notebook.  The same backend now sits
 behind the public `IntegrateAntenna[...]` route for `A40`, `tildeA40`,
-`hatA40`, `B40`, and `C40`.  Full production comparisons for each four-parton
+`B40`, and `C40`.  Full production comparisons for each four-parton
 antenna should still be run component by component because the complete
 expressions are large.
 
@@ -208,7 +295,6 @@ A20
 A30
 A40
 tildeA40
-hatA40
 B40
 C40
 ```
@@ -240,7 +326,7 @@ Unintegrated antennae:
 ```wl
 BuildAntenna[A, 2, 0]  (* A20 *)
 BuildAntenna[A, 3, 0]  (* A30 *)
-BuildAntenna[A, 4, 0]  (* {A40, tildeA40, hatA40} *)
+BuildAntenna[A, 4, 0]  (* {A40, tildeA40} *)
 BuildAntenna[B, 4, 0]  (* B40 *)
 BuildAntenna[C, 4, 0]  (* C40 *)
 BuildAntenna[A, 2, 1]  (* A21 *)
@@ -259,8 +345,6 @@ BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading, ExpansionOrder -> 0]
   (* integrated A40 via the X40 IBP route *)
 BuildAndIntegrateAntenna[A, 4, 0, Component -> Subleading, ExpansionOrder -> 0]
   (* integrated tildeA40 via the X40 IBP route *)
-BuildAndIntegrateAntenna[A, 4, 0, Component -> Nf, ExpansionOrder -> 0]
-  (* integrated hatA40 via the X40 IBP route *)
 BuildAndIntegrateAntenna[B, 4, 0, ExpansionOrder -> 0]
   (* integrated B40 via the X40 IBP route *)
 BuildAndIntegrateAntenna[C, 4, 0, ExpansionOrder -> 0]
@@ -276,11 +360,8 @@ Object-first integration:
 ```wl
 obj = BuildAntennaObject[A, 3, 1];
 IntegrateAntenna[obj, ExpansionOrder -> 0]
-IntegrateAntenna[obj, Component -> Nf, ExpansionOrder -> 0]
-
 obj2 = BuildAntenna[A, 3, 1, IntegrableForm -> True];
 IntegrateAntenna[obj2, ExpansionOrder -> 0]
-IntegrateAntenna[obj2, Component -> Nf, ExpansionOrder -> 0]
 ```
 
 Multi-component antennae can be indexed directly:
@@ -288,7 +369,6 @@ Multi-component antennae can be indexed directly:
 ```wl
 BuildAntenna[A, 4, 0, Component -> Leading]
 BuildAntenna[A, 4, 0, Component -> Subleading]
-BuildAntenna[A, 4, 0, Component -> Nf]
 BuildAntenna[A, 3, 1, Component -> Nf]
 BuildAntenna[A, 2, 2, Component -> Breve]
 ```
@@ -382,7 +462,7 @@ BuildAntenna[A, 4, 0]
 returns:
 
 ```wl
-{A40, tildeA40, hatA40}
+{A40, tildeA40}
 ```
 
 For A31 integration, the final antennae are returned by default, while the
@@ -449,7 +529,6 @@ Build one component of a multi-component antenna:
 ```wl
 a40Lead = BuildAntenna[A, 4, 0, Component -> Leading];
 a40Sub = BuildAntenna[A, 4, 0, Component -> Subleading];
-a40Nf = BuildAntenna[A, 4, 0, Component -> Nf];
 ```
 
 Build the unintegrated A31 antenna components:
@@ -715,7 +794,7 @@ Direct compatibility checks:
 AssignAntennaProductionVariables[];
 A20 === BuildAntenna[A, 2, 0]
 A30 === BuildAntenna[A, 3, 0]
-{A40, tildeA40, hatA40} === BuildAntenna[A, 4, 0]
+{A40, tildeA40} === BuildAntenna[A, 4, 0]
 B40 === BuildAntenna[B, 4, 0]
 C40 === BuildAntenna[C, 4, 0]
 ```

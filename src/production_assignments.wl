@@ -4,7 +4,7 @@
   Optional notebook-style production assignments.
   Loading AntennaPipeline.wl deliberately does not build any antennae.  Call
   AssignAntennaProductionVariables[] when you want the old public variables
-  A20, A30, A40, tildeA40, hatA40, B40, and C40 to be populated in the
+  A20, A30, A40, tildeA40, B40, and C40 to be populated in the
   current kernel.
 *)
 
@@ -36,9 +36,9 @@ AssignAntennaProductionVariables[] :=
 
     FullColorLeadCoefficientA40 = A40Build["FullColorComponents"]["Lead"];
     tildeA40 = A40Build["FullColorComponents"]["SubLead"];
-    hatA40 = A40Build["FullColorComponents"]["QuarkLoop"];
+    A40QuarkLoopCoefficient = A40Build["FullColorComponents"]["QuarkLoop"];
     A40ColorOrderedData = A40Build["ColorOrderedData"];
-    {A40, tildeA40, hatA40} = BuildAntennaResult[{A, 4, 0}, A40Build];
+    {A40, tildeA40} = BuildAntennaResult[{A, 4, 0}, A40Build];
 
     B40Full = B40Build["FullComponents"]["Antenna"];
     B40FullColourDiagnostics = B40Build["FullDiagnostics"];
@@ -56,5 +56,5 @@ AssignAntennaProductionVariables[] :=
     C40DirectPrimaryBLikeDiagnostics = C40Build["ReferenceSquareDiagnostics"];
     C40 = BuildAntennaResult[{C, 4, 0}, C40Build];
 
-    {A20, A30, A40, tildeA40, hatA40, B40, C40}
+    {A20, A30, A40, tildeA40, B40, C40}
   ];
