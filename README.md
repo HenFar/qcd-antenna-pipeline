@@ -44,8 +44,9 @@ Current project status against that target:
 [done] Public integrated A31, tildeA31, hatA31
 [done] Public integrated A22, tildeA22, hatA22, breveA22 via the stitched route
 [done] A22 matched to 0403057 through the real IBP path
-[partial] X40 full production validation should still be treated component by
-          component
+[done] X40 public-route validation is closed to the current fresh-kernel state
+[done] Baseline public-route benchmark runner scaffolded in
+       `dev/run_public_route_benchmarks.wl`
 [partial] Package usability/docs are improving, but the repo is not yet in the
           final "anyone can load it and reproduce the whole 0403057 A-type
           story without guidance" state
@@ -71,10 +72,10 @@ Family / object                  build   integrate   paper   clean   notes
 ----------------------------------------------------------------------------
 A20                             yes     n/a         yes     yes     tree-level public object
 A30                             yes     yes         yes     yes     integrated through X30 IBP
-A40                             yes     yes         yes*    partial X40 public route exists; full integration is heavy
-tildeA40                        yes     yes         yes*    partial X40 public route exists; run component by component
-B40                             yes     yes         yes*    partial X40 public route exists; full integration is heavy
-C40                             yes     yes         yes*    partial X40 public route exists; full integration is heavy
+A40                             yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Leading`
+tildeA40                        yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Subleading`
+B40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified
+C40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified
 A21                             yes     yes         yes     yes     public PaVe/Package-X route
 A31                             yes     yes         yes     yes     public integrated final antenna route
 tildeA31                        yes     yes         yes     yes     returned with A31 list route
@@ -87,28 +88,32 @@ breveA22                        yes     yes         yes     yes     one-loop-sel
 
 `yes*` here means the unintegrated tree-level paper diagnostics are already in
 the package and exposed through the existing diagnostics workflow; the
-remaining gap is the fully signed-off integrated/public package path for the
-full X40 family.
+integrated public-route status for the X40 family is now whatever the fresh
+kernel returns today, and the fresh-kernel public checks now succeed for
+`A40`, `tildeA40`, `B40`, and `C40`.
 
 ## Roadmap
 
 The next work should be organized in this order.
 
-### Immediate Validation Queue
+### Immediate Benchmark Queue
 
 ```text
-1. Finish the remaining X40 public-route checks for B40 and C40 from a fresh
-   Mathematica kernel.
-2. Record those results in the release checklist before changing the status
-   bar again.
+1. Run `dev/run_public_route_benchmarks.wl` across the baseline public routes
+   and save the first timing table.
+2. Use those timings to identify whether the current pain is in build time,
+   integrate-only time, or one-shot build+integrate time.
 ```
 
 ### Mandatory Package Milestones
 
 ```text
 1. Performance / efficiency pass.
-   - Add a benchmark/timer suite covering all public antenna families.
-   - Measure build and integration times separately.
+   - Use the new public benchmark runner covering `BuildAntenna[...]`,
+     `BuildAntennaObject[...]`, `IntegrateAntenna[obj,...]`, and
+     `BuildAndIntegrateAntenna[...]`.
+   - Measure build, prebuilt-object integration, and one-shot times
+     separately.
    - Use the benchmark results to identify real bottlenecks before rewriting
      internals blindly.
 
@@ -119,13 +124,21 @@ The next work should be organized in this order.
    - Candidate stages include: built source, reduced terms, mapped masters,
      T-terms, extracted integrated antennae, and final diagnostics.
 
-3. Prototype R-ratio driver.
+3. Loop-build public API cleanup.
+   - Change `BuildAntenna[...]` for loop antennae so the default built object is
+     the PaVe-form expression users will expect to inspect.
+   - Remove the PaVe-shape control from `IntegrateAntenna[...]` and move that
+     expectation to the build stage instead of the integration stage.
+
+4. Prototype R-ratio driver.
+   - Do not start this until the benchmark pass says which public routes are
+     stable enough to expose.
    - Add a public function that takes the antenna model
      (for example `SMQCD`, `SUSY`, or `HEFT`) together with the quark-mass
      assumptions and assembles the corresponding R-ratio ingredients.
    - Initial scope: prototype only, massless `SMQCD` only.
 
-4. Wolfram-facing documentation polish.
+5. Wolfram-facing documentation polish.
    - Add usage comments / inline function documentation so Mathematica
      autocomplete and help popups expose meaningful summaries.
    - Expand the README with reproducible examples, runtime expectations, and
@@ -157,8 +170,10 @@ families.
 
 ```text
 Tier 1: thesis-critical, must finish before defense preparation
-- Finish the remaining B40 and C40 public-route validation.
-- Add a timing / benchmark suite for the public antenna routes.
+- Run and extend the timing / benchmark suite for the public antenna routes.
+- Change loop-level `BuildAntenna[...]` defaults so users get the PaVe-form
+  expression directly, and remove the corresponding PaVe-shape option from
+  `IntegrateAntenna[...]`.
 - Add options to expose intermediate pipeline stages for debugging and
   explanation.
 - Add a prototype public R-ratio driver for massless SMQCD only.
@@ -220,9 +235,19 @@ topologies.  It classifies reduced masters into `R4`, `R6`, `R8a`, and `R8b`,
 then applies the finite-truncated master expansions and the four-particle
 global normalization used in the X40 notebook.  The same backend now sits
 behind the public `IntegrateAntenna[...]` route for `A40`, `tildeA40`,
-`B40`, and `C40`.  Full production comparisons for each four-parton
-antenna should still be run component by component because the complete
-expressions are large.
+`B40`, and `C40`.  Fresh-kernel public validation now gives a clean public
+result for the full X40 family:
+
+```text
+A40 / tildeA40: clean through the public route when run component by component
+B40:            clean through both `IntegrateAntenna[obj,...]` and
+                `BuildAndIntegrateAntenna[...]`
+C40:            clean through both `IntegrateAntenna[obj,...]` and
+                `BuildAndIntegrateAntenna[...]`
+```
+
+So the remaining X40 work is no longer validation closeout; it is timing and
+usability work around routes that are known to be heavy but now verified.
 
 The X31/A31 IBP backend loads the existing A31, A31SL, and A31Super LiteRed
 bases from `momentumBasis`.  It converts the FeynCalc one-loop antenna
@@ -452,6 +477,44 @@ Generate the A22 tree/two-loop basis family with:
 The generator intentionally does not load `AntennaPipeline.wl`, FeynCalc, or
 FeynArts.  LiteRed basis generation is context-sensitive, so generation is
 kept in this clean script and the package only loads the saved basis.
+
+Run the public-route benchmark harness with:
+
+```sh
+/Applications/Wolfram.app/Contents/MacOS/WolframKernel -script antenna_pipeline/dev/run_public_route_benchmarks.wl
+```
+
+Optional environment variables:
+
+```text
+ANTENNA_BENCHMARK_TIMEOUT      per-call timeout in seconds (default: 300)
+ANTENNA_BENCHMARK_LABELS       comma-separated subset of route labels
+ANTENNA_BENCHMARK_OUTPUT       optional JSON output path
+```
+
+The current baseline route set is:
+
+```text
+A20
+A30
+A40 Leading
+A40 Subleading
+B40
+C40
+A21
+A31 Leading
+A22 Leading
+A22 full stitched
+```
+
+For each baseline route the script records four public entrypoints:
+
+```text
+BuildAntenna
+BuildAntennaObject
+IntegrateAntenna
+BuildAndIntegrateAntenna
+```
 
 For the earlier A40 case, for example:
 
