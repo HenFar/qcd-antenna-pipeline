@@ -16,7 +16,8 @@ Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
     True, BasisFamily -> Automatic, BasisRoot -> Automatic,
    GenerateMissingBases -> False,
    ReturnTTerms -> False, Component -> All, Contribution -> All,
-   IntermediateSteps -> {}, PrintIntermediateSteps -> False};
+   IntermediateSteps -> {}, PrintIntermediateSteps -> False,
+   DetailedTimingDiagnostics -> False};
 
 IntegrateAntenna::heavy =
   "This route uses a heavy integration backend and may take a long time: `1`.";
@@ -171,7 +172,8 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
             "ExpansionOrder"], BasisFamily -> OptionValue["BasisFamily"],
             BasisRoot -> OptionValue["BasisRoot"], GenerateMissingBases ->
              OptionValue["GenerateMissingBases"], ReturnDiagnostics ->
-             OptionValue["ReturnDiagnostics"]]
+             OptionValue["ReturnDiagnostics"], DetailedTimingDiagnostics ->
+             OptionValue["DetailedTimingDiagnostics"]]
         ,
         _,
           Print["Unsupported integration backend: ", integrationMethod,
@@ -287,6 +289,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> All,
               Contribution -> TwoLoopTree]
           ]
@@ -310,6 +314,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> All,
               Contribution -> OneLoopSelf]
           ]
@@ -333,6 +339,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> All,
               Contribution -> TwoLoopTree];
           subleadingCall =
@@ -353,6 +361,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> All,
               Contribution -> TwoLoopTree];
           nfCall =
@@ -373,6 +383,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> All,
               Contribution -> TwoLoopTree];
           breveCall =
@@ -393,6 +405,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> All,
               Contribution -> OneLoopSelf];
           {leadingResult, leadingDiag} = leadingCall;
@@ -467,7 +481,9 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
                 Automatic], OptionValue["BasisFamily"]], BasisRoot ->
                OptionValue["BasisRoot"], GenerateMissingBases -> OptionValue[
                 "GenerateMissingBases"], ExpansionOrder -> expansionOrder,
-              ReturnDiagnostics -> OptionValue["ReturnDiagnostics"]];
+              ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"]];
           If[OptionValue["ReturnDiagnostics"] === True,
             backendDiagnostics = ibpResult[[2]];
             ibpResult[[1]]
@@ -591,6 +607,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> OptionValue["Component"],
               Contribution -> TwoLoopTree]
           ]
@@ -613,6 +631,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> Breve,
               Contribution -> OneLoopSelf]
           ]
@@ -635,6 +655,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> Leading,
               Contribution -> TwoLoopTree];
           subleadingCall =
@@ -654,6 +676,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> Subleading,
               Contribution -> TwoLoopTree];
           nfCall =
@@ -673,6 +697,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> Nf,
               Contribution -> TwoLoopTree];
           breveCall =
@@ -692,6 +718,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnTTerms -> OptionValue["ReturnTTerms"],
               IntermediateSteps -> OptionValue["IntermediateSteps"],
               PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+              DetailedTimingDiagnostics -> OptionValue[
+                "DetailedTimingDiagnostics"],
               Component -> Breve,
               Contribution -> OneLoopSelf];
           {leadingResult, leadingDiag} = leadingCall;
@@ -787,6 +815,7 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       ReturnTTerms -> OptionValue["ReturnTTerms"],
       IntermediateSteps -> OptionValue["IntermediateSteps"],
       PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+      DetailedTimingDiagnostics -> OptionValue["DetailedTimingDiagnostics"],
       Component -> selectionComponent,
       Contribution -> OptionValue["Contribution"]]
   ];
@@ -812,6 +841,7 @@ LegacyIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     ReturnTTerms -> OptionValue["ReturnTTerms"],
     IntermediateSteps -> OptionValue["IntermediateSteps"],
     PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+    DetailedTimingDiagnostics -> OptionValue["DetailedTimingDiagnostics"],
     Component -> OptionValue["Component"],
     Contribution -> OptionValue["Contribution"]];
 IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Association,

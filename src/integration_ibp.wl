@@ -228,7 +228,7 @@ IBPProfile["A31"] :=
       Join[
         Table[<|"Basis" -> Symbol["A31Basis" <> ToString[i]],
           "DirectoryName" -> "A31basis" <> ToString[i]|>, {i,
-          {3, 4, 5, 6, 7, 8, 9, 10, 12, 2, 11, 13, 1}}],
+          {9, 10, 12, 2, 6, 5, 4, 3, 7, 8, 11, 13, 1}}],
         Table[<|"Basis" -> Symbol["A31SLBasis" <> ToString[i]],
           "DirectoryName" -> "A31SLbasis" <> ToString[i]|>, {i, 14}],
         Table[<|"Basis" -> Symbol["A31BasisSuper" <> ToString[i]],
@@ -304,7 +304,7 @@ MergeIBPProfileOptions[profile_Association, opts_Association] :=
 (* Basis loading *)
 
 IBPBasisRecords[profile_Association] :=
-  Module[{classes},
+  Module[{classes, records},
     If[KeyExistsQ[profile, "BasisNames"],
       Return[
         Table[
@@ -318,7 +318,7 @@ IBPBasisRecords[profile_Association] :=
       ]
     ];
     classes = Lookup[profile, "BasisClasses", {None}];
-    Flatten[
+    records = Flatten[
       Table[
         <|"Topology" -> profile["Topologies"][[i]], "Class" ->
            classes[[j]], "Basis" -> IBPBasisSymbol[profile["Topologies"][[
@@ -326,8 +326,37 @@ IBPBasisRecords[profile_Association] :=
         ,
         {i, Length[profile["Topologies"]]}, {j, Length[classes]}
       ]
+    ];
+    If[Lookup[profile, "BasisFamily", Missing["UnknownFamily"]] === "X40",
+      records = OrderX40BasisRecords[records]
+    ];
+    records
+  ];
+
+X40BasisPriority[basis_] :=
+  Module[{name},
+    name = ToString[basis];
+    FirstCase[
+      {
+        "chainBasis1432" -> 1,
+        "chainBasis1342" -> 2,
+        "hybridBasis1234" -> 3,
+        "hybridBasis1243" -> 4,
+        "chainBasis1234" -> 5,
+        "boxBasis1234" -> 6,
+        "boxBasis1243" -> 7,
+        "chainBasis1243" -> 8,
+        "chainBasis1324" -> 9,
+        "hybridBasis1342" -> 10
+      },
+      (key_ -> priority_) /; key === name :> priority,
+      1000
     ]
   ];
+
+OrderX40BasisRecords[records_List] :=
+  SortBy[records, {X40BasisPriority[Lookup[#, "Basis"]]&, ToString[
+       Lookup[#, "Basis"]]&}];
 
 LoadSingleIBPBasis[record_Association, profile_Association] :=
   Module[{name, basisDir, loc, status},
@@ -1526,47 +1555,73 @@ IBPMasterValues[profile_Association] :=
 
 (* Reduction and normalisation *)
 
-ReduceAntennaIBP[antenna_, bases_List, profile_Association] :=
-  Module[{expanded, listAntenna, records, reduced, unmatched, rawReduced},
-    expanded =
-      antenna //
-      CanonicalIBPInvariantSums //
-      Expand;
+ReduceAntennaIBP[antenna_, bases_List, profile_Association,
+   detailedTiming_:False] :=
+  Module[{expanded, listAntenna, records, reduced, unmatched, rawReduced,
+     expansionSeconds, reductionSeconds, totalMatchSeconds,
+     totalReduceSeconds, totalMasterRuleSeconds, totalSeconds},
+    {expansionSeconds, expanded} =
+      AbsoluteTiming[
+        antenna //
+        CanonicalIBPInvariantSums //
+        Expand
+      ];
     listAntenna =
       If[Head[expanded] === Plus,
         List @@ expanded
         ,
         {expanded}
       ];
-    records =
-      Table[
-        Module[{match, redTerm, masterRules},
-          match = MatchIBPBasis[listAntenna[[i]], bases, profile];
-          redTerm =
-            If[TrueQ[match["MatchedQ"]],
-              Check[
-                Quiet[
-                  Block[{$Output = {}},
-                    LiteRed`IBPReduce[match["JTerm"]]
+    {reductionSeconds, records} =
+      AbsoluteTiming[
+        Table[
+          Module[{match, redTerm, masterRules, matchSeconds, reduceSeconds,
+             masterRuleSeconds, baseRecord},
+            {matchSeconds, match} =
+              AbsoluteTiming[
+                MatchIBPBasis[listAntenna[[i]], bases, profile]
+              ];
+            {reduceSeconds, redTerm} =
+              If[TrueQ[match["MatchedQ"]],
+                AbsoluteTiming[
+                  Check[
+                    Quiet[
+                      Block[{$Output = {}},
+                        LiteRed`IBPReduce[match["JTerm"]]
+                      ]
+                    ]
+                    ,
+                    $Failed
                   ]
                 ]
                 ,
-                $Failed
-              ]
+                {0., $Failed}
+              ];
+            {masterRuleSeconds, masterRules} =
+              If[TrueQ[match["MatchedQ"]],
+                AbsoluteTiming[
+                  IBPMasterRulesForBasis[match["Basis"], profile]
+                ]
+                ,
+                {0., {}}
+              ];
+            baseRecord =
+              Join[match, <|"Index" -> i, "InputTerm" -> listAntenna[[i]],
+                 "MasterRules" -> masterRules, "ReducedTerm" -> redTerm|>];
+            If[TrueQ[detailedTiming],
+              Join[baseRecord, <|"MatchSeconds" -> matchSeconds,
+                "ReduceSeconds" -> reduceSeconds, "MasterRuleSeconds" ->
+                 masterRuleSeconds, "PreparedLeafCount" ->
+                 If[match["PreparedTerm"] === $Failed, $Failed,
+                   LeafCount[match["PreparedTerm"]]], "ReducedLeafCount" ->
+                 If[redTerm === $Failed, $Failed, LeafCount[redTerm]]|>]
               ,
-              $Failed
-            ];
-          masterRules =
-            If[TrueQ[match["MatchedQ"]],
-              IBPMasterRulesForBasis[match["Basis"], profile]
-              ,
-              {}
-            ];
-          Join[match, <|"Index" -> i, "InputTerm" -> listAntenna[[i]],
-             "MasterRules" -> masterRules, "ReducedTerm" -> redTerm|>]
+              baseRecord
+            ]
+          ]
+          ,
+          {i, Length[listAntenna]}
         ]
-        ,
-        {i, Length[listAntenna]}
       ];
     unmatched = Select[records, !TrueQ[#["MatchedQ"]] || #["ReducedTerm"
       ] === $Failed&];
@@ -1590,8 +1645,34 @@ ReduceAntennaIBP[antenna_, bases_List, profile_Association] :=
           {i, Length[rawReduced]}
         ]
       ];
-    <|"RawReducedTerms" -> rawReduced, "ReducedTerms" -> reduced, "TermRecords" -> records, "UnmatchedTerms"
-       -> unmatched, "UnmatchedCount" -> Length[unmatched]|>
+    totalMatchSeconds =
+      If[TrueQ[detailedTiming],
+        Total[Lookup[records, "MatchSeconds", 0.]]
+        ,
+        0.
+      ];
+    totalReduceSeconds =
+      If[TrueQ[detailedTiming],
+        Total[Lookup[records, "ReduceSeconds", 0.]]
+        ,
+        0.
+      ];
+    totalMasterRuleSeconds =
+      If[TrueQ[detailedTiming],
+        Total[Lookup[records, "MasterRuleSeconds", 0.]]
+        ,
+        0.
+      ];
+    totalSeconds = expansionSeconds + reductionSeconds;
+    <|"RawReducedTerms" -> rawReduced, "ReducedTerms" -> reduced,
+      "TermRecords" -> If[TrueQ[detailedTiming], records, Missing[
+          "NotRequested"]], "UnmatchedTerms" -> unmatched, "UnmatchedCount"
+       -> Length[unmatched], "TimingDiagnostics" -> <|"ExpansionSeconds" ->
+         expansionSeconds, "ReductionLoopSeconds" -> reductionSeconds,
+         "MatchSeconds" -> totalMatchSeconds, "IBPReduceSeconds" ->
+         totalReduceSeconds, "MasterRuleSeconds" -> totalMasterRuleSeconds,
+         "ReductionTotalSeconds" -> totalSeconds, "InputTermCount" -> Length[
+           listAntenna], "ExpandedLeafCount" -> LeafCount[expanded]|>|>
   ];
 
 IBPPhaseSpaceMeasure[2] :=
@@ -1622,56 +1703,79 @@ IBPNormalization[profile_Association] :=
   ];
 
 IBPToSeries[reduced_, profile_Association] :=
-  Module[{raw, withMasters, normalized, series},
+  Module[{timed},
+    timed = IBPToSeriesWithDiagnostics[Missing["NotAvailable"], reduced,
+      profile];
+    timed["Integrated"]
+  ];
+
+IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association] :=
+  Module[{rawLiteRed, rawMapped, withMasters, normalized, series,
+     rawLiteRedSeconds, rawMappedSeconds, masterSubstitutionSeconds,
+     normalizationSeconds, seriesSeconds},
     If[reduced === $Failed,
-      Return[$Failed]
+      Return[<|"Integrated" -> $Failed, "Stages" -> <|"RawLiteRedCombination"
+            -> $Failed, "MasterMappedExpression" -> $Failed,
+            "RawMasterCombination" -> $Failed,
+            "MasterSubstitutedExpression" -> $Failed,
+            "NormalizedBeforeSeries" -> $Failed, "SeriesResult" -> $Failed|>,
+          "TimingDiagnostics" -> <|"RawLiteRedCombinationSeconds" -> 0.,
+            "RawMasterCombinationSeconds" -> 0.,
+            "MasterSubstitutionSeconds" -> 0., "NormalizationSeconds" ->
+             0., "SeriesSeconds" -> 0., "SeriesPipelineTotalSeconds" -> 0.,
+            "RawLiteRedLeafCount" -> $Failed, "MasterMappedLeafCount" ->
+             $Failed, "MasterSubstitutedLeafCount" -> $Failed,
+            "NormalizedLeafCount" -> $Failed, "SeriesLeafCount" -> $Failed|>|>]
     ];
-    raw = Total[reduced];
-    withMasters = raw /. IBPMasterValues[profile];
-    normalized =
-      withMasters * IBPNormalization[profile] //
-      ReplaceAll[#, {d -> 4 - 2 eps, q2 -> 1}]& //
-      Together //
-      Simplify;
-    series =
-      Series[normalized, {eps, 0, profile["ExpansionOrder"]}] //
-      Normal //
-      FullSimplify //
-      ReplaceAll[#, eps -> FeynCalc`Epsilon]& //
-      Collect[#, FeynCalc`Epsilon]&;
-    series
+    {rawLiteRedSeconds, rawLiteRed} =
+      If[ListQ[rawReduced],
+        AbsoluteTiming[Total[rawReduced]]
+        ,
+        {0., Missing["NotAvailable"]}
+      ];
+    {rawMappedSeconds, rawMapped} = AbsoluteTiming[Total[reduced]];
+    {masterSubstitutionSeconds, withMasters} =
+      AbsoluteTiming[rawMapped /. IBPMasterValues[profile]];
+    {normalizationSeconds, normalized} =
+      AbsoluteTiming[
+        withMasters * IBPNormalization[profile] //
+        ReplaceAll[#, {d -> 4 - 2 eps, q2 -> 1}]& //
+        Together //
+        Simplify
+      ];
+    {seriesSeconds, series} =
+      AbsoluteTiming[
+        Series[normalized, {eps, 0, profile["ExpansionOrder"]}] //
+        Normal //
+        FullSimplify //
+        ReplaceAll[#, eps -> FeynCalc`Epsilon]& //
+        Collect[#, FeynCalc`Epsilon]&
+      ];
+    <|"Integrated" -> series, "Stages" -> <|"RawLiteRedCombination" ->
+         rawLiteRed, "MasterMappedExpression" -> rawMapped,
+        "RawMasterCombination" -> rawMapped,
+        "MasterSubstitutedExpression" -> withMasters,
+        "NormalizedBeforeSeries" -> normalized, "SeriesResult" -> series|>,
+      "TimingDiagnostics" -> <|"RawLiteRedCombinationSeconds" ->
+         rawLiteRedSeconds, "RawMasterCombinationSeconds" ->
+         rawMappedSeconds,
+        "MasterSubstitutionSeconds" -> masterSubstitutionSeconds,
+        "NormalizationSeconds" -> normalizationSeconds, "SeriesSeconds" ->
+         seriesSeconds, "SeriesPipelineTotalSeconds" -> rawLiteRedSeconds +
+          rawMappedSeconds + masterSubstitutionSeconds +
+          normalizationSeconds + seriesSeconds, "RawLiteRedLeafCount" ->
+         If[rawLiteRed === Missing["NotAvailable"], Missing[
+             "NotAvailable"], LeafCount[rawLiteRed]],
+        "MasterMappedLeafCount" -> LeafCount[rawMapped],
+        "MasterSubstitutedLeafCount" -> LeafCount[withMasters],
+        "NormalizedLeafCount" -> LeafCount[normalized], "SeriesLeafCount"
+         -> LeafCount[series]|>|>
   ];
 
 IBPReductionStages[rawReduced_, reduced_, profile_Association] :=
-  Module[{rawLiteRed, rawMapped, withMasters, normalized, series},
-    If[reduced === $Failed || rawReduced === $Failed,
-      Return[<|"RawLiteRedCombination" -> $Failed,
-        "MasterMappedExpression" -> $Failed,
-        "RawMasterCombination" -> $Failed,
-        "MasterSubstitutedExpression" -> $Failed,
-        "NormalizedBeforeSeries" -> $Failed,
-        "SeriesResult" -> $Failed|>]
-    ];
-    rawLiteRed = Total[rawReduced];
-    rawMapped = Total[reduced];
-    withMasters = rawMapped /. IBPMasterValues[profile];
-    normalized =
-      withMasters * IBPNormalization[profile] //
-      ReplaceAll[#, {d -> 4 - 2 eps, q2 -> 1}]& //
-      Together //
-      Simplify;
-    series =
-      Series[normalized, {eps, 0, profile["ExpansionOrder"]}] //
-      Normal //
-      FullSimplify //
-      ReplaceAll[#, eps -> FeynCalc`Epsilon]& //
-      Collect[#, FeynCalc`Epsilon]&;
-    <|"RawLiteRedCombination" -> rawLiteRed,
-      "MasterMappedExpression" -> rawMapped,
-      "RawMasterCombination" -> rawMapped,
-      "MasterSubstitutedExpression" -> withMasters,
-      "NormalizedBeforeSeries" -> normalized,
-      "SeriesResult" -> series|>
+  Module[{timed},
+    timed = IBPToSeriesWithDiagnostics[rawReduced, reduced, profile];
+    timed["Stages"]
   ];
 
 (*************************************************)
@@ -1680,11 +1784,13 @@ IBPReductionStages[rawReduced_, reduced_, profile_Association] :=
 
 Options[IntegrateViaIBP] = {NumFinalParticles -> 3, NumLoops -> 0, BasisFamily
    -> "X30", BasisRoot -> Automatic, GenerateMissingBases -> False, ExpansionOrder
-   -> 0, ReturnDiagnostics -> False};
+   -> 0, ReturnDiagnostics -> False, DetailedTimingDiagnostics -> False};
 
 IntegrateViaIBP[antenna_, OptionsPattern[]] :=
   Module[{family, profile, basisLoad, reduction, integrated, diagnostics,
-     masterSymbols, remainingBad, componentResults, reductionStages},
+     masterSymbols, remainingBad, componentResults, reductionStages,
+     basisLoadSeconds, reductionSeconds, seriesSeconds, timedSeries,
+     timingDiagnostics},
     If[ListQ[antenna],
       componentResults =
         If[# === $Failed,
@@ -1701,7 +1807,8 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
               BasisRoot], GenerateMissingBases -> OptionValue[
               GenerateMissingBases], ExpansionOrder -> OptionValue[
               ExpansionOrder], ReturnDiagnostics -> OptionValue[
-              ReturnDiagnostics]]
+              ReturnDiagnostics], DetailedTimingDiagnostics -> OptionValue[
+              DetailedTimingDiagnostics]]
         ]& /@ antenna;
       Return[
         If[OptionValue[ReturnDiagnostics] === True,
@@ -1742,7 +1849,7 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
         ]
       ]
     ];
-    basisLoad = LoadIBPBases[profile];
+    {basisLoadSeconds, basisLoad} = AbsoluteTiming[LoadIBPBases[profile]];
     If[!TrueQ[basisLoad["LoadedQ"]],
       diagnostics = <|"Failed" -> True, "Reason" -> "MissingIBPBases",
          "Profile" -> profile, "BasisLoad" -> basisLoad|>;
@@ -1754,10 +1861,18 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
         ]
       ]
     ];
-    reduction = ReduceAntennaIBP[antenna, basisLoad["Bases"], profile];
-    integrated = IBPToSeries[reduction["ReducedTerms"], profile];
-    reductionStages = IBPReductionStages[reduction["RawReducedTerms"],
-      reduction["ReducedTerms"], profile];
+    {reductionSeconds, reduction} =
+      AbsoluteTiming[
+        ReduceAntennaIBP[antenna, basisLoad["Bases"], profile,
+          OptionValue["DetailedTimingDiagnostics"]]
+      ];
+    {seriesSeconds, timedSeries} =
+      AbsoluteTiming[
+        IBPToSeriesWithDiagnostics[reduction["RawReducedTerms"],
+          reduction["ReducedTerms"], profile]
+      ];
+    integrated = timedSeries["Integrated"];
+    reductionStages = timedSeries["Stages"];
     masterSymbols =
       If[reduction["ReducedTerms"] === $Failed,
         {}
@@ -1773,11 +1888,22 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
         !FreeQ[reduction["ReducedTerms"], LiteRed`Toj | LiteRed`sp | 
           Dot]
       ];
+    timingDiagnostics =
+      Join[
+        Lookup[reduction, "TimingDiagnostics", <||>],
+        Lookup[timedSeries, "TimingDiagnostics", <||>],
+        <|"BasisLoadSeconds" -> basisLoadSeconds, "ReductionSeconds" ->
+           reductionSeconds, "SeriesPipelineSeconds" -> seriesSeconds,
+          "EndToEndSeconds" -> basisLoadSeconds + reductionSeconds +
+            seriesSeconds|>
+      ];
     diagnostics = <|"Profile" -> profile, "BasisLoad" -> basisLoad, "LoadedBasisCount"
        -> Length[basisLoad["Bases"]], "UnmatchedCount" -> reduction["UnmatchedCount"
       ], "UnmatchedTerms" -> reduction["UnmatchedTerms"], "RemainingTojSpOrDotQ"
        -> remainingBad, "MasterSymbols" -> masterSymbols, "RawReducedTerms" ->
        reduction["RawReducedTerms"], "ReducedTerms" -> reduction["ReducedTerms"],
+      "TermRecords" -> Lookup[reduction, "TermRecords", Missing[
+          "NotRequested"]], "TimingDiagnostics" -> timingDiagnostics,
       "RawLiteRedCombination" -> reductionStages["RawLiteRedCombination"],
       "MasterMappedExpression" -> reductionStages["MasterMappedExpression"],
       "RawMasterCombination" -> reductionStages["RawMasterCombination"],

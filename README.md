@@ -1,10 +1,11 @@
 # Antenna Pipeline
 
-`antenna_pipeline` is the modular version of the thesis antenna-generation
-workflow.  It keeps the physics and public interface of `automate_draft.wl`,
-but splits the implementation by pipeline stage so that tree, loop,
-diagnostic, and integration work can grow without turning the main file into a
-single monolith.
+`antenna_pipeline` is a Mathematica package for building and integrating QCD
+antenna functions through a small public API. It packages the thesis workflow
+into reusable functions so that interested users can generate tree-level and
+loop-level antenna ingredients, inspect intermediate stages when needed, and
+reproduce the massless A-type results used in the NNLO `R`-ratio calculation
+without working directly through the original notebooks.
 
 The package is intentionally loaded with plain Wolfram `Get[...]` calls rather
 than package contexts.  This keeps the current FeynCalc/FeynArts/FeynHelpers
@@ -49,6 +50,9 @@ Current project status against that target:
        in `dev/run_public_route_benchmarks.wl`
 [done] Optional public intermediate-step capture and printing are available via
        `IntermediateSteps -> {...}` and `PrintIntermediateSteps -> True`
+[done] Shared `X40` basis-order optimization is adopted as the default public
+       route behavior; timing diagnostics identify basis matching as the main
+       performance bottleneck
 [partial] Package usability/docs are improving, but the repo is not yet in the
           final "anyone can load it and reproduce the whole 0403057 A-type
           story without guidance" state
@@ -78,12 +82,12 @@ Family / object                  build   integrate   paper   clean   notes
 ----------------------------------------------------------------------------
 A20                             yes     n/a         yes     yes     tree-level public object
 A30                             yes     yes         yes     yes     integrated through X30 IBP
-A40                             yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Leading`; current one-shot runtime about 13 min on MacBook Pro M4
-tildeA40                        yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Subleading`; current object integration runtime about 32 min on MacBook Pro M4
-B40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified; current one-shot runtime about 85 s on MacBook Pro M4
-C40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified; current one-shot runtime about 260 s on MacBook Pro M4
+A40                             yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Leading`; current object integration runtime about 194 s on MacBook Pro M4 after shared `X40` basis reordering
+tildeA40                        yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Subleading`; current object integration runtime about 582 s on MacBook Pro M4 after shared `X40` basis reordering
+B40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified; current object integration runtime about 16 s on MacBook Pro M4 after shared `X40` basis reordering
+C40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified; current object integration runtime about 308 s on MacBook Pro M4 after shared `X40` basis reordering
 A21                             yes     yes         yes     yes     public PaVe/Package-X route
-A31                             yes     yes         yes     yes     public integrated final antenna route
+A31                             yes     yes         yes     yes     public integrated final antenna route; current object integration runtime about 197 s on MacBook Pro M4 after the A31 family basis reordering
 tildeA31                        yes     yes         yes     yes     returned with A31 list route
 hatA31                          yes     yes         yes     yes     returned with A31 list route
 A22                             yes     yes         yes     yes     stitched public route via TwoLoopTree + OneLoopSelf
@@ -107,9 +111,16 @@ The next work should be organized in this order.
 ```text
 1. Use the completed baseline benchmark snapshot to target the real runtime
    bottlenecks, rather than guessing from route complexity alone.
-2. Focus first on the heaviest currently validated public integrations:
-   `A40 Subleading`, `A31 Leading`, and `A40 Leading`.
-3. Keep the benchmark harness as the standard way to compare future changes
+2. The shared `X40` basis reorder is now the adopted default for the family;
+   it substantially improves `A40` and `B40`, with a modest accepted
+   regression on `C40` in exchange for keeping the full `X40` family on one
+   common basis-order structure.
+3. `A31 Leading` has now been inspected with the same timing diagnostics, and
+   its dominant cost is also `MatchIBPBasis`.
+4. An `A31` family basis-order optimization is now adopted from that timing
+   evidence; the refreshed post-reorder `A31 Leading` object-first baseline is
+   about 197 s on a MacBook Pro M4.
+5. Keep the benchmark harness as the standard way to compare future changes
    against the current baseline.
 ```
 
@@ -119,12 +130,27 @@ The next work should be organized in this order.
 1. Performance / efficiency pass.
    - Initial baseline timing data is now in hand for the agreed public-route
      matrix on a MacBook Pro M4.
-   - The current dominant cost is integration time, not object construction,
-     for the heavy one-loop/X40 routes.
-   - The clearest runtime outlier is `A40 Subleading`, which is validated but
-     currently takes about 32 minutes through the object-first public route.
-   - Future optimization work should be measured against this benchmark
-     baseline before rewriting internals blindly.
+   - Timing diagnostics now show that the dominant `X40` cost is
+     `MatchIBPBasis`, not basis loading and not the final
+     series/simplification stage.
+   - The shared `X40` basis reorder is now adopted as the default family-wide
+     optimization.  On the benchmark MacBook Pro M4 it reduces:
+       `A40 Leading` object integration from about 690 s to about 194 s,
+       `A40 Subleading` from about 1823 s to about 582 s,
+       and `B40` from about 85 s to about 16 s.
+   - `C40` becomes somewhat slower under the shared order (about 308 s instead
+     of about 260 s), but that tradeoff is currently accepted to preserve a
+     single common `X40` family structure rather than route-specific basis
+     heuristics.
+   - `A31 Leading` shows the same bottleneck shape as `X40`: basis loading and
+     final simplification are negligible, while `MatchIBPBasis` dominates the
+     run.
+   - The `A31` family basis order is now updated to prioritize the dominant
+     matched bases (`A31Basis9`, `A31Basis10`, `A31Basis12`, `A31Basis2`,
+     then `A31Basis6` and `A31Basis5`).
+   - That family reorder reduces the fresh-kernel `A31 Leading`
+     object-first route from about 695 s to about 197 s on the benchmark
+     MacBook Pro M4.
 
 2. Intermediate-step visibility.
    - Done in the current public API: `IntermediateSteps -> {...}` captures
@@ -252,20 +278,21 @@ behind the public `IntegrateAntenna[...]` route for `A40`, `tildeA40`,
 result for the full X40 family:
 
 ```text
-A40 Leading:    clean through the public route; benchmarked one-shot runtime
-                about 768 s on a MacBook Pro M4
-A40 Subleading: clean through the public route; unrestricted object-first run
-                completes in about 1905 s on a MacBook Pro M4
+A40 Leading:    clean through the public route; object-first timing after the
+                shared X40 basis reorder is about 194 s on a MacBook Pro M4
+A40 Subleading: clean through the public route; object-first timing after the
+                shared X40 basis reorder is about 582 s on a MacBook Pro M4
 B40:            clean through both `IntegrateAntenna[obj,...]` and
-                `BuildAndIntegrateAntenna[...]`; benchmarked one-shot runtime
-                about 85 s on a MacBook Pro M4
+                `BuildAndIntegrateAntenna[...]`; object-first timing after the
+                shared X40 basis reorder is about 16 s on a MacBook Pro M4
 C40:            clean through both `IntegrateAntenna[obj,...]` and
-                `BuildAndIntegrateAntenna[...]`; benchmarked one-shot runtime
-                about 260 s on a MacBook Pro M4
+                `BuildAndIntegrateAntenna[...]`; object-first timing after the
+                shared X40 basis reorder is about 308 s on a MacBook Pro M4
 ```
 
-So the remaining X40 work is no longer validation closeout; it is timing and
-usability work around routes that are known to be heavy but now verified.
+So the remaining X40 work is no longer validation closeout; it is family-level
+performance and usability work around routes that are now verified and
+materially faster under the shared basis-order optimization.
 
 The X31/A31 IBP backend loads the existing A31, A31SL, and A31Super LiteRed
 bases from `momentumBasis`.  It converts the FeynCalc one-loop antenna
@@ -540,8 +567,9 @@ BuildAndIntegrateAntenna
 
 ### Runtime Expectations
 
-The following timings are the current public-route baseline measured from
-fresh kernels on a MacBook Pro M4 during the benchmark pass on June 4-5, 2026.
+The following timings are the current public-route expectations measured from
+fresh kernels on a MacBook Pro M4 during the benchmark and follow-up
+performance-investigation passes on June 4-5, 2026.
 They should be treated as approximate user-facing expectations rather than
 hard guarantees.
 
@@ -554,11 +582,11 @@ A21 build-only                            about 0.5 s
 A21 object integration                    about 0.36 s
 A22 Leading one-shot                      about 223 s
 A22 full stitched one-shot                about 589 s
-A31 Leading one-shot                      about 813 s
-A40 Leading one-shot                      about 768 s
-A40 Subleading object integration         about 1905 s
-B40 one-shot                              about 85 s
-C40 one-shot                              about 260 s
+A31 Leading object integration            about 197 s
+A40 Leading object integration            about 194 s
+A40 Subleading object integration         about 582 s
+B40 object integration                    about 16 s
+C40 object integration                    about 308 s
 ```
 
 The current practical picture is:
@@ -566,11 +594,16 @@ The current practical picture is:
 ```text
 - `BuildAntennaObject[...]` is usually much cheaper than the heavy integration leg.
 - For the hard loop/X40 routes, most runtime is spent inside `IntegrateAntenna[...]`.
+- For the heavy `X40` routes, the dominant cost was found to be
+  `MatchIBPBasis`, not basis loading and not final simplification.
+- A single shared `X40` basis reorder now gives a substantial speedup across
+  the family, especially for `A40 Leading`, `tildeA40`, and `B40`.
 - `BuildAndIntegrateAntenna[...]` is usually only modestly slower than the
-  split object-first route.
-- `A40 Subleading` is validated and completes, but it is currently the
-  slowest baseline route at roughly 32 minutes through the object-first public
-  integration path.
+  split object-first route, but the object-first route remains the cleanest way
+  to inspect heavy-route timing diagnostics.
+- `A31 Leading` is now another confirmed matching-dominated heavy route with a
+  family-level basis reorder in place; on the benchmark MacBook Pro M4 that
+  reduces the object-first route to about 197 s.
 ```
 
 ### Intermediate-Step Capture
@@ -580,6 +613,7 @@ The first public inspection pass is now available through:
 ```wl
 IntermediateSteps -> {...}
 PrintIntermediateSteps -> True
+DetailedTimingDiagnostics -> True
 ```
 
 This is non-default and leaves the normal black-box return shape unchanged
@@ -599,6 +633,13 @@ unless explicitly requested.  In the current first pass:
   intermediateStepsAssociation}` when intermediate capture is requested.
 - If `PrintIntermediateSteps -> True` is also set, the requested stages are
   printed with simple stage headers during evaluation.
+- IBP-backed integrations now also attach a `"TimingDiagnostics"` association
+  inside `"BackendDiagnostics"` with stage-level timings for basis loading,
+  reduction, and the final series/simplification pipeline.
+- If `DetailedTimingDiagnostics -> True` is requested on an IBP-backed route,
+  `"BackendDiagnostics"` also includes per-term `"TermRecords"` with
+  match/reduce timings and simple leaf-count size indicators for investigation
+  work.
 - The current A21 smoke tests validate the first-pass user experience:
   the PaVe-default build now matches the PaVe paper target in diagnostics, and
   the integration-side `BackendDiagnostics` stage returns a clean empty
@@ -981,8 +1022,9 @@ C40 === BuildAntenna[C, 4, 0]
   notebook evaluations.
 - Full X40 antenna integrations are implemented and validated, but some of
   them are operationally very heavy.  In particular, the current
-  `A40 Subleading` object-first public integration takes about 32 minutes on a
-  MacBook Pro M4 and should be launched deliberately.
+  `A40 Subleading` object-first public integration takes about 10 minutes on a
+  MacBook Pro M4 after the shared X40 basis reorder, and should still be
+  launched deliberately.
 - Full A31 component integrations are computationally heavy.  The X31 direct
   reduction and master mapping infrastructure is present, but long reductions
   should be run deliberately in a Mathematica session with diagnostics.
