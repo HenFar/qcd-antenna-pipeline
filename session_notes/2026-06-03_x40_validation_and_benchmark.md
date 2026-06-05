@@ -53,3 +53,17 @@ Current behavior:
 - Emits a JSON report with route label, entrypoint, wall-clock time,
   success/failure, timeout flag, and diagnostic summary fields when available
 ```
+
+Follow-up after the first benchmark pass:
+
+```text
+- The initial A21 benchmark failure exposed a real public inconsistency:
+  BuildAntennaObject[A, 2, 1] with the old default build settings produced a
+  raw loop object that later mixed 4- and D-dimensional quantities inside the
+  object-based IntegrateAntenna route.
+- The fix was to move the PaVe-reduced loop-shape choice fully onto the build
+  side: one-loop BuildAntenna now defaults to the PaVe form, integrable
+  one-loop objects now choose the backend-compatible build shape they need,
+  and IntegrateAntenna always performs integration rather than serving as a
+  PaVe-shape toggle.
+```

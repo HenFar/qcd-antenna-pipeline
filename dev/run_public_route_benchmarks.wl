@@ -95,7 +95,7 @@ benchmarkCall[route_Association, entryPoint_String, thunk_] :=
     {elapsed, outcome} =
       AbsoluteTiming[
         TimeConstrained[
-          Quiet[Check[thunk[], $Failed], IntegrateAntenna::heavy],
+          Quiet[thunk[], IntegrateAntenna::heavy],
           benchmarkTimeoutSeconds,
           (timedOut = True; $Aborted)
         ]
@@ -229,7 +229,8 @@ runRouteBenchmarks[route_Association] :=
         route,
         "BuildAntenna",
         Function[
-          BuildAntenna @@ Join[buildArgs, {ReturnDiagnostics -> True}]
+          BuildAntenna @@ Join[buildArgs, {ReturnDiagnostics -> True,
+            RunPaperCheck -> False}]
         ]
       ];
     buildObjectResult =
@@ -237,7 +238,8 @@ runRouteBenchmarks[route_Association] :=
         route,
         "BuildAntennaObject",
         Function[
-          BuildAntennaObject @@ Join[buildArgs, {ReturnDiagnostics -> True}]
+          BuildAntennaObject @@ Join[buildArgs, {ReturnDiagnostics -> True,
+            RunPaperCheck -> False}]
         ]
       ];
     prebuiltObject = buildObjectResult["Value"];

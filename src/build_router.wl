@@ -11,16 +11,49 @@
 
 Options[BuildLoopAntennaData] = {printDiagram -> False, prefactor -> 
   1, ApplyStripCouplings -> AllCouplings, ApplyCasimirSubstitution -> True,
-   ApplyDimReg -> True, LoopMomentum -> l, ReductionBackend -> None};
+   ApplyDimReg -> True, LoopMomentum -> l, ReductionBackend -> Automatic};
 
 Options[BuildTwoLoopAntennaData] = {printDiagram -> False, prefactor ->
   1, ApplyStripCouplings -> AllCouplings, ApplyCasimirSubstitution -> True,
    ApplyDimReg -> True, LoopMomenta -> {l1, l2}, Contribution -> All};
 
+ResolveLoopBuildReductionBackend[profile_Association, requestedBackend_] :=
+  Module[{resolvedBackend},
+    resolvedBackend =
+      If[requestedBackend === Automatic,
+        Lookup[Lookup[profile, "ReductionProfile", <||>], "DefaultBackend",
+          "PaVe"]
+        ,
+        requestedBackend
+      ];
+    resolvedBackend
+  ];
+
+ResolveIntegrableLoopBuildReductionBackend[key_, requestedBackend_] :=
+  Module[{integrationBackend},
+    If[requestedBackend =!= Automatic,
+      Return[requestedBackend]
+    ];
+    integrationBackend =
+      Lookup[AntennaIntegrationProfile[key], "DefaultBackend", None];
+    Switch[integrationBackend,
+      PaVe,
+        "PaVe"
+      ,
+      IBP,
+        None
+      ,
+      _,
+        None
+    ]
+  ];
+
 BuildLoopAntennaData[key_, OptionsPattern[]] :=
-  Module[{profile, treeAmp, loopAmp, interference, context, extraction,
-     output},
+  Module[{profile, treeAmp, loopAmp, reductionBackend, interference,
+     context, extraction, output},
     profile = AntennaProfile[key];
+    reductionBackend =
+      ResolveLoopBuildReductionBackend[profile, OptionValue["ReductionBackend"]];
     treeAmp = profile["TreeAmplitude"];
     loopAmp = MAmpOneLoop[profile["NumFinalParticles"], AntennaType ->
        profile["AntennaType"], LoopMomentum -> OptionValue["LoopMomentum"],
@@ -29,7 +62,7 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
       ]];
     interference = InterfereOneLoopMAmplitudes[treeAmp, loopAmp, profile[
       "NumFinalParticles"], LoopMomentum -> OptionValue["LoopMomentum"], ReductionBackend
-       -> OptionValue["ReductionBackend"], ApplyCasimirSubstitution -> OptionValue[
+       -> reductionBackend, ApplyCasimirSubstitution -> OptionValue[
       "ApplyCasimirSubstitution"], ApplyDimReg -> False];
     context = <|"BornInterference" -> profile["BornInterference"]|>;
     extraction = ExtractLoopAntennaComponents[interference, profile, 
@@ -331,7 +364,8 @@ Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
   RunPaperCheck -> Automatic, Verbose -> False, printDiagram -> False,
   prefactor -> 1, ApplyStripCouplings -> AllCouplings,
   ApplyCasimirSubstitution -> True, ApplyDimReg -> True,
-  LoopMomentum -> l, ReductionBackend -> None, Component -> All,
+  LoopMomentum -> l, ReductionBackend -> Automatic, Component -> All,
+  IntermediateSteps -> {}, PrintIntermediateSteps -> False,
   LoopMomenta -> {l1, l2}, Contribution -> All};
 
 Options[BuildAntennaObject] =
@@ -358,6 +392,65 @@ CanonicalAntennaComponentName[component_] :=
 
 CanonicalAntennaComponentName[component_String] :=
   component;
+
+NormalizeIntermediateSteps[steps_] :=
+  Module[{normalized},
+    normalized =
+      Which[
+        steps === None || steps === False || steps === {},
+          {}
+        ,
+        steps === All || steps === True,
+          {"BuildData", "FullBuildResult", "SelectedBuildResult",
+            "AntennaObject", "BuildDiagnostics"}
+        ,
+        StringQ[steps],
+          {steps}
+        ,
+        ListQ[steps],
+          Flatten[steps /. s_String :> {s}]
+        ,
+        True,
+          {ToString[Unevaluated[steps], InputForm]}
+      ];
+    DeleteDuplicates[normalized]
+  ];
+
+RequestedIntermediateStepQ[steps_List, label_String] :=
+  MemberQ[steps, label];
+
+CollectBuildIntermediateSteps[data_Association, fullResult_, selectedResult_,
+   antennaObject_, diagnostics_, steps_List] :=
+  Module[{collected = <||>},
+    If[RequestedIntermediateStepQ[steps, "BuildData"],
+      collected = Join[collected, <|"BuildData" -> data|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "FullBuildResult"],
+      collected = Join[collected, <|"FullBuildResult" -> fullResult|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "SelectedBuildResult"],
+      collected = Join[collected, <|"SelectedBuildResult" -> selectedResult|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "AntennaObject"],
+      collected = Join[collected, <|"AntennaObject" -> antennaObject|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "BuildDiagnostics"],
+      collected = Join[collected, <|"BuildDiagnostics" -> diagnostics|>]
+    ];
+    collected
+  ];
+
+PrintIntermediateStepsAssociation[steps_Association] :=
+  Module[{},
+    KeyValueMap[
+      (
+        Print["=== ", #1, " ==="];
+        Print[#2]
+      )&,
+      steps
+    ];
+    Null
+  ];
 
 SelectAntennaComponent[result_, key_, component_] :=
   Module[{order, orderNames, componentName, position},
@@ -520,15 +613,36 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       "ApplyCasimirSubstitution"],
     ApplyDimReg -> OptionValue["ApplyDimReg"],
     LoopMomentum -> OptionValue["LoopMomentum"],
-    ReductionBackend -> OptionValue["ReductionBackend"],
+    ReductionBackend -> If[loopOrder === 1,
+      ResolveIntegrableLoopBuildReductionBackend[
+        {type, numFinalParticles, loopOrder},
+        OptionValue["ReductionBackend"]]
+      ,
+      OptionValue["ReductionBackend"]
+    ],
     Component -> OptionValue["Component"],
+    IntermediateSteps -> OptionValue["IntermediateSteps"],
+    PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
     LoopMomenta -> OptionValue["LoopMomenta"],
     Contribution -> OptionValue["Contribution"]];
 
 BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
   Module[{key, data, result, selectedResult, diagnostics, antennaObject,
-     integrableRequested},
+     integrableRequested, reductionBackend, intermediateSteps,
+     collectedSteps},
     key = {type, numFinalParticles, loopOrder};
+    intermediateSteps = NormalizeIntermediateSteps[OptionValue[
+      "IntermediateSteps"]];
+    integrableRequested =
+      TrueQ[OptionValue["IntegrableForm"]] ||
+      TrueQ[OptionValue["ReturnAntennaObject"]];
+    reductionBackend =
+      If[loopOrder === 1 && integrableRequested,
+        ResolveIntegrableLoopBuildReductionBackend[key, OptionValue[
+          "ReductionBackend"]]
+        ,
+        OptionValue["ReductionBackend"]
+      ];
     data =
       Switch[loopOrder,
         0,
@@ -539,7 +653,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
             ], prefactor -> OptionValue["prefactor"], ApplyStripCouplings -> OptionValue[
             "ApplyStripCouplings"], ApplyCasimirSubstitution -> OptionValue["ApplyCasimirSubstitution"
             ], ApplyDimReg -> OptionValue["ApplyDimReg"], LoopMomentum -> OptionValue[
-            "LoopMomentum"], ReductionBackend -> OptionValue["ReductionBackend"]]
+            "LoopMomentum"], ReductionBackend -> reductionBackend]
         ,
         2,
           BuildTwoLoopAntennaData[key, printDiagram -> OptionValue[
@@ -563,40 +677,81 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
        "Component"]];
     antennaObject = MakeAntennaObject[key, data, OptionValue["Component"],
       OptionValue["Contribution"]];
-    integrableRequested =
-      TrueQ[OptionValue["IntegrableForm"]] ||
-      TrueQ[OptionValue["ReturnAntennaObject"]];
     If[integrableRequested,
       If[antennaObject === $Failed,
         diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
           "RunPaperCheck"]];
+        collectedSteps = CollectBuildIntermediateSteps[data, result,
+          selectedResult, $Failed, diagnostics, intermediateSteps];
+        If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
+            collectedSteps] > 0,
+          PrintIntermediateStepsAssociation[collectedSteps]
+        ];
         Return[
           If[OptionValue["ReturnDiagnostics"] === True,
             {$Failed, Join[diagnostics, <|"SelectedComponent" ->
                 OptionValue["Component"], "Contribution" -> OptionValue[
                 "Contribution"], "Failed" -> True,
-                "Reason" -> "InvalidComponentSelection"|>]}
+                "Reason" -> "InvalidComponentSelection"|>,
+              If[Length[collectedSteps] > 0,
+                <|"IntermediateSteps" -> collectedSteps|>,
+                <||>
+              ]]}
             ,
-            $Failed
+            If[Length[collectedSteps] > 0,
+              {$Failed, collectedSteps}
+              ,
+              $Failed
+            ]
           ]
         ]
       ];
-      If[OptionValue["ReturnDiagnostics"] === True,
-        diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
-          "RunPaperCheck"]];
-        Return[{antennaObject, Join[diagnostics, <|"SelectedComponent" ->
-              OptionValue["Component"], "Contribution" -> OptionValue[
-              "Contribution"]|>]}]
-        ,
-        Return[antennaObject]
-      ]
-    ];
-    If[OptionValue["ReturnDiagnostics"] === True,
       diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
         "RunPaperCheck"]];
+      collectedSteps = CollectBuildIntermediateSteps[data, result,
+        selectedResult, antennaObject, diagnostics, intermediateSteps];
+      If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
+          collectedSteps] > 0,
+        PrintIntermediateStepsAssociation[collectedSteps]
+      ];
+      If[OptionValue["ReturnDiagnostics"] === True,
+        Return[{antennaObject, Join[diagnostics, <|"SelectedComponent" ->
+              OptionValue["Component"], "Contribution" -> OptionValue[
+              "Contribution"]|>,
+            If[Length[collectedSteps] > 0,
+              <|"IntermediateSteps" -> collectedSteps|>,
+              <||>
+            ]]}]
+        ,
+        Return[
+          If[Length[collectedSteps] > 0,
+            {antennaObject, collectedSteps}
+            ,
+            antennaObject
+          ]
+        ]
+      ]
+    ];
+    diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
+      "RunPaperCheck"]];
+    collectedSteps = CollectBuildIntermediateSteps[data, result,
+      selectedResult, antennaObject, diagnostics, intermediateSteps];
+    If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
+        collectedSteps] > 0,
+      PrintIntermediateStepsAssociation[collectedSteps]
+    ];
+    If[OptionValue["ReturnDiagnostics"] === True,
       {selectedResult, Join[diagnostics, <|"SelectedComponent" -> OptionValue[
-          "Component"]|>]}
+          "Component"]|>,
+        If[Length[collectedSteps] > 0,
+          <|"IntermediateSteps" -> collectedSteps|>,
+          <||>
+        ]]}
       ,
-      selectedResult
+      If[Length[collectedSteps] > 0,
+        {selectedResult, collectedSteps}
+        ,
+        selectedResult
+      ]
     ]
   ];

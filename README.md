@@ -45,14 +45,20 @@ Current project status against that target:
 [done] Public integrated A22, tildeA22, hatA22, breveA22 via the stitched route
 [done] A22 matched to 0403057 through the real IBP path
 [done] X40 public-route validation is closed to the current fresh-kernel state
-[done] Baseline public-route benchmark runner scaffolded in
-       `dev/run_public_route_benchmarks.wl`
+[done] Baseline public-route benchmark runner completed an initial timing map
+       in `dev/run_public_route_benchmarks.wl`
+[done] Optional public intermediate-step capture and printing are available via
+       `IntermediateSteps -> {...}` and `PrintIntermediateSteps -> True`
 [partial] Package usability/docs are improving, but the repo is not yet in the
           final "anyone can load it and reproduce the whole 0403057 A-type
           story without guidance" state
 [todo] Final polish for distributable package usability: clearer onboarding,
-       examples, expected runtimes, and end-to-end verification workflow
+       end-to-end verification workflow, and heavy-route ergonomics
 ```
+
+All current target A-type public antenna routes now run.  The remaining gap is
+not missing A-type coverage; it is runtime/usability polish around routes that
+are already implemented and validated but can still be very heavy in practice.
 
 ## Release Checklist
 
@@ -72,10 +78,10 @@ Family / object                  build   integrate   paper   clean   notes
 ----------------------------------------------------------------------------
 A20                             yes     n/a         yes     yes     tree-level public object
 A30                             yes     yes         yes     yes     integrated through X30 IBP
-A40                             yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Leading`
-tildeA40                        yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Subleading`
-B40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified
-C40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified
+A40                             yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Leading`; current one-shot runtime about 13 min on MacBook Pro M4
+tildeA40                        yes     yes         yes*    yes     fresh-kernel public route verified via `Component -> Subleading`; current object integration runtime about 32 min on MacBook Pro M4
+B40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified; current one-shot runtime about 85 s on MacBook Pro M4
+C40                             yes     yes         yes*    yes     fresh-kernel public object and one-shot routes both verified; current one-shot runtime about 260 s on MacBook Pro M4
 A21                             yes     yes         yes     yes     public PaVe/Package-X route
 A31                             yes     yes         yes     yes     public integrated final antenna route
 tildeA31                        yes     yes         yes     yes     returned with A31 list route
@@ -99,36 +105,46 @@ The next work should be organized in this order.
 ### Immediate Benchmark Queue
 
 ```text
-1. Run `dev/run_public_route_benchmarks.wl` across the baseline public routes
-   and save the first timing table.
-2. Use those timings to identify whether the current pain is in build time,
-   integrate-only time, or one-shot build+integrate time.
+1. Use the completed baseline benchmark snapshot to target the real runtime
+   bottlenecks, rather than guessing from route complexity alone.
+2. Focus first on the heaviest currently validated public integrations:
+   `A40 Subleading`, `A31 Leading`, and `A40 Leading`.
+3. Keep the benchmark harness as the standard way to compare future changes
+   against the current baseline.
 ```
 
 ### Mandatory Package Milestones
 
 ```text
 1. Performance / efficiency pass.
-   - Use the new public benchmark runner covering `BuildAntenna[...]`,
-     `BuildAntennaObject[...]`, `IntegrateAntenna[obj,...]`, and
-     `BuildAndIntegrateAntenna[...]`.
-   - Measure build, prebuilt-object integration, and one-shot times
-     separately.
-   - Use the benchmark results to identify real bottlenecks before rewriting
-     internals blindly.
+   - Initial baseline timing data is now in hand for the agreed public-route
+     matrix on a MacBook Pro M4.
+   - The current dominant cost is integration time, not object construction,
+     for the heavy one-loop/X40 routes.
+   - The clearest runtime outlier is `A40 Subleading`, which is validated but
+     currently takes about 32 minutes through the object-first public route.
+   - Future optimization work should be measured against this benchmark
+     baseline before rewriting internals blindly.
 
 2. Intermediate-step visibility.
-   - Keep the current public black-box workflow intact by default.
-   - Add options that expose intermediate stages for users who want to inspect
-     or debug the pipeline.
-   - Candidate stages include: built source, reduced terms, mapped masters,
-     T-terms, extracted integrated antennae, and final diagnostics.
+   - Done in the current public API: `IntermediateSteps -> {...}` captures
+     named build-side and integration-side stages without changing default
+     black-box behavior.
+   - `PrintIntermediateSteps -> True` adds a notebook-friendly view layer on
+     top of the same structured stage capture.
+   - The next refinement here is not basic functionality, but deciding whether
+     large stages such as `BackendDiagnostics` need a compact display mode.
 
 3. Loop-build public API cleanup.
-   - Change `BuildAntenna[...]` for loop antennae so the default built object is
-     the PaVe-form expression users will expect to inspect.
-   - Remove the PaVe-shape control from `IntegrateAntenna[...]` and move that
-     expectation to the build stage instead of the integration stage.
+   - Done in the current public API: one-loop `BuildAntenna[...]` now defaults
+     to the PaVe-reduced form users are expected to inspect.
+   - The raw unreduced loop expression remains available explicitly through
+     `ReductionBackend -> None` on the build side.
+   - Integrable one-loop objects now choose their build-time reduction shape
+     from the route they need to feed, so the object-first integration path
+     stays consistent with the route backend.
+   - `IntegrateAntenna[...]` no longer exposes a separate PaVe-shape toggle;
+     that choice now lives entirely at build time.
 
 4. Prototype R-ratio driver.
    - Do not start this until the benchmark pass says which public routes are
@@ -171,9 +187,6 @@ families.
 ```text
 Tier 1: thesis-critical, must finish before defense preparation
 - Run and extend the timing / benchmark suite for the public antenna routes.
-- Change loop-level `BuildAntenna[...]` defaults so users get the PaVe-form
-  expression directly, and remove the corresponding PaVe-shape option from
-  `IntegrateAntenna[...]`.
 - Add options to expose intermediate pipeline stages for debugging and
   explanation.
 - Add a prototype public R-ratio driver for massless SMQCD only.
@@ -239,11 +252,16 @@ behind the public `IntegrateAntenna[...]` route for `A40`, `tildeA40`,
 result for the full X40 family:
 
 ```text
-A40 / tildeA40: clean through the public route when run component by component
+A40 Leading:    clean through the public route; benchmarked one-shot runtime
+                about 768 s on a MacBook Pro M4
+A40 Subleading: clean through the public route; unrestricted object-first run
+                completes in about 1905 s on a MacBook Pro M4
 B40:            clean through both `IntegrateAntenna[obj,...]` and
-                `BuildAndIntegrateAntenna[...]`
+                `BuildAndIntegrateAntenna[...]`; benchmarked one-shot runtime
+                about 85 s on a MacBook Pro M4
 C40:            clean through both `IntegrateAntenna[obj,...]` and
-                `BuildAndIntegrateAntenna[...]`
+                `BuildAndIntegrateAntenna[...]`; benchmarked one-shot runtime
+                about 260 s on a MacBook Pro M4
 ```
 
 So the remaining X40 work is no longer validation closeout; it is timing and
@@ -338,11 +356,14 @@ BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder, ...]
 `BuildAntenna[...]` is the constructor.  The primary integration route is now
 object-based: build an antenna object with `BuildAntennaObject[...]` or
 `BuildAntenna[..., IntegrableForm -> True]`, then pass that object to
-`IntegrateAntenna[...]`.  The plain `BuildAntenna[...]` output stays readable
-by default and is intentionally not directly integrable, because it does not
-carry the routing metadata needed by the integration backends.  The older
-`LegacyIntegrateAntenna[type, n, loop, ...]` form is still available as
-compatibility sugar and delegates to `BuildAndIntegrateAntenna[...]`.
+`IntegrateAntenna[...]`.  For one-loop antennae the default build output is
+now the PaVe-reduced form; request `ReductionBackend -> None` if you
+specifically want the raw unreduced loop expression instead.  The plain
+`BuildAntenna[...]` output stays readable by default and is intentionally not
+directly integrable, because it does not carry the routing metadata needed by
+the integration backends.  The older `LegacyIntegrateAntenna[type, n, loop,
+...]` form is still available as compatibility sugar and delegates to
+`BuildAndIntegrateAntenna[...]`.
 
 ### Quick API Reference
 
@@ -357,6 +378,7 @@ BuildAntenna[C, 4, 0]  (* C40 *)
 BuildAntenna[A, 2, 1]  (* A21 *)
 BuildAntenna[A, 3, 1]  (* {A31, tildeA31, hatA31} *)
 BuildAntenna[A, 2, 2]  (* experimental/heavy: {A22, tildeA22, hatA22, breveA22} *)
+BuildAntenna[A, 2, 1, ReductionBackend -> None]  (* raw unreduced A21 loop form *)
 BuildAntenna[A, 2, 2, Contribution -> OneLoopSelf]
   (* bounded A22 source route: {$Failed, $Failed, $Failed, breveA22} *)
 ```
@@ -514,6 +536,85 @@ BuildAntenna
 BuildAntennaObject
 IntegrateAntenna
 BuildAndIntegrateAntenna
+```
+
+### Runtime Expectations
+
+The following timings are the current public-route baseline measured from
+fresh kernels on a MacBook Pro M4 during the benchmark pass on June 4-5, 2026.
+They should be treated as approximate user-facing expectations rather than
+hard guarantees.
+
+```text
+Route / entrypoint snapshot                Expected runtime
+----------------------------------------------------------
+A20 build-only                            under 0.1 s
+A30 one-shot                              about 0.15 s
+A21 build-only                            about 0.5 s
+A21 object integration                    about 0.36 s
+A22 Leading one-shot                      about 223 s
+A22 full stitched one-shot                about 589 s
+A31 Leading one-shot                      about 813 s
+A40 Leading one-shot                      about 768 s
+A40 Subleading object integration         about 1905 s
+B40 one-shot                              about 85 s
+C40 one-shot                              about 260 s
+```
+
+The current practical picture is:
+
+```text
+- `BuildAntennaObject[...]` is usually much cheaper than the heavy integration leg.
+- For the hard loop/X40 routes, most runtime is spent inside `IntegrateAntenna[...]`.
+- `BuildAndIntegrateAntenna[...]` is usually only modestly slower than the
+  split object-first route.
+- `A40 Subleading` is validated and completes, but it is currently the
+  slowest baseline route at roughly 32 minutes through the object-first public
+  integration path.
+```
+
+### Intermediate-Step Capture
+
+The first public inspection pass is now available through:
+
+```wl
+IntermediateSteps -> {...}
+PrintIntermediateSteps -> True
+```
+
+This is non-default and leaves the normal black-box return shape unchanged
+unless explicitly requested.  In the current first pass:
+
+```text
+- `BuildAntenna[...]` and `BuildAntennaObject[...]` can return structured
+  build-side stages such as `BuildData`, `FullBuildResult`,
+  `SelectedBuildResult`, `AntennaObject`, and `BuildDiagnostics`.
+- `IntegrateAntenna[...]` and `BuildAndIntegrateAntenna[...]` can return
+  structured integration-side stages such as `InputAntenna`,
+  `RawIntegrated`, `TTerms`, `FinalIntegrated`, `SelectedIntegrated`,
+  `BackendDiagnostics`, and `IntegrationDiagnostics`.
+- When `ReturnDiagnostics -> True`, the requested stages are attached under
+  `\"IntermediateSteps\"` inside the diagnostics association.
+- When `ReturnDiagnostics -> False`, the call returns `{result,
+  intermediateStepsAssociation}` when intermediate capture is requested.
+- If `PrintIntermediateSteps -> True` is also set, the requested stages are
+  printed with simple stage headers during evaluation.
+- The current A21 smoke tests validate the first-pass user experience:
+  the PaVe-default build now matches the PaVe paper target in diagnostics, and
+  the integration-side `BackendDiagnostics` stage returns a clean empty
+  association when the selected backend has no extra payload to expose.
+```
+
+For example:
+
+```wl
+BuildAndIntegrateAntenna[A, 3, 1,
+  Component -> Leading,
+  ExpansionOrder -> 0,
+  ReturnDiagnostics -> True,
+  PrintIntermediateSteps -> True,
+  IntermediateSteps -> {"RawIntegrated", "TTerms", "BackendDiagnostics"}
+]
 ```
 
 For the earlier A40 case, for example:
@@ -864,6 +965,9 @@ C40 === BuildAntenna[C, 4, 0]
 
 ## Known Limitations
 
+- The package now runs the full current target A-type public-route set, so the
+  remaining issues are about runtime and user ergonomics rather than missing
+  A-type coverage.
 - Final two-loop A22 public integration is now routed through the combined
   contribution layer rather than a single mixed basis family.  The default
   four-component public object is assembled from the `TwoLoopTree`
@@ -875,9 +979,10 @@ C40 === BuildAntenna[C, 4, 0]
   session, preferably component by component with diagnostics or checkpoints.
   In particular, avoid treating full A31/X40 reductions as lightweight
   notebook evaluations.
-- Full X40 antenna integrations should be run component by component; the
-  basis/master backend is implemented, but large full-list reductions can be
-  slow.
+- Full X40 antenna integrations are implemented and validated, but some of
+  them are operationally very heavy.  In particular, the current
+  `A40 Subleading` object-first public integration takes about 32 minutes on a
+  MacBook Pro M4 and should be launched deliberately.
 - Full A31 component integrations are computationally heavy.  The X31 direct
   reduction and master mapping infrastructure is present, but long reductions
   should be run deliberately in a Mathematica session with diagnostics.

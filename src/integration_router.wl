@@ -9,19 +9,48 @@
 
 (*************************************************)
 
-Options[IntegrateAntenna] = {ExpandPaVeFunction -> True, ApplyFeynCalcMS
-   -> True, quarkMass -> 0, PaVeEvaluation -> "PaXEvaluate",
+Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
+   PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> Automatic, KinematicScale -> q2, NormalizeKinematicScale ->
     True, ReturnDiagnostics -> False, LoopMomentum -> l, ApplyDimReg ->
-    True, ReductionBackend -> Automatic, BasisFamily -> Automatic,
-   BasisRoot -> Automatic, GenerateMissingBases -> False,
-   ReturnTTerms -> False, Component -> All, Contribution -> All};
+    True, BasisFamily -> Automatic, BasisRoot -> Automatic,
+   GenerateMissingBases -> False,
+   ReturnTTerms -> False, Component -> All, Contribution -> All,
+   IntermediateSteps -> {}, PrintIntermediateSteps -> False};
 
 IntegrateAntenna::heavy =
   "This route uses a heavy integration backend and may take a long time: `1`.";
 
 IntegratedResidualListZeroQ[residuals_] :=
   ListQ[residuals] && And @@ (TrueQ[# === 0]& /@ residuals);
+
+CollectIntegrationIntermediateSteps[antenna_, rawIntegrated_, tTerms_,
+   finalIntegrated_, selectedIntegrated_, backendDiagnostics_, diagnostics_,
+   steps_List] :=
+  Module[{collected = <||>},
+    If[RequestedIntermediateStepQ[steps, "InputAntenna"],
+      collected = Join[collected, <|"InputAntenna" -> antenna|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "RawIntegrated"],
+      collected = Join[collected, <|"RawIntegrated" -> rawIntegrated|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "TTerms"],
+      collected = Join[collected, <|"TTerms" -> tTerms|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "FinalIntegrated"],
+      collected = Join[collected, <|"FinalIntegrated" -> finalIntegrated|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "SelectedIntegrated"],
+      collected = Join[collected, <|"SelectedIntegrated" -> selectedIntegrated|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "BackendDiagnostics"],
+      collected = Join[collected, <|"BackendDiagnostics" -> backendDiagnostics|>]
+    ];
+    If[RequestedIntermediateStepQ[steps, "IntegrationDiagnostics"],
+      collected = Join[collected, <|"IntegrationDiagnostics" -> diagnostics|>]
+    ];
+    collected
+  ];
 
 If[!ValueQ[$AntennaPipelineHeavyRouteNotices],
   $AntennaPipelineHeavyRouteNotices = <||>;
@@ -115,11 +144,12 @@ A22CombineIntegratedComponentDiagnostics[treeComponentDiags_Association,
 
 IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
    OptionsPattern[]] :=
-  Module[{ExpandPaVeFunctionOpt, ApplyFeynCalcOpt, quarkMassOpt, profile,
-     output},
-    ExpandPaVeFunctionOpt = OptionValue["ExpandPaVeFunction"];
+  Module[{ApplyFeynCalcOpt, quarkMassOpt, profile, output,
+     intermediateSteps, collectedSteps},
     ApplyFeynCalcOpt = OptionValue["ApplyFeynCalcMS"];
     quarkMassOpt = OptionValue["quarkMass"];
+    intermediateSteps = NormalizeIntermediateSteps[OptionValue[
+      "IntermediateSteps"]];
     profile = <|"DefaultBackend" -> integrationMethod, "PaVeFamily" ->
        "MasslessTwoPartonVertex", "KinematicScale" -> OptionValue[
         "KinematicScale"], "ExpansionOrder" -> If[OptionValue[
@@ -128,7 +158,7 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
     output =
       Switch[integrationMethod,
         PaVe,
-          IntegrateViaPaVe[antenna, profile, ExpandPaVeFunctionOpt,
+          IntegrateViaPaVe[antenna, profile, True,
             ApplyFeynCalcOpt, quarkMassOpt, PaVeEvaluation -> OptionValue[
              "PaVeEvaluation"], ExpansionOrder -> profile["ExpansionOrder"],
             KinematicScale -> OptionValue["KinematicScale"],
@@ -148,8 +178,20 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
             ". Aborting..."];
           $Failed
       ];
-    SelectAntennaComponent[output, Missing["DirectIntegratedObject"],
-      OptionValue["Component"]]
+    output = SelectAntennaComponent[output, Missing["DirectIntegratedObject"],
+      OptionValue["Component"]];
+    collectedSteps = CollectIntegrationIntermediateSteps[antenna,
+      Missing["NotAvailable"], Missing["NotAvailable"], output, output,
+      <||>, <||>, intermediateSteps];
+    If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
+        collectedSteps] > 0,
+      PrintIntermediateStepsAssociation[collectedSteps]
+    ];
+    If[Length[collectedSteps] > 0,
+      {output, collectedSteps}
+      ,
+      output
+    ]
   ];
 
 Options[BuildAndIntegrateAntenna] =
@@ -157,13 +199,13 @@ Options[BuildAndIntegrateAntenna] =
 
 IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
   Module[{data, key, profile, contributionInput, contribution,
-     componentInput, componentName, storedComponent, backend,
-     reductionBackend, antenna, diagnostics, output, ibpResult,
-     backendDiagnostics, rawIntegrated, tTerms, finalIntegrated,
+     componentInput, componentName, storedComponent, backend, antenna,
+     diagnostics, output, ibpResult,
+     backendDiagnostics = <||>, rawIntegrated, tTerms, finalIntegrated,
      selectedIntegrated, expansionOrder, leadingCall, subleadingCall,
      nfCall, breveCall, leadingResult, subleadingResult, nfResult,
      breveResult, leadingDiag, subleadingDiag, nfDiag, breveDiag,
-     treeDiags},
+     treeDiags, intermediateSteps, collectedSteps},
     If[!AntennaObjectQ[obj],
       Print["IntegrateAntenna expected a valid AntennaObject. Aborting..."];
       Return[
@@ -176,6 +218,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
       ]
     ];
     data = AntennaObjectData[obj];
+    intermediateSteps = NormalizeIntermediateSteps[OptionValue[
+      "IntermediateSteps"]];
     key = Lookup[data, "Key", Missing["UnknownKey"]];
     If[key === Missing["UnknownKey"],
       Print["Antenna object is missing its antenna key. Aborting..."];
@@ -228,7 +272,6 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
           Return[
             IntegrateAntenna[
               AntennaObjectWithSelection[obj, componentInput, TwoLoopTree],
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -238,11 +281,12 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> All,
               Contribution -> TwoLoopTree]
           ]
@@ -251,7 +295,6 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
           Return[
             IntegrateAntenna[
               AntennaObjectWithSelection[obj, Breve, OneLoopSelf],
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -261,11 +304,12 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> All,
               Contribution -> OneLoopSelf]
           ]
@@ -274,7 +318,6 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
           leadingCall =
             IntegrateAntenna[
               AntennaObjectWithSelection[obj, Leading, TwoLoopTree],
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -284,17 +327,17 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> All,
               Contribution -> TwoLoopTree];
           subleadingCall =
             IntegrateAntenna[
               AntennaObjectWithSelection[obj, Subleading, TwoLoopTree],
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -304,17 +347,17 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> All,
               Contribution -> TwoLoopTree];
           nfCall =
             IntegrateAntenna[
               AntennaObjectWithSelection[obj, Nf, TwoLoopTree],
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -324,17 +367,17 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> All,
               Contribution -> TwoLoopTree];
           breveCall =
             IntegrateAntenna[
               AntennaObjectWithSelection[obj, Breve, OneLoopSelf],
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -344,11 +387,12 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> All,
               Contribution -> OneLoopSelf];
           {leadingResult, leadingDiag} = leadingCall;
@@ -400,31 +444,14 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
         ]
       ]
     ];
-    backend = OptionValue["ReductionBackend"];
-    If[backend === Automatic,
-      backend = profile["DefaultBackend"]
-    ];
-    reductionBackend =
-      Switch[backend,
-        PaVe,
-          "PaVe"
-        ,
-        IBP,
-          "IBP"
-        ,
-        None,
-          None
-        ,
-        _,
-          backend
-      ];
+    backend = profile["DefaultBackend"];
     storedComponent = Lookup[data, "SelectedComponent", All];
     antenna = Lookup[data, "Antenna", $Failed];
     rawIntegrated =
       Switch[backend,
         PaVe,
-          IntegrateViaPaVe[antenna, profile, OptionValue[
-            "ExpandPaVeFunction"], OptionValue["ApplyFeynCalcMS"], OptionValue[
+          IntegrateViaPaVe[antenna, profile, True, OptionValue[
+            "ApplyFeynCalcMS"], OptionValue[
             "quarkMass"], PaVeEvaluation -> OptionValue["PaVeEvaluation"],
             ExpansionOrder -> expansionOrder, KinematicScale -> Lookup[
              profile, "KinematicScale", OptionValue["KinematicScale"]],
@@ -488,21 +515,35 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
         <||>
       ]
     ];
+    collectedSteps = CollectIntegrationIntermediateSteps[antenna,
+      rawIntegrated, tTerms, finalIntegrated, selectedIntegrated,
+      backendDiagnostics, diagnostics, intermediateSteps];
+    If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
+        collectedSteps] > 0,
+      PrintIntermediateStepsAssociation[collectedSteps]
+    ];
     output =
       If[OptionValue["ReturnDiagnostics"] === True,
         {selectedIntegrated, Join[diagnostics, <|"SelectedComponent" ->
             componentInput, "BuildComponent" -> storedComponent,
-            "RawIntegrated" -> rawIntegrated, "TTerms" -> tTerms|>]}
+            "RawIntegrated" -> rawIntegrated, "TTerms" -> tTerms|>,
+          If[Length[collectedSteps] > 0,
+            <|"IntermediateSteps" -> collectedSteps|>,
+            <||>
+          ]]}
         ,
-        selectedIntegrated
+        If[Length[collectedSteps] > 0,
+          {selectedIntegrated, collectedSteps}
+          ,
+          selectedIntegrated
+        ]
       ];
     output
   ];
 
 BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
    OptionsPattern[]] :=
-  Module[{key, profile, contribution, componentName, backend,
-     reductionBackend, antennaObject,
+  Module[{key, profile, contribution, componentName, antennaObject,
      buildComponent, selectionComponent,
      diagnostics, expansionOrder,
      leadingCall, subleadingCall, nfCall, breveCall,
@@ -535,7 +576,6 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
         "Leading" | "Subleading" | "Nf",
           Return[
             BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -545,11 +585,12 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> OptionValue["Component"],
               Contribution -> TwoLoopTree]
           ]
@@ -557,7 +598,6 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
         "Breve",
           Return[
             BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -567,11 +607,12 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> Breve,
               Contribution -> OneLoopSelf]
           ]
@@ -579,7 +620,6 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
         "All",
           leadingCall =
             BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -589,16 +629,16 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> Leading,
               Contribution -> TwoLoopTree];
           subleadingCall =
             BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -608,16 +648,16 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> Subleading,
               Contribution -> TwoLoopTree];
           nfCall =
             BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -627,16 +667,16 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> Nf,
               Contribution -> TwoLoopTree];
           breveCall =
             BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-              ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
               ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
               quarkMass -> OptionValue["quarkMass"],
               PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -646,11 +686,12 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
               ReturnDiagnostics -> True,
               LoopMomentum -> OptionValue["LoopMomentum"],
               ApplyDimReg -> OptionValue["ApplyDimReg"],
-              ReductionBackend -> OptionValue["ReductionBackend"],
               BasisFamily -> OptionValue["BasisFamily"],
               BasisRoot -> OptionValue["BasisRoot"],
               GenerateMissingBases -> OptionValue["GenerateMissingBases"],
               ReturnTTerms -> OptionValue["ReturnTTerms"],
+              IntermediateSteps -> OptionValue["IntermediateSteps"],
+              PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
               Component -> Breve,
               Contribution -> OneLoopSelf];
           {leadingResult, leadingDiag} = leadingCall;
@@ -701,24 +742,6 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
         ]
       ]
     ];
-    backend = OptionValue["ReductionBackend"];
-    If[backend === Automatic,
-      backend = profile["DefaultBackend"]
-    ];
-    reductionBackend =
-      Switch[backend,
-        PaVe,
-          "PaVe"
-        ,
-        IBP,
-          "IBP"
-        ,
-        None,
-          None
-        ,
-        _,
-          backend
-      ];
     buildComponent =
       If[OptionValue["Component"] === All,
         All
@@ -732,8 +755,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
         All
       ];
     antennaObject = BuildAntennaObject[type, numFinalParticles, loopOrder,
-      ReductionBackend -> reductionBackend, ApplyDimReg -> OptionValue[
-       "ApplyDimReg"], LoopMomentum -> OptionValue["LoopMomentum"],
+      ApplyDimReg -> OptionValue["ApplyDimReg"],
+      LoopMomentum -> OptionValue["LoopMomentum"],
       Component -> buildComponent, Contribution -> OptionValue[
        "Contribution"]];
     If[antennaObject === $Failed,
@@ -749,7 +772,6 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       ]
     ];
     IntegrateAntenna[antennaObject,
-      ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
       ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
       quarkMass -> OptionValue["quarkMass"],
       PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -759,11 +781,12 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
       LoopMomentum -> OptionValue["LoopMomentum"],
       ApplyDimReg -> OptionValue["ApplyDimReg"],
-      ReductionBackend -> OptionValue["ReductionBackend"],
       BasisFamily -> OptionValue["BasisFamily"],
       BasisRoot -> OptionValue["BasisRoot"],
       GenerateMissingBases -> OptionValue["GenerateMissingBases"],
       ReturnTTerms -> OptionValue["ReturnTTerms"],
+      IntermediateSteps -> OptionValue["IntermediateSteps"],
+      PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
       Component -> selectionComponent,
       Contribution -> OptionValue["Contribution"]]
   ];
@@ -774,7 +797,6 @@ Options[LegacyIntegrateAntenna] =
 LegacyIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
    OptionsPattern[]] :=
   BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-    ExpandPaVeFunction -> OptionValue["ExpandPaVeFunction"],
     ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
     quarkMass -> OptionValue["quarkMass"],
     PaVeEvaluation -> OptionValue["PaVeEvaluation"],
@@ -784,11 +806,12 @@ LegacyIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
     LoopMomentum -> OptionValue["LoopMomentum"],
     ApplyDimReg -> OptionValue["ApplyDimReg"],
-    ReductionBackend -> OptionValue["ReductionBackend"],
     BasisFamily -> OptionValue["BasisFamily"],
     BasisRoot -> OptionValue["BasisRoot"],
     GenerateMissingBases -> OptionValue["GenerateMissingBases"],
     ReturnTTerms -> OptionValue["ReturnTTerms"],
+    IntermediateSteps -> OptionValue["IntermediateSteps"],
+    PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
     Component -> OptionValue["Component"],
     Contribution -> OptionValue["Contribution"]];
 IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Association,

@@ -207,8 +207,17 @@ PaperDiagnosticsFor[{C, 4, 0}, result_] :=
      result, 4]|>;
 
 PaperDiagnosticsFor[{A, 2, 1}, result_] :=
-  <|"PaperCheckAvailable" -> True, "ExactMatchQ" -> TrueQ[Simplify[result
-     - A21Paper] === 0]|>;
+  Module[{target, mode},
+    If[!FreeQ[result, B0 | C0],
+      target = A21PaperPaVe /. D -> 4 - 2 Epsilon;
+      mode = "PaVe"
+      ,
+      target = A21Paper;
+      mode = "Raw"
+    ];
+    <|"PaperCheckAvailable" -> True, "ComparisonMode" -> mode,
+      "ExactMatchQ" -> TrueQ[Simplify[result - target] === 0]|>
+  ];
 
 PaperDiagnosticsFor[{A, 3, 1}, _] :=
   <|"PaperCheckAvailable" -> False, "Reason" -> "NoFullUnintegratedPaperExpression"

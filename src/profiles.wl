@@ -25,7 +25,7 @@ AntennaReductionProfile[{A, 2, 1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
 AntennaReductionProfile[{A, 3, 1}] :=
-  <|"DefaultBackend" -> "IBP", "BasisFamily" -> "A31"|>;
+  <|"DefaultBackend" -> "PaVe"|>;
 
 AntennaProfile[{A, 2, 1}] :=
   <|"Key" -> {A, 2, 1}, "Name" -> "A21", "AntennaType" -> A, "NumFinalParticles"
