@@ -92,6 +92,10 @@ extractDiagnosticSummary[diag_] :=
 
 benchmarkCall[route_Association, entryPoint_String, thunk_] :=
   Module[{timedOut = False, elapsed, outcome, value, diag, base},
+    Print[
+      "[", DateString[{"ISODate", " ", "Time"}], "] ",
+      route["Label"], " :: ", entryPoint, " :: starting"
+    ];
     {elapsed, outcome} =
       AbsoluteTiming[
         TimeConstrained[
@@ -100,6 +104,12 @@ benchmarkCall[route_Association, entryPoint_String, thunk_] :=
           (timedOut = True; $Aborted)
         ]
       ];
+    Print[
+      "[", DateString[{"ISODate", " ", "Time"}], "] ",
+      route["Label"], " :: ", entryPoint, " :: ",
+      If[timedOut, "timed out", "finished"],
+      " in ", ToString[NumberForm[N[elapsed], {Infinity, 3}], StandardForm], " s"
+    ];
     base =
       Join[
         <|
@@ -213,10 +223,18 @@ benchmarkRoutes = {
     "ExpansionOrderLabel" -> "0", "IntegrationSupported" -> True|>
 };
 
+rRatioBenchmarkRoutes = {
+  <|"Label" -> "RRatio SMQCD", "Model" -> SMQCD,
+    "DriverOptions" -> {quarkMass -> 0}|>
+};
+
 filteredRoutes =
   If[selectedRouteLabels === All,
-    benchmarkRoutes,
-    Select[benchmarkRoutes, MemberQ[selectedRouteLabels, #["Label"]]&]
+    Join[benchmarkRoutes, rRatioBenchmarkRoutes],
+    Join[
+      Select[benchmarkRoutes, MemberQ[selectedRouteLabels, #["Label"]]&],
+      Select[rRatioBenchmarkRoutes, MemberQ[selectedRouteLabels, #["Label"]]&]
+    ]
   ];
 
 runRouteBenchmarks[route_Association] :=
@@ -329,7 +347,38 @@ runRouteBenchmarks[route_Association] :=
     }
   ];
 
-results = Flatten[runRouteBenchmarks /@ filteredRoutes, 1];
+runRRatioBenchmarks[route_Association] :=
+  Module[{driverOptions, rratioResult, modelSymbol},
+    driverOptions = Lookup[route, "DriverOptions", {}];
+    modelSymbol = Lookup[route, "Model", Missing["UnknownModel"]];
+    rratioResult =
+      benchmarkCall[
+        <|"Label" -> route["Label"], "ComponentLabel" -> "All",
+          "ContributionLabel" -> "All", "ExpansionOrderLabel" -> "default"|>,
+        "BuildRRatio",
+        Function[
+          BuildRRatio[
+            route["Model"],
+            Sequence @@ Join[driverOptions, {ReturnDiagnostics -> True}]
+          ]
+        ]
+      ];
+    {
+      Join[
+        rratioResult["Benchmark"],
+        <|"Model" -> ToString[modelSymbol, InputForm]|>
+      ]
+    }
+  ];
+
+results =
+  Flatten[
+    If[KeyExistsQ[#, "Model"],
+      runRRatioBenchmarks[#],
+      runRouteBenchmarks[#]
+    ]& /@ filteredRoutes,
+    1
+  ];
 
 report =
   <|

@@ -53,6 +53,9 @@ Current project status against that target:
 [done] Shared `X40` basis-order optimization is adopted as the default public
        route behavior; timing diagnostics identify basis matching as the main
        performance bottleneck
+[done] Prototype public `BuildRRatio[SMQCD, quarkMass -> 0]` driver now
+       assembles the final symbolic massless NNLO `R`-ratio expression from
+       the validated public antenna routes
 [partial] Package usability/docs are improving, but the repo is not yet in the
           final "anyone can load it and reproduce the whole 0403057 A-type
           story without guidance" state
@@ -173,12 +176,14 @@ The next work should be organized in this order.
      that choice now lives entirely at build time.
 
 4. Prototype R-ratio driver.
-   - Do not start this until the benchmark pass says which public routes are
-     stable enough to expose.
-   - Add a public function that takes the antenna model
-     (for example `SMQCD`, `SUSY`, or `HEFT`) together with the quark-mass
-     assumptions and assembles the corresponding R-ratio ingredients.
-   - Initial scope: prototype only, massless `SMQCD` only.
+   - Done in the current public API for massless `SMQCD`:
+     `BuildRRatio[SMQCD, quarkMass -> 0]`.
+   - The driver uses the thesis notebook/package formula as its assembly
+     source and collects the required antenna ingredients through the
+     validated public routes.
+   - `BuildRRatio[SUSY, ...]` and `BuildRRatio[HiggsEFT, ...]` now exist as
+     explicit public shells, but still return clear not-yet-implemented
+     failures in this prototype milestone.
 
 5. Wolfram-facing documentation polish.
    - Add usage comments / inline function documentation so Mathematica
@@ -196,7 +201,7 @@ The next work should be organized in this order.
 2. Extend beyond A-type into D-type and F-type antennae.
    - First exploratory target: one example antenna in each model family,
      such as `D30` and `F30`.
-   - Planned route: test `SUSY` and `HEFT` model support through FeynCalc /
+   - Planned route: test `SUSY` and `HiggsEFT` model support through FeynCalc /
      FeynArts and use those examples to establish the multi-model workflow.
 ```
 
@@ -215,7 +220,8 @@ Tier 1: thesis-critical, must finish before defense preparation
 - Run and extend the timing / benchmark suite for the public antenna routes.
 - Add options to expose intermediate pipeline stages for debugging and
   explanation.
-- Add a prototype public R-ratio driver for massless SMQCD only.
+- Keep the prototype public R-ratio driver for massless SMQCD aligned with
+  the thesis formula and the validated public ingredient routes.
 - Improve function comments / usage text so Mathematica-side discoverability is
   acceptable during the thesis and defense period.
 - Write the thesis around the validated massless A-type package story.
@@ -224,11 +230,11 @@ Tier 2: thesis-useful, only if Tier 1 is stable
 - Work out at least one 0403057 master-integral derivation "by hand" for the
   thesis narrative.
 - Try one exploratory beyond-A-type example such as D30 or F30.
-- Try one exploratory non-SMQCD model path such as SUSY or HEFT.
+- Try one exploratory non-SMQCD model path such as SUSY or HiggsEFT.
 
 Tier 3: post-defense / follow-up paper scope
 - Systematic D-type and F-type implementation.
-- Broader SUSY / HEFT support.
+- Broader SUSY / HiggsEFT support.
 - Full software-polish pass beyond thesis-critical usability.
 ```
 
@@ -371,13 +377,14 @@ C40
 
 ## Public Entry Points
 
-The two main functions are:
+The main public entry points are:
 
 ```wl
 BuildAntenna[type, numFinalParticles, loopOrder]
 BuildAntennaObject[type, numFinalParticles, loopOrder, ...]
 IntegrateAntenna[antennaObject, ...]
 BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder, ...]
+BuildRRatio[model, ...]
 ```
 
 `BuildAntenna[...]` is the constructor.  The primary integration route is now
@@ -391,6 +398,16 @@ directly integrable, because it does not carry the routing metadata needed by
 the integration backends.  The older `LegacyIntegrateAntenna[type, n, loop,
 ...]` form is still available as compatibility sugar and delegates to
 `BuildAndIntegrateAntenna[...]`.
+
+`BuildRRatio[...]` is the first high-level physics driver layered on top of
+those antenna routes.  In the current prototype it supports only the massless
+`SMQCD` case and returns the final symbolic NNLO `R`-ratio expression built
+from the validated public antenna ingredients.  The `SUSY` and `HiggsEFT`
+entry points already exist as explicit API shells, but they still fail
+cleanly as not-yet-implemented placeholders.  The current output uses the same
+package conventions as the ingredient routes, so the symbolic result is
+expressed in terms of `SUNN`, `Nf`, `FeynCalc\`Epsilon`, `q2`, and
+`SMP["alpha_s"]`.
 
 ### Quick API Reference
 
@@ -427,6 +444,15 @@ BuildAndIntegrateAntenna[A, 3, 1, ExpansionOrder -> 0]
   (* {integrated A31, integrated tildeA31, integrated hatA31} *)
 BuildAndIntegrateAntenna[A, 2, 2, ExpansionOrder -> 0]
   (* {integrated A22, integrated tildeA22, integrated hatA22, integrated breveA22} *)
+```
+
+High-level `R`-ratio driver:
+
+```wl
+BuildRRatio[SMQCD, quarkMass -> 0]
+BuildRRatio[SMQCD, quarkMass -> 0, ReturnDiagnostics -> True]
+BuildRRatio[SUSY, quarkMass -> 0]      (* placeholder shell: not implemented *)
+BuildRRatio[HiggsEFT, quarkMass -> 0]  (* placeholder shell: not implemented *)
 ```
 
 Object-first integration:
@@ -587,6 +613,7 @@ A40 Leading object integration            about 194 s
 A40 Subleading object integration         about 582 s
 B40 object integration                    about 16 s
 C40 object integration                    about 308 s
+RRatio SMQCD driver                       about 2913 s
 ```
 
 The current practical picture is:
@@ -788,6 +815,21 @@ Return only one final integrated A31 component:
 intTildeA31 =
   BuildAndIntegrateAntenna[A, 3, 1, Component -> Subleading,
     ExpansionOrder -> 0];
+```
+
+Assemble the massless `SMQCD` NNLO `R`-ratio expression:
+
+```wl
+rRatioSMQCD = BuildRRatio[SMQCD, quarkMass -> 0];
+```
+
+Inspect the assembled ingredient bundle and the raw combination used by the
+driver:
+
+```wl
+{rRatioSMQCD, rRatioDiag} =
+  BuildRRatio[SMQCD, quarkMass -> 0, ReturnDiagnostics -> True,
+    IntermediateSteps -> {"Ingredients", "AssemblyExpression"}];
 ```
 
 Run tree-level regression checks:

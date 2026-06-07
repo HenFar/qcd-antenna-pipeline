@@ -45,3 +45,5 @@ Get[FileNameJoin[{packageRoot, "src", "paper_targets.wl"}]];
 Get[FileNameJoin[{packageRoot, "src", "diagnostics.wl"}]];
 
 Get[FileNameJoin[{packageRoot, "src", "notebook_patches.wl"}]];
+
+Get[FileNameJoin[{packageRoot, "src", "rratio_driver.wl"}]];
