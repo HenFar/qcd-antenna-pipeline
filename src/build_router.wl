@@ -24,6 +24,9 @@ ResolveIntegrableLoopBuildReductionBackend::usage =
 BuildAntennaData::usage =
   "BuildAntennaData[key] assembles the raw build-side data association for a given antenna key.";
 
+ResolvedTreeSelfInterference::usage =
+  "ResolvedTreeSelfInterference[key, amp, profile] returns the tree self-interference for a route, falling back to a direct recomputation if the memoized symbol has gone inert.";
+
 BuildAntenna::usage =
   "BuildAntenna[type, numFinalParticles, loopOrder, ...] is the main public constructor for unintegrated antenna expressions.";
 
@@ -360,7 +363,7 @@ BuildAntennaData[key_] :=
     output =
       Switch[profile["Production"],
         "SelfInterference",
-          fullInterference = AntennaSelfInterference[key];
+          fullInterference = ResolvedTreeSelfInterference[key, amp, profile];
           extraction = ExtractAntennaComponents[fullInterference, profile,
              context];
           <|"Profile" -> profile, "Amplitude" -> amp, "Sectors" -> <|
@@ -369,7 +372,7 @@ BuildAntennaData[key_] :=
             ]|>
         ,
         "ColorOrderedAntenna",
-          fullInterference = AntennaSelfInterference[key];
+          fullInterference = ResolvedTreeSelfInterference[key, amp, profile];
           fullExtraction = ExtractAntennaComponents[fullInterference,
              profile, context];
           colorOrderedData = ColorOrderedAntenna[amp, AntennaAmplitude[{A,
@@ -407,7 +410,7 @@ BuildAntennaData[key_] :=
           |>
         ,
         "SectorSelfInterference",
-          fullInterference = AntennaSelfInterference[key];
+          fullInterference = ResolvedTreeSelfInterference[key, amp, profile];
           fullExtraction = ExtractAntennaComponents[fullInterference,
              profile, context];
           split = SplitAmplitudeBySectors[amp, profile];
@@ -475,6 +478,55 @@ BuildAntennaData[key_] :=
             "Failed" -> True, "Reason" -> "UnknownProductionMode"|>|>
       ];
     output
+  ];
+
+ResolvedTreeSelfInterference[key_, amp_, profile_Association] :=
+  Module[{interference, storedRuleValue, keyTypeName},
+    keyTypeName = SymbolName[First[key]];
+    If[keyTypeName === "A" && key[[2]] === 3 && key[[3]] === 0,
+      Return[
+        InterfereMAmplitudes[
+          amp,
+          amp,
+          Lookup[profile, "NumFinalParticles", key[[2]]]
+        ]
+      ]
+    ];
+    interference = Quiet[Check[Evaluate[AntennaSelfInterference[key]], $Failed]];
+    If[interference === $Failed ||
+        Head[interference] === AntennaSelfInterference,
+      storedRuleValue =
+        FirstCase[
+          DownValues[AntennaSelfInterference],
+          HoldPattern[HoldPattern[AntennaSelfInterference[arg : {type_Symbol, n_Integer, l_Integer}]] :> rhs_] /;
+              TrueQ[
+                SymbolName[type] === keyTypeName &&
+                n === key[[2]] &&
+                l === key[[3]]
+              ] :>
+            rhs,
+          Missing["NotFound"]
+        ];
+      If[storedRuleValue =!= Missing["NotFound"],
+        Return[storedRuleValue]
+      ];
+      interference =
+        If[Lookup[profile, "AntennaType", First[key]] === A,
+          InterfereMAmplitudes[
+            amp,
+            amp,
+            Lookup[profile, "NumFinalParticles", key[[2]]]
+          ]
+          ,
+          InterfereMAmplitudes[
+            amp,
+            amp,
+            Lookup[profile, "NumFinalParticles", key[[2]]],
+            AntennaType -> Lookup[profile, "AntennaType", First[key]]
+          ]
+        ]
+    ];
+    interference
   ];
 (*************************************************)
 
