@@ -29,6 +29,21 @@ ResolveLoopBuildReductionBackend[profile_Association, requestedBackend_] :=
     resolvedBackend
   ];
 
+ResolveLoopBuildReductionBackend[profile_, requestedBackend_] :=
+  Module[{resolvedProfile},
+    resolvedProfile = Quiet[Check[Evaluate[profile], profile]];
+    If[AssociationQ[resolvedProfile],
+      Return[
+        ResolveLoopBuildReductionBackend[resolvedProfile, requestedBackend]
+      ]
+    ];
+    If[requestedBackend === Automatic,
+      "PaVe"
+      ,
+      requestedBackend
+    ]
+  ];
+
 ResolveIntegrableLoopBuildReductionBackend[key_, requestedBackend_] :=
   Module[{integrationBackend},
     If[requestedBackend =!= Automatic,
@@ -64,9 +79,33 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
       "NumFinalParticles"], LoopMomentum -> OptionValue["LoopMomentum"], ReductionBackend
        -> reductionBackend, ApplyCasimirSubstitution -> OptionValue[
       "ApplyCasimirSubstitution"], ApplyDimReg -> False];
+    If[interference === $Failed,
+      Return[
+        <|"Profile" -> profile, "TreeAmplitude" -> treeAmp,
+          "LoopAmplitude" -> loopAmp, "Interferences" -> <|"Production" -> $Failed|>,
+          "Components" -> <|"Lead" -> $Failed, "SubLead" -> $Failed,
+            "QuarkLoop" -> $Failed, "Breve" -> $Failed|>,
+          "Diagnostics" -> <|"Failed" -> True,
+            "Reason" -> "OneLoopInterferenceFailed"|>,
+          "NormalizedInterference" -> $Failed|>
+      ]
+    ];
     context = <|"BornInterference" -> profile["BornInterference"]|>;
     extraction = ExtractLoopAntennaComponents[interference, profile, 
       context, ApplyDimReg -> OptionValue["ApplyDimReg"]];
+    If[!AssociationQ[extraction],
+      Return[
+        <|"Profile" -> profile, "TreeAmplitude" -> treeAmp,
+          "LoopAmplitude" -> loopAmp,
+          "Interferences" -> <|"Production" -> interference|>,
+          "Components" -> <|"Lead" -> $Failed, "SubLead" -> $Failed,
+            "QuarkLoop" -> $Failed|>,
+          "Diagnostics" -> <|"Failed" -> True,
+            "Reason" -> "LoopExtractionFailed",
+            "ExtractionHead" -> Head[extraction]|>,
+          "NormalizedInterference" -> $Failed|>
+      ]
+    ];
     output = <|"Profile" -> profile, "TreeAmplitude" -> treeAmp, "LoopAmplitude"
        -> loopAmp, "Interferences" -> <|"Production" -> interference|>, "Components"
        -> extraction["Components"], "Diagnostics" -> extraction["Diagnostics"
@@ -366,7 +405,9 @@ Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
   ApplyCasimirSubstitution -> True, ApplyDimReg -> True,
   LoopMomentum -> l, ReductionBackend -> Automatic, Component -> All,
   IntermediateSteps -> {}, PrintIntermediateSteps -> False,
-  LoopMomenta -> {l1, l2}, Contribution -> All};
+  LoopMomenta -> {l1, l2}, Contribution -> All,
+  UseStoredResults -> False, StoreResults -> False,
+  ResultsCacheRoot -> Automatic, RefreshStoredResults -> False};
 
 Options[BuildAntennaObject] =
   Options[BuildAntenna];
@@ -450,6 +491,96 @@ PrintIntermediateStepsAssociation[steps_Association] :=
       steps
     ];
     Null
+  ];
+
+BuildAntennaStoredResultKey[type_, numFinalParticles_, loopOrder_,
+   options_Association] :=
+  StoredResultKeyAssociation[
+    "BuildAntenna",
+    <|
+      "Type" -> type,
+      "NumFinalParticles" -> numFinalParticles,
+      "LoopOrder" -> loopOrder,
+      "ReturnBuildData" -> Lookup[options, "ReturnBuildData", False],
+      "ReturnAntennaObject" -> Lookup[options, "ReturnAntennaObject", False],
+      "IntegrableForm" -> Lookup[options, "IntegrableForm", False],
+      "RunPaperCheck" -> Lookup[options, "RunPaperCheck", Automatic],
+      "prefactor" -> Lookup[options, "prefactor", 1],
+      "ApplyStripCouplings" -> Lookup[options, "ApplyStripCouplings",
+        AllCouplings],
+      "ApplyCasimirSubstitution" -> Lookup[options,
+        "ApplyCasimirSubstitution", True],
+      "ApplyDimReg" -> Lookup[options, "ApplyDimReg", True],
+      "LoopMomentum" -> Lookup[options, "LoopMomentum", l],
+      "ReductionBackend" -> Lookup[options, "ReductionBackend", Automatic],
+      "Component" -> Lookup[options, "Component", All],
+      "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}],
+      "Contribution" -> Lookup[options, "Contribution", All]
+    |>
+  ];
+
+BuildAntennaStoredResultLabel[type_, numFinalParticles_, loopOrder_,
+   options_Association] :=
+  StringJoin[
+    "BuildAntenna-",
+    StoredResultTypeLabel[type], "-",
+    ToString[numFinalParticles], "-",
+    ToString[loopOrder], "-",
+    CanonicalAntennaComponentName[Lookup[options, "Component", All]], "-",
+    CanonicalAntennaComponentName[Lookup[options, "Contribution", All]]
+  ];
+
+BuildAntennaObjectStoredResultKey[type_, numFinalParticles_, loopOrder_,
+   options_Association] :=
+  StoredResultKeyAssociation[
+    "BuildAntennaObject",
+    <|
+      "Type" -> type,
+      "NumFinalParticles" -> numFinalParticles,
+      "LoopOrder" -> loopOrder,
+      "RunPaperCheck" -> Lookup[options, "RunPaperCheck", Automatic],
+      "prefactor" -> Lookup[options, "prefactor", 1],
+      "ApplyStripCouplings" -> Lookup[options, "ApplyStripCouplings",
+        AllCouplings],
+      "ApplyCasimirSubstitution" -> Lookup[options,
+        "ApplyCasimirSubstitution", True],
+      "ApplyDimReg" -> Lookup[options, "ApplyDimReg", True],
+      "LoopMomentum" -> Lookup[options, "LoopMomentum", l],
+      "ReductionBackend" -> Lookup[options, "ReductionBackend", Automatic],
+      "Component" -> Lookup[options, "Component", All],
+      "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}],
+      "Contribution" -> Lookup[options, "Contribution", All]
+    |>
+  ];
+
+BuildAntennaObjectStoredResultLabel[type_, numFinalParticles_, loopOrder_,
+   options_Association] :=
+  StringJoin[
+    "BuildAntennaObject-",
+    StoredResultTypeLabel[type], "-",
+    ToString[numFinalParticles], "-",
+    ToString[loopOrder], "-",
+    CanonicalAntennaComponentName[Lookup[options, "Component", All]], "-",
+    CanonicalAntennaComponentName[Lookup[options, "Contribution", All]]
+  ];
+
+FormatFreshBuildReturn[result_, diagnostics_, returnDiagnostics_,
+   requestedSteps_List, printSteps_] :=
+  Module[{selectedSteps},
+    selectedSteps = Lookup[diagnostics, "IntermediateSteps", <||>];
+    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
+        selectedSteps] > 0,
+      PrintIntermediateStepsAssociation[selectedSteps]
+    ];
+    If[TrueQ[returnDiagnostics],
+      {result, diagnostics}
+      ,
+      If[Length[requestedSteps] > 0,
+        {result, selectedSteps}
+        ,
+        result
+      ]
+    ]
   ];
 
 SelectAntennaComponent[result_, key_, component_] :=
@@ -583,6 +714,40 @@ BuildAntennaResult[{A, 2, 2}, data_Association] :=
   {data["Components"]["Lead"], data["Components"]["SubLead"], data["Components"
     ]["QuarkLoop"], data["Components"]["Breve"]};
 
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 0},
+   data_Association] :=
+  data["Components"]["Antenna"];
+
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 3, 0},
+   data_Association] :=
+  data["Components"]["Antenna"];
+
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 4, 0},
+   data_Association] :=
+  {data["Components"]["Antenna"], data["FullColorComponents"]["SubLead"]};
+
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "B", 4, 0},
+   data_Association] :=
+  data["Components"]["Antenna"];
+
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "C", 4, 0},
+   data_Association] :=
+  data["Components"]["Antenna"];
+
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 1},
+   data_Association] :=
+  data["Components"]["Antenna"];
+
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 3, 1},
+   data_Association] :=
+  {data["Components"]["Lead"], data["Components"]["SubLead"],
+    data["Components"]["QuarkLoop"]};
+
+BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 2},
+   data_Association] :=
+  {data["Components"]["Lead"], data["Components"]["SubLead"],
+    data["Components"]["QuarkLoop"], data["Components"]["Breve"]};
+
 BuildAntennaDiagnostics[key_, result_, data_Association, runPaperCheck_
   ] :=
   Module[{paperDiagnostics},
@@ -599,40 +764,219 @@ BuildAntennaDiagnostics[key_, result_, data_Association, runPaperCheck_
 
 BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
    OptionsPattern[]] :=
-  BuildAntenna[type, numFinalParticles, loopOrder,
-    ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
-    ReturnBuildData -> False,
-    ReturnAntennaObject -> False,
-    IntegrableForm -> True,
-    RunPaperCheck -> OptionValue["RunPaperCheck"],
-    Verbose -> OptionValue["Verbose"],
-    printDiagram -> OptionValue["printDiagram"],
-    prefactor -> OptionValue["prefactor"],
-    ApplyStripCouplings -> OptionValue["ApplyStripCouplings"],
-    ApplyCasimirSubstitution -> OptionValue[
-      "ApplyCasimirSubstitution"],
-    ApplyDimReg -> OptionValue["ApplyDimReg"],
-    LoopMomentum -> OptionValue["LoopMomentum"],
-    ReductionBackend -> If[loopOrder === 1,
-      ResolveIntegrableLoopBuildReductionBackend[
-        {type, numFinalParticles, loopOrder},
-        OptionValue["ReductionBackend"]]
-      ,
-      OptionValue["ReductionBackend"]
-    ],
-    Component -> OptionValue["Component"],
-    IntermediateSteps -> OptionValue["IntermediateSteps"],
-    PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
-    LoopMomenta -> OptionValue["LoopMomenta"],
-    Contribution -> OptionValue["Contribution"]];
+  Module[{requestedSteps, useStored, storeStored, refreshStored,
+     cacheKey, cacheLabel, cacheRoot, loaded, computed, result, diagnostics,
+     optionsAssoc},
+    requestedSteps = NormalizeIntermediateSteps[OptionValue[
+      "IntermediateSteps"]];
+    useStored = TrueQ[OptionValue["UseStoredResults"]];
+    storeStored = TrueQ[OptionValue["StoreResults"]];
+    refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
+    optionsAssoc = <|
+      "RunPaperCheck" -> OptionValue["RunPaperCheck"],
+      "prefactor" -> OptionValue["prefactor"],
+      "ApplyStripCouplings" -> OptionValue["ApplyStripCouplings"],
+      "ApplyCasimirSubstitution" -> OptionValue[
+        "ApplyCasimirSubstitution"],
+      "ApplyDimReg" -> OptionValue["ApplyDimReg"],
+      "LoopMomentum" -> OptionValue["LoopMomentum"],
+      "ReductionBackend" -> OptionValue["ReductionBackend"],
+      "Component" -> OptionValue["Component"],
+      "LoopMomenta" -> OptionValue["LoopMomenta"],
+      "Contribution" -> OptionValue["Contribution"]
+    |>;
+    If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
+        StoredResultsEnabledQ[useStored, storeStored, refreshStored],
+      cacheKey = BuildAntennaObjectStoredResultKey[type,
+        numFinalParticles, loopOrder, optionsAssoc];
+      cacheLabel = BuildAntennaObjectStoredResultLabel[type,
+        numFinalParticles, loopOrder, optionsAssoc];
+      cacheRoot = OptionValue["ResultsCacheRoot"];
+      If[!refreshStored && useStored,
+        loaded = LoadStoredResultEntry["BuildAntennaObject", cacheKey,
+          cacheRoot, cacheLabel];
+        If[AssociationQ[loaded],
+          PrintStoredResultHit[cacheLabel];
+          Return[
+            FormatStoredResultReturn[loaded["Result"],
+              loaded["Diagnostics"], loaded, OptionValue[
+                "ReturnDiagnostics"], requestedSteps,
+              OptionValue["PrintIntermediateSteps"]]
+          ]
+        ]
+      ];
+      computed =
+        Block[{$AntennaPipelineBypassStoredResults = True},
+          BuildAntenna[type, numFinalParticles, loopOrder,
+            ReturnDiagnostics -> True,
+            ReturnBuildData -> False,
+            ReturnAntennaObject -> False,
+            IntegrableForm -> True,
+            RunPaperCheck -> OptionValue["RunPaperCheck"],
+            Verbose -> OptionValue["Verbose"],
+            printDiagram -> OptionValue["printDiagram"],
+            prefactor -> OptionValue["prefactor"],
+            ApplyStripCouplings -> OptionValue["ApplyStripCouplings"],
+            ApplyCasimirSubstitution -> OptionValue[
+              "ApplyCasimirSubstitution"],
+            ApplyDimReg -> OptionValue["ApplyDimReg"],
+            LoopMomentum -> OptionValue["LoopMomentum"],
+            ReductionBackend -> If[loopOrder === 1,
+              ResolveIntegrableLoopBuildReductionBackend[
+                {type, numFinalParticles, loopOrder},
+                OptionValue["ReductionBackend"]]
+              ,
+              OptionValue["ReductionBackend"]
+            ],
+            Component -> OptionValue["Component"],
+            IntermediateSteps -> OptionValue["IntermediateSteps"],
+            PrintIntermediateSteps -> False,
+            LoopMomenta -> OptionValue["LoopMomenta"],
+            Contribution -> OptionValue["Contribution"],
+            UseStoredResults -> False,
+            StoreResults -> False,
+            ResultsCacheRoot -> cacheRoot,
+            RefreshStoredResults -> False]
+        ];
+      If[!MatchQ[computed, {_, _Association}],
+        Return[computed]
+      ];
+      {result, diagnostics} = computed;
+      If[result =!= $Failed && (storeStored || refreshStored),
+        StoreStoredResultEntry["BuildAntennaObject", cacheKey, cacheRoot,
+          cacheLabel, result, diagnostics]
+      ];
+      Return[
+        FormatFreshBuildReturn[result, diagnostics, OptionValue[
+            "ReturnDiagnostics"], requestedSteps, OptionValue[
+            "PrintIntermediateSteps"]]
+      ]
+    ];
+    BuildAntenna[type, numFinalParticles, loopOrder,
+      ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
+      ReturnBuildData -> False,
+      ReturnAntennaObject -> False,
+      IntegrableForm -> True,
+      RunPaperCheck -> OptionValue["RunPaperCheck"],
+      Verbose -> OptionValue["Verbose"],
+      printDiagram -> OptionValue["printDiagram"],
+      prefactor -> OptionValue["prefactor"],
+      ApplyStripCouplings -> OptionValue["ApplyStripCouplings"],
+      ApplyCasimirSubstitution -> OptionValue[
+        "ApplyCasimirSubstitution"],
+      ApplyDimReg -> OptionValue["ApplyDimReg"],
+      LoopMomentum -> OptionValue["LoopMomentum"],
+      ReductionBackend -> If[loopOrder === 1,
+        ResolveIntegrableLoopBuildReductionBackend[
+          {type, numFinalParticles, loopOrder},
+          OptionValue["ReductionBackend"]]
+        ,
+        OptionValue["ReductionBackend"]
+      ],
+      Component -> OptionValue["Component"],
+      IntermediateSteps -> OptionValue["IntermediateSteps"],
+      PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+      LoopMomenta -> OptionValue["LoopMomenta"],
+      Contribution -> OptionValue["Contribution"],
+      UseStoredResults -> OptionValue["UseStoredResults"],
+      StoreResults -> OptionValue["StoreResults"],
+      ResultsCacheRoot -> OptionValue["ResultsCacheRoot"],
+      RefreshStoredResults -> OptionValue["RefreshStoredResults"]]
+  ];
 
 BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
   Module[{key, data, result, selectedResult, diagnostics, antennaObject,
      integrableRequested, reductionBackend, intermediateSteps,
-     collectedSteps},
+     collectedSteps, useStored, storeStored, refreshStored, cacheKey,
+     cacheLabel, cacheRoot, loaded, computed, optionsAssoc},
+    useStored = TrueQ[OptionValue["UseStoredResults"]];
+    storeStored = TrueQ[OptionValue["StoreResults"]];
+    refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
     key = {type, numFinalParticles, loopOrder};
     intermediateSteps = NormalizeIntermediateSteps[OptionValue[
       "IntermediateSteps"]];
+    optionsAssoc = <|
+      "ReturnBuildData" -> OptionValue["ReturnBuildData"],
+      "ReturnAntennaObject" -> OptionValue["ReturnAntennaObject"],
+      "IntegrableForm" -> OptionValue["IntegrableForm"],
+      "RunPaperCheck" -> OptionValue["RunPaperCheck"],
+      "prefactor" -> OptionValue["prefactor"],
+      "ApplyStripCouplings" -> OptionValue["ApplyStripCouplings"],
+      "ApplyCasimirSubstitution" -> OptionValue[
+        "ApplyCasimirSubstitution"],
+      "ApplyDimReg" -> OptionValue["ApplyDimReg"],
+      "LoopMomentum" -> OptionValue["LoopMomentum"],
+      "ReductionBackend" -> OptionValue["ReductionBackend"],
+      "Component" -> OptionValue["Component"],
+      "LoopMomenta" -> OptionValue["LoopMomenta"],
+      "Contribution" -> OptionValue["Contribution"]
+    |>;
+    If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
+        StoredResultsEnabledQ[useStored, storeStored, refreshStored],
+      cacheKey = BuildAntennaStoredResultKey[type, numFinalParticles,
+        loopOrder, optionsAssoc];
+      cacheLabel = BuildAntennaStoredResultLabel[type, numFinalParticles,
+        loopOrder, optionsAssoc];
+      cacheRoot = OptionValue["ResultsCacheRoot"];
+      If[!refreshStored && useStored,
+        loaded = LoadStoredResultEntry["BuildAntenna", cacheKey, cacheRoot,
+          cacheLabel];
+        If[AssociationQ[loaded],
+          PrintStoredResultHit[cacheLabel];
+          Return[
+            FormatStoredResultReturn[loaded["Result"],
+              loaded["Diagnostics"], loaded, OptionValue[
+                "ReturnDiagnostics"], intermediateSteps, OptionValue[
+                "PrintIntermediateSteps"]]
+          ]
+        ]
+      ];
+      computed =
+        Block[{$AntennaPipelineBypassStoredResults = True},
+          BuildAntenna[type, numFinalParticles, loopOrder,
+            ReturnDiagnostics -> True,
+            ReturnBuildData -> OptionValue["ReturnBuildData"],
+            ReturnAntennaObject -> OptionValue["ReturnAntennaObject"],
+            IntegrableForm -> OptionValue["IntegrableForm"],
+            RunPaperCheck -> OptionValue["RunPaperCheck"],
+            Verbose -> OptionValue["Verbose"],
+            printDiagram -> OptionValue["printDiagram"],
+            prefactor -> OptionValue["prefactor"],
+            ApplyStripCouplings -> OptionValue["ApplyStripCouplings"],
+            ApplyCasimirSubstitution -> OptionValue[
+              "ApplyCasimirSubstitution"],
+            ApplyDimReg -> OptionValue["ApplyDimReg"],
+            LoopMomentum -> OptionValue["LoopMomentum"],
+            ReductionBackend -> OptionValue["ReductionBackend"],
+            Component -> OptionValue["Component"],
+            IntermediateSteps -> OptionValue["IntermediateSteps"],
+            PrintIntermediateSteps -> False,
+            LoopMomenta -> OptionValue["LoopMomenta"],
+            Contribution -> OptionValue["Contribution"],
+            UseStoredResults -> False,
+            StoreResults -> False,
+            ResultsCacheRoot -> cacheRoot,
+            RefreshStoredResults -> False]
+        ];
+      If[MatchQ[computed, {_, _Association}],
+        {result, diagnostics} = computed;
+        If[result =!= $Failed && (storeStored || refreshStored),
+          StoreStoredResultEntry["BuildAntenna", cacheKey, cacheRoot,
+            cacheLabel, result, diagnostics]
+        ];
+        Return[
+          FormatFreshBuildReturn[result, diagnostics, OptionValue[
+              "ReturnDiagnostics"], intermediateSteps, OptionValue[
+              "PrintIntermediateSteps"]]
+        ]
+      ];
+      If[OptionValue["ReturnBuildData"] === True && computed =!= $Failed &&
+          (storeStored || refreshStored),
+        StoreStoredResultEntry["BuildAntenna", cacheKey, cacheRoot,
+          cacheLabel, computed, <||>]
+      ];
+      Return[computed]
+    ];
     integrableRequested =
       TrueQ[OptionValue["IntegrableForm"]] ||
       TrueQ[OptionValue["ReturnAntennaObject"]];

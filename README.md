@@ -409,6 +409,20 @@ package conventions as the ingredient routes, so the symbolic result is
 expressed in terms of `SUNN`, `Nf`, `FeynCalc\`Epsilon`, `q2`, and
 `SMP["alpha_s"]`.
 
+All current public entry points also accept an optional generated-result cache
+layer:
+
+```wl
+UseStoredResults -> False
+StoreResults -> False
+ResultsCacheRoot -> Automatic
+RefreshStoredResults -> False
+```
+
+Caching is off by default.  The normal pipeline remains the source of truth:
+stored results are generated artifacts that can be regenerated from fresh
+public-route evaluations whenever needed.
+
 ### Quick API Reference
 
 Unintegrated antennae:
@@ -453,6 +467,21 @@ BuildRRatio[SMQCD, quarkMass -> 0]
 BuildRRatio[SMQCD, quarkMass -> 0, ReturnDiagnostics -> True]
 BuildRRatio[SUSY, quarkMass -> 0]      (* placeholder shell: not implemented *)
 BuildRRatio[HiggsEFT, quarkMass -> 0]  (* placeholder shell: not implemented *)
+```
+
+Generated-result cache examples:
+
+```wl
+BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading, ExpansionOrder -> 0,
+  StoreResults -> True]
+
+BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading, ExpansionOrder -> 0,
+  UseStoredResults -> True]
+
+BuildRRatio[SMQCD, quarkMass -> 0, StoreResults -> True]
+BuildRRatio[SMQCD, quarkMass -> 0, UseStoredResults -> True]
+BuildRRatio[SMQCD, quarkMass -> 0, RefreshStoredResults -> True,
+  StoreResults -> True]
 ```
 
 Object-first integration:
@@ -582,6 +611,13 @@ A22 Leading
 A22 full stitched
 ```
 
+An additional optional cache-hit benchmark label is also available once a
+stored result exists:
+
+```text
+RRatio SMQCD cached
+```
+
 For each baseline route the script records four public entrypoints:
 
 ```text
@@ -632,6 +668,35 @@ The current practical picture is:
   family-level basis reorder in place; on the benchmark MacBook Pro M4 that
   reduces the object-first route to about 197 s.
 ```
+
+### Stored Result Cache
+
+Heavy public outputs can now be stored under the repo-local
+`stored_results/` tree:
+
+```text
+stored_results/build/
+stored_results/build_objects/
+stored_results/integrated/
+stored_results/build_and_integrate/
+stored_results/rratio/
+```
+
+These files are versioned generated artifacts, not hard-coded replacements for
+the implementation.  The intended workflow is:
+
+```text
+- ignore caching entirely if you just want fresh package behavior
+- compute and store a heavy public result once if you plan to reuse it
+- reload it later with `UseStoredResults -> True`
+- refresh it explicitly with `RefreshStoredResults -> True` when needed
+```
+
+Display-only options such as `IntermediateSteps` and
+`PrintIntermediateSteps` are not part of the cache key.  When a stored result
+is loaded, the package reuses the saved result/diagnostics payload and applies
+requested intermediate-step display on top of that cached payload when
+possible.
 
 ### Intermediate-Step Capture
 
@@ -821,6 +886,13 @@ Assemble the massless `SMQCD` NNLO `R`-ratio expression:
 
 ```wl
 rRatioSMQCD = BuildRRatio[SMQCD, quarkMass -> 0];
+```
+
+Store and later reuse the same heavy `R`-ratio driver result:
+
+```wl
+BuildRRatio[SMQCD, quarkMass -> 0, StoreResults -> True];
+BuildRRatio[SMQCD, quarkMass -> 0, UseStoredResults -> True];
 ```
 
 Inspect the assembled ingredient bundle and the raw combination used by the

@@ -9,6 +9,8 @@ $AntennaPipelineRoot = packageRoot;
 
 Get[FileNameJoin[{packageRoot, "src", "setup.wl"}]];
 
+Get[FileNameJoin[{packageRoot, "src", "result_cache.wl"}]];
+
 Get[FileNameJoin[{packageRoot, "src", "kinematics_and_utilities.wl"}]
   ];
 

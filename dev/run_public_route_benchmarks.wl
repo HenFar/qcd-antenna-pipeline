@@ -108,7 +108,7 @@ benchmarkCall[route_Association, entryPoint_String, thunk_] :=
       "[", DateString[{"ISODate", " ", "Time"}], "] ",
       route["Label"], " :: ", entryPoint, " :: ",
       If[timedOut, "timed out", "finished"],
-      " in ", ToString[NumberForm[N[elapsed], {Infinity, 3}], StandardForm], " s"
+      " in ", ToString[Round[1000. N[elapsed]]/1000., InputForm], " s"
     ];
     base =
       Join[
@@ -225,7 +225,10 @@ benchmarkRoutes = {
 
 rRatioBenchmarkRoutes = {
   <|"Label" -> "RRatio SMQCD", "Model" -> SMQCD,
-    "DriverOptions" -> {quarkMass -> 0}|>
+    "DriverOptions" -> {quarkMass -> 0}|>,
+  <|"Label" -> "RRatio SMQCD cached", "Model" -> SMQCD,
+    "DriverOptions" -> {quarkMass -> 0, UseStoredResults -> True},
+    "CacheModeLabel" -> "CacheHitRequested"|>
 };
 
 filteredRoutes =
@@ -366,7 +369,11 @@ runRRatioBenchmarks[route_Association] :=
     {
       Join[
         rratioResult["Benchmark"],
-        <|"Model" -> ToString[modelSymbol, InputForm]|>
+        <|
+          "Model" -> ToString[modelSymbol, InputForm],
+          "CacheMode" -> Lookup[route, "CacheModeLabel",
+            "FreshOrDefault"]
+        |>
       ]
     }
   ];

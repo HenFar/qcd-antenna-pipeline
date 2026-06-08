@@ -65,7 +65,7 @@ MAmpOneLoop[numFinalParticles_ /; numFinalParticles >= 2, OptionsPattern[
       ,
       {i, 1, numFinalParticles}
     ];
-    If[optAntennaType =!= A,
+    If[SymbolName[optAntennaType] =!= "A",
       Print["One-loop amplitudes are currently implemented only for A-type antennae. Aborting..."
         ];
       Return[$Failed]
@@ -165,7 +165,7 @@ MAmpTwoLoop[numFinalParticles_ /; numFinalParticles == 2, OptionsPattern[
       ,
       {i, 1, numFinalParticles}
     ];
-    If[optAntennaType =!= A,
+    If[SymbolName[optAntennaType] =!= "A",
       Print["Two-loop amplitudes are currently implemented only for A-type antennae. Aborting..."
         ];
       Return[$Failed]

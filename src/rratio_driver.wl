@@ -9,7 +9,9 @@
 (*************************************************)
 
 Options[BuildRRatio] = {quarkMass -> 0, ReturnDiagnostics -> False,
-   IntermediateSteps -> {}, PrintIntermediateSteps -> False};
+   IntermediateSteps -> {}, PrintIntermediateSteps -> False,
+   UseStoredResults -> False, StoreResults -> False,
+   ResultsCacheRoot -> Automatic, RefreshStoredResults -> False};
 
 BuildRRatio::unsupportedModel =
   "Unsupported R-ratio model `1`. Supported model shells are SMQCD, SUSY, and HiggsEFT.";
@@ -74,6 +76,25 @@ RRatioModelShellFailure[model_Symbol, returnDiagnostics_, intermediateSteps_] :=
       returnDiagnostics]
   ];
 
+FormatFreshRRatioReturn[result_, diagnostics_, returnDiagnostics_,
+   requestedSteps_List, printSteps_] :=
+  Module[{selectedSteps},
+    selectedSteps = Lookup[diagnostics, "IntermediateSteps", <||>];
+    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
+        selectedSteps] > 0,
+      PrintIntermediateStepsAssociation[selectedSteps]
+    ];
+    If[TrueQ[returnDiagnostics],
+      {result, diagnostics}
+      ,
+      If[Length[requestedSteps] > 0,
+        {result, selectedSteps}
+        ,
+        result
+      ]
+    ]
+  ];
+
 RRatioIngredientCallFailedQ[result_] :=
   result === $Failed ||
     MatchQ[result, {$Failed, _Association}] ||
@@ -94,6 +115,19 @@ EvaluateRRatioIngredient[label_String, expr_] :=
     RRatioProgressPrint[label, "finished"];
     result
   ];
+
+EvaluateRRatioStoredIngredient[label_String, expr_] :=
+  Module[{result},
+    RRatioProgressPrint[label, "starting"];
+    result =
+      Block[{$AntennaPipelineBypassStoredResults = False},
+        Quiet[expr, IntegrateAntenna::heavy]
+      ];
+    RRatioProgressPrint[label, "finished"];
+    result
+  ];
+
+SetAttributes[EvaluateRRatioStoredIngredient, HoldAll];
 
 BuildRRatioIngredientCallAssociation[masslessQuarkMass_] :=
   <|
@@ -133,50 +167,115 @@ BuildRRatioIngredientCallAssociation[masslessQuarkMass_] :=
     ]
   |>;
 
-BuildRRatioSMQCDIngredients[masslessQuarkMass_] :=
-  Module[{a21Result, a30Result, a31Result, a22Result, a40LeadResult,
-     a40SubResult, b40Result, c40Result, ingredients, ingredientDiagnostics},
+BuildRRatioIngredientCacheOptions[options_Association] :=
+  Module[{useStored, storeStored, refreshStored, cacheRoot},
+    useStored = TrueQ[Lookup[options, "UseStoredResults", False]];
+    storeStored = TrueQ[Lookup[options, "StoreResults", False]];
+    refreshStored = TrueQ[Lookup[options, "RefreshStoredResults", False]];
+    cacheRoot = Lookup[options, "ResultsCacheRoot", Automatic];
+    <|
+      "UseStoredResults" -> (useStored || storeStored || refreshStored),
+      "StoreResults" -> storeStored,
+      "RefreshStoredResults" -> False,
+      "ResultsCacheRoot" -> cacheRoot
+    |>
+  ];
+
+BuildRRatioStoredResultKey[model_Symbol, options_Association] :=
+  StoredResultKeyAssociation[
+    "BuildRRatio",
+    <|
+      "Model" -> SymbolName[Unevaluated[model]],
+      "quarkMass" -> Lookup[options, "quarkMass", 0]
+    |>
+  ];
+
+BuildRRatioStoredResultLabel[model_Symbol, options_Association] :=
+  StringJoin[
+    "BuildRRatio-",
+    ToLowerCase[SymbolName[Unevaluated[model]]], "-",
+    StringReplace[ToString[Lookup[options, "quarkMass", 0], InputForm],
+      {" " -> "", "." -> "-", "/" -> "-"}]
+  ];
+
+BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
+  Module[{cacheOptions, a21Result, a30Result, a31Result, a22Result,
+     a40LeadResult, a40SubResult, b40Result, c40Result, ingredients,
+     ingredientDiagnostics},
+    cacheOptions = BuildRRatioIngredientCacheOptions[options];
     a21Result =
-      EvaluateRRatioIngredient["intA21",
+      EvaluateRRatioStoredIngredient["intA21",
         BuildAndIntegrateAntenna[A, 2, 1, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True]
+          ReturnDiagnostics -> True,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     a30Result =
-      EvaluateRRatioIngredient["intA30",
+      EvaluateRRatioStoredIngredient["intA30",
         BuildAndIntegrateAntenna[A, 3, 0, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 2]
+          ReturnDiagnostics -> True, ExpansionOrder -> 2,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     a31Result =
-      EvaluateRRatioIngredient["A31 components",
+      EvaluateRRatioStoredIngredient["A31 components",
         BuildAndIntegrateAntenna[A, 3, 1, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0]
+          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     a22Result =
-      EvaluateRRatioIngredient["A22 components",
+      EvaluateRRatioStoredIngredient["A22 components",
         BuildAndIntegrateAntenna[A, 2, 2, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0]
+          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     a40LeadResult =
-      EvaluateRRatioIngredient["intA40",
+      EvaluateRRatioStoredIngredient["intA40",
         BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading,
           quarkMass -> masslessQuarkMass, ReturnDiagnostics -> True,
-          ExpansionOrder -> 0]
+          ExpansionOrder -> 0,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     a40SubResult =
-      EvaluateRRatioIngredient["intTildeA40",
+      EvaluateRRatioStoredIngredient["intTildeA40",
         BuildAndIntegrateAntenna[A, 4, 0, Component -> Subleading,
           quarkMass -> masslessQuarkMass, ReturnDiagnostics -> True,
-          ExpansionOrder -> 0]
+          ExpansionOrder -> 0,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     b40Result =
-      EvaluateRRatioIngredient["intB40",
+      EvaluateRRatioStoredIngredient["intB40",
         BuildAndIntegrateAntenna[B, 4, 0, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0]
+          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     c40Result =
-      EvaluateRRatioIngredient["intC40",
+      EvaluateRRatioStoredIngredient["intC40",
         BuildAndIntegrateAntenna[C, 4, 0, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0]
+          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          UseStoredResults -> cacheOptions["UseStoredResults"],
+          StoreResults -> cacheOptions["StoreResults"],
+          RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+          ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
       ];
     If[RRatioIngredientCallFailedQ[a21Result],
       Return[<|"Failed" -> True, "Reason" -> "IngredientRouteFailed",
@@ -320,10 +419,22 @@ AssembleSMQCDRRatio[ingredients_Association] :=
 BuildRRatio[SMQCD, OptionsPattern[]] :=
   Module[{masslessQuarkMass, intermediateSteps, ingredientCalls,
      ingredientResult, ingredients, ingredientDiagnostics, assemblyResult,
-     assemblyExpression, finalExpression, diagnostics, collectedSteps},
+     assemblyExpression, finalExpression, diagnostics, collectedSteps,
+     useStored, storeStored, refreshStored, cacheKey, cacheLabel, cacheRoot,
+     loaded, computed, computedResult, computedDiagnostics, optionsAssoc},
     masslessQuarkMass = OptionValue[quarkMass];
     intermediateSteps = NormalizeIntermediateSteps[OptionValue[
       IntermediateSteps]];
+    useStored = TrueQ[OptionValue["UseStoredResults"]];
+    storeStored = TrueQ[OptionValue["StoreResults"]];
+    refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
+    optionsAssoc = <|
+      "quarkMass" -> masslessQuarkMass,
+      "UseStoredResults" -> useStored,
+      "StoreResults" -> storeStored,
+      "RefreshStoredResults" -> refreshStored,
+      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"]
+    |>;
     ingredientCalls = BuildRRatioIngredientCallAssociation[masslessQuarkMass];
     If[masslessQuarkMass =!= 0,
       Message[BuildRRatio::masslessOnly, "SMQCD"];
@@ -340,7 +451,52 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
           OptionValue[ReturnDiagnostics]]
       ]
     ];
-    ingredientResult = BuildRRatioSMQCDIngredients[masslessQuarkMass];
+    If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
+        StoredResultsEnabledQ[useStored, storeStored, refreshStored],
+      cacheKey = BuildRRatioStoredResultKey[SMQCD, optionsAssoc];
+      cacheLabel = BuildRRatioStoredResultLabel[SMQCD, optionsAssoc];
+      cacheRoot = OptionValue["ResultsCacheRoot"];
+      If[!refreshStored && useStored,
+        loaded = LoadStoredResultEntry["BuildRRatio", cacheKey, cacheRoot,
+          cacheLabel];
+        If[AssociationQ[loaded],
+          PrintStoredResultHit[cacheLabel];
+          Return[
+            FormatStoredResultReturn[loaded["Result"],
+              loaded["Diagnostics"], loaded, OptionValue[
+                "ReturnDiagnostics"], intermediateSteps, OptionValue[
+                "PrintIntermediateSteps"]]
+          ]
+        ]
+      ];
+      computed =
+        Block[{$AntennaPipelineBypassStoredResults = True},
+          BuildRRatio[SMQCD,
+            quarkMass -> masslessQuarkMass,
+            ReturnDiagnostics -> True,
+            IntermediateSteps -> OptionValue["IntermediateSteps"],
+            PrintIntermediateSteps -> False,
+            UseStoredResults -> True,
+            StoreResults -> False,
+            ResultsCacheRoot -> cacheRoot,
+            RefreshStoredResults -> False]
+        ];
+      If[!MatchQ[computed, {_, _Association}],
+        Return[computed]
+      ];
+      {computedResult, computedDiagnostics} = computed;
+      If[computedResult =!= $Failed && (storeStored || refreshStored),
+        StoreStoredResultEntry["BuildRRatio", cacheKey, cacheRoot,
+          cacheLabel, computedResult, computedDiagnostics]
+      ];
+      Return[
+        FormatFreshRRatioReturn[computedResult, computedDiagnostics,
+          OptionValue["ReturnDiagnostics"], intermediateSteps, OptionValue[
+            "PrintIntermediateSteps"]]
+      ]
+    ];
+    ingredientResult = BuildRRatioSMQCDIngredients[masslessQuarkMass,
+      optionsAssoc];
     If[TrueQ[Lookup[ingredientResult, "Failed", False]],
       Message[BuildRRatio::ingredientFailure, "SMQCD",
         Lookup[ingredientResult, "FailedIngredient", "Unknown"]];
@@ -376,25 +532,14 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
     collectedSteps = CollectRRatioIntermediateSteps[ingredientCalls,
       ingredients, assemblyExpression, finalExpression, diagnostics,
       intermediateSteps];
-    If[TrueQ[OptionValue[PrintIntermediateSteps]] && Length[
-        collectedSteps] > 0,
-      PrintIntermediateStepsAssociation[collectedSteps]
-    ];
-    If[TrueQ[OptionValue[ReturnDiagnostics]],
-      {
-        finalExpression,
-        If[Length[collectedSteps] > 0,
-          Join[diagnostics, <|"IntermediateSteps" -> collectedSteps|>],
-          diagnostics
-        ]
-      }
-      ,
+    diagnostics =
       If[Length[collectedSteps] > 0,
-        {finalExpression, collectedSteps}
-        ,
-        finalExpression
-      ]
-    ]
+        Join[diagnostics, <|"IntermediateSteps" -> collectedSteps|>],
+        diagnostics
+      ];
+    FormatFreshRRatioReturn[finalExpression, diagnostics,
+      OptionValue["ReturnDiagnostics"], intermediateSteps, OptionValue[
+        "PrintIntermediateSteps"]]
   ];
 
 BuildRRatio[SUSY, OptionsPattern[]] :=

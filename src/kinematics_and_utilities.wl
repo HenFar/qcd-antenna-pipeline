@@ -6,6 +6,7 @@ KinematicRules[numFinalParticles_Integer /; numFinalParticles >= 2, OptionsPatte
   ]] :=
   Module[{quarkMassOpt},
     quarkMassOpt = OptionValue["QuarkMass"];
+    FCClearScalarProducts[];
     If[quarkMassOpt == 0,
       Which[
         numFinalParticles == 2,
@@ -83,21 +84,32 @@ GluonColourBasisNorm[numGluons_] :=
     output
   ];
 
+HasPolarizationVectorQ[expr_, mom_] :=
+  !FreeQ[expr, Polarization[mom, ___]];
+
+SafeDoPolarizationSums[expr_, mom_, ref_, opts___] :=
+  If[HasPolarizationVectorQ[expr, mom],
+    DoPolarizationSums[expr, mom, ref, opts]
+    ,
+    expr
+  ];
+
 SpinPolSum[expr_, numFinalParticles_] :=
   Module[{result, resultWhich, output},
     result =
       expr //
       FermionSpinSum //
-      DoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
+      SafeDoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
     Which[
       numFinalParticles == 3,
-        resultWhich = result // DoPolarizationSums[#, k3, 0]&
+        resultWhich = SafeDoPolarizationSums[result, k3, 0]
       ,
       numFinalParticles == 4,
-        resultWhich =
-          result //
-          DoPolarizationSums[#, k3, 0]& //
-          DoPolarizationSums[#, k4, 0]&
+        resultWhich = SafeDoPolarizationSums[
+          SafeDoPolarizationSums[result, k3, 0],
+          k4,
+          0
+        ]
       ,
       Default,
         resultWhich = result

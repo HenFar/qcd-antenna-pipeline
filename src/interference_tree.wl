@@ -89,21 +89,26 @@ InterfereMAmp1Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution
       interfBare //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
       FermionSpinSum //
-      DoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
+      SafeDoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
     If[AntennaType === A,
       Which[
         numFinalParticles == 2,
           interfNumPart = interfSimp
         ,
         numFinalParticles == 3,
-          interfNumPart = interfSimp // DoPolarizationSums[#, k3, 0, 
-            VirtualBoson -> True]&
+          interfNumPart = SafeDoPolarizationSums[
+            interfSimp,
+            k3,
+            0,
+            VirtualBoson -> True
+          ]
         ,
         numFinalParticles == 4,
-          interfNumPart =
-            interfSimp //
-            DoPolarizationSums[#, k3, k4]& //
-            DoPolarizationSums[#, k4, k3]&
+          interfNumPart = SafeDoPolarizationSums[
+            SafeDoPolarizationSums[interfSimp, k3, k4],
+            k4,
+            k3
+          ]
       ]
       ,
       interfNumPart = interfSimp;
@@ -159,7 +164,7 @@ InterfereMAmp2Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution
           ComplexConjugate[S1[[i]]] S2[[j]] //
           SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
           FermionSpinSum //
-          DoPolarizationSums[#, p, 0, VirtualBoson -> True]&
+          SafeDoPolarizationSums[#, p, 0, VirtualBoson -> True]&
         ]
         ,
         {j, C2 // Length}
@@ -186,7 +191,7 @@ InterfereMAmp2Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution
           Do[
             SCouples[[i]] =
               SCouples[[i]] //
-              DoPolarizationSums[#, k3, 0, VirtualBoson -> True]& //
+              SafeDoPolarizationSums[#, k3, 0, VirtualBoson -> True]& //
               DiracSimplify //
               Simplify //
               Calc
@@ -198,8 +203,8 @@ InterfereMAmp2Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution
           Do[
             SCouples[[i]] =
               SCouples[[i]] //
-              DoPolarizationSums[#, k3, k4]& //
-              DoPolarizationSums[#, k4, k3]& //
+              SafeDoPolarizationSums[#, k3, k4]& //
+              SafeDoPolarizationSums[#, k4, k3]& //
               DiracSimplify //
               Simplify //
               Calc

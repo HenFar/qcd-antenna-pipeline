@@ -14,6 +14,31 @@ Options[ExtractLoopAntennaComponents] = {ApplyDimReg -> True};
 OneLoopColorFreeQ[expr_] :=
   FreeQ[expr, SUNN | CA | CF | Nf | _SUNTF | _SUNF | _SUNFDelta];
 
+ExtractLoopAntennaComponents[interference_, profile_, context_, opts : OptionsPattern[]] :=
+  Module[{resolvedProfile, resolvedContext},
+    resolvedProfile = Quiet[Check[Evaluate[profile], profile]];
+    resolvedContext = Quiet[Check[Evaluate[context], context]];
+    If[AssociationQ[resolvedProfile] && AssociationQ[resolvedContext],
+      Return[
+        ExtractLoopAntennaComponents[
+          interference,
+          resolvedProfile,
+          resolvedContext,
+          opts
+        ]
+      ]
+    ];
+    <|
+      "Components" -> <|"Lead" -> $Failed, "SubLead" -> $Failed,
+        "QuarkLoop" -> $Failed|>,
+      "Diagnostics" -> <|"Failed" -> True,
+        "Reason" -> "InvalidLoopExtractionInputs",
+        "ProfileHead" -> Head[resolvedProfile],
+        "ContextHead" -> Head[resolvedContext]|>,
+      "NormalizedInterference" -> $Failed
+    |>
+  ];
+
 ExtractLoopAntennaComponents[interference_, profile_Association, context_Association,
    OptionsPattern[]] :=
   Module[{applyDimRegOpt, bornInterference, colorNorm, extractionMode,

@@ -64,6 +64,33 @@ IntegratedAntennaSeriesSafe[expr_, order_Integer] :=
     IntegratedAntennaSeries[expr, order]
   ];
 
+SafeIntegratedResidualSimplify[expr_] :=
+  Module[{togetherResidual, simplifiedResidual},
+    togetherResidual =
+      Quiet[
+        Check[Together[expr], expr],
+        {Power::infy, Infinity::indet}
+      ];
+    If[TrueQ[togetherResidual === 0],
+      Return[0]
+    ];
+    simplifiedResidual =
+      Quiet[
+        Check[
+          togetherResidual //
+            FunctionExpand //
+            FullSimplify,
+          togetherResidual
+        ],
+        {Power::infy, Infinity::indet}
+      ];
+    If[TrueQ[Together[simplifiedResidual] === 0],
+      0
+      ,
+      simplifiedResidual
+    ]
+  ];
+
 IntegratedAntennaTTerms[{a_Symbol /; SymbolName[a] === "A", 3, 1}, integratedRaw_List, OptionsPattern[]] :=
   Module[{eps, order, dependencyOrder, integratedA30, rawPaper, tTerms},
     eps = FeynCalc`Epsilon;
@@ -209,7 +236,7 @@ A31IntegratedAntennaTargets[order_Integer] :=
   ];
 
 A31IntegratedResiduals[result_List, targets_List] :=
-  MapThread[FullSimplify[#1 - #2]&, {result, targets}];
+  MapThread[SafeIntegratedResidualSimplify[#1 - #2]&, {result, targets}];
 
 (*************************************************)
 

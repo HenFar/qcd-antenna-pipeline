@@ -57,20 +57,20 @@ InterfereOneLoopMAmplitudes[treeAmp_, loopAmp_, numFinalParticles_, OptionsPatte
       bare //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
       FermionSpinSum //
-      DoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
+      SafeDoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
     Which[
       numFinalParticles == 2,
         numPart = simp
       ,
       numFinalParticles == 3,
-        numPart = simp // DoPolarizationSums[#, k3, 0, VirtualBoson ->
-           True]&
+        numPart = SafeDoPolarizationSums[simp, k3, 0, VirtualBoson -> True]
       ,
       numFinalParticles == 4,
-        numPart =
-          simp //
-          DoPolarizationSums[#, k3, k4]& //
-          DoPolarizationSums[#, k4, k3]&
+        numPart = SafeDoPolarizationSums[
+          SafeDoPolarizationSums[simp, k3, k4],
+          k4,
+          k3
+        ]
       ,
       True,
         Print["Loop interferences are currently implemented only for 2, 3, or 4 final-state particles. Aborting..."
@@ -128,7 +128,7 @@ InterfereTreeTwoLoopTerm[treeAmp_, twoLoopTerm_, numFinalParticles_] :=
       bare //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
       FermionSpinSum //
-      DoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
+      SafeDoPolarizationSums[#, p, 0, VirtualBoson -> True]&;
     diracSimp = simp // DiracSimplify;
     calcExpr = Calc[diracSimp];
     calcExpr //
