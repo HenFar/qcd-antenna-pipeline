@@ -9,6 +9,21 @@
 
 (*************************************************)
 
+OneLoopColorFreeQ::usage =
+  "OneLoopColorFreeQ[expr] tests whether the loop interference has been stripped of the color structures expected by the extractor.";
+
+ExtractLoopAntennaComponents::usage =
+  "ExtractLoopAntennaComponents[interference, profile, context, ...] extracts the one-loop public antenna components from the normalized interference.";
+
+ExtractTwoLoopAntennaComponents::usage =
+  "ExtractTwoLoopAntennaComponents[interference, profile, context, ...] extracts the two-loop/tree source components used by the A22 route.";
+
+ExtractA22OneLoopSelfComponent::usage =
+  "ExtractA22OneLoopSelfComponent[interference, profile, context, ...] extracts the breve A22 one-loop self-interference source.";
+
+ExtractA22TwoLoopTreeComponents::usage =
+  "ExtractA22TwoLoopTreeComponents[interference, profile, context, ...] extracts the Leading, Subleading, and Nf A22 tree/two-loop sources.";
+
 Options[ExtractLoopAntennaComponents] = {ApplyDimReg -> True};
 
 OneLoopColorFreeQ[expr_] :=

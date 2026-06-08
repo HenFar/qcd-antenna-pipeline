@@ -8,6 +8,24 @@
 
 (*************************************************)
 
+AntennaReductionProfile::usage =
+  "AntennaReductionProfile[key] returns the build-side reduction settings associated with an antenna family.";
+
+AntennaProfile::usage =
+  "AntennaProfile[key] returns the main metadata association for an antenna route, including amplitudes, extraction rules, and diagnostics data.";
+
+AntennaAmplitude::usage =
+  "AntennaAmplitude[key] returns the tree-level amplitude object associated with a profile.";
+
+AntennaSelfInterference::usage =
+  "AntennaSelfInterference[key] returns the encoded self-interference or companion object associated with a profile.";
+
+BornInterference::usage =
+  "BornInterference[] returns the standard born-level interference data shared by the loop extractors.";
+
+AntennaIntegrationProfile::usage =
+  "AntennaIntegrationProfile[key] returns the integration-backend metadata used by IntegrateAntenna for a given route.";
+
 colourNorm = SUNN - 1 / SUNN;
 
 (*************************************************)

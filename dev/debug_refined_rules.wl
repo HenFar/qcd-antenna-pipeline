@@ -1,10 +1,15 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
 
+(* getVector: Script-local helper for this development or benchmarking utility. *)
 getVector[LiteRed`sp[v_, _]] := v;
+(* getVector: Script-local helper for this development or benchmarking utility. *)
 getVector[v_] := v;
 
+(* simplifySp: Script-local helper for this development or benchmarking utility. *)
 simplifySp[expr_] := expr // Expand //. {
   LiteRed`sp[x_ + y_, z_] :> LiteRed`sp[x, z] + LiteRed`sp[y, z],
   LiteRed`sp[x_, y_ + z_] :> LiteRed`sp[x, y] + LiteRed`sp[x, z],
@@ -19,21 +24,25 @@ simplifySp[expr_] := expr // Expand //. {
   LiteRed`sp[q, k1] -> q2/2
 } // Simplify;
 
+(* refinedA22LOMI: Script-local helper for this development or benchmarking utility. *)
 refinedA22LOMI[p1sq_, p2sq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA22LO[];
   val * (p1sq * p2sq / q2^2)^(-eps)
 ];
 
+(* refinedA3MI: Script-local helper for this development or benchmarking utility. *)
 refinedA3MI[Qsq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA3[];
   val * (Qsq / q2)^(1 - 2 eps)
 ];
 
+(* refinedA4MI: Script-local helper for this development or benchmarking utility. *)
 refinedA4MI[Qsq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA4[];
   val * (Qsq / q2)^(-2 eps)
 ];
 
+(* refinedA6MI: Script-local helper for this development or benchmarking utility. *)
 refinedA6MI[Qsq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA6[];
   val * (Qsq / q2)^(-2 - 2 eps)

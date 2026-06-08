@@ -10,6 +10,60 @@
 
 (*************************************************)
 
+IntegratedAntennaTTerms::usage =
+  "IntegratedAntennaTTerms[key, integratedRaw, ...] converts a backend-integrated object into the T-function pieces used by the literature formulae.";
+
+ExtractIntegratedAntenna::usage =
+  "ExtractIntegratedAntenna[key, tTerms, ...] converts T-function pieces into the final integrated antennae returned publicly.";
+
+A31PaperConventionFactor::usage =
+  "A31PaperConventionFactor[] returns the overall convention factor used when mapping integrated A31 objects to the paper normalization.";
+
+IntegratedAntennaSeries::usage =
+  "IntegratedAntennaSeries[expr, order] truncates and simplifies an epsilon series in the package convention.";
+
+IntegratedAntennaDependencyExpansionOrder::usage =
+  "IntegratedAntennaDependencyExpansionOrder[order] returns the lower-order epsilon depth needed by subtraction terms at the requested final order.";
+
+IntegratedA21SubtractionSeries::usage =
+  "IntegratedA21SubtractionSeries[order] returns the encoded integrated A21 series used in higher-order antenna reconstructions.";
+
+IntegratedA30SubtractionSeries::usage =
+  "IntegratedA30SubtractionSeries[order] returns the encoded integrated A30 series used in higher-order antenna reconstructions.";
+
+IntegratedLowerAntenna::usage =
+  "IntegratedLowerAntenna[key, order] memoizes the lower-order integrated antenna building blocks needed by higher-order extraction formulae.";
+
+IntegratedAntennaSeriesSafe::usage =
+  "IntegratedAntennaSeriesSafe[expr, order] applies series truncation while preserving $Failed outputs unchanged.";
+
+SafeIntegratedResidualSimplify::usage =
+  "SafeIntegratedResidualSimplify[expr] simplifies an integrated residual with extra safeguards around singular intermediate forms.";
+
+A31TTermTargets::usage =
+  "A31TTermTargets[order] returns the encoded literature targets for the integrated A31 T-function brackets.";
+
+A31IntegratedAntennaTargets::usage =
+  "A31IntegratedAntennaTargets[order] returns the encoded literature targets for the final integrated A31 antennae.";
+
+A31IntegratedResiduals::usage =
+  "A31IntegratedResiduals[result, targets] computes diagnostic residuals for the integrated A31 route.";
+
+A22TTermTargets::usage =
+  "A22TTermTargets[order] returns the encoded literature targets for the integrated A22 T-function brackets.";
+
+A22TTermTargetForComponent::usage =
+  "A22TTermTargetForComponent[component, order] returns the encoded T-function target for one public A22 component.";
+
+A22ResidualSimplify::usage =
+  "A22ResidualSimplify[expr] applies the special simplification strategy used by A22 diagnostic residuals.";
+
+A22TTermResiduals::usage =
+  "A22TTermResiduals[result, ...] computes diagnostic residuals for A22 T-function outputs.";
+
+A22IntegratedResiduals::usage =
+  "A22IntegratedResiduals[result, ...] computes diagnostic residuals for final integrated A22 antennae.";
+
 Options[IntegratedAntennaTTerms] = {ExpansionOrder -> 0, Component -> All};
 
 Options[ExtractIntegratedAntenna] = {ExpansionOrder -> 0};

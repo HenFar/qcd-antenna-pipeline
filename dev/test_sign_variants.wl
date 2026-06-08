@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 (*
   Test sign/normalization variants for A22LO and A3 master values.
   For each variant, check if the 2x2 system at eps^{-4} is consistent
@@ -16,6 +18,7 @@ order = 0;
 dataLead = Get["/private/tmp/a22_two_loop_tree_Leading_masters.mx"];
 dataSub  = Get["/private/tmp/a22_two_loop_tree_Subleading_masters.mx"];
 
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_] :=
   Normal[Series[expr /. {d -> 4 - 2 eps, q2 -> 1}, {eps, 0, order}]] //
     FunctionExpand // FullSimplify;
@@ -92,7 +95,9 @@ Print["A22LO_test: ", A22LO_test];
 Print["A3_test:    ", A3_test];
 
 (* Solve the full 5x5 system with these *)
+(* Xexpr: Script-local helper for this development or benchmarking utility. *)
 Xexpr[x2_, x1_, x0_] := x2/eps^2 + x1/eps + x0;
+(* Yexpr: Script-local helper for this development or benchmarking utility. *)
 Yexpr[y1_, y0_]       := y1/eps + y0;
 
 productL_test = toSeries[cLA22LO * Xexpr[x2, x1, x0] + cLA3 * Yexpr[y1, y0]];

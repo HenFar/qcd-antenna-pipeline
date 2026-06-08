@@ -1,3 +1,39 @@
+KinematicChanges::usage =
+  "KinematicChanges[expr, numFinalParticles] rewrites an expression into the package kinematic convention used by the diagnostics layer.";
+
+TestEqualAntennaeQ::usage =
+  "TestEqualAntennaeQ[paperAnt, compAnt, numFinalParticles] returns True when the computed and target antennae agree under the package comparison rules.";
+
+TestEqualAntennae::usage =
+  "TestEqualAntennae[paperAnt, compAnt, numFinalParticles] returns the simplified comparison residual between a paper target and a computed antenna.";
+
+ExactNumericResidual::usage =
+  "ExactNumericResidual[paperAnt, compAnt, numFinalParticles] evaluates a numeric residual used when symbolic comparison is inconclusive.";
+
+SwapFourQuarkPairs::usage =
+  "SwapFourQuarkPairs[expr] applies the pair-exchange relabeling used in four-parton diagnostics.";
+
+PermuteSInvariants::usage =
+  "PermuteSInvariants[expr, perm] permutes Mandelstam invariants according to a momentum-label permutation.";
+
+FourPartonMomentumLabelPermutations::usage =
+  "FourPartonMomentumLabelPermutations[] returns the momentum permutations scanned by the four-parton diagnostics.";
+
+MomentumLabelScan::usage =
+  "MomentumLabelScan[paperAnt, compAnt] scans the allowed momentum relabelings to help identify equivalent four-parton expressions.";
+
+PrintAntennaDiagnostics::usage =
+  "PrintAntennaDiagnostics[label, diagnostics, paperAnt, compAnt] prints a human-readable summary of a diagnostic comparison.";
+
+PaperCheckAvailableQ::usage =
+  "PaperCheckAvailableQ[key] returns True when an encoded paper target exists for the requested antenna key.";
+
+PaperDiagnosticsFor::usage =
+  "PaperDiagnosticsFor[key, result] constructs the encoded paper-comparison diagnostics for a built or integrated antenna result.";
+
+RunAntennaDiagnostics::usage =
+  "RunAntennaDiagnostics[...] runs the package's built-in regression and paper-check suite.";
+
 KinematicChanges[expr_, numFinalParticles_] :=
   Module[{changedExpr},
     Which[

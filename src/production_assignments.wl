@@ -1,3 +1,6 @@
+AssignAntennaProductionVariables::usage =
+  "AssignAntennaProductionVariables[] populates the legacy global antenna symbols from the current public build routes.";
+
 (*************************************************)
 
 (*

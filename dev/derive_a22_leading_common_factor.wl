@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
@@ -12,11 +14,13 @@ baseNoA4 =
 a4Part =
   (data["CoefficientA4"] A22TwoLoopTreeMasterValueA4[] /. {d -> 4 - 2 eps, q2 -> 1});
 
+(* raw: Script-local helper for this development or benchmarking utility. *)
 raw[f_] =
   Normal[Series[f baseNoA4 + a4Part, {eps, 0, 0}]] //
     FunctionExpand // FullSimplify;
 
 target = A22TTermTargetForComponent[Leading, 0];
+(* tterm: Script-local helper for this development or benchmarking utility. *)
 tterm[f_] =
   IntegratedAntennaTTerms[
     {A, 2, 2},

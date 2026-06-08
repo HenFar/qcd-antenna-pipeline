@@ -1,5 +1,11 @@
 (* M Amplitudes *)
 
+ComputeMAmplitude::usage =
+  "ComputeMAmplitude[numFinalParticles, numLoops] dispatches to the tree, one-loop, or two-loop M-amplitude builder for the requested multiplicity.";
+
+MAmpLoopLess::usage =
+  "MAmpLoopLess[numFinalParticles, ...] builds the tree-level M amplitude used as the starting point for tree antenna construction.";
+
 (*************************************************)
 
 (*

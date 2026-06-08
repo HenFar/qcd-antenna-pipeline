@@ -1,7 +1,10 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
 
+(* A22TopologyClassSymbol: Script-local helper for this development or benchmarking utility. *)
 A22TopologyClassSymbol[master_, basis_] :=
   Module[{indices, activeDenominators, activeCount, l1Dens, l2Dens, mixedDens,
       v1, v2, v3, qSqVal, u1, u2, p1, w1, w2, p2, p1SqVal, p2SqVal},
@@ -84,6 +87,7 @@ A22TopologyClassSymbol[master_, basis_] :=
     ]
   ];
 
+(* ClassifiedBareAmplitude: Script-local helper for this development or benchmarking utility. *)
 ClassifiedBareAmplitude[component_] :=
   Module[{antenna, profile, basisLoad, reduction, rawReduced, records,
       classifiedReduced, totalClassified, norm},
@@ -107,6 +111,7 @@ ClassifiedBareAmplitude[component_] :=
       Together // Simplify
   ];
 
+(* PrintComponent: Script-local helper for this development or benchmarking utility. *)
 PrintComponent[component_] :=
   Module[{expr, symbols},
     Print[""];

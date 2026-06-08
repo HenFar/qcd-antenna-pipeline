@@ -423,6 +423,13 @@ Caching is off by default.  The normal pipeline remains the source of truth:
 stored results are generated artifacts that can be regenerated from fresh
 public-route evaluations whenever needed.
 
+The cache can also be inspected directly through two read-only helpers:
+
+```wl
+ListStoredResults[]
+StoredResultInfo[...]
+```
+
 ### Quick API Reference
 
 Unintegrated antennae:
@@ -482,6 +489,12 @@ BuildRRatio[SMQCD, quarkMass -> 0, StoreResults -> True]
 BuildRRatio[SMQCD, quarkMass -> 0, UseStoredResults -> True]
 BuildRRatio[SMQCD, quarkMass -> 0, RefreshStoredResults -> True,
   StoreResults -> True]
+
+ListStoredResults[]
+ListStoredResults[RouteKind -> "BuildRRatio"]
+StoredResultInfo[BuildAndIntegrateAntenna, A, 4, 0,
+  Component -> Subleading, ExpansionOrder -> 0]
+StoredResultInfo[BuildRRatio, SMQCD, quarkMass -> 0]
 ```
 
 Object-first integration:
@@ -649,7 +662,8 @@ A40 Leading object integration            about 194 s
 A40 Subleading object integration         about 582 s
 B40 object integration                    about 16 s
 C40 object integration                    about 308 s
-RRatio SMQCD driver                       about 2913 s
+RRatio SMQCD driver (fresh)               about 3061 s
+RRatio SMQCD driver (cached load)         about 1.14 s
 ```
 
 The current practical picture is:
@@ -683,20 +697,77 @@ stored_results/rratio/
 ```
 
 These files are versioned generated artifacts, not hard-coded replacements for
-the implementation.  The intended workflow is:
+the implementation.  Fresh computation is still the default package behavior;
+the cache is there to make repeated heavy use practical when you opt in.
+
+The committed stored artifacts currently correspond to the massless public
+benchmark set on the benchmark MacBook Pro M4:
 
 ```text
-- ignore caching entirely if you just want fresh package behavior
-- compute and store a heavy public result once if you plan to reuse it
-- reload it later with `UseStoredResults -> True`
-- refresh it explicitly with `RefreshStoredResults -> True` when needed
+- `A21`
+- `A30`
+- `A31`
+- `A22 Leading`
+- `A22 full stitched`
+- `A40 Leading`
+- `A40 Subleading`
+- `B40`
+- `C40`
+- `BuildRRatio[SMQCD, quarkMass -> 0]`
 ```
+
+Typical stored-result workflow:
+
+```wl
+(* fresh compute, no cache involvement *)
+BuildRRatio[SMQCD, quarkMass -> 0]
+
+(* compute and store the top-level result *)
+BuildRRatio[SMQCD, quarkMass -> 0, StoreResults -> True]
+
+(* reuse the stored top-level result *)
+BuildRRatio[SMQCD, quarkMass -> 0, UseStoredResults -> True]
+
+(* refresh the top-level artifact while reusing nested stored ingredients *)
+BuildRRatio[SMQCD, quarkMass -> 0,
+  RefreshStoredResults -> True,
+  StoreResults -> True]
+```
+
+In the current benchmark set, the fresh massless `SMQCD` `R`-ratio build takes
+about `3061 s`, while a top-level cache hit returns in about `1.14 s`.
 
 Display-only options such as `IntermediateSteps` and
 `PrintIntermediateSteps` are not part of the cache key.  When a stored result
 is loaded, the package reuses the saved result/diagnostics payload and applies
 requested intermediate-step display on top of that cached payload when
 possible.
+
+The cache semantics are:
+
+```text
+- `UseStoredResults -> True` tries to load a matching stored artifact first
+- `StoreResults -> True` writes a successful fresh result to disk
+- `RefreshStoredResults -> True` recomputes the top-level request and overwrites
+  its stored artifact on success
+- for `BuildRRatio[...]`, a top-level refresh now reuses matching nested stored
+  antenna ingredients instead of refreshing every heavy ingredient underneath
+```
+
+The new read-only helpers make the stored set easy to inspect:
+
+```wl
+ListStoredResults[]
+ListStoredResults[RouteKind -> "BuildRRatio"]
+StoredResultInfo[BuildRRatio, SMQCD, quarkMass -> 0]
+StoredResultInfo[BuildAndIntegrateAntenna, A, 4, 0,
+  Component -> Subleading, ExpansionOrder -> 0]
+```
+
+`ListStoredResults[]` returns compact metadata for the stored entries, while
+`StoredResultInfo[...]` resolves one exact cache entry and reports its schema
+version, request key, path, whether diagnostics are stored, and whether the
+payload currently passes the cache validator.
 
 ### Intermediate-Step Capture
 

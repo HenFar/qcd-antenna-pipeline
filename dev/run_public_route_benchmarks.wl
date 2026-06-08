@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 scriptRoot = DirectoryName[$InputFileName];
 
 Get[FileNameJoin[{DirectoryName[scriptRoot], "AntennaPipeline.wl"}]];
@@ -18,6 +20,7 @@ selectedRouteLabels =
     ]
   ];
 
+(* stringifyValue: Script-local helper for this development or benchmarking utility. *)
 stringifyValue[value_] :=
   Which[
     MatchQ[value, _Missing], ToString[value, InputForm],
@@ -26,6 +29,7 @@ stringifyValue[value_] :=
     True, ToString[value, InputForm]
   ];
 
+(* serializeValue: Script-local helper for this development or benchmarking utility. *)
 serializeValue[value_] :=
   Which[
     AssociationQ[value], serializeAssociation[value],
@@ -35,6 +39,7 @@ serializeValue[value_] :=
     True, stringifyValue[value]
   ];
 
+(* serializeAssociation: Script-local helper for this development or benchmarking utility. *)
 serializeAssociation[assoc_Association] :=
   Association @ KeyValueMap[
     With[{serialized = serializeValue[#2]},
@@ -43,6 +48,7 @@ serializeAssociation[assoc_Association] :=
     assoc
   ];
 
+(* routeOptionsSummary: Script-local helper for this development or benchmarking utility. *)
 routeOptionsSummary[route_Association] :=
   <|
     "Component" -> Lookup[route, "ComponentLabel", "All"],
@@ -50,6 +56,7 @@ routeOptionsSummary[route_Association] :=
     "ExpansionOrder" -> Lookup[route, "ExpansionOrderLabel", "default"]
   |>;
 
+(* extractDiagnosticSummary: Script-local helper for this development or benchmarking utility. *)
 extractDiagnosticSummary[diag_] :=
   Module[{backend, backendProfile, baseSummary},
     If[!AssociationQ[diag],
@@ -90,6 +97,7 @@ extractDiagnosticSummary[diag_] :=
     ]
   ];
 
+(* benchmarkCall: Script-local helper for this development or benchmarking utility. *)
 benchmarkCall[route_Association, entryPoint_String, thunk_] :=
   Module[{timedOut = False, elapsed, outcome, value, diag, base},
     Print[
@@ -167,6 +175,7 @@ benchmarkCall[route_Association, entryPoint_String, thunk_] :=
     |>
   ];
 
+(* buildCallArguments: Script-local helper for this development or benchmarking utility. *)
 buildCallArguments[route_Association] :=
   Join[
     {
@@ -177,6 +186,7 @@ buildCallArguments[route_Association] :=
     Lookup[route, "BuildOptions", {}]
   ];
 
+(* integrationCallArguments: Script-local helper for this development or benchmarking utility. *)
 integrationCallArguments[route_Association] :=
   Lookup[route, "IntegrationOptions", {}];
 
@@ -240,6 +250,7 @@ filteredRoutes =
     ]
   ];
 
+(* runRouteBenchmarks: Script-local helper for this development or benchmarking utility. *)
 runRouteBenchmarks[route_Association] :=
   Module[{buildResult, buildObjectResult, integrateResult, combinedResult,
      buildArgs, integrateArgs, prebuiltObject, skippedIntegration},
@@ -350,6 +361,7 @@ runRouteBenchmarks[route_Association] :=
     }
   ];
 
+(* runRRatioBenchmarks: Script-local helper for this development or benchmarking utility. *)
 runRRatioBenchmarks[route_Association] :=
   Module[{driverOptions, rratioResult, modelSymbol},
     driverOptions = Lookup[route, "DriverOptions", {}];

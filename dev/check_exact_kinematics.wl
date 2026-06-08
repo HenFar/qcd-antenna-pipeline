@@ -1,9 +1,12 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
 profile = IBPProfile["A22TwoLoopTree"];
 basisLoad = LoadIBPBases[profile];
 
+(* analyzeExactMaster: Script-local helper for this development or benchmarking utility. *)
 analyzeExactMaster[basis_, master_] := Module[{indices, activeDenominators, activeCount, l1Dens, l2Dens, mixedDens,
         v1, v2, v3, Q, QsqVal, u1, u2, p1, w1, w2, p2, p1sqVal, p2sqVal},
   indices = List @@ master // Rest;

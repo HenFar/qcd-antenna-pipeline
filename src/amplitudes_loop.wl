@@ -7,6 +7,33 @@
 
 (*************************************************)
 
+MAmpOneLoop::usage =
+  "MAmpOneLoop[numFinalParticles, ...] builds the one-loop M amplitude for the requested A-type antenna sector.";
+
+OneLoopExcludedParticles::usage =
+  "OneLoopExcludedParticles[numFinalParticles, antennaType] returns the FeynArts particle exclusions recorded in the antenna profile.";
+
+OneLoopDropSumOver::usage =
+  "OneLoopDropSumOver[numFinalParticles, antennaType] returns whether external SumOver factors should be stripped in the selected loop route.";
+
+CleanOneLoopAmplitude::usage =
+  "CleanOneLoopAmplitude[amp, numFinalParticles] applies the notebook-to-package cleanup rules used after one-loop amplitude generation.";
+
+MAmpTwoLoop::usage =
+  "MAmpTwoLoop[numFinalParticles, ...] builds the experimental two-loop amplitude object used by the A22 source routes.";
+
+TwoLoopExcludedParticles::usage =
+  "TwoLoopExcludedParticles[numFinalParticles, antennaType] returns the profile-driven particle exclusions for two-loop generation.";
+
+TwoLoopDropSumOver::usage =
+  "TwoLoopDropSumOver[numFinalParticles, antennaType] returns whether SumOver cleanup should be applied after two-loop generation.";
+
+CleanTwoLoopAmplitude::usage =
+  "CleanTwoLoopAmplitude[amp, numFinalParticles] applies the standard post-processing rules to raw two-loop amplitudes.";
+
+MAmpTwoLoops::usage =
+  "MAmpTwoLoops[numFinalParticles, ...] is a compatibility wrapper around MAmpTwoLoop.";
+
 Options[MAmpOneLoop] = {printDiagram -> False, prefactor -> 1, ApplyStripCouplings
    -> AllCouplings, AntennaType -> A, LoopMomentum -> l};
 

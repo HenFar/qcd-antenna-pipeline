@@ -1,12 +1,17 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
 
 (* Extractor for vector inside sp[v, v] *)
+(* getVector: Script-local helper for this development or benchmarking utility. *)
 getVector[sp[v_, _]] := v;
+(* getVector: Script-local helper for this development or benchmarking utility. *)
 getVector[v_] := v;
 
 (* Robust scalar product simplifier *)
+(* simplifySp: Script-local helper for this development or benchmarking utility. *)
 simplifySp[expr_] := expr // Expand /. {
   sp[x_ + y_, z_] :> sp[x, z] + sp[y, z],
   sp[x_, y_ + z_] :> sp[x, y] + sp[x, z],
@@ -22,24 +27,28 @@ simplifySp[expr_] := expr // Expand /. {
 } // Simplify;
 
 (* Refined master values including kinematic scaling factors *)
+(* refinedA22LOMI: Script-local helper for this development or benchmarking utility. *)
 refinedA22LOMI[p1sq_, p2sq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA22LO[];
   (* scale is (p1sq * p2sq)^(-eps) *)
   val * (p1sq * p2sq / q2^2)^(-eps)
 ];
 
+(* refinedA3MI: Script-local helper for this development or benchmarking utility. *)
 refinedA3MI[Qsq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA3[];
   (* scale is (Qsq)^(1 - 2 eps) *)
   val * (Qsq / q2)^(1 - 2 eps)
 ];
 
+(* refinedA4MI: Script-local helper for this development or benchmarking utility. *)
 refinedA4MI[Qsq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA4[];
   (* scale is (Qsq)^(-2 eps) *)
   val * (Qsq / q2)^(-2 eps)
 ];
 
+(* refinedA6MI: Script-local helper for this development or benchmarking utility. *)
 refinedA6MI[Qsq_] := Module[{val},
   val = A22TwoLoopTreeMasterValueA6[];
   (* scale is (Qsq)^(-2 - 2 eps) *)
@@ -47,6 +56,7 @@ refinedA6MI[Qsq_] := Module[{val},
 ];
 
 (* Automatic master identifier and scaler *)
+(* A22TwoLoopTreeRefinedMasterRules: Script-local helper for this development or benchmarking utility. *)
 A22TwoLoopTreeRefinedMasterRules[basis_] := Module[{masters, rules},
   masters = LiteRed`MIs[basis];
   rules = Table[
@@ -105,6 +115,7 @@ A22TwoLoopTreeRefinedMasterRules[basis_] := Module[{masters, rules},
 ];
 
 (* Run test for components *)
+(* testComponent: Script-local helper for this development or benchmarking utility. *)
 testComponent[component_] := Module[{antenna, profile, basisLoad, reduction, rawLiteRed, rawMapped, integrated, tTerms, res},
   Print["\nTesting component: ", component];
   antenna = BuildAntenna[A, 2, 2, Contribution -> TwoLoopTree, Component -> component];

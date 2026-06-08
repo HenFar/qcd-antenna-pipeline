@@ -1,3 +1,30 @@
+ReduceLoopIntegrals::usage =
+  "ReduceLoopIntegrals[expr, loopMomentum, ...] applies the requested one-loop reduction backend before interference extraction.";
+
+SafeOneLoopTreeConjugate::usage =
+  "SafeOneLoopTreeConjugate[treeAmp, numFinalParticles] takes the tree conjugate with the extra cleanup needed by the loop routes.";
+
+InterfereTreeOneLoopAmplitudes::usage =
+  "InterfereTreeOneLoopAmplitudes[treeAmp, loopAmp, numFinalParticles, ...] builds the one-loop/tree interference used by A21 and A31.";
+
+LoopExpansionNormalization::usage =
+  "LoopExpansionNormalization[numLoops] returns the normalization factor used when converting loop amplitudes into the package expansion convention.";
+
+NotebookChargeConvention::usage =
+  "NotebookChargeConvention[expr] rewrites charge conventions so saved notebook expressions match the package sign choices.";
+
+InterfereTreeTwoLoopMAmplitudes::usage =
+  "InterfereTreeTwoLoopMAmplitudes[treeAmp, twoLoopAmp, numFinalParticles, ...] builds the tree/two-loop interference used by the A22 source route.";
+
+InterfereTreeTwoLoopTerm::usage =
+  "InterfereTreeTwoLoopTerm[treeAmp, twoLoopTerm, numFinalParticles] evaluates one tree/two-loop interference contribution.";
+
+InterfereOneLoopSelfMAmplitudes::usage =
+  "InterfereOneLoopSelfMAmplitudes[loopAmp, numFinalParticles, ...] builds the one-loop self-interference used by breve A22.";
+
+InterfereOneLoopMAmplitudes::usage =
+  "InterfereOneLoopMAmplitudes[treeAmp, loopAmp, numFinalParticles, ...] is the public one-loop interference entrypoint used by the loop builders.";
+
 Options[ReduceLoopIntegrals] = {ReductionBackend -> "PaVe"};
 
 ReduceLoopIntegrals[expr_, loopMomentum_, OptionsPattern[]] :=

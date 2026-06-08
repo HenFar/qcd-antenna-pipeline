@@ -1,8 +1,11 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
 order = 0;
 
+(* A22TwoLoopTreeSymbolicMasterValue: Script-local helper for this development or benchmarking utility. *)
 A22TwoLoopTreeSymbolicMasterValue[master_, basis_] :=
   Module[{indices, activeDenominators, activeCount, l1Dens, l2Dens, mixedDens,
           v1, v2, v3, Q, QsqVal, u1, u2, p1, w1, w2, p2, p1sqVal, p2sqVal},
@@ -62,6 +65,7 @@ A22TwoLoopTreeSymbolicMasterValue[master_, basis_] :=
     ]
   ];
 
+(* getSymbolicBareAmp: Script-local helper for this development or benchmarking utility. *)
 getSymbolicBareAmp[component_] := Module[{antenna, profile, basisLoad, reduction, rawReduced, records, symbolicReduced, totalSymbolic, norm},
   antenna = BuildAntenna[A, 2, 2, Contribution -> TwoLoopTree, Component -> component];
   profile = IBPProfile["A22TwoLoopTree"];
@@ -87,6 +91,7 @@ bareL = getSymbolicBareAmp[Leading];
 Print["Reducing Subleading component..."];
 bareS = getSymbolicBareAmp[Subleading];
 
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_] :=
   Normal[Series[expr, {eps, 0, order}]] // FunctionExpand // FullSimplify;
 
@@ -125,7 +130,9 @@ subL = toSeries[-11/(6 eps) * intA21];
 residL = toSeries[targetLead - subL - (leadA4 + leadA6)];
 residS = toSeries[targetSub - (subA4 + subA6)];
 
+(* Xexpr: Script-local helper for this development or benchmarking utility. *)
 Xexpr[x2_, x1_, x0_, x1new_, x2new_] := x2/eps^2 + x1/eps + x0 + x1new * eps + x2new * eps^2;
+(* Yexpr: Script-local helper for this development or benchmarking utility. *)
 Yexpr[y1_, y0_, y1new_, y2new_, y3new_] := y1/eps + y0 + y1new * eps + y2new * eps^2 + y3new * eps^3;
 
 vars = {x2, x1, x0, x1new, x2new, y1, y0, y1new, y2new, y3new};

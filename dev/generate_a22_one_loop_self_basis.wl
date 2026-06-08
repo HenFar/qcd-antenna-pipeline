@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 (* ::Package:: *)
 
 (*
@@ -27,9 +29,13 @@ SetDim[d];
 Declare[{l1, l2, k1, q}, Vector];
 Declare[q2, Number];
 
+(* sp: Script-local helper for this development or benchmarking utility. *)
 sp[q, q] = q2;
+(* sp: Script-local helper for this development or benchmarking utility. *)
 sp[k1, k1] = 0;
+(* sp: Script-local helper for this development or benchmarking utility. *)
 sp[q, k1] = q2 / 2;
+(* sp: Script-local helper for this development or benchmarking utility. *)
 sp[k1, q] = q2 / 2;
 
 Clear[A22OneLoopSelfBasis];

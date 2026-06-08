@@ -9,6 +9,96 @@
 
 (*************************************************)
 
+BuildLoopAntennaData::usage =
+  "BuildLoopAntennaData[key, ...] builds the internal association used to route one-loop antenna construction and diagnostics.";
+
+BuildTwoLoopAntennaData::usage =
+  "BuildTwoLoopAntennaData[key, ...] builds the internal association used by the experimental two-loop source routes.";
+
+ResolveLoopBuildReductionBackend::usage =
+  "ResolveLoopBuildReductionBackend[profile, requestedBackend] chooses the loop-side reduction backend used during build-time processing.";
+
+ResolveIntegrableLoopBuildReductionBackend::usage =
+  "ResolveIntegrableLoopBuildReductionBackend[key, requestedBackend] picks the build-time reduction shape needed by an integrable antenna object.";
+
+BuildAntennaData::usage =
+  "BuildAntennaData[key] assembles the raw build-side data association for a given antenna key.";
+
+BuildAntenna::usage =
+  "BuildAntenna[type, numFinalParticles, loopOrder, ...] is the main public constructor for unintegrated antenna expressions.";
+
+BuildAntennaObject::usage =
+  "BuildAntennaObject[type, numFinalParticles, loopOrder, ...] builds an AntennaObject carrying the metadata needed by IntegrateAntenna.";
+
+BuildAntennaDiagnostics::usage =
+  "BuildAntennaDiagnostics[key, result, data, ...] constructs the diagnostics association returned by the public build routes.";
+
+BuildAntennaStoredResultKey::usage =
+  "BuildAntennaStoredResultKey[type, numFinalParticles, loopOrder, options] builds the cache key for a BuildAntenna request.";
+
+BuildAntennaStoredResultLabel::usage =
+  "BuildAntennaStoredResultLabel[type, numFinalParticles, loopOrder, options] builds the human-readable cache label for a BuildAntenna request.";
+
+BuildAntennaObjectStoredResultKey::usage =
+  "BuildAntennaObjectStoredResultKey[type, numFinalParticles, loopOrder, options] builds the cache key for a BuildAntennaObject request.";
+
+BuildAntennaObjectStoredResultLabel::usage =
+  "BuildAntennaObjectStoredResultLabel[type, numFinalParticles, loopOrder, options] builds the human-readable cache label for a BuildAntennaObject request.";
+
+BuildAntennaResult::usage =
+  "BuildAntennaResult[key, data] converts internal build data into the natural public antenna expression or component list.";
+
+AntennaComponentOrder::usage =
+  "AntennaComponentOrder[key] returns the canonical component ordering used when a route has multiple public components.";
+
+CanonicalAntennaComponentName::usage =
+  "CanonicalAntennaComponentName[component] normalizes component labels to the standard public names used across diagnostics and caching.";
+
+NormalizeIntermediateSteps::usage =
+  "NormalizeIntermediateSteps[steps] normalizes intermediate-step requests into the internal list form used by the routers.";
+
+RequestedIntermediateStepQ::usage =
+  "RequestedIntermediateStepQ[steps, label] tests whether a named intermediate stage was requested by the caller.";
+
+PrintIntermediateStepsAssociation::usage =
+  "PrintIntermediateStepsAssociation[steps] prints the requested intermediate-stage association with simple section headers.";
+
+CollectBuildIntermediateSteps::usage =
+  "CollectBuildIntermediateSteps[key, buildData, result, diagnostics, requestedSteps] collects the build-side stages requested for inspection.";
+
+FormatFreshBuildReturn::usage =
+  "FormatFreshBuildReturn[result, diagnostics, returnDiagnostics, requestedSteps, printSteps] formats a fresh build result in the public return shape.";
+
+SelectAntennaComponent::usage =
+  "SelectAntennaComponent[result, key, component] extracts one named component from a multi-component antenna result.";
+
+AntennaObjectQ::usage =
+  "AntennaObjectQ[expr] returns True when expr is a valid AntennaObject wrapper.";
+
+AntennaObjectData::usage =
+  "AntennaObjectData[obj] returns the association stored inside an AntennaObject.";
+
+AntennaKey::usage =
+  "AntennaKey[obj] returns the {type, multiplicity, loopOrder} key stored in an AntennaObject.";
+
+AntennaComponent::usage =
+  "AntennaComponent[obj] returns the currently selected component recorded in an AntennaObject.";
+
+AntennaContribution::usage =
+  "AntennaContribution[obj] returns the currently selected contribution recorded in an AntennaObject.";
+
+AntennaExpression::usage =
+  "AntennaExpression[obj] returns the selected antenna expression stored in an AntennaObject.";
+
+AntennaFullExpression::usage =
+  "AntennaFullExpression[obj] returns the full unselected expression payload stored in an AntennaObject.";
+
+MakeAntennaObject::usage =
+  "MakeAntennaObject[key, data, component, contribution] constructs the AntennaObject wrapper used by the integration routes.";
+
+AntennaObjectWithSelection::usage =
+  "AntennaObjectWithSelection[obj, component, contribution] returns a copy of an AntennaObject with updated component or contribution selection.";
+
 Options[BuildLoopAntennaData] = {printDiagram -> False, prefactor -> 
   1, ApplyStripCouplings -> AllCouplings, ApplyCasimirSubstitution -> True,
    ApplyDimReg -> True, LoopMomentum -> l, ReductionBackend -> Automatic};

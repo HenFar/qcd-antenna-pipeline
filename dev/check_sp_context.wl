@@ -1,10 +1,15 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
 
+(* getVector: Script-local helper for this development or benchmarking utility. *)
 getVector[LiteRed`sp[v_, _]] := v;
+(* getVector: Script-local helper for this development or benchmarking utility. *)
 getVector[v_] := v;
 
+(* simplifySp: Script-local helper for this development or benchmarking utility. *)
 simplifySp[expr_] := expr // Expand //. {
   LiteRed`sp[x_ + y_, z_] :> LiteRed`sp[x, z] + LiteRed`sp[y, z],
   LiteRed`sp[x_, y_ + z_] :> LiteRed`sp[x, y] + LiteRed`sp[x, z],

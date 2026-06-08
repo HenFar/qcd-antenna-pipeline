@@ -1,3 +1,27 @@
+BCColorFreeQ::usage =
+  "BCColorFreeQ[expr] tests whether an expression is free of the B/C color structures handled by the tree extractor.";
+
+AmplitudeTerms::usage =
+  "AmplitudeTerms[amp] expands an amplitude into the list of terms classified by the tree extractor.";
+
+TermContainsAnyQ::usage =
+  "TermContainsAnyQ[expr, vars] tests whether any variable from vars appears in expr.";
+
+SectorMatchQ::usage =
+  "SectorMatchQ[kinTerm, invariantGroups] tests whether a kinematic term belongs to one of the profile-defined invariant sectors.";
+
+ClassifyAmplitudeTerm::usage =
+  "ClassifyAmplitudeTerm[term, profile] classifies one tree-level amplitude term into the antenna sectors defined by the profile.";
+
+ColorTensorCountSafe::usage =
+  "ColorTensorCountSafe[expr] counts color tensors with a failure-safe wrapper used during tree extraction.";
+
+SplitAmplitudeBySectors::usage =
+  "SplitAmplitudeBySectors[amp, profile] partitions a tree amplitude into the sectors needed by the antenna profiles.";
+
+ExtractAntennaComponents::usage =
+  "ExtractAntennaComponents[amp, profile] extracts the public tree-level antenna components from a classified amplitude.";
+
 BCColorFreeQ[expr_] :=
   FreeQ[expr, SUNN | CA | CF | Nf | _SUNTF | _SUNF | _SUNFDelta];
 

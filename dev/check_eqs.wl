@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
@@ -6,6 +8,7 @@ order = 0;
 dataLead = Get["/private/tmp/a22_two_loop_tree_Leading_masters.mx"];
 dataSub  = Get["/private/tmp/a22_two_loop_tree_Subleading_masters.mx"];
 
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_] :=
   Normal[Series[expr /. {d -> 4 - 2 eps, q2 -> 1}, {eps, 0, order}]] //
     FunctionExpand // FullSimplify;
@@ -37,7 +40,9 @@ targetSub = toSeries[-1/(4 eps^4) - 3/(4 eps^3) + (-41/16 + 13 Pi^2/24)/eps^2 +
 residL = toSeries[targetLead - (leadA4 + leadA6)];
 residS = toSeries[targetSub - (subA4 + subA6)];
 
+(* Xexpr: Script-local helper for this development or benchmarking utility. *)
 Xexpr[x2_, x1_, x0_] := x2/eps^2 + x1/eps + x0;
+(* Yexpr: Script-local helper for this development or benchmarking utility. *)
 Yexpr[y1_, y0_]       := y1/eps + y0;
 
 vars = {x2, x1, x0, y1, y0};

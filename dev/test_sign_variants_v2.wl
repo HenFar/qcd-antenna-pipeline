@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 (*
   Test sign variants for A22LO and A3 master values.
   For each combination, set up the full 10-equation system and check consistency.
@@ -15,6 +17,7 @@ order = 0;
 dataLead = Get["/private/tmp/a22_two_loop_tree_Leading_masters.mx"];
 dataSub  = Get["/private/tmp/a22_two_loop_tree_Subleading_masters.mx"];
 
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_] :=
   Normal[Series[expr /. {d -> 4 - 2 eps, q2 -> 1}, {eps, 0, order}]] //
     FunctionExpand // FullSimplify;
@@ -41,6 +44,7 @@ residL = toSeries[targetLead - leadA4];
 residS = toSeries[targetSub  - subA4];
 
 (* Check consistency of the 10-equation system for a given A22LO and A3 series *)
+(* checkConsistency: Script-local helper for this development or benchmarking utility. *)
 checkConsistency[a22lo_, a3_, label_] :=
   Module[{cA22lo, cA3, Xfn, Yfn, productL, productS, eqs, sol},
     cA22lo = toSeries[a22lo];

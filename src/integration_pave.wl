@@ -1,3 +1,18 @@
+IntegrateViaPaVe::usage =
+  "IntegrateViaPaVe[antenna, profile, expandPaVeQ, applyFeynCalcQ, quarkMass, ...] runs the PaVe/Package-X integration route.";
+
+EvaluatePaVeAntenna::usage =
+  "EvaluatePaVeAntenna[antenna, profile, applyFeynCalcMS, ...] evaluates a PaVe antenna with the selected PaVe backend.";
+
+NormalizePaXEvaluateResult::usage =
+  "NormalizePaXEvaluateResult[paXResult, profile, applyFeynCalcMS, ...] converts a raw Package-X result into the package or paper convention.";
+
+NormalizeMasslessTwoPartonPaXResult::usage =
+  "NormalizeMasslessTwoPartonPaXResult[paXResult, epsilon, scale, scaleMu, applyFeynCalcMS, ...] applies the special normalization used by the massless two-parton paper route.";
+
+MasslessTwoPartonPaXPaperConversionFactor::usage =
+  "MasslessTwoPartonPaXPaperConversionFactor[epsilon, order] returns the Package-X-to-paper conversion factor used for the A21 route.";
+
 Options[IntegrateViaPaVe] = {PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> 2, KinematicScale -> q2, NormalizeKinematicScale ->
     True, LoopMomentum -> l, ApplyDimReg -> True};

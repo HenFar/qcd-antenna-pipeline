@@ -9,6 +9,51 @@
 
 (*************************************************)
 
+ColorTensorFreeQ::usage =
+  "ColorTensorFreeQ[expr] tests whether an expression is free of explicit color tensors.";
+
+ExpandUnsquaredColor::usage =
+  "ExpandUnsquaredColor[amp] expands and collects the color structures needed to isolate the A40 ordered partials.";
+
+TwoGluonChainQ::usage =
+  "TwoGluonChainQ[expr] returns True when expr is a two-gluon fundamental color chain.";
+
+ChainData::usage =
+  "ChainData[chain] extracts the adjoint and fundamental indices carried by a two-gluon color chain.";
+
+ReversedChainPairQ::usage =
+  "ReversedChainPairQ[d1, d2] tests whether two chain records form the reversed pair used by the A40 color-ordering logic.";
+
+DiscoverTwoGluonChains::usage =
+  "DiscoverTwoGluonChains[orderedAmp] locates the two reversed two-gluon chains expected in the color-ordered A40 construction.";
+
+PoleQ::usage =
+  "PoleQ[expr, inv] tests whether an expression contains a pole in the selected invariant.";
+
+PoleSignature::usage =
+  "PoleSignature[expr] returns the set of pole invariants present in an expression.";
+
+AdjacentPoleScore1342::usage =
+  "AdjacentPoleScore1342[expr] scores a partial amplitude by how closely its pole structure matches the target 1342 ordering.";
+
+ExtractTwoGluonColorOrderedPartials::usage =
+  "ExtractTwoGluonColorOrderedPartials[amp4] extracts the color-ordered four-parton partial amplitudes used to build A40.";
+
+ExtractBornColorStrippedPartial::usage =
+  "ExtractBornColorStrippedPartial[bornAmp] extracts the color-stripped Born partial used to normalize the ordered A40 object.";
+
+HasPolarizationVectorQ::usage =
+  "HasPolarizationVectorQ[expr, mom] tests whether a polarization vector for the given momentum still appears in an expression.";
+
+SafeDoPolarizationSums::usage =
+  "SafeDoPolarizationSums[expr, mom, ref, ...] applies DoPolarizationSums only when the requested polarization vector is present.";
+
+ColorStrippedInterference::usage =
+  "ColorStrippedInterference[ampLeft, ampRight, numFinalParticles] computes the spin-summed color-stripped interference used by the ordered A40 route.";
+
+ColorOrderedAntenna::usage =
+  "ColorOrderedAntenna[amp4, bornAmp] builds the paper-style color-ordered A40 antenna from the full-color amplitude and Born normalization.";
+
 ColorTensorFreeQ[expr_] :=
   FreeQ[expr, _SUNTF | _SUNF | _SUNFDelta];
 

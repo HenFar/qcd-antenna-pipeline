@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 (*
   Solve for the EXACT series that A22LOMI and A3MI must have,
   using Leading and Subleading as simultaneous linear constraints.
@@ -16,6 +18,7 @@ dataLead = Get["/private/tmp/a22_two_loop_tree_Leading_masters.mx"];
 dataSub  = Get["/private/tmp/a22_two_loop_tree_Subleading_masters.mx"];
 
 (* Helper: expand to series *)
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_] :=
   Normal[Series[expr /. {d -> 4 - 2 eps, q2 -> 1}, {eps, 0, order}]] //
     FunctionExpand // FullSimplify;
@@ -89,6 +92,7 @@ Print["  Subleading: ", residS];
 *)
 
 (* Extract coefficients of eps^n *)
+(* getCoeff: Script-local helper for this development or benchmarking utility. *)
 getCoeff[expr_, n_] := Coefficient[expr, eps, n];
 
 (* IBP coefficient series (indexed by eps power) *)

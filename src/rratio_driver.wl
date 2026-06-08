@@ -8,6 +8,51 @@
 
 (*************************************************)
 
+BuildRRatio::usage =
+  "BuildRRatio[model, ...] builds the public symbolic R-ratio driver output for the selected model shell.";
+
+CollectRRatioIntermediateSteps::usage =
+  "CollectRRatioIntermediateSteps[ingredientCalls, ingredients, assemblyExpression, finalExpression, diagnostics, steps] collects the requested driver-side intermediate stages.";
+
+RRatioFailureResult::usage =
+  "RRatioFailureResult[result, diagnostics, intermediateSteps, returnDiagnostics] formats a failing R-ratio evaluation in the public return shape.";
+
+RRatioModelShellFailure::usage =
+  "RRatioModelShellFailure[model, returnDiagnostics, intermediateSteps] returns the standard placeholder failure for an unimplemented model shell.";
+
+FormatFreshRRatioReturn::usage =
+  "FormatFreshRRatioReturn[result, diagnostics, returnDiagnostics, requestedSteps, printSteps] formats a fresh R-ratio evaluation in the public return shape.";
+
+RRatioIngredientCallFailedQ::usage =
+  "RRatioIngredientCallFailedQ[result] tests whether one nested ingredient call failed.";
+
+RRatioProgressPrint::usage =
+  "RRatioProgressPrint[label, status] prints the lightweight progress messages used by fresh BuildRRatio evaluations.";
+
+EvaluateRRatioIngredient::usage =
+  "EvaluateRRatioIngredient[label, expr] evaluates one nested ingredient call with fresh-run progress logging.";
+
+EvaluateRRatioStoredIngredient::usage =
+  "EvaluateRRatioStoredIngredient[label, expr] evaluates one nested ingredient call while preserving the shorter stored-result logging path.";
+
+BuildRRatioIngredientCallAssociation::usage =
+  "BuildRRatioIngredientCallAssociation[masslessQuarkMass] returns the named nested ingredient requests used by the massless SMQCD driver.";
+
+BuildRRatioIngredientCacheOptions::usage =
+  "BuildRRatioIngredientCacheOptions[options] resolves the cache behavior passed from the top-level driver to its nested ingredient calls.";
+
+BuildRRatioStoredResultKey::usage =
+  "BuildRRatioStoredResultKey[model, options] builds the cache key for a BuildRRatio request.";
+
+BuildRRatioStoredResultLabel::usage =
+  "BuildRRatioStoredResultLabel[model, options] builds the human-readable cache label for a BuildRRatio request.";
+
+BuildRRatioSMQCDIngredients::usage =
+  "BuildRRatioSMQCDIngredients[masslessQuarkMass, options] collects the validated integrated antenna ingredients used by the massless SMQCD driver.";
+
+AssembleSMQCDRRatio::usage =
+  "AssembleSMQCDRRatio[ingredients] assembles the final symbolic massless SMQCD R-ratio expression from the validated antenna ingredients.";
+
 Options[BuildRRatio] = {quarkMass -> 0, ReturnDiagnostics -> False,
    IntermediateSteps -> {}, PrintIntermediateSteps -> False,
    UseStoredResults -> False, StoreResults -> False,

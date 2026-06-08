@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 componentString = Environment["A22_COMPONENT"];
@@ -7,9 +9,11 @@ component =
     Leading
   ];
 
+(* CanonicalDenominatorString: Script-local helper for this development or benchmarking utility. *)
 CanonicalDenominatorString[den_] :=
   ToString[InputForm[den // Expand // Simplify]];
 
+(* MasterSignatureSummary: Script-local helper for this development or benchmarking utility. *)
 MasterSignatureSummary[master_, basis_] :=
   Module[{indices, activeDenominators, activeCount, l1Dens, l2Dens, mixedDens,
       v1, v2, v3, qSqVal, u1, u2, p1, w1, w2, p2, p1SqVal, p2SqVal},

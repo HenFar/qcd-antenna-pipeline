@@ -9,6 +9,54 @@
 
 (*************************************************)
 
+IntegrateAntenna::usage =
+  "IntegrateAntenna[obj, ...] integrates an AntennaObject through the appropriate PaVe or IBP backend.";
+
+BuildAndIntegrateAntenna::usage =
+  "BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder, ...] is the one-shot public route that builds and integrates an antenna in one call.";
+
+LegacyIntegrateAntenna::usage =
+  "LegacyIntegrateAntenna[type, numFinalParticles, loopOrder, ...] is compatibility sugar that delegates to BuildAndIntegrateAntenna.";
+
+IntegratedResidualListZeroQ::usage =
+  "IntegratedResidualListZeroQ[residuals] tests whether every entry in a diagnostic residual list is exactly zero.";
+
+CollectIntegrationIntermediateSteps::usage =
+  "CollectIntegrationIntermediateSteps[antenna, rawIntegrated, tTerms, finalIntegrated, selectedIntegrated, backendDiagnostics, diagnostics, steps] collects the requested integration-side stages.";
+
+HeavyIntegrationRouteQ::usage =
+  "HeavyIntegrationRouteQ[key, component, contribution] identifies routes that should warn users about a long-running integration backend.";
+
+HeavyIntegrationRouteLabel::usage =
+  "HeavyIntegrationRouteLabel[key, component, contribution] formats the human-readable heavy-route label used in warnings.";
+
+MaybeWarnHeavyIntegrationRoute::usage =
+  "MaybeWarnHeavyIntegrationRoute[key, component, contribution] emits the one-time heavy-route warning when a selected route is known to be expensive.";
+
+IntegrateAntennaStoredResultKey::usage =
+  "IntegrateAntennaStoredResultKey[obj, options] builds the cache key for an IntegrateAntenna request.";
+
+IntegrateAntennaStoredResultLabel::usage =
+  "IntegrateAntennaStoredResultLabel[obj, options] builds the human-readable cache label for an IntegrateAntenna request.";
+
+BuildAndIntegrateStoredResultKey::usage =
+  "BuildAndIntegrateStoredResultKey[type, numFinalParticles, loopOrder, options] builds the cache key for a BuildAndIntegrateAntenna request.";
+
+BuildAndIntegrateStoredResultLabel::usage =
+  "BuildAndIntegrateStoredResultLabel[type, numFinalParticles, loopOrder, options] builds the human-readable cache label for a BuildAndIntegrateAntenna request.";
+
+FormatFreshIntegrationReturn::usage =
+  "FormatFreshIntegrationReturn[result, diagnostics, returnDiagnostics, requestedSteps, printSteps] formats a fresh integration result in the public return shape.";
+
+A22CombineIntegratedResults::usage =
+  "A22CombineIntegratedResults[treeResult, breveResult] stitches the public four-component A22 integrated result from its tree/two-loop and one-loop/self branches.";
+
+A22CombineIntegratedComponentDiagnostics::usage =
+  "A22CombineIntegratedComponentDiagnostics[treeDiagnostics, breveDiag, finalIntegrated, selectedComponent, returnTTerms] merges the stitched A22 diagnostics into one public association.";
+
+IntegratedAntennaDiagnostics::usage =
+  "IntegratedAntennaDiagnostics[key, rawIntegrated, tTerms, finalIntegrated, selectedIntegrated, backendDiagnostics, ...] constructs the standard diagnostics association for integrated routes.";
+
 Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
    PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> Automatic, KinematicScale -> q2, NormalizeKinematicScale ->

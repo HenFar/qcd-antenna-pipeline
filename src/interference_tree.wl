@@ -1,3 +1,18 @@
+InterfereMAmplitudes::usage =
+  "InterfereMAmplitudes[amp1, amp2, numFinalParticles, ...] builds the tree-level interference used by the unintegrated antenna extractors.";
+
+InterfereMAmplitudesPair::usage =
+  "InterfereMAmplitudesPair[term1, term2, numFinalParticles, ...] evaluates one pairwise tree-level interference contribution.";
+
+InterfereMAmp1Count::usage =
+  "InterfereMAmp1Count[amp] returns the number of terms in the first interfering amplitude.";
+
+InterfereMAmp2Count::usage =
+  "InterfereMAmp2Count[amp] returns the number of terms in the second interfering amplitude.";
+
+SymmetrizedInterference::usage =
+  "SymmetrizedInterference[left, right] adds the left-right and right-left interference pieces in the package convention.";
+
 Options[InterfereMAmplitudes] = {ApplyCasimirSubstitution -> True, ApplyDimReg
    -> True, AntennaType -> A};
 

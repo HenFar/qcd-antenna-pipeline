@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
@@ -6,6 +8,7 @@ lead = Get["/private/tmp/a22_signature_coeffs_Leading.mx"]["NormalizedCoefficien
 sub = Get["/private/tmp/a22_signature_coeffs_Subleading.mx"]["NormalizedCoefficients"];
 nf  = Get["/private/tmp/a22_signature_coeffs_Nf.mx"]["NormalizedCoefficients"];
 
+(* findByDens: Script-local helper for this development or benchmarking utility. *)
 findByDens[assoc_, dens_List] :=
   SelectFirst[Keys[assoc], Lookup[#, "ActiveDenominators", {}] === Sort[dens] &];
 
@@ -42,6 +45,7 @@ a4dKey = findByDens[sub, {
 
 a6Key = SelectFirst[Keys[sub], Lookup[#, "ActiveCount", 0] === 6 &];
 
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_, order_:0] :=
   Normal[Series[expr /. {q2 -> 1}, {eps, 0, order}]] //
     FunctionExpand // FullSimplify;

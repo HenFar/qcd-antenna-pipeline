@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 eps = FeynCalc`Epsilon;
@@ -6,13 +8,16 @@ leadData = Get["/private/tmp/a22_signature_coeffs_Leading.mx"]["NormalizedCoeffi
 subData = Get["/private/tmp/a22_signature_coeffs_Subleading.mx"]["NormalizedCoefficients"];
 nfData = Get["/private/tmp/a22_signature_coeffs_Nf.mx"]["NormalizedCoefficients"];
 
+(* findByDens: Script-local helper for this development or benchmarking utility. *)
 findByDens[assoc_, dens_List] :=
   SelectFirst[Keys[assoc], Lookup[#, "ActiveDenominators", {}] === Sort[dens] &];
 
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_, order_:0] :=
   Normal[Series[expr /. {q2 -> 1}, {eps, 0, order}]] //
     FunctionExpand // FullSimplify;
 
+(* valueSeries: Script-local helper for this development or benchmarking utility. *)
 valueSeries[name_String, min_Integer, max_Integer] :=
   Sum[ToExpression[name <> If[i < 0, "m" <> ToString[-i], ToString[i]]] eps^i,
     {i, min, max}];
@@ -91,6 +96,7 @@ targetNf = toSeries[
   0
 ];
 
+(* buildChannelExpressions: Script-local helper for this development or benchmarking utility. *)
 buildChannelExpressions[valueRules_Association] :=
   Module[{leadExpr, subExpr, nfExpr},
     leadExpr = toSeries[
@@ -122,6 +128,7 @@ buildChannelExpressions[valueRules_Association] :=
     <|"Leading" -> leadExpr, "Subleading" -> subExpr, "Nf" -> nfExpr|>
   ];
 
+(* equationsFor: Script-local helper for this development or benchmarking utility. *)
 equationsFor[channelExprs_Association] :=
   Join[
     Table[Coefficient[channelExprs["Leading"] - targetLead, eps, n] == 0,
@@ -132,6 +139,7 @@ equationsFor[channelExprs_Association] :=
       {n, -3, 0}]
   ];
 
+(* runStage: Script-local helper for this development or benchmarking utility. *)
 runStage[name_String, valueRules_Association, solveVars_List] :=
   Module[{channelExprs, eqs, sol},
     channelExprs = buildChannelExpressions[valueRules];

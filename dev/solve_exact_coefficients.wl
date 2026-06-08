@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 eps = Epsilon;
 
 (* Dynamically computed IBP coefficients *)
@@ -12,9 +14,11 @@ cSA4    = (40 + eps*(-56 + eps*(196 + eps*(178 + 1121*eps))))/(32*eps^2*Pi^4);
 cSA6    = (2 + eps*(6 + eps*(28 + 113*eps*(1 + 4*eps))))/(8*Pi^4);
 
 (* Validated master values *)
+(* A22VirtualTwoPartonConventionFactor: Script-local helper for this development or benchmarking utility. *)
 A22VirtualTwoPartonConventionFactor[] := 
   1 - Pi^2 eps^2 / 6 + (26 Zeta[3] / 3) eps^3 + (Pi^4 / 120 - 28 Zeta[3]) eps^4;
 
+(* A22TwoLoopTreeVirtualConventionFactor: Script-local helper for this development or benchmarking utility. *)
 A22TwoLoopTreeVirtualConventionFactor[] := 
   1 - 2 Pi^2 eps^2 - (28 Zeta[3] eps^3) / 3 + (2 (Pi^4 + 42 Zeta[3]) eps^4) / 3;
 

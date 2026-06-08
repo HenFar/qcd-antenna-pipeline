@@ -1,10 +1,14 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 Get[FileNameJoin[{DirectoryName[DirectoryName[]], "AntennaPipeline.wl"}]];
 
 ClearAll[CanonicalDenominatorString, MasterSignatureData, ComponentMasterUsage];
 
+(* CanonicalDenominatorString: Script-local helper for this development or benchmarking utility. *)
 CanonicalDenominatorString[den_] :=
   ToString[InputForm[den // Expand // Simplify]];
 
+(* MasterSignatureData: Script-local helper for this development or benchmarking utility. *)
 MasterSignatureData[master_, basis_] :=
   Module[{indices, allDenominators, activeDenominators, activeCount, l1Dens,
       l2Dens, mixedDens, qSqVal, p1SqVal, p2SqVal, v1, v2, v3, u1, u2, p1,
@@ -60,6 +64,7 @@ MasterSignatureData[master_, basis_] :=
     |>
   ];
 
+(* ComponentMasterUsage: Script-local helper for this development or benchmarking utility. *)
 ComponentMasterUsage[component_] :=
   Module[{antenna, profile, basisLoad, reduction, rawReduced, records, usage},
     antenna = BuildAntenna[A, 2, 2,

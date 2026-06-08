@@ -1,5 +1,35 @@
 (* functions *)
 
+KinematicRules::usage =
+  "KinematicRules[numFinalParticles, ...] sets the scalar-product kinematics used throughout the package for the selected final-state multiplicity.";
+
+ApplyFeynCalcRules::usage =
+  "ApplyFeynCalcRules[expr, numFinalParticles] normalizes denominator and propagator syntax after FeynCalc/FeynArts generation.";
+
+StripCouplings::usage =
+  "StripCouplings[flag, numFinalParticles, numLoops] returns the coupling factor associated with the selected stripping mode.";
+
+MakeAmplitudeObject::usage =
+  "MakeAmplitudeObject[expr, n, L, colourMode, couplingMode, colourNorm] wraps a raw amplitude together with the metadata used by later pipeline stages.";
+
+GluonColourBasisNorm::usage =
+  "GluonColourBasisNorm[numGluons] returns the normalization factor for the color-stripped gluon basis.";
+
+HasPolarizationVectorQ::usage =
+  "HasPolarizationVectorQ[expr, mom] tests whether a polarization vector for the given momentum still appears in an expression.";
+
+SafeDoPolarizationSums::usage =
+  "SafeDoPolarizationSums[expr, mom, ref, ...] applies DoPolarizationSums only when the matching polarization vector is present.";
+
+SpinPolSum::usage =
+  "SpinPolSum[expr, numFinalParticles] performs the standard spin and polarization sums for the selected tree or loop expression.";
+
+ColourTensorCounter::usage =
+  "ColourTensorCounter[amp] counts color-tensor structures inside an amplitude expression.";
+
+ReturnColourSpinCouples::usage =
+  "ReturnColourSpinCouples[MAmp] extracts the color-and-spin normalized expression returned by the amplitude builders.";
+
 Options[KinematicRules] = {QuarkMass -> 0};
 
 KinematicRules[numFinalParticles_Integer /; numFinalParticles >= 2, OptionsPattern[

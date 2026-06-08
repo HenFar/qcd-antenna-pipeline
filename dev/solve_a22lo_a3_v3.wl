@@ -1,3 +1,5 @@
+(* Development script: local exploratory or benchmark utility for the antenna pipeline. Script-local helpers below are intentionally narrow and only support this file. *)
+
 (*
   Solve for A22LO_correct and A3_correct with correct starting orders.
   cLA22LO ~ 1/eps^2, A22LO ~ 1/eps^2 → product starts at 1/eps^4.
@@ -16,6 +18,7 @@ order = 0;
 dataLead = Get["/private/tmp/a22_two_loop_tree_Leading_masters.mx"];
 dataSub  = Get["/private/tmp/a22_two_loop_tree_Subleading_masters.mx"];
 
+(* toSeries: Script-local helper for this development or benchmarking utility. *)
 toSeries[expr_] :=
   Normal[Series[expr /. {d -> 4 - 2 eps, q2 -> 1}, {eps, 0, order}]] //
     FunctionExpand // FullSimplify;
@@ -59,7 +62,9 @@ Print["  residS  = ", residS];
     (cLA22LO)(eps) × X(eps) + (cLA3)(eps) × Y(eps) = residL(eps)
 *)
 
+(* Xexpr: Script-local helper for this development or benchmarking utility. *)
 Xexpr[x2_, x1_, x0_] := x2/eps^2 + x1/eps + x0;
+(* Yexpr: Script-local helper for this development or benchmarking utility. *)
 Yexpr[y1_, y0_]       := y1/eps + y0;
 
 vars = {x2, x1, x0, y1, y0};
