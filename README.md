@@ -169,6 +169,12 @@ The next work should be organized in this order.
    - Record mode is the "do not hide what was already computed" path:
      diagnostics are always included there, and the useful build/integration
      stages can be inspected later without rerunning the route.
+   - Verified on the heavy fresh `A31` IBP route as well:
+     `IntegrateAntenna[...]` and `BuildAndIntegrateAntenna[...]` both return
+     `AntennaRunRecord[...]`, the record `"Result"` matches the plain public
+     return exactly, and the master-facing fields such as
+     `"MasterCombination"` and `"MasterSubstitutedExpression"` are present on
+     the fresh run without relying on stored results.
 
 3. Loop-build public API cleanup.
    - Done in the current public API: one-loop `BuildAntenna[...]` now defaults
