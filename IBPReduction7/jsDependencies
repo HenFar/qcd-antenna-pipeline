@@ -1,0 +1,5 @@
+{"res" -> {js[NLOBasis123, 1, 1, 1, 0, 1]}, js[NLOBasis123, 1, 1, 1, 0, 1] -> 
+  {js[NLOBasis123, 1, 0, 1, 0, 0], js[NLOBasis123, 1, 0, 1, 0, 1], 
+   js[NLOBasis123, 1, 1, 0, 0, 1], js[NLOBasis123, 1, 1, 1, 0, 0]}, 
+ js[NLOBasis123, 1, 1, 1, 0, 0] -> {js[NLOBasis123, 1, 1, 0, 0, 0], 
+   js[NLOBasis123, 1, 0, 1, 0, 0], js[NLOBasis123, 0, 1, 1, 0, 0]}}

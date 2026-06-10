@@ -159,10 +159,16 @@ The next work should be organized in this order.
    - Done in the current public API: `IntermediateSteps -> {...}` captures
      named build-side and integration-side stages without changing default
      black-box behavior.
+   - Done in the current public API: `ReturnRecord -> True` on
+     `BuildAntenna[...]`, `IntegrateAntenna[...]`, and
+     `BuildAndIntegrateAntenna[...]` returns an inspectable
+     `AntennaRunRecord[...]` wrapper whose `"Result"` field matches the
+     historical public return exactly.
    - `PrintIntermediateSteps -> True` adds a notebook-friendly view layer on
      top of the same structured stage capture.
-   - The next refinement here is not basic functionality, but deciding whether
-     large stages such as `BackendDiagnostics` need a compact display mode.
+   - Record mode is the "do not hide what was already computed" path:
+     diagnostics are always included there, and the useful build/integration
+     stages can be inspected later without rerunning the route.
 
 3. Loop-build public API cleanup.
    - Done in the current public API: one-loop `BuildAntenna[...]` now defaults
@@ -308,6 +314,12 @@ classes.  The route is intentionally conservative: term-level reductions are
 validated, while full-component reductions are expected to be expensive and
 should be launched deliberately.
 
+The A31 and A22 runtime master substitutions are now loaded from the
+checked-in artifact `masterIntegrals/master_values_runtime.wl`.  That artifact
+is exported from the derivation/provenance layer under `masterIntegrals/`, so
+the package keeps a visible source for those values without recomputing the
+master derivations during normal package loads.
+
 For A31 the integrated IBP components are first interpreted as the colour
 brackets of the `Tqqg6` object.  The post-integration layer then applies the
 known T-to-antenna relations, including the lower-order `A21 A30` product and
@@ -329,6 +341,19 @@ terms and no leftover LiteRed objects, and the public
 0403057 `Tqqbar^(6,[2x0])` bracket through topology-specific IBP master
 substitution.  The `Subleading` and `Nf` tree/two-loop routes now match the
 remaining 0403057 colour brackets through the same real IBP path.
+
+After editing the derivation-side master files, refresh the checked-in runtime
+artifact with:
+
+```sh
+bash masterIntegrals/run_kernel.sh -run 'Get["masterIntegrals/export_runtime_master_values.wl"]; Exit[]'
+```
+
+Then verify that the artifact still matches the live derivation layer:
+
+```sh
+bash masterIntegrals/run_kernel.sh -run 'Get["dev/validate_runtime_master_values.wl"]; Exit[]'
+```
 
 ## Loading
 
@@ -505,6 +530,32 @@ IntegrateAntenna[obj, ExpansionOrder -> 0]
 obj2 = BuildAntenna[A, 3, 1, IntegrableForm -> True];
 IntegrateAntenna[obj2, ExpansionOrder -> 0]
 ```
+
+Inspectable run records:
+
+```wl
+buildRecord = BuildAntenna[A, 3, 1, ReturnRecord -> True];
+buildRecord["Result"]
+buildRecord["IntermediateSteps"]
+buildRecord["AntennaObject"]
+
+obj = BuildAntennaObject[A, 3, 1];
+integrationRecord = IntegrateAntenna[obj, ExpansionOrder -> 0,
+  ReturnRecord -> True];
+integrationRecord["Result"]
+integrationRecord["MasterCombination"]
+integrationRecord["MasterSubstitutedExpression"]
+integrationRecord["BackendDiagnostics"]
+
+fullRecord = BuildAndIntegrateAntenna[A, 2, 1, ReturnRecord -> True];
+fullRecord["Result"]
+fullRecord["Diagnostics"]
+fullRecord["SourceObject"]
+```
+
+Default behavior is unchanged when `ReturnRecord` is omitted or `False`.  In
+record mode, `ReturnDiagnostics` becomes unnecessary because the record always
+contains the diagnostics association.
 
 Multi-component antennae can be indexed directly:
 

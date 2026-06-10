@@ -5,6 +5,24 @@
   This association is for routing and diagnostics.  The public BuildAntenna
   wrapper below converts it back to the natural expression/list returned to
   the user.
+
+  Expected shape of the returned association:
+    "Profile"
+      AntennaProfile[key] association used to drive later routing decisions.
+    "TreeAmplitude" / "LoopAmplitude"
+      Raw amplitude objects used to build the interference.
+    "Interferences"
+      Named intermediate interferences, usually keyed by contribution.
+    "Components"
+      Public-facing component association after extraction, e.g. Lead/SubLead.
+    "Diagnostics"
+      Build-side health and validation information.
+    "NormalizedInterference"
+      Optional scalar/color-normalized expression used by downstream logic.
+
+  The intent is that all build routes, even failing ones, return the same broad
+  record shape so diagnostics, caching, and public formatting do not need to
+  special-case each antenna family.
 *)
 
 (*************************************************)
@@ -81,6 +99,15 @@ AntennaObjectQ::usage =
 AntennaObjectData::usage =
   "AntennaObjectData[obj] returns the association stored inside an AntennaObject.";
 
+AntennaRunRecordQ::usage =
+  "AntennaRunRecordQ[expr] returns True when expr is a valid AntennaRunRecord wrapper.";
+
+AntennaRunRecordData::usage =
+  "AntennaRunRecordData[record] returns the association stored inside an AntennaRunRecord.";
+
+AntennaRunRecordValue::usage =
+  "AntennaRunRecordValue[record, key] returns one named field from an AntennaRunRecord.";
+
 AntennaKey::usage =
   "AntennaKey[obj] returns the {type, multiplicity, loopOrder} key stored in an AntennaObject.";
 
@@ -101,6 +128,30 @@ MakeAntennaObject::usage =
 
 AntennaObjectWithSelection::usage =
   "AntennaObjectWithSelection[obj, component, contribution] returns a copy of an AntennaObject with updated component or contribution selection.";
+
+BuildRecordStepLabels::usage =
+  "BuildRecordStepLabels[] returns the canonical build-side stages included automatically in ReturnRecord mode.";
+
+IntegrationRecordStepLabels::usage =
+  "IntegrationRecordStepLabels[] returns the canonical integration-side stages included automatically in ReturnRecord mode.";
+
+CollectBuildRecordStages::usage =
+  "CollectBuildRecordStages[data, fullResult, selectedResult, antennaObject, diagnostics] collects the full build-side stages included in an AntennaRunRecord.";
+
+CollectIntegrationRecordStages::usage =
+  "CollectIntegrationRecordStages[antenna, rawIntegrated, tTerms, finalIntegrated, selectedIntegrated, backendDiagnostics, diagnostics] collects the full integration-side stages included in an AntennaRunRecord.";
+
+MakeAntennaRunRecord::usage =
+  "MakeAntennaRunRecord[assoc] wraps an association in the public AntennaRunRecord container.";
+
+BuildRunRecord::usage =
+  "BuildRunRecord[routeKind, result, diagnostics, stages, metadata] constructs a build-side AntennaRunRecord.";
+
+IntegrationRunRecord::usage =
+  "IntegrationRunRecord[routeKind, result, diagnostics, stages, metadata] constructs an integration-side AntennaRunRecord with the physics-facing aliases promoted from backend diagnostics when available.";
+
+RetagAntennaRunRecord::usage =
+  "RetagAntennaRunRecord[record, routeKind, metadata] rewrites the route metadata on an existing AntennaRunRecord.";
 
 Options[BuildLoopAntennaData] = {printDiagram -> False, prefactor -> 
   1, ApplyStripCouplings -> AllCouplings, ApplyCasimirSubstitution -> True,
@@ -142,6 +193,9 @@ ResolveIntegrableLoopBuildReductionBackend[key_, requestedBackend_] :=
     If[requestedBackend =!= Automatic,
       Return[requestedBackend]
     ];
+    (* Build-time reduction shape is chosen to match the integration backend:
+       PaVe routes want a reduced PaVe object, while IBP routes keep the more
+       explicit loop form so the basis-matching layer can still see it. *)
     integrationBackend =
       Lookup[AntennaIntegrationProfile[key], "DefaultBackend", None];
     Switch[integrationBackend,
@@ -168,6 +222,9 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
        printDiagram -> OptionValue["printDiagram"], prefactor -> OptionValue[
       "prefactor"], ApplyStripCouplings -> OptionValue["ApplyStripCouplings"
       ]];
+    (* Interference is computed before dimensional-regularization cleanup
+       because the extraction layer may need to inspect the unreduced structure
+       when deciding how the public components should be separated. *)
     interference = InterfereOneLoopMAmplitudes[treeAmp, loopAmp, profile[
       "NumFinalParticles"], LoopMomentum -> OptionValue["LoopMomentum"], ReductionBackend
        -> reductionBackend, ApplyCasimirSubstitution -> OptionValue[
@@ -183,6 +240,9 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
           "NormalizedInterference" -> $Failed|>
       ]
     ];
+    (* Extraction is the step that turns a raw production interference into the
+       stable public component names used across BuildAntenna, diagnostics, and
+       IntegrateAntenna. *)
     context = <|"BornInterference" -> profile["BornInterference"]|>;
     extraction = ExtractLoopAntennaComponents[interference, profile, 
       context, ApplyDimReg -> OptionValue["ApplyDimReg"]];
@@ -542,6 +602,7 @@ ResolvedTreeSelfInterference[key_, amp_, profile_Association] :=
 
 Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
   -> False, ReturnAntennaObject -> False, IntegrableForm -> False,
+  ReturnRecord -> False,
   RunPaperCheck -> Automatic, Verbose -> False, printDiagram -> False,
   prefactor -> 1, ApplyStripCouplings -> AllCouplings,
   ApplyCasimirSubstitution -> True, ApplyDimReg -> True,
@@ -552,7 +613,7 @@ Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
   ResultsCacheRoot -> Automatic, RefreshStoredResults -> False};
 
 Options[BuildAntennaObject] =
-  Options[BuildAntenna];
+  DeleteCases[Options[BuildAntenna], ReturnRecord -> _];
 
 AntennaComponentOrder[{a_Symbol /; SymbolName[a] === "A", 4, 0}] :=
   {Leading, Subleading};
@@ -602,6 +663,15 @@ NormalizeIntermediateSteps[steps_] :=
 RequestedIntermediateStepQ[steps_List, label_String] :=
   MemberQ[steps, label];
 
+BuildRecordStepLabels[] :=
+  {"BuildData", "FullBuildResult", "SelectedBuildResult",
+    "AntennaObject", "BuildDiagnostics"};
+
+IntegrationRecordStepLabels[] :=
+  {"InputAntenna", "RawIntegrated", "TTerms", "FinalIntegrated",
+    "SelectedIntegrated", "BackendDiagnostics",
+    "IntegrationDiagnostics"};
+
 CollectBuildIntermediateSteps[data_Association, fullResult_, selectedResult_,
    antennaObject_, diagnostics_, steps_List] :=
   Module[{collected = <||>},
@@ -621,6 +691,142 @@ CollectBuildIntermediateSteps[data_Association, fullResult_, selectedResult_,
       collected = Join[collected, <|"BuildDiagnostics" -> diagnostics|>]
     ];
     collected
+  ];
+
+CollectBuildRecordStages[data_Association, fullResult_, selectedResult_,
+   antennaObject_, diagnostics_] :=
+  <|
+    "BuildData" -> data,
+    "FullBuildResult" -> fullResult,
+    "SelectedBuildResult" -> selectedResult,
+    "AntennaObject" -> antennaObject,
+    "BuildDiagnostics" -> diagnostics
+  |>;
+
+CollectIntegrationRecordStages[antenna_, rawIntegrated_, tTerms_,
+   finalIntegrated_, selectedIntegrated_, backendDiagnostics_, diagnostics_] :=
+  <|
+    "InputAntenna" -> antenna,
+    "RawIntegrated" -> rawIntegrated,
+    "TTerms" -> tTerms,
+    "FinalIntegrated" -> finalIntegrated,
+    "SelectedIntegrated" -> selectedIntegrated,
+    "BackendDiagnostics" -> backendDiagnostics,
+    "IntegrationDiagnostics" -> diagnostics
+  |>;
+
+IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
+  Module[{backendDiagnostics, masterCombination},
+    backendDiagnostics =
+      Lookup[stages, "BackendDiagnostics",
+        Lookup[diagnostics, "BackendDiagnostics", Missing["NotAvailable"]]];
+    If[!AssociationQ[backendDiagnostics],
+      backendDiagnostics = <||>
+    ];
+    masterCombination =
+      Lookup[backendDiagnostics, "RawMasterCombination",
+        Lookup[backendDiagnostics, "MasterMappedExpression",
+          Missing["NotAvailable"]]];
+    <|
+      "InputAntenna" -> Lookup[stages, "InputAntenna",
+        Missing["NotAvailable"]],
+      "RawIntegrated" -> Lookup[stages, "RawIntegrated",
+        Lookup[diagnostics, "RawIntegrated", Missing["NotAvailable"]]],
+      "TTerms" -> Lookup[stages, "TTerms",
+        Lookup[diagnostics, "TTerms", Missing["NotAvailable"]]],
+      "FinalIntegrated" -> Lookup[stages, "FinalIntegrated",
+        Missing["NotAvailable"]],
+      "SelectedIntegrated" -> Lookup[stages, "SelectedIntegrated",
+        Missing["NotAvailable"]],
+      "BackendDiagnostics" -> backendDiagnostics,
+      "IntegrationDiagnostics" -> diagnostics,
+      "RawLiteRedCombination" -> Lookup[backendDiagnostics,
+        "RawLiteRedCombination", Missing["NotAvailable"]],
+      "MasterMappedExpression" -> Lookup[backendDiagnostics,
+        "MasterMappedExpression", Missing["NotAvailable"]],
+      "RawMasterCombination" -> Lookup[backendDiagnostics,
+        "RawMasterCombination", Missing["NotAvailable"]],
+      "MasterCombination" -> masterCombination,
+      "MasterSubstitutedExpression" -> Lookup[backendDiagnostics,
+        "MasterSubstitutedExpression", Missing["NotAvailable"]],
+      "NormalizedBeforeSeries" -> Lookup[backendDiagnostics,
+        "NormalizedBeforeSeries", Missing["NotAvailable"]],
+      "SeriesResult" -> Lookup[backendDiagnostics, "SeriesResult",
+        Missing["NotAvailable"]]
+    |>
+  ];
+
+MakeAntennaRunRecord[assoc_Association] :=
+  AntennaRunRecord[assoc];
+
+AntennaRunRecord /: (record_AntennaRunRecord)[key_] :=
+  AntennaRunRecordValue[record, key];
+
+AntennaRunRecordQ[AntennaRunRecord[data_Association]] :=
+  And[
+    KeyExistsQ[data, "RouteKind"],
+    KeyExistsQ[data, "Result"],
+    KeyExistsQ[data, "Diagnostics"],
+    KeyExistsQ[data, "IntermediateSteps"]
+  ];
+
+AntennaRunRecordQ[_] :=
+  False;
+
+AntennaRunRecordData[AntennaRunRecord[data_Association]] :=
+  data;
+
+AntennaRunRecordValue[record_AntennaRunRecord, key_] :=
+  Lookup[AntennaRunRecordData[record], key,
+    Missing["NotAvailable", key]];
+
+BuildRunRecord[routeKind_String, result_, diagnostics_Association,
+   stages_Association, metadata_Association:<||>] :=
+  MakeAntennaRunRecord[
+    Join[
+      <|
+        "RouteKind" -> routeKind,
+        "Result" -> result,
+        "Diagnostics" -> diagnostics,
+        "IntermediateSteps" -> stages,
+        "BuildData" -> Lookup[stages, "BuildData", Missing["NotAvailable"]],
+        "FullBuildResult" -> Lookup[stages, "FullBuildResult",
+          Missing["NotAvailable"]],
+        "SelectedBuildResult" -> Lookup[stages, "SelectedBuildResult",
+          Missing["NotAvailable"]],
+        "AntennaObject" -> Lookup[stages, "AntennaObject",
+          Missing["NotAvailable"]],
+        "BuildDiagnostics" -> diagnostics
+      |>,
+      metadata
+    ]
+  ];
+
+IntegrationRunRecord[routeKind_String, result_, diagnostics_Association,
+   stages_Association, metadata_Association:<||>] :=
+  MakeAntennaRunRecord[
+    Join[
+      <|
+        "RouteKind" -> routeKind,
+        "Result" -> result,
+        "Diagnostics" -> diagnostics,
+        "IntermediateSteps" -> stages,
+        "SourceObject" -> Lookup[metadata, "SourceObject",
+          Lookup[diagnostics, "SourceObject", Missing["NotAvailable"]]],
+        "AntennaObject" -> Lookup[metadata, "AntennaObject",
+          Lookup[diagnostics, "AntennaObject", Missing["NotAvailable"]]],
+        "StoredResultCache" -> Lookup[metadata, "StoredResultCache",
+          Lookup[diagnostics, "StoredResultCache", Missing["NotAvailable"]]]
+      |>,
+      IntegrationRecordAliases[stages, diagnostics],
+      metadata
+    ]
+  ];
+
+RetagAntennaRunRecord[record_AntennaRunRecord, routeKind_String,
+   metadata_Association:<||>] :=
+  MakeAntennaRunRecord[
+    Join[AntennaRunRecordData[record], <|"RouteKind" -> routeKind|>, metadata]
   ];
 
 PrintIntermediateStepsAssociation[steps_Association] :=
@@ -707,12 +913,23 @@ BuildAntennaObjectStoredResultLabel[type_, numFinalParticles_, loopOrder_,
   ];
 
 FormatFreshBuildReturn[result_, diagnostics_, returnDiagnostics_,
-   requestedSteps_List, printSteps_] :=
-  Module[{selectedSteps},
+   returnRecord_, requestedSteps_List, printSteps_, routeKind_String:"BuildAntenna",
+   recordStages_:Automatic, recordMetadata_Association:<||>] :=
+  Module[{selectedSteps, stages},
     selectedSteps = Lookup[diagnostics, "IntermediateSteps", <||>];
     If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
         selectedSteps] > 0,
       PrintIntermediateStepsAssociation[selectedSteps]
+    ];
+    If[TrueQ[returnRecord],
+      stages =
+        If[AssociationQ[recordStages],
+          recordStages
+          ,
+          If[AssociationQ[selectedSteps], selectedSteps, <||>]
+        ];
+      Return[BuildRunRecord[routeKind, result, diagnostics, stages,
+        recordMetadata]]
     ];
     If[TrueQ[returnDiagnostics],
       {result, diagnostics}
@@ -942,8 +1159,8 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
           Return[
             FormatStoredResultReturn[loaded["Result"],
               loaded["Diagnostics"], loaded, OptionValue[
-                "ReturnDiagnostics"], requestedSteps,
-              OptionValue["PrintIntermediateSteps"]]
+                "ReturnDiagnostics"], False, requestedSteps,
+              OptionValue["PrintIntermediateSteps"], "BuildAntennaObject"]
           ]
         ]
       ];
@@ -990,8 +1207,8 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       ];
       Return[
         FormatFreshBuildReturn[result, diagnostics, OptionValue[
-            "ReturnDiagnostics"], requestedSteps, OptionValue[
-            "PrintIntermediateSteps"]]
+            "ReturnDiagnostics"], False, requestedSteps, OptionValue[
+            "PrintIntermediateSteps"], "BuildAntennaObject"]
       ]
     ];
     BuildAntenna[type, numFinalParticles, loopOrder,
@@ -1027,10 +1244,11 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
   ];
 
 BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
-  Module[{key, data, result, selectedResult, diagnostics, antennaObject,
-     integrableRequested, reductionBackend, intermediateSteps,
-     collectedSteps, useStored, storeStored, refreshStored, cacheKey,
-     cacheLabel, cacheRoot, loaded, computed, optionsAssoc},
+  Module[{key, data, result, selectedResult, publicResult, diagnostics,
+     diagnosticsWithMetadata, antennaObject, integrableRequested,
+     reductionBackend, intermediateSteps, collectedSteps, recordStages,
+     useStored, storeStored, refreshStored, cacheKey, cacheLabel, cacheRoot,
+     loaded, computed, optionsAssoc, recordMetadata},
     useStored = TrueQ[OptionValue["UseStoredResults"]];
     storeStored = TrueQ[OptionValue["StoreResults"]];
     refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
@@ -1053,6 +1271,9 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       "LoopMomenta" -> OptionValue["LoopMomenta"],
       "Contribution" -> OptionValue["Contribution"]
     |>;
+    recordMetadata =
+      <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
+        "Contribution" -> OptionValue["Contribution"]|>;
     If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
         StoredResultsEnabledQ[useStored, storeStored, refreshStored],
       cacheKey = BuildAntennaStoredResultKey[type, numFinalParticles,
@@ -1068,8 +1289,11 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           Return[
             FormatStoredResultReturn[loaded["Result"],
               loaded["Diagnostics"], loaded, OptionValue[
-                "ReturnDiagnostics"], intermediateSteps, OptionValue[
-                "PrintIntermediateSteps"]]
+                "ReturnDiagnostics"], OptionValue["ReturnRecord"],
+              intermediateSteps, OptionValue["PrintIntermediateSteps"],
+              "BuildAntenna",
+              <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
+                "Contribution" -> OptionValue["Contribution"]|>]
           ]
         ]
       ];
@@ -1091,7 +1315,11 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
             LoopMomentum -> OptionValue["LoopMomentum"],
             ReductionBackend -> OptionValue["ReductionBackend"],
             Component -> OptionValue["Component"],
-            IntermediateSteps -> OptionValue["IntermediateSteps"],
+            IntermediateSteps -> If[StoredResultsEnabledQ[useStored,
+                storeStored, refreshStored],
+              BuildRecordStepLabels[],
+              OptionValue["IntermediateSteps"]
+            ],
             PrintIntermediateSteps -> False,
             LoopMomenta -> OptionValue["LoopMomenta"],
             Contribution -> OptionValue["Contribution"],
@@ -1108,8 +1336,9 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
         ];
         Return[
           FormatFreshBuildReturn[result, diagnostics, OptionValue[
-              "ReturnDiagnostics"], intermediateSteps, OptionValue[
-              "PrintIntermediateSteps"]]
+              "ReturnDiagnostics"], OptionValue["ReturnRecord"],
+            intermediateSteps, OptionValue["PrintIntermediateSteps"],
+            "BuildAntenna", Automatic, recordMetadata]
         ]
       ];
       If[OptionValue["ReturnBuildData"] === True && computed =!= $Failed &&
@@ -1155,7 +1384,8 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
             "Diagnostics" -> <|"Failed" -> True,
               "Reason" -> "UnsupportedLoopOrder"|>|>
       ];
-    If[OptionValue["ReturnBuildData"] === True,
+    If[OptionValue["ReturnBuildData"] === True &&
+        !TrueQ[OptionValue["ReturnRecord"]],
       Return[data]
     ];
     result = BuildAntennaResult[key, data];
@@ -1169,75 +1399,65 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           "RunPaperCheck"]];
         collectedSteps = CollectBuildIntermediateSteps[data, result,
           selectedResult, $Failed, diagnostics, intermediateSteps];
-        If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
-            collectedSteps] > 0,
-          PrintIntermediateStepsAssociation[collectedSteps]
-        ];
-        Return[
-          If[OptionValue["ReturnDiagnostics"] === True,
-            {$Failed, Join[diagnostics, <|"SelectedComponent" ->
-                OptionValue["Component"], "Contribution" -> OptionValue[
-                "Contribution"], "Failed" -> True,
-                "Reason" -> "InvalidComponentSelection"|>,
-              If[Length[collectedSteps] > 0,
-                <|"IntermediateSteps" -> collectedSteps|>,
-                <||>
-              ]]}
-            ,
+        recordStages = CollectBuildRecordStages[data, result, selectedResult,
+          $Failed, diagnostics];
+        diagnosticsWithMetadata =
+          Join[diagnostics, <|"SelectedComponent" -> OptionValue[
+                "Component"], "Contribution" -> OptionValue["Contribution"],
+              "Failed" -> True, "Reason" -> "InvalidComponentSelection"|>,
             If[Length[collectedSteps] > 0,
-              {$Failed, collectedSteps}
-              ,
-              $Failed
-            ]
-          ]
+              <|"IntermediateSteps" -> collectedSteps|>,
+              <||>
+            ]];
+        Return[
+          FormatFreshBuildReturn[$Failed, diagnosticsWithMetadata, OptionValue[
+              "ReturnDiagnostics"], OptionValue["ReturnRecord"],
+            intermediateSteps, OptionValue["PrintIntermediateSteps"],
+            "BuildAntenna", recordStages, recordMetadata]
         ]
       ];
       diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
         "RunPaperCheck"]];
       collectedSteps = CollectBuildIntermediateSteps[data, result,
         selectedResult, antennaObject, diagnostics, intermediateSteps];
-      If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
-          collectedSteps] > 0,
-        PrintIntermediateStepsAssociation[collectedSteps]
-      ];
-      If[OptionValue["ReturnDiagnostics"] === True,
-        Return[{antennaObject, Join[diagnostics, <|"SelectedComponent" ->
-              OptionValue["Component"], "Contribution" -> OptionValue[
-              "Contribution"]|>,
-            If[Length[collectedSteps] > 0,
-              <|"IntermediateSteps" -> collectedSteps|>,
-              <||>
-            ]]}]
-        ,
-        Return[
+      recordStages = CollectBuildRecordStages[data, result, selectedResult,
+        antennaObject, diagnostics];
+      diagnosticsWithMetadata =
+        Join[diagnostics, <|"SelectedComponent" -> OptionValue[
+              "Component"], "Contribution" -> OptionValue["Contribution"]|>,
           If[Length[collectedSteps] > 0,
-            {antennaObject, collectedSteps}
-            ,
-            antennaObject
-          ]
-        ]
+            <|"IntermediateSteps" -> collectedSteps|>,
+            <||>
+          ]];
+      Return[
+        FormatFreshBuildReturn[antennaObject, diagnosticsWithMetadata,
+          OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
+          intermediateSteps, OptionValue["PrintIntermediateSteps"],
+          "BuildAntenna", recordStages,
+          Join[recordMetadata, <|"AntennaObject" -> antennaObject|>]]
       ]
     ];
     diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
       "RunPaperCheck"]];
     collectedSteps = CollectBuildIntermediateSteps[data, result,
       selectedResult, antennaObject, diagnostics, intermediateSteps];
-    If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
-        collectedSteps] > 0,
-      PrintIntermediateStepsAssociation[collectedSteps]
-    ];
-    If[OptionValue["ReturnDiagnostics"] === True,
-      {selectedResult, Join[diagnostics, <|"SelectedComponent" -> OptionValue[
-          "Component"]|>,
+    publicResult =
+      If[TrueQ[OptionValue["ReturnBuildData"]],
+        data
+        ,
+        selectedResult
+      ];
+    recordStages = CollectBuildRecordStages[data, result, selectedResult,
+      antennaObject, diagnostics];
+    diagnosticsWithMetadata =
+      Join[diagnostics, <|"SelectedComponent" -> OptionValue["Component"],
+          "Contribution" -> OptionValue["Contribution"]|>,
         If[Length[collectedSteps] > 0,
           <|"IntermediateSteps" -> collectedSteps|>,
           <||>
-        ]]}
-      ,
-      If[Length[collectedSteps] > 0,
-        {selectedResult, collectedSteps}
-        ,
-        selectedResult
-      ]
-    ]
+        ]];
+    FormatFreshBuildReturn[publicResult, diagnosticsWithMetadata, OptionValue[
+        "ReturnDiagnostics"], OptionValue["ReturnRecord"], intermediateSteps,
+      OptionValue["PrintIntermediateSteps"], "BuildAntenna", recordStages,
+      Join[recordMetadata, <|"AntennaObject" -> antennaObject|>]]
   ];

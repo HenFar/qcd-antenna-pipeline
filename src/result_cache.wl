@@ -105,7 +105,7 @@ PrintStoredResultHit::usage =
   "PrintStoredResultHit[label] prints the short message shown when a stored result is reused.";
 
 FormatStoredResultReturn::usage =
-  "FormatStoredResultReturn[result, diagnostics, loadedData, returnDiagnostics, requestedSteps, printSteps] formats a cache hit in the same public shape as a fresh computation.";
+  "FormatStoredResultReturn[result, diagnostics, loadedData, returnDiagnostics, returnRecord, requestedSteps, printSteps, routeKind, metadata] formats a cache hit in the same public shape as a fresh computation.";
 
 ListStoredResults::usage =
   "ListStoredResults[...] returns compact metadata for the stored-result entries currently present under the cache root.";
@@ -552,8 +552,10 @@ PrintStoredResultHit[label_String] :=
   Print["Using stored result for ", label, "."];
 
 FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
-   returnDiagnostics_, requestedSteps_List, printSteps_] :=
-  Module[{annotatedDiagnostics, selectedSteps},
+   returnDiagnostics_, returnRecord_, requestedSteps_List, printSteps_,
+   routeKind_String, recordMetadata_Association:<||>] :=
+  Module[{annotatedDiagnostics, selectedSteps, stages, cacheMetadata,
+     mergedMetadata},
     annotatedDiagnostics =
       If[AssociationQ[diagnostics],
         AnnotateStoredResultDiagnostics[diagnostics, loadedData,
@@ -565,6 +567,28 @@ FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
     If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
         selectedSteps] > 0,
       PrintIntermediateStepsAssociation[selectedSteps]
+    ];
+    If[TrueQ[returnRecord],
+      stages =
+        If[AssociationQ[selectedSteps],
+          selectedSteps
+          ,
+          <||>
+        ];
+      cacheMetadata =
+        Lookup[annotatedDiagnostics, "StoredResultCache",
+          StoredResultCacheMetadata[loadedData]];
+      mergedMetadata = Join[recordMetadata, <|"StoredResultCache" ->
+            cacheMetadata|>];
+      Return[
+        If[MemberQ[{"BuildAntenna", "BuildAntennaObject"}, routeKind],
+          BuildRunRecord[routeKind, result, annotatedDiagnostics, stages,
+            mergedMetadata]
+          ,
+          IntegrationRunRecord[routeKind, result, annotatedDiagnostics,
+            stages, mergedMetadata]
+        ]
+      ]
     ];
     If[TrueQ[returnDiagnostics],
       {result, annotatedDiagnostics}

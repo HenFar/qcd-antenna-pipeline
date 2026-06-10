@@ -1,4 +1,6 @@
-(* functions *)
+(* Shared kinematics and amplitude utilities.
+   These helpers encode package-wide conventions, so small changes here can
+   affect many antenna families at once. *)
 
 KinematicRules::usage =
   "KinematicRules[numFinalParticles, ...] sets the scalar-product kinematics used throughout the package for the selected final-state multiplicity.";
@@ -36,8 +38,13 @@ KinematicRules[numFinalParticles_Integer /; numFinalParticles >= 2, OptionsPatte
   ]] :=
   Module[{quarkMassOpt},
     quarkMassOpt = OptionValue["QuarkMass"];
+    (* The package assumes one active scalar-product environment at a time.
+       Clearing first avoids stale notebook state leaking into later routes. *)
     FCClearScalarProducts[];
     If[quarkMassOpt == 0,
+      (* The massless routes use outgoing momenta and the standard s_ij/2
+         normalization for scalar products.  Many later simplifications assume
+         exactly these assignments rather than deriving them on the fly. *)
       Which[
         numFinalParticles == 2,
           SPD[k1, k1] = 0;
@@ -77,6 +84,9 @@ ApplyFeynCalcRules[expr_, numFinalParticles_] :=
 
 StripCouplings[flag_, numFinalParticles_, numLoops_] :=
   Module[{electricCoupling, strongCoupling, output},
+    (* The builders factor couplings in a consistent package convention so
+       later extraction and comparison steps can decide explicitly whether to
+       keep or strip electroweak and strong prefactors. *)
     electricCoupling = electricCouplingConstant * upQuarkElectricCharge
       ;
     strongCoupling = strongCouplingConstant ^ (numFinalParticles - 2 
@@ -104,6 +114,8 @@ StripCouplings[flag_, numFinalParticles_, numLoops_] :=
 
 MakeAmplitudeObject[expr_, n_, L_, colourMode_, couplingMode_, colourNorm_
   ] :=
+  (* This lightweight record is the common hand-off object between the raw
+     amplitude builders and the interference/extraction stages. *)
   <|"Expression" -> expr, "NumFinalParticles" -> n, "LoopOrder" -> L,
      "ColourMode" -> colourMode, "CouplingMode" -> couplingMode, "AntennaColourNorm"
      -> colourNorm|>;
@@ -126,6 +138,9 @@ SafeDoPolarizationSums[expr_, mom_, ref_, opts___] :=
 
 SpinPolSum[expr_, numFinalParticles_] :=
   Module[{result, resultWhich, output},
+    (* Polarization sums are applied only to vectors that actually survive the
+       earlier algebra.  That keeps the helper robust across antenna families
+       whose reduced expressions no longer carry every nominal external leg. *)
     result =
       expr //
       FermionSpinSum //

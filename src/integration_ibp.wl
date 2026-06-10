@@ -87,6 +87,10 @@ A22TwoLoopTreeMasterRulesForBasis::usage = "A22TwoLoopTreeMasterRulesForBasis[ba
 IBPMasterRulesForBasis::usage = "IBPMasterRulesForBasis[basis, profile] returns the master substitution rules used for one matched basis.";
 IBPMasterRules::usage = "IBPMasterRules[profile] returns the profile-level master substitution rules used after LiteRed reduction.";
 IBPX40MasterCoefficientRules::usage = "IBPX40MasterCoefficientRules[] returns the coefficient normalizations used when mapping X40 masters into the paper convention.";
+DefaultRuntimeMasterValuesPath::usage = "DefaultRuntimeMasterValuesPath[] returns the checked-in runtime master-values artifact path under masterIntegrals/.";
+RuntimeMasterValuesValidQ::usage = "RuntimeMasterValuesValidQ[data] returns True when a loaded runtime master-values artifact is structurally usable.";
+LoadRuntimeMasterValues::usage = "LoadRuntimeMasterValues[] loads and memoizes the checked-in runtime master-values artifact exported from masterIntegrals/.";
+RuntimeMasterValue::usage = "RuntimeMasterValue[group, key] returns one runtime master expression from the exported master-values artifact.";
 A31Ceps::usage = "A31Ceps[] returns the epsilon-dependent normalization factor used by the A31 master convention.";
 A31SGamma2::usage = "A31SGamma2[] returns the gamma-function normalization factor used by the A31 master convention.";
 A31MasterCoefficientRules::usage = "A31MasterCoefficientRules[] returns the coefficient normalizations used when mapping A31 masters into the paper convention.";
@@ -1485,6 +1489,63 @@ IBPX40MasterCoefficientRules[] :=
        (44 Zeta[3])/eps - (61 Pi^4)/60
   };
 
+DefaultRuntimeMasterValuesPath[] :=
+  FileNameJoin[{$AntennaPipelineRoot, "masterIntegrals", "master_values_runtime.wl"}];
+
+RuntimeMasterValuesValidQ[data_] :=
+  AssociationQ[data] &&
+    Lookup[data, "SchemaVersion", Missing["KeyAbsent", "SchemaVersion"]] === 1 &&
+    Lookup[data, "GeneratedFrom", Missing["KeyAbsent", "GeneratedFrom"]] === "masterIntegrals" &&
+    AssociationQ[Lookup[data, "A22TwoLoopTree", Missing["KeyAbsent", "A22TwoLoopTree"]]] &&
+    AssociationQ[Lookup[data, "A31", Missing["KeyAbsent", "A31"]]] &&
+    And @@ (KeyExistsQ[Lookup[data, "A22TwoLoopTree", <||>], #]& /@
+      {"A22LO", "A3", "A4", "A6"}) &&
+    And @@ (KeyExistsQ[Lookup[data, "A31", <||>], #]& /@
+      {"qMI", "qkMI", "qsMI"});
+
+LoadRuntimeMasterValues::missing =
+  "Runtime master-values artifact not found at `1`. Regenerate it with masterIntegrals/export_runtime_master_values.wl.";
+
+LoadRuntimeMasterValues::invalid =
+  "Runtime master-values artifact at `1` is missing required keys or has an unexpected schema. Regenerate it with masterIntegrals/export_runtime_master_values.wl.";
+
+RuntimeMasterValue::missing =
+  "Runtime master value `2` in group `1` was not found in the exported master-values artifact. Regenerate it with masterIntegrals/export_runtime_master_values.wl.";
+
+LoadRuntimeMasterValues[] :=
+  Module[{path, data},
+    If[ValueQ[$AntennaPipelineRuntimeMasterValues] &&
+        RuntimeMasterValuesValidQ[$AntennaPipelineRuntimeMasterValues],
+      Return[$AntennaPipelineRuntimeMasterValues]
+    ];
+    path = DefaultRuntimeMasterValuesPath[];
+    If[!FileExistsQ[path],
+      Message[LoadRuntimeMasterValues::missing, path];
+      Return[$Failed]
+    ];
+    data = Quiet[Check[Get[path], $Failed]];
+    If[data === $Failed || !RuntimeMasterValuesValidQ[data],
+      Message[LoadRuntimeMasterValues::invalid, path];
+      Return[$Failed]
+    ];
+    $AntennaPipelineRuntimeMasterValues = data;
+    data
+  ];
+
+RuntimeMasterValue[group_String, key_String] :=
+  Module[{data, value},
+    data = LoadRuntimeMasterValues[];
+    If[data === $Failed,
+      Return[$Failed]
+    ];
+    value = Lookup[Lookup[data, group, <||>], key, Missing["NotAvailable"]];
+    If[MissingQ[value],
+      Message[RuntimeMasterValue::missing, group, key];
+      Return[$Failed]
+    ];
+    value
+  ];
+
 A31Ceps[] :=
   (4 Pi) ^ eps Exp[-EulerGamma eps] / (8 Pi^2);
 
@@ -1492,19 +1553,11 @@ A31SGamma2[] :=
   IBPPhaseSpaceMeasure[2] ((4 Pi)^eps / (16 Pi^2 Gamma[1 - eps]))^2;
 
 A31MasterCoefficientRules[] :=
-  Module[{sGamma2, v5a, v5b, v8},
-    sGamma2 = A31SGamma2[];
-    v5a =
-      sGamma2 q2^(1 - 2 eps) Gamma[1 - eps]^6 Gamma[1 + eps] Cos[
-        Pi eps] / (Gamma[2 - 2 eps] Gamma[3 - 3 eps] eps);
-    v5b =
-      sGamma2 q2^(1 - 2 eps) Gamma[1 - eps]^5 Gamma[1 - 2 eps] Gamma[
-        1 + eps] Cos[Pi eps] / (Gamma[2 - 2 eps] Gamma[3 - 4 eps] eps);
-    v8 =
-      -sGamma2 q2^(-2 - 2 eps) (-5/(2 eps^4) +
-         9 Pi^2/(2 eps^2) + 89 Zeta[3]/eps + 13 Pi^4/180);
-    {qMI -> I v5a, qkMI -> I v5b, qsMI -> I v8}
-  ];
+  {
+    qMI -> RuntimeMasterValue["A31", "qMI"],
+    qkMI -> RuntimeMasterValue["A31", "qkMI"],
+    qsMI -> RuntimeMasterValue["A31", "qsMI"]
+  };
 
 A22LOMasterCore[] :=
   Pi^4 Gamma[1 + eps]^2 Gamma[1 - eps]^6 /
@@ -1570,31 +1623,16 @@ A22TwoLoopTreePaperConventionFactor[] :=
    actually substitutes, while the explicit core/rule helpers above remain as
    the transparent derivation layer. *)
 A22TwoLoopTreeMasterValueA22LO[] :=
-  q2^(-2 eps) * (
-    (-3*Pi^4)/(8*eps^2) - 
-    Pi^4/eps + 
-    (Pi^4*(-53 + 14*Pi^2))/32 - 
-    (1/288*(Pi^4*(-2239 + 6*Pi^2 + 3264*Zeta[3]))) * eps + 
-    ((Pi^4*(1338445 - 141690*Pi^2 + 3468*Pi^4 - 888480*Zeta[3]))/17280) * eps^2
-  );
+  RuntimeMasterValue["A22TwoLoopTree", "A22LO"];
 
 A22TwoLoopTreeMasterValueA3[] :=
-  q2^(1 - 2 eps) * (
-    -Pi^4/72 + 
-    ((Pi^4*(-11 + 24*Pi^2))/216) * eps + 
-    ((Pi^4*(-14047 + 3666*Pi^2 + 8784*Zeta[3]))/2592) * eps^2 + 
-    ((Pi^4*(-480097 + 114348*Pi^2 - 2934*Pi^4 + 332928*Zeta[3]))/15552) * eps^3
-  );
+  RuntimeMasterValue["A22TwoLoopTree", "A3"];
 
 A22TwoLoopTreeMasterValueA4[] :=
-  (-(Pi^4/2) A22VirtualTwoPartonConventionFactor[] * A22TwoLoopTreeVirtualConventionFactor[] q2^(-2 eps) *
-    Gamma[1 - 2 eps] Gamma[1 + eps] Gamma[1 - eps]^4 Gamma[1 + 2 eps]) /
-    (2 (1 - 2 eps) eps^2 Gamma[2 - 3 eps]);
+  RuntimeMasterValue["A22TwoLoopTree", "A4"];
 
 A22TwoLoopTreeMasterValueA6[] :=
-  -Pi^4 A22VirtualTwoPartonConventionFactor[] *
-    A22TwoLoopTreeVirtualConventionFactor[] q2^(-2 - 2 eps) *
-    (-1 / eps^4 + 5 Pi^2 / (6 eps^2) + 27 Zeta[3] / eps + 23 Pi^4 / 36);
+  RuntimeMasterValue["A22TwoLoopTree", "A6"];
 
 A22TwoLoopTreeMasterValueA22LOQQ[] :=
   A22TwoLoopTreeMasterValueA22LO[];
