@@ -257,12 +257,8 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
    returnRecord_, requestedSteps_List, printSteps_,
    routeKind_String:"IntegrateAntenna", recordStages_:Automatic,
    recordMetadata_Association:<||>] :=
-  Module[{selectedSteps, stages},
+  Module[{selectedSteps, stages, record},
     selectedSteps = Lookup[diagnostics, "IntermediateSteps", <||>];
-    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
-        selectedSteps] > 0,
-      PrintIntermediateStepsAssociation[selectedSteps]
-    ];
     If[TrueQ[returnRecord],
       stages =
         If[AssociationQ[recordStages],
@@ -270,8 +266,17 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
           ,
           If[AssociationQ[selectedSteps], selectedSteps, <||>]
         ];
-      Return[IntegrationRunRecord[routeKind, result, diagnostics, stages,
-        recordMetadata]]
+      record = IntegrationRunRecord[routeKind, result, diagnostics, stages,
+        recordMetadata];
+      If[TrueQ[printSteps] && AssociationQ[record["IntermediateSteps"]] &&
+          Length[record["IntermediateSteps"]] > 0,
+        PrintIntermediateStepsAssociation[record["IntermediateSteps"]]
+      ];
+      Return[record]
+    ];
+    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
+        selectedSteps] > 0,
+      PrintIntermediateStepsAssociation[selectedSteps]
     ];
     If[TrueQ[returnDiagnostics],
       {result, diagnostics}

@@ -665,12 +665,11 @@ RequestedIntermediateStepQ[steps_List, label_String] :=
 
 BuildRecordStepLabels[] :=
   {"BuildData", "FullBuildResult", "SelectedBuildResult",
-    "AntennaObject", "BuildDiagnostics"};
+    "AntennaObject"};
 
 IntegrationRecordStepLabels[] :=
   {"InputAntenna", "RawIntegrated", "TTerms", "FinalIntegrated",
-    "SelectedIntegrated", "BackendDiagnostics",
-    "IntegrationDiagnostics"};
+    "SelectedIntegrated"};
 
 CollectBuildIntermediateSteps[data_Association, fullResult_, selectedResult_,
    antennaObject_, diagnostics_, steps_List] :=
@@ -699,8 +698,7 @@ CollectBuildRecordStages[data_Association, fullResult_, selectedResult_,
     "BuildData" -> data,
     "FullBuildResult" -> fullResult,
     "SelectedBuildResult" -> selectedResult,
-    "AntennaObject" -> antennaObject,
-    "BuildDiagnostics" -> diagnostics
+    "AntennaObject" -> antennaObject
   |>;
 
 CollectIntegrationRecordStages[antenna_, rawIntegrated_, tTerms_,
@@ -710,10 +708,151 @@ CollectIntegrationRecordStages[antenna_, rawIntegrated_, tTerms_,
     "RawIntegrated" -> rawIntegrated,
     "TTerms" -> tTerms,
     "FinalIntegrated" -> finalIntegrated,
-    "SelectedIntegrated" -> selectedIntegrated,
-    "BackendDiagnostics" -> backendDiagnostics,
-    "IntegrationDiagnostics" -> diagnostics
+    "SelectedIntegrated" -> selectedIntegrated
   |>;
+
+PresentRecordStepValueQ[value_] :=
+  Which[
+    MatchQ[value, Missing[__]],
+      False
+    ,
+    AssociationQ[value],
+      Length[value] > 0
+    ,
+    ListQ[value],
+      True
+    ,
+    True,
+      True
+  ];
+
+BuildRecordAmplitudeValue[data_Association] :=
+  Module[{singleAmplitude, multiAmplitude},
+    singleAmplitude = Lookup[data, "Amplitude", Missing["NotAvailable"]];
+    If[PresentRecordStepValueQ[singleAmplitude],
+      Return[singleAmplitude]
+    ];
+    multiAmplitude =
+      Association @ DeleteCases[
+        {
+          If[KeyExistsQ[data, "TreeAmplitude"],
+            "TreeAmplitude" -> data["TreeAmplitude"],
+            Nothing
+          ],
+          If[KeyExistsQ[data, "LoopAmplitude"],
+            "LoopAmplitude" -> data["LoopAmplitude"],
+            Nothing
+          ],
+          If[KeyExistsQ[data, "TwoLoopAmplitude"],
+            "TwoLoopAmplitude" -> data["TwoLoopAmplitude"],
+            Nothing
+          ]
+        },
+        Nothing
+      ];
+    Which[
+      Length[multiAmplitude] === 0,
+        Missing["NotAvailable"]
+      ,
+      Length[multiAmplitude] === 1,
+        First[Values[multiAmplitude]]
+      ,
+      True,
+        multiAmplitude
+    ]
+  ];
+
+BuildRecordInterferenceValue[data_Association] :=
+  Module[{interferences},
+    interferences = Lookup[data, "Interferences", Missing["NotAvailable"]];
+    If[!AssociationQ[interferences],
+      Return[interferences]
+    ];
+    Which[
+      Length[interferences] === 0,
+        Missing["NotAvailable"]
+      ,
+      Length[interferences] === 1,
+        First[Values[interferences]]
+      ,
+      KeyExistsQ[interferences, "Production"],
+        Join[<|"Production" -> interferences["Production"]|>,
+          KeyDrop[interferences, {"Production"}]]
+      ,
+      True,
+        interferences
+    ]
+  ];
+
+RecordStageAssociation[rules_List] :=
+  Association @ DeleteCases[
+    rules,
+    (_String -> value_) /; !PresentRecordStepValueQ[value]
+  ];
+
+BuildRecordIntermediateStepsView[data_Association, result_, resultLabel_String:"Result"] :=
+  RecordStageAssociation[
+    {
+      "Amplitude" -> BuildRecordAmplitudeValue[data],
+      "Interference" -> BuildRecordInterferenceValue[data],
+      resultLabel -> result
+    }
+  ];
+
+BuildRecordIntermediateStepsView[obj_AntennaObject, resultLabel_String:"BuiltAntenna"] :=
+  Module[{data},
+    data = AntennaObjectData[obj];
+    BuildRecordIntermediateStepsView[
+      Lookup[data, "BuildData", <||>],
+      Lookup[data, "Antenna", Missing["NotAvailable"]],
+      resultLabel
+    ]
+  ];
+
+IntegrationMethodValue[diagnostics_Association] :=
+  Lookup[Lookup[diagnostics, "Profile", <||>], "DefaultBackend",
+    Missing["NotAvailable"]];
+
+IntegrationRecordIntermediateStepsView[routeKind_String,
+   stages_Association, diagnostics_Association, metadata_Association:<||>] :=
+  Module[{backendDiagnostics, masterCombination, dimensionExpression,
+     resultValue, sourceObject, buildSteps},
+    backendDiagnostics =
+      Lookup[diagnostics, "BackendDiagnostics", Missing["NotAvailable"]];
+    If[!AssociationQ[backendDiagnostics],
+      backendDiagnostics = <||>
+    ];
+    masterCombination =
+      Lookup[backendDiagnostics, "RawMasterCombination",
+        Lookup[backendDiagnostics, "MasterMappedExpression",
+          Missing["NotAvailable"]]];
+    dimensionExpression =
+      Lookup[backendDiagnostics, "MasterSubstitutedExpression",
+        Missing["NotAvailable"]];
+    resultValue =
+      Lookup[stages, "SelectedIntegrated",
+        Lookup[diagnostics, "SeriesResult", Missing["NotAvailable"]]];
+    sourceObject =
+      Lookup[metadata, "SourceObject",
+        Lookup[metadata, "AntennaObject", Missing["NotAvailable"]]];
+    buildSteps =
+      If[routeKind === "BuildAndIntegrateAntenna" && AntennaObjectQ[sourceObject],
+        BuildRecordIntermediateStepsView[sourceObject, "BuiltAntenna"]
+        ,
+        <||>
+      ];
+    Join[
+      buildSteps,
+      RecordStageAssociation[
+        {
+          "Method" -> IntegrationMethodValue[diagnostics],
+          "MasterCombination" -> masterCombination,
+          "DimensionExpression" -> dimensionExpression,
+          "Result" -> resultValue
+        }
+      ]
+    ]
+  ];
 
 IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
   Module[{backendDiagnostics, masterCombination},
@@ -788,7 +927,10 @@ BuildRunRecord[routeKind_String, result_, diagnostics_Association,
         "RouteKind" -> routeKind,
         "Result" -> result,
         "Diagnostics" -> diagnostics,
-        "IntermediateSteps" -> stages,
+        "IntermediateSteps" -> BuildRecordIntermediateStepsView[
+          Lookup[stages, "BuildData", <||>],
+          Lookup[stages, "SelectedBuildResult", result]
+        ],
         "BuildData" -> Lookup[stages, "BuildData", Missing["NotAvailable"]],
         "FullBuildResult" -> Lookup[stages, "FullBuildResult",
           Missing["NotAvailable"]],
@@ -810,7 +952,9 @@ IntegrationRunRecord[routeKind_String, result_, diagnostics_Association,
         "RouteKind" -> routeKind,
         "Result" -> result,
         "Diagnostics" -> diagnostics,
-        "IntermediateSteps" -> stages,
+        "IntermediateSteps" -> IntegrationRecordIntermediateStepsView[
+          routeKind, stages, diagnostics, metadata
+        ],
         "SourceObject" -> Lookup[metadata, "SourceObject",
           Lookup[diagnostics, "SourceObject", Missing["NotAvailable"]]],
         "AntennaObject" -> Lookup[metadata, "AntennaObject",
@@ -915,12 +1059,8 @@ BuildAntennaObjectStoredResultLabel[type_, numFinalParticles_, loopOrder_,
 FormatFreshBuildReturn[result_, diagnostics_, returnDiagnostics_,
    returnRecord_, requestedSteps_List, printSteps_, routeKind_String:"BuildAntenna",
    recordStages_:Automatic, recordMetadata_Association:<||>] :=
-  Module[{selectedSteps, stages},
+  Module[{selectedSteps, stages, record},
     selectedSteps = Lookup[diagnostics, "IntermediateSteps", <||>];
-    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
-        selectedSteps] > 0,
-      PrintIntermediateStepsAssociation[selectedSteps]
-    ];
     If[TrueQ[returnRecord],
       stages =
         If[AssociationQ[recordStages],
@@ -928,8 +1068,17 @@ FormatFreshBuildReturn[result_, diagnostics_, returnDiagnostics_,
           ,
           If[AssociationQ[selectedSteps], selectedSteps, <||>]
         ];
-      Return[BuildRunRecord[routeKind, result, diagnostics, stages,
-        recordMetadata]]
+      record = BuildRunRecord[routeKind, result, diagnostics, stages,
+        recordMetadata];
+      If[TrueQ[printSteps] && AssociationQ[record["IntermediateSteps"]] &&
+          Length[record["IntermediateSteps"]] > 0,
+        PrintIntermediateStepsAssociation[record["IntermediateSteps"]]
+      ];
+      Return[record]
+    ];
+    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
+        selectedSteps] > 0,
+      PrintIntermediateStepsAssociation[selectedSteps]
     ];
     If[TrueQ[returnDiagnostics],
       {result, diagnostics}

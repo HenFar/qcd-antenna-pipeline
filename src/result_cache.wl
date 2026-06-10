@@ -555,7 +555,7 @@ FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
    returnDiagnostics_, returnRecord_, requestedSteps_List, printSteps_,
    routeKind_String, recordMetadata_Association:<||>] :=
   Module[{annotatedDiagnostics, selectedSteps, stages, cacheMetadata,
-     mergedMetadata},
+     mergedMetadata, record},
     annotatedDiagnostics =
       If[AssociationQ[diagnostics],
         AnnotateStoredResultDiagnostics[diagnostics, loadedData,
@@ -564,10 +564,6 @@ FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
         <|"StoredResultCache" -> StoredResultCacheMetadata[loadedData]|>
       ];
     selectedSteps = Lookup[annotatedDiagnostics, "IntermediateSteps", <||>];
-    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
-        selectedSteps] > 0,
-      PrintIntermediateStepsAssociation[selectedSteps]
-    ];
     If[TrueQ[returnRecord],
       stages =
         If[AssociationQ[selectedSteps],
@@ -580,15 +576,23 @@ FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
           StoredResultCacheMetadata[loadedData]];
       mergedMetadata = Join[recordMetadata, <|"StoredResultCache" ->
             cacheMetadata|>];
-      Return[
+      record =
         If[MemberQ[{"BuildAntenna", "BuildAntennaObject"}, routeKind],
           BuildRunRecord[routeKind, result, annotatedDiagnostics, stages,
             mergedMetadata]
           ,
           IntegrationRunRecord[routeKind, result, annotatedDiagnostics,
             stages, mergedMetadata]
-        ]
-      ]
+        ];
+      If[TrueQ[printSteps] && AssociationQ[record["IntermediateSteps"]] &&
+          Length[record["IntermediateSteps"]] > 0,
+        PrintIntermediateStepsAssociation[record["IntermediateSteps"]]
+      ];
+      Return[record]
+    ];
+    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
+        selectedSteps] > 0,
+      PrintIntermediateStepsAssociation[selectedSteps]
     ];
     If[TrueQ[returnDiagnostics],
       {result, annotatedDiagnostics}
