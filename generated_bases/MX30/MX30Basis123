@@ -1,0 +1,152 @@
+BasisDirectory[MX30Basis123] = StringDrop[DirectoryName[$Input], -1]
+MX30Basis123 /: BasisSectors[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "BasisSectors[MX30Basis123]"}]]
+MX30Basis123 /: CurrentState[MX30Basis123] := <|NewDsBasis -> True, 
+   GenerateIBP -> True, AnalyzeSectors -> True, FindSymmetries -> False|>
+MX30Basis123 /: CutDs[MX30Basis123] := {1, 1, 1, 0, 0}
+MX30Basis123 /: Definitions[MX30Basis123] := 
+  {Hold[MetricTensor[] === d, SetDim[d]], Hold[VecQ[p1], 
+    Declare[p1, Vector]], Hold[VecQ[p2], Declare[p2, Vector]], 
+   Hold[VecQ[q], Declare[q, Vector]], 
+   Hold[LiteRed`Private`ExpresionType[q] === LiteRed`Private`ExpresionType[
+      q], Declare[q, LiteRed`Private`ExpresionType[q]]], 
+   Hold[LiteRed`Private`ExpresionType[q2] === LiteRed`Private`ExpresionType[
+      q2], Declare[q2, LiteRed`Private`ExpresionType[q2]]], 
+   Hold[sp[q, q] === q2, sp[q, q] = q2]}
+MX30Basis123 /: Ds[MX30Basis123] := {m2 - sp[p1, p1], m2 - sp[p2, p2], 
+   sp[-p1 - p2 + q, -p1 - p2 + q], m2 - sp[-p2 + q, -p2 + q], 
+   m2 - sp[-p1 + q, -p1 + q]}
+MX30Basis123 /: DsBasisQ[MX30Basis123] := True
+MX30Basis123 /: EMs[MX30Basis123] := {q}
+MX30Basis123 /: ExtMappedSectors[MX30Basis123] := {}
+MX30Basis123 /: ExtSectorsMappings[MX30Basis123] := {}
+MX30Basis123 /: IBP[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], "IBP[MX30Basis123]"}]]
+MX30Basis123 /: Information[MX30Basis123] := 
+  (If[ValueQ[MX30Basis123::usage], Information[MX30Basis123, 
+     LongForm -> False]]; 
+   Print[Grid[Partition[Union[Replace[Replace[
+         First /@ UpValues[MX30Basis123] /. HoldPattern -> HoldForm, 
+         {HoldPattern[HoldForm[(LiteRed`Private`f$_)[MX30Basis123, __]]] :> 
+           HoldForm[LiteRed`Private`f$[MX30Basis123, "\[Ellipsis]"]]}, {1}], 
+        {HoldPattern[LiteRed`Private`x$:HoldForm[(LiteRed`Private`f$_)[
+              MX30Basis123, ___]]] :> Button[LiteRed`Private`x$, 
+           (SelectionMove[ButtonNotebook[], All, GeneratedCell]; 
+             NotebookDelete[]; Information[Evaluate[LiteRed`Private`x$[[1,
+                0]]], LongForm -> False]; Print[TableForm[Cases[UpValues[
+                  MX30Basis123], HoldPattern[LiteRed`Private`a$_ :> 
+                    LiteRed`Private`b$_] /; MatchQ[LiteRed`Private`a$[[1,0]], 
+                   LiteRed`Private`x$[[1,0]]]] /. HoldPattern -> 
+                 HoldForm]]) & , Appearance -> "Frameless", 
+           BaseStyle -> "InformationLink"]}, {1}]], 5], 
+     DefaultBaseStyle -> "InfoGrid"]])
+MX30Basis123 /: jRules[MX30Basis123, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "jRules[MX30Basis123, 1, 1, 1, 0, 0]"}]]
+MX30Basis123 /: jRules[MX30Basis123, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "jRules[MX30Basis123, 1, 1, 1, 0, 1]"}]]
+MX30Basis123 /: jRules[MX30Basis123, 1, 1, 1, 1, 0] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "jRules[MX30Basis123, 1, 1, 1, 1, 0]"}]]
+MX30Basis123 /: jRules[MX30Basis123, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "jRules[MX30Basis123, 1, 1, 1, 1, 1]"}]]
+MX30Basis123 /: jsOrder[MX30Basis123] := {"np", "cp", "-ds", "-ns"}
+MX30Basis123 /: jsOrder[MX30Basis123, 0, 1, 1, 0, 0] := 
+  {{-1, 1, 1, -1, -1}, {-1, 0, 0, -1, -1}, {0, -1, 0, 0, 0}, {1, 0, 0, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 0, 1, 1, 0, 1] := 
+  {{-1, 1, 1, -1, 1}, {-1, 0, 0, -1, 0}, {0, 1, 1, 0, 0}, {0, -1, 0, 0, 0}, 
+   {1, 0, 0, 0, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 0, 1, 1, 1, 1] := 
+  {{-1, 1, 1, 1, 1}, {-1, 0, 0, 0, 0}, {0, 1, 1, 0, 0}, {0, -1, 0, 0, 0}, 
+   {0, 0, 0, -1, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 0, 1, 0, 0] := 
+  {{1, -1, 1, -1, -1}, {0, -1, 0, -1, -1}, {-1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 0, 1, 0, 1] := 
+  {{1, -1, 1, -1, 1}, {0, -1, 0, -1, 0}, {1, 0, 1, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, 1, 0, 0, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 0, 1, 1, 1] := 
+  {{1, -1, 1, 1, 1}, {0, -1, 0, 0, 0}, {1, 0, 1, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, 0, 0, -1, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 1, 0, 0, 0] := 
+  {{1, 1, -1, -1, -1}, {0, 0, -1, -1, -1}, {-1, 0, 0, 0, 0}, {0, 0, 1, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 1, 0, 0, 1] := 
+  {{1, 1, -1, -1, 1}, {0, 0, -1, -1, 0}, {1, 1, 0, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, 0, 1, 0, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 1, 1, 0, 0] := 
+  {{1, 1, 1, -1, -1}, {0, 0, 0, -1, -1}, {-1, 0, 0, 0, 0}, {0, -1, 0, 0, 0}, 
+   {0, 0, 0, 1, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 1, 1, 0, 1] := 
+  {{1, 1, 1, -1, 1}, {0, 0, 0, -1, 0}, {1, 1, 1, 0, 0}, {-1, 0, 0, 0, 0}, 
+   {0, -1, 0, 0, 0}}
+MX30Basis123 /: jsOrder[MX30Basis123, 1, 1, 1, 1, 1] := 
+  {{1, 1, 1, 1, 1}, {1, 1, 1, 0, 0}, {-1, 0, 0, 0, 0}, {0, -1, 0, 0, 0}, 
+   {0, 0, 0, -1, 0}}
+MX30Basis123 /: jSymmetries[MX30Basis123, 1, 1, 1, 0, 0] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "jSymmetries[MX30Basis123, 1, 1, 1, 0, 0]"}]]
+MX30Basis123 /: jSymmetries[MX30Basis123, 1, 1, 1, 0, 1] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "jSymmetries[MX30Basis123, 1, 1, 1, 0, 1]"}]]
+MX30Basis123 /: jSymmetries[MX30Basis123, 1, 1, 1, 1, 1] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "jSymmetries[MX30Basis123, 1, 1, 1, 1, 1]"}]]
+MX30Basis123 /: LI[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], "LI[MX30Basis123]"}]]
+MX30Basis123 /: LMs[MX30Basis123] := {p1, p2}
+MX30Basis123 /: MappedSectors[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "MappedSectors[MX30Basis123]"}]]
+MX30Basis123 /: MIs[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], "MIs[MX30Basis123]"}]]
+MX30Basis123 /: NDs[MX30Basis123] := 5
+MX30Basis123 /: NonZeroSectors[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "NonZeroSectors[MX30Basis123]"}]]
+MX30Basis123 /: Parameters[MX30Basis123] := {m2, q2, d}
+MX30Basis123 /: PowerShifts[MX30Basis123] := {0, 0, 0, 0, 0}
+MX30Basis123 /: SectorsMappings[MX30Basis123] := 
+  {js[MX30Basis123, 1, 1, 1, 1, 0] -> js[MX30Basis123, 1, 1, 1, 0, 1]}
+MX30Basis123 /: SectorsPattern[MX30Basis123] := {___}
+MX30Basis123 /: SimpleSectors[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "SimpleSectors[MX30Basis123]"}]]
+MX30Basis123 /: SPs[MX30Basis123] := {sp[p1, p1], sp[p1, p2], sp[p1, q], 
+   sp[p2, p2], sp[p2, q]}
+MX30Basis123 /: SR[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], "SR[MX30Basis123]"}]]
+MX30Basis123 /: Toj[MX30Basis123] := 
+  {sp[p1, p1] -> m2 - j[MX30Basis123, -1, 0, 0, 0, 0], 
+   sp[p1, p2] -> -m2 + q2/2 + j[MX30Basis123, 0, 0, -1, 0, 0]/2 + 
+     j[MX30Basis123, 0, 0, 0, -1, 0]/2 + j[MX30Basis123, 0, 0, 0, 0, -1]/2, 
+   sp[p1, q] -> (q2 - j[MX30Basis123, -1, 0, 0, 0, 0] + 
+      j[MX30Basis123, 0, 0, 0, 0, -1])/2, 
+   sp[p2, p2] -> m2 - j[MX30Basis123, 0, -1, 0, 0, 0], 
+   sp[p2, q] -> (q2 - j[MX30Basis123, 0, -1, 0, 0, 0] + 
+      j[MX30Basis123, 0, 0, 0, -1, 0])/2}
+MX30Basis123 /: UniqueSectors[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "UniqueSectors[MX30Basis123]"}]]
+MX30Basis123 /: ZerojRule[MX30Basis123] := 
+  LiteRed`Private`jjj:j[MX30Basis123, __] :> 
+   0 /; Module[{LiteRed`Private`jjs = 
+       Rest[List @@ jSector[LiteRed`Private`jjj]]}, 
+     Or @@ (BitOr[LiteRed`Private`jjs, #1] === #1 & ) /@ 
+       {{1, 1, 0, 1, 1}, {1, 0, 1, 1, 1}, {0, 1, 1, 1, 1}}]
+MX30Basis123 /: ZeroSectors[MX30Basis123] := 
+  Get[FileNameJoin[{BasisDirectory[MX30Basis123], 
+     "ZeroSectors[MX30Basis123]"}]]
+MX30Basis123 /: SectorsMappings[MX30Basis123, LiteRed`Private`ns$:
+    (0 | 1)..] := Cases[SectorsMappings[MX30Basis123], 
+   HoldPattern[js[MX30Basis123, LiteRed`Private`ns$] -> _]]
+MX30Basis123::usage = "2-loop basis with 1 external momenta.\nUse \
+Information[MX30Basis123] to get basis summary.\nThis string can be redefined \
+by setting MX30Basis123::usage=\"\[Ellipsis]\""; 
+ Information[MX30Basis123, LongForm -> False]; 
+LiteRed`Private`CheckDefs[MX30Basis123]
+BasisDirectory[MX30Basis123]

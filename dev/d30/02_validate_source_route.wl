@@ -1,0 +1,10 @@
+Get[FileNameJoin[{DirectoryName[DirectoryName[DirectoryName[$InputFileName]]], "AntennaPipeline.wl"}]];
+validate[tag_, test_] := If[TrueQ[test], Print[tag <> ": PASS"], Print[tag <> ": FAIL"]; Quit[1]];
+int2 = D30SourceSelfInterference[2];
+validate["source-born-interference", int2 =!= $Failed && Head[int2] =!= D30SourceSelfInterference];
+int3 = TimeConstrained[D30SourceSelfInterference[3], 300, $Aborted];
+validate["source-production-interference", int3 =!= $Failed && int3 =!= $Aborted && Head[int3] =!= D30SourceSelfInterference];
+res = BuildAntenna[D, 3, 0, ReturnDiagnostics -> True];
+validate["default-d30-still-honest", MatchQ[res, {$Failed, _Association}]];
+Print["leaf-born: ", LeafCount[int2]];
+Print["leaf-production: ", LeafCount[int3]];

@@ -49,6 +49,14 @@ Supporting thesis source: `main_old.pdf`
 - `run_kernel.sh`
 - `nnloMIs.wl`
 
+### Massive A30 trial masters
+
+These are first-pass provenance files for the two LiteRed masters that appear
+in the current massive `A30` integration route.
+
+- `MX30I1.wl`
+- `MX30I2.wl`
+
 ## File roles
 
 ### `common.wl`
@@ -195,6 +203,16 @@ bash masterIntegrals/run_kernel.sh -run 'Get["masterIntegrals/A3.wl"]; Print[A3R
 - `R6` and `R8b` are encoded in optical-theorem form.
 - `V8` is currently encoded as a literature series object rather than a compact
   closed gamma-function form.
+- `MX30I1` now records the bridged literature phase-space master
+  `I1^(m,0,m)` together with the generated-basis identification of the
+  undotted runtime master.
+- `MX30I2` is now explicitly labeled as a provisional runtime-basis bridge:
+  the paper second master is a numerator master, while the package second
+  master is the dotted LiteRed basis representative
+  `j[MX30Basis123, 2, 1, 1, 0, 0]`.
+- The current integrated acceptance check for the `MX30` pair is therefore the
+  massive `A30` integrated target match, not the old massless-limit-only
+  ansatz.
 - Some package-convention bridges are encoded directly in the file; others are
   documented as inherited normalization layers.
 - The runtime package loads `masterIntegrals/master_values_runtime.wl`, not the

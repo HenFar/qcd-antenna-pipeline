@@ -1,0 +1,10 @@
+{{j[MX30Basis312, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+    (n4_)?NonPositive, (n5_)?Positive] :> 
+   Expand[j[MX30Basis312, n1, n2, n3, n4, n5]]}, 
+ {j[MX30Basis312, (n1_)?Positive, (n2_)?Positive, (n3_)?Positive, 
+    (n4_)?NonPositive, (n5_)?Positive] :> 
+   Expand[j[MX30Basis312, n2, n1, n3, 0, n5]/
+     (j[MX30Basis312, -1, 0, 0, 0, 0] + j[MX30Basis312, 0, -1, 0, 0, 0] - 
+       j[MX30Basis312, 0, 0, -1, 0, 0] - j[MX30Basis312, 0, 0, 0, -1, 0] - 
+       j[MX30Basis312, 0, 0, 0, 0, -1] + (2*m2 - q2)*j[MX30Basis312, 0, 0, 0, 
+         0, 0])^n4]}}

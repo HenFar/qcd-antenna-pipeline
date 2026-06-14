@@ -263,6 +263,82 @@ B40
 C40
 ```
 
+## Massive A30 Status
+
+The massive final-final `A30` track is intentionally left unfinished.
+
+This is an important boundary for the thesis and for anyone using this repo:
+
+- The massive `A30` build-side reconstruction is real and can be used
+  correctly.
+- The massive `A30` integration-side derivation is not yet closed in the same
+  standard as the massless package routes.
+- The unresolved point is not the literature result itself, but the full,
+  package-native bridge between the package `MX30` master basis and the paper
+  master basis.
+
+More precisely, the current state is:
+
+- `BuildAntenna[A, 3, 0, quarkMass -> mQ]` is a genuine package-derived
+  route.
+  It reconstructs the massive tree antenna through the package build chain:
+  diagrams, amplitude, self-interference, and antenna extraction.
+- The bibliography/provenance layer under
+  [`dev/massiveA30_sources/`](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/dev/massiveA30_sources)
+  correctly encodes:
+  - the unintegrated massive `A30` thesis result;
+  - the integrated massive `A30` literature result;
+  - the explicit paper-to-package convention bridge used for comparison.
+- The public package implementation itself now lives entirely under `src/`,
+  just like the rest of the supported antennae.
+  The runtime-owned massive `A30` functions are loaded from:
+  - [src/massive_a30_unintegrated.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/massive_a30_unintegrated.wl)
+  - [src/massive_a30_reconstruction.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/massive_a30_reconstruction.wl)
+  - [src/massive_a30_integrated.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/massive_a30_integrated.wl)
+- The package `MX30` IBP track is also real up to the master-combination
+  stage.
+  The generated bases under
+  [`generated_bases/MX30/`](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/generated_bases/MX30)
+  can reduce the package-built massive `A30` to a linear combination of
+  package masters.
+
+What is not yet finished:
+
+- We do not yet have a fully enclosed integration derivation that starts from
+  the package-built massive antenna, reduces it to the package `MX30` masters,
+  substitutes independently justified closed master values in that same basis,
+  and reproduces the literature result without leaning on the final literature
+  answer as an active bridge.
+- In particular, the clean identification of the second paper master with the
+  package runtime basis is still unresolved.
+  The paper uses a numerator-type master, while the package reduction uses a
+  dotted LiteRed master, and that exact basis-change proof is still missing.
+
+Because of that, this repo should currently be understood as supporting the
+massive `A30` case only up to the following honest level:
+
+- fully reproduced build-side massive antenna;
+- encoded integrated bibliography result;
+- explicit convention bridge;
+- package-owned IBP reduction to a linear combination of `MX30` masters;
+- developer validation material for studying the missing master-basis bridge.
+
+It should not currently be described as a fully closed, thesis-standard,
+package-native integrated massive `A30` result.
+
+If you want to work with the massive case today, the correct workflow is:
+
+1. Use `BuildAntenna[A, 3, 0, quarkMass -> mQ]` for the genuine reconstructed
+   unintegrated antenna.
+2. Use the `dev/massiveA30/` scripts and the
+   [`dev/massiveA30_sources/`](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/dev/massiveA30_sources)
+   provenance files to
+   inspect the encoded thesis and literature results.
+3. Use the `MX30` basis generation and reduction checks to obtain the package
+   master combination.
+4. Treat the final closed integrated comparison as bibliography/provenance,
+   not yet as a fully internalized master-substitution result.
+
 Implemented one-loop infrastructure:
 
 ```text
@@ -1117,8 +1193,8 @@ True
 
 ## How The Files Communicate
 
-`AntennaPipeline.wl` loads the files in `src/` in dependency order.  Files do
-not pass values to one another directly.  They define functions and variables
+`AntennaPipeline.wl` loads the files in `src/` in dependency order. Files do
+not pass values to one another directly. They define functions and variables
 in the active Wolfram session; those functions then pass amplitudes,
 interferences, antennae, and integrated results at runtime.
 
@@ -1133,72 +1209,28 @@ paper targets + diagnostics -> opt-in checks
 ## File Map
 
 ```text
-src/setup.wl
-  FeynCalc/FeynArts/FeynHelpers loading, constants, and shared substitutions.
+src/core/
+  setup, shared kinematics/utilities, profiles, cache, diagnostics helpers,
+  and notebook-style support glue.
 
-src/kinematics_and_utilities.wl
-  Kinematic rules, coupling stripping, color/spin utilities, and common
-  FeynCalc replacement rules.
+src/engines/
+  direct FeynArts/FeynCalc/LiteRed/Package-X operations:
+  amplitudes, interferences, extraction kernels, PaVe, and IBP backends.
 
-src/amplitudes_tree.wl
-  Tree-level amplitude generation.
+src/routes/
+  readable antenna workflows, route-stage contracts, route stories, and the
+  runtime-owned massive A30 implementation.
 
-src/amplitudes_loop.wl
-  One-loop amplitude generation and loop-amplitude cleanup.
+src/interface/
+  public API wrappers, result formatting, object/record handling, public
+  diagnostics assembly, paper-target hooks, and R-ratio assembly.
 
-src/interference_tree.wl
-  Tree/tree interference machinery.
-
-src/interference_loop.wl
-  Tree/loop interference machinery and one-loop normalization.
-
-src/profiles.wl
-  Antenna profiles, reduction profiles, and integration profiles.
-
-src/extraction_tree.wl
-  Tree-level component extraction and four-quark sector selection.
-
-src/extraction_loop.wl
-  One-loop component extraction.
-
-src/color_ordered_a40.wl
-  Color-ordered A40 construction from the unsquared color-chain amplitude.
-
-src/build_router.wl
-  Internal build associations and the public BuildAntenna wrapper.
-
-src/production_assignments.wl
-  Optional notebook-style public variable assignment through
-  AssignAntennaProductionVariables[].
-
-src/integration_router.wl
-  Public IntegrateAntenna dispatch.
-
-src/integration_pave.wl
-  PaVe backend and Package-X convention handling.
-
-src/integration_ibp.wl
-  LiteRed IBP backend; currently complete for X30/A30 and equipped with X40
-  and X31 basis/master infrastructure.  It also contains the experimental
-  `A22OneLoopSelf` profile that loads the generated two-loop self basis.
-
-src/integrated_antenna_extraction.wl
-  Post-integration conversion from T-object colour brackets to final
-  integrated antenna components.
-
-src/paper_targets.wl
-  Paper/reference expressions.
-
-src/diagnostics.wl
-  Paper comparisons, residual helpers, momentum-label scans, and
-  diagnostic runners.
+dev/src_legacy_flat_2026-06-14/
+  archived pre-layered source tree kept as a backup of the old flat layout.
 
 dev/generate_a22_one_loop_self_basis.wl
-  Standalone clean-kernel LiteRed generator for the experimental A22
+  standalone clean-kernel LiteRed generator for the experimental A22
   one-loop self-interference basis.
-
-src/notebook_patches.wl
-  Disabled-by-default, notebook-style explanatory patches.
 ```
 
 ## Verification

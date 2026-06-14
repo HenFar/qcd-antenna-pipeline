@@ -1,11 +1,7 @@
 .DS_Store
 .claude/
 
-IBPReduction1/
-IBPReduction2/
-IBPReduction3/
-IBPReduction4/
-IBPReduction5/
+IBPReduction*/
 eps/
 eps
 
@@ -13,3 +9,4 @@ eps
 *.log
 *.tmp
 *.swp
+dev/tmp_src_new_parity_cache/

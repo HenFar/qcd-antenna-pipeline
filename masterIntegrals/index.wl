@@ -41,6 +41,14 @@ If[
   FileExistsQ[FileNameJoin[{masterIntegralDirectory, "V8.wl"}]],
   Get[FileNameJoin[{masterIntegralDirectory, "V8.wl"}]]
 ];
+If[
+  FileExistsQ[FileNameJoin[{masterIntegralDirectory, "MX30I1.wl"}]],
+  Get[FileNameJoin[{masterIntegralDirectory, "MX30I1.wl"}]]
+];
+If[
+  FileExistsQ[FileNameJoin[{masterIntegralDirectory, "MX30I2.wl"}]],
+  Get[FileNameJoin[{masterIntegralDirectory, "MX30I2.wl"}]]
+];
 
 MasterIntegralRegistry[] :=
   <|
@@ -55,5 +63,7 @@ MasterIntegralRegistry[] :=
     "R8b" -> MasterIntegralR8bData[],
     "V5a" -> If[ValueQ[MasterIntegralV5aData], MasterIntegralV5aData[], Missing["NotAvailable"]],
     "V5b" -> If[ValueQ[MasterIntegralV5bData], MasterIntegralV5bData[], Missing["NotAvailable"]],
-    "V8" -> If[ValueQ[MasterIntegralV8Data], MasterIntegralV8Data[], Missing["NotAvailable"]]
+    "V8" -> If[ValueQ[MasterIntegralV8Data], MasterIntegralV8Data[], Missing["NotAvailable"]],
+    "MX30I1" -> If[ValueQ[MasterIntegralMX30I1Data], MasterIntegralMX30I1Data[], Missing["NotAvailable"]],
+    "MX30I2" -> If[ValueQ[MasterIntegralMX30I2Data], MasterIntegralMX30I2Data[], Missing["NotAvailable"]]
   |>;
