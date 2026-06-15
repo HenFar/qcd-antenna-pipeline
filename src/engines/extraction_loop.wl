@@ -1,6 +1,22 @@
 (*************************************************)
 
 (*
+  File role and communication map
+  -------------------------------
+  This file communicates with:
+    - src/engines/interference_loop.wl, whose normalized loop interferences are
+      consumed here.
+    - src/core/profiles.wl through loop-level `Extraction`, `BornInterference`,
+      and `ColourNorm` metadata.
+    - src/routes/build_workflows.wl, which uses these helpers when assembling
+      A21, A31, and A22 public build outputs.
+
+  Why this file exists:
+  Loop interferences are not themselves public antennae.  They still need to be
+  divided by the correct Born/current normalization, multiplied by the chosen
+  loop-expansion convention factor, and in some cases decomposed into colour
+  components.  Those responsibilities live here.
+
   One-loop antenna extraction.
   The interference has already been computed; this stage performs the common
   Born and colour normalisation, then returns either a scalar loop antenna or
@@ -26,9 +42,22 @@ ExtractA22TwoLoopTreeComponents::usage =
 
 Options[ExtractLoopAntennaComponents] = {ApplyDimReg -> True};
 
+(* OneLoopColorFreeQ[expr]
+   =======================
+   Test whether a purported extracted loop component is free of leftover colour
+   structures. *)
 OneLoopColorFreeQ[expr_] :=
   FreeQ[expr, SUNN | CA | CF | Nf | _SUNTF | _SUNF | _SUNFDelta];
 
+(* ExtractLoopAntennaComponents[interference, profile, context, ...]
+   =================================================================
+   Extract the public one-loop antenna components from a normalized
+   interference.
+
+   Notes
+     The evaluation guards at the top exist because several call sites pass
+     delayed profile/context objects.  Resolving them here keeps the extraction
+     interface forgiving without hiding invalid inputs. *)
 ExtractLoopAntennaComponents[interference_, profile_, context_, opts : OptionsPattern[]] :=
   Module[{resolvedProfile, resolvedContext},
     resolvedProfile = Quiet[Check[Evaluate[profile], profile]];
@@ -64,6 +93,9 @@ ExtractLoopAntennaComponents[interference_, profile_Association, context_Associa
       ]];
     colorNorm = Lookup[profile, "ColourNorm", SUNN - 1 / SUNN];
     extractionMode = profile["Extraction"];
+    (* Divide by the Born/current normalization before any colour decomposition.
+       Physically this is where the matrix-element interference becomes a loop
+       antenna rather than just a virtual correction to a source process. *)
     antenna =
       interference / (bornInterference colorNorm) //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
@@ -141,6 +173,10 @@ ExtractLoopAntennaComponents[interference_, profile_Association, context_Associa
 
 Options[ExtractTwoLoopAntennaComponents] = {ApplyDimReg -> True};
 
+(* ExtractA22TwoLoopTreeComponents[...]
+   ====================================
+   Extract the leading, subleading, and `Nf` components of the A22 tree/two-loop
+   source bracket. *)
 ExtractA22TwoLoopTreeComponents[twoLoopTreeInterference_, profile_Association,
    context_Association, OptionsPattern[ExtractTwoLoopAntennaComponents]] :=
   Module[{applyDimRegOpt, bornInterference, colorNorm, twoLoopBracket,
@@ -150,6 +186,9 @@ ExtractA22TwoLoopTreeComponents[twoLoopTreeInterference_, profile_Association,
     bornInterference = Lookup[context, "BornInterference",
       profile["BornInterference"]];
     colorNorm = Lookup[profile, "ColourNorm", SUNN - 1 / SUNN];
+    (* The A22 tree/two-loop source has the same broad colour-bracket logic as
+       the one-loop A-type virtual antennae, but with the two-loop normalization
+       convention applied explicitly. *)
     twoLoopBracket =
       twoLoopTreeInterference / (bornInterference colorNorm) //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
@@ -192,6 +231,11 @@ ExtractA22TwoLoopTreeComponents[twoLoopTreeInterference_, profile_Association,
       "TwoLoopNormalizedInterference" -> colorCanonicalTwoLoop|>
   ];
 
+(* ExtractA22OneLoopSelfComponent[...]
+   ===================================
+   Extract the breve A22 one-loop self-interference source.  This is normalized
+   by an extra power of the colour norm because it comes from a squared
+   one-loop object rather than from a tree/two-loop interference. *)
 ExtractA22OneLoopSelfComponent[oneLoopSelfInterference_, profile_Association,
    context_Association, OptionsPattern[ExtractTwoLoopAntennaComponents]] :=
   Module[{applyDimRegOpt, bornInterference, colorNorm, selfBracket, breve,
@@ -218,6 +262,10 @@ ExtractA22OneLoopSelfComponent[oneLoopSelfInterference_, profile_Association,
       "SelfNormalizedInterference" -> breve|>
   ];
 
+(* ExtractTwoLoopAntennaComponents[twoLoopTreeInterference, oneLoopSelfInterference, ...]
+   ======================================================================================
+   Combine the tree/two-loop and one-loop-self extraction outputs into the full
+   A22 source-component record used by the build routes. *)
 ExtractTwoLoopAntennaComponents[twoLoopTreeInterference_, oneLoopSelfInterference_,
    profile_Association, context_Association, OptionsPattern[]] :=
   Module[{twoLoopExtraction, selfExtraction},

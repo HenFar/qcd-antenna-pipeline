@@ -1,6 +1,34 @@
 (*************************************************)
 
 (*
+  File role and communication map
+  -------------------------------
+  This file is the metadata registry for the whole package.
+
+  It communicates with:
+    - src/engines/amplitudes_tree.wl through MAmpLoopLess[...], which supplies
+      the tree amplitudes cached by AntennaAmplitude[...].
+    - src/engines/interference_tree.wl through InterfereMAmplitudes[...], which
+      supplies the Born/self-interference objects cached by
+      AntennaSelfInterference[...].
+    - src/core/d30_effective_model.wl through D30EffectiveModelName[], which is
+      referenced by the D30 tree-level profile metadata.
+    - src/routes/build_workflows.wl, which uses AntennaProfile[...] to choose
+      the correct production and extraction workflow for a requested antenna.
+    - src/routes/integration_workflows.wl and src/interface/integration_router.wl,
+      which use AntennaIntegrationProfile[...] to choose the integration backend,
+      basis family, and expansion depth.
+    - src/core/production_assignments.wl, which reads AntennaAmplitude[...]
+      and AntennaSelfInterference[...] to populate legacy globals.
+
+  Why this file exists:
+  The package separates route logic from physics metadata.  Instead of
+  hard-coding every antenna family choice inside builders and integrators, the
+  builders ask this registry what kind of object they are dealing with.  That
+  makes the workflow code shorter and, more importantly, makes design decisions
+  like colour normalization, sector choice, or reduction backend explicit and
+  centrally auditable.
+
   Lightweight shared normalisation.
   This is symbolic and cheap to define at load time; amplitudes and
   interferences are built lazily below.
@@ -39,6 +67,24 @@ colourNorm = SUNN - 1 / SUNN;
 
 (*************************************************)
 
+(* AntennaReductionProfile[key]
+   ============================
+   Summary
+     Return build-side reduction preferences for a requested antenna family.
+
+   Parameters
+     key : list
+       Antenna selector of the form `{type, multiplicity, loopOrder}`.
+
+   Returns
+     Association
+       Reduction metadata consumed by the build routes.
+
+   Notes
+     The reduction backend is stored as metadata rather than inferred from the
+     loop order because the physically natural backend can differ from one family
+     to another.  A21 and A31, for example, are both one-loop objects but feed
+     very different extraction logic downstream. *)
 AntennaReductionProfile[{A, 2, 1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
@@ -51,6 +97,25 @@ AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 2, 1}] :=
 AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
+(* AntennaProfile[key]
+   ===================
+   Summary
+     Return the central metadata record describing how one antenna family should
+     be produced, extracted, and normalized.
+
+   Parameters
+     key : list
+       Antenna selector `{type, multiplicity, loopOrder}`.
+
+   Returns
+     Association
+       Route metadata used throughout the build layer.
+
+   Notes
+     This function is the main contract between the physics taxonomy of the
+     package and the workflow layer.  Fields such as `Extraction`,
+     `ProductionSectors`, and `ColourNorm` encode not just what the object is,
+     but why the code treats it differently from nearby families. *)
 AntennaProfile[{A, 2, 1}] :=
   <|"Key" -> {A, 2, 1}, "Name" -> "A21", "AntennaType" -> A, "NumFinalParticles"
      -> 2, "LoopOrder" -> 1, "TreeAmplitude" -> AntennaAmplitude[{A, 2,
@@ -119,6 +184,15 @@ AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 2}] :=
 
 (*************************************************)
 
+(* The tree-level profiles below are intentionally declarative.
+   The route layer reads these records to decide which engine workflow to call,
+   so the profile tells us not only the antenna family name but also why the
+   family branches:
+   - `SelfInterference` for simple squared amplitudes,
+   - `ColorOrderedAntenna` when the physically useful object is a color-ordered
+     decomposition rather than one scalar,
+   - sector-based production for B40/C40 where phase-space singular structure
+     and quark-pair symmetry make a one-shot build less usable. *)
 AntennaProfile[{A, 2, 0}] :=
   <|"Key" -> {A, 2, 0}, "Name" -> "A20", "AntennaType" -> A, "NumFinalParticles"
      -> 2, "Production" -> "SelfInterference", "Extraction" -> "BornScalar",
@@ -204,6 +278,25 @@ AntennaProfile[{type_Symbol /; SymbolName[type] === "D", 3, 0}] :=
     "SourceModel" -> D30EffectiveModelName[],
     "ImplementationStatus" -> "ModelOwnedSourcePendingRoute"|>;
 
+(* AntennaAmplitude[key]
+   =====================
+   Summary
+     Lazily build and memoize the tree-level amplitude associated with a tree
+     antenna profile.
+
+   Parameters
+     key : list
+       Tree-level antenna selector.
+
+   Returns
+     expression
+       The underlying FeynCalc amplitude.
+
+   Notes
+     These amplitudes are memoized because many routes need them repeatedly:
+     self-interference construction, Born normalization for loop antennae, and
+     notebook compatibility helpers.  Building them once keeps the software
+     responsive without hiding where the physics input came from. *)
 AntennaAmplitude[{A, 2, 0}] :=
   AntennaAmplitude[{A, 2, 0}] = MAmpLoopLess[2];
 
@@ -234,6 +327,26 @@ AntennaAmplitude[{type_Symbol /; SymbolName[type] === "B", 4, 0}] :=
 AntennaAmplitude[{type_Symbol /; SymbolName[type] === "C", 4, 0}] :=
   AntennaAmplitude[{type, 4, 0}] = MAmpLoopLess[4, AntennaType -> C];
 
+(* AntennaSelfInterference[key]
+   ============================
+   Summary
+     Lazily build and memoize the tree-level self-interference object associated
+     with a tree antenna profile.
+
+   Parameters
+     key : list
+       Tree-level antenna selector.
+
+   Returns
+     expression
+       The squared or interfered matrix element before route-specific
+       extraction.
+
+   Notes
+     This sits one level above AntennaAmplitude[...].  Keeping the self-
+     interference cached separately is useful because several downstream routes
+     need the squared object directly, while others still need access to the
+     unsquared amplitude for more specialized reconstructions. *)
 AntennaSelfInterference[{A, 2, 0}] :=
   AntennaSelfInterference[{A, 2, 0}] =
     InterfereMAmplitudes[AntennaAmplitude[{A, 2, 0}], AntennaAmplitude[{
@@ -259,8 +372,43 @@ AntennaSelfInterference[{C, 4, 0}] :=
     InterfereMAmplitudes[AntennaAmplitude[{C, 4, 0}], AntennaAmplitude[{
       C, 4, 0}], 4, AntennaType -> C];
 
+(* BornInterference[]
+   ==================
+   Summary
+     Return the canonical A20 Born interference used to normalize loop-level
+     antenna extractions.
+
+   Returns
+     expression
+       The A20 self-interference object.
+
+   Notes
+     This helper intentionally fixes the Born object to one canonical source.
+     That avoids a common category error where “the relevant tree” is inferred
+     differently in different loop routes. *)
 BornInterference[] :=
   AntennaSelfInterference[{A, 2, 0}];
+
+(* AntennaIntegrationProfile[key]
+   ==============================
+   Summary
+     Return the integration-side backend metadata for a requested antenna.
+
+   Parameters
+     key : list
+       Antenna selector `{type, multiplicity, loopOrder}`.
+
+   Returns
+     Association
+       Integration routing metadata.
+
+   Notes
+     Integration is separated from build metadata because the most convenient
+     construction representation is not always the most convenient integration
+     representation.  For example, A21 is built naturally in a PaVe language,
+     while A31 and the tree-level higher-multiplicity antennae are routed into
+     IBP families whose expansion orders are determined by their infrared pole
+     structure. *)
 AntennaIntegrationProfile[{A, 2, 1}] :=
   <|"DefaultBackend" -> PaVe, "PaVeFamily" -> "MasslessTwoPartonVertex",
     "PaXConvention" -> "PaperRealMasslessTwoParton", "KinematicScale" ->

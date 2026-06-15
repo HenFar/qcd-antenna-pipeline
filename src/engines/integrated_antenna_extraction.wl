@@ -1,6 +1,22 @@
 (*************************************************)
 
 (*
+  File role and communication map
+  -------------------------------
+  This file communicates with:
+    - src/engines/integration_pave.wl and src/engines/integration_ibp.wl, whose
+      raw integrated outputs are post-processed here.
+    - src/routes/integration_workflows.wl, which calls these helpers to convert
+      backend-integrated objects into public integrated antennae.
+    - src/interface/paper_targets.wl, whose encoded targets are reused for the
+      integrated residual diagnostics defined later in this file.
+
+  Why this file exists:
+  Backend integration does not always return the final literature object
+  directly.  Sometimes it returns a colour bracket or T-function quantity that
+  still needs subtraction-term and convention-level post-processing.  This file
+  isolates that final physics translation step.
+
   Integrated antenna extraction.
   IBP and PaVe backends integrate the objects they are given.  For some
   antennae the integrated object is naturally a colour bracket in a T-function,
@@ -68,9 +84,16 @@ Options[IntegratedAntennaTTerms] = {ExpansionOrder -> 0, Component -> All};
 
 Options[ExtractIntegratedAntenna] = {ExpansionOrder -> 0};
 
+(* A31PaperConventionFactor[]
+   ==========================
+   Overall convention factor used when mapping the integrated A31 backend output
+   into the paper normalization. *)
 A31PaperConventionFactor[] :=
   2 Pi^2;
 
+(* IntegratedAntennaSeries[expr, order]
+   ====================================
+   Truncate and simplify an epsilon series in the package convention. *)
 IntegratedAntennaSeries[expr_, order_Integer] :=
   Module[{eps},
     eps = FeynCalc`Epsilon;
@@ -82,6 +105,10 @@ IntegratedAntennaSeries[expr_, order_Integer] :=
 IntegratedAntennaDependencyExpansionOrder[order_Integer] :=
   order + 2;
 
+(* The lower-order integrated A21 and A30 series are encoded here because
+   higher-order extraction formulae depend on them as subtraction building
+   blocks.  Treating them as explicit functions rather than inline constants
+   makes that dependency visible to later readers. *)
 IntegratedA21SubtractionSeries[order_Integer] :=
   Module[{eps, series},
     eps = FeynCalc`Epsilon;
@@ -145,6 +172,15 @@ SafeIntegratedResidualSimplify[expr_] :=
     ]
   ];
 
+(* IntegratedAntennaTTerms[key, integratedRaw, ...]
+   ================================================
+   Convert backend-integrated objects into the T-function-like pieces used by
+   the literature formulae.
+
+   Notes
+     For A31 and A22 this stage is where UV counterterm pieces involving lower
+     integrated antennae are applied.  Keeping that step separate from the raw
+     backend makes the physics bookkeeping much easier to audit. *)
 IntegratedAntennaTTerms[{a_Symbol /; SymbolName[a] === "A", 3, 1}, integratedRaw_List, OptionsPattern[]] :=
   Module[{eps, order, dependencyOrder, integratedA30, rawPaper, tTerms},
     eps = FeynCalc`Epsilon;

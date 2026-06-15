@@ -1,6 +1,23 @@
 (*************************************************)
 
 (*
+  Public integration interface.
+  Communicates with:
+    - src/interface/build_router.wl for AntennaObject creation and run-record
+      helpers.
+    - src/routes/integration_workflows.wl for route orchestration.
+    - src/routes/massive_a30_integrated.wl for the heavy A30 bibliography
+      bridge.
+    - src/engines/integration_pave.wl, src/engines/integration_ibp.wl, and
+      src/engines/integrated_antenna_extraction.wl for backend and post-
+      integration mechanics.
+
+  Why this file exists:
+    Integration has the richest public contract in the package: it may return a
+    series result, T-terms, a master combination, or a stitched multi-branch
+    object, and it may do so from either a direct backend call or a built
+    AntennaObject.  This file keeps those public choices uniform.
+
   Integration router placeholder.
   The public integration layer should eventually mirror BuildAntenna:
   user-facing calls dispatch through antenna/integration profiles while the
@@ -59,6 +76,9 @@ BuildAndIntegrateStoredResultLabel::usage =
 FormatFreshIntegrationReturn::usage =
   "FormatFreshIntegrationReturn[result, diagnostics, returnDiagnostics, returnRecord, requestedSteps, printSteps, routeKind, recordStages, metadata] formats a fresh integration result in the public return shape.";
 
+ResolveIntegrationPublicResult::usage =
+  "ResolveIntegrationPublicResult[result, diagnostics, returnMasterCombination, routeLabel] rewrites the public return value into the requested integration result kind without changing the stored backend stages.";
+
 A22CombineIntegratedResults::usage =
   "A22CombineIntegratedResults[treeResult, breveResult] stitches the public four-component A22 integrated result from its tree/two-loop and one-loop/self branches.";
 
@@ -78,6 +98,7 @@ Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
    PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> Automatic, KinematicScale -> q2, NormalizeKinematicScale ->
     True, ReturnDiagnostics -> False, ReturnRecord -> False,
+   ReturnMasterCombination -> False,
    LoopMomentum -> l, ApplyDimReg -> True, BasisFamily -> Automatic, BasisRoot -> Automatic,
    GenerateMissingBases -> False,
    ReturnTTerms -> False, Component -> All, Contribution -> All,
@@ -89,9 +110,15 @@ Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
 IntegrateAntenna::heavy =
   "This route uses a heavy integration backend and may take a long time: `1`.";
 
+IntegrateAntenna::nomaster =
+  "Master-combination form is not available for `1`.";
+
 IntegratedResidualListZeroQ[residuals_] :=
   ListQ[residuals] && And @@ (TrueQ[# === 0]& /@ residuals);
 
+(* CollectIntegrationIntermediateSteps[...]
+   ========================================
+   Collect only the integration stages explicitly requested by the caller. *)
 CollectIntegrationIntermediateSteps[antenna_, rawIntegrated_, tTerms_,
    finalIntegrated_, selectedIntegrated_, backendDiagnostics_, diagnostics_,
    steps_List] :=
@@ -140,6 +167,7 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
       "IntermediateSteps" -> OptionValue["IntermediateSteps"],
       "KinematicScale" -> OptionValue["KinematicScale"],
       "ExpansionOrder" -> OptionValue["ExpansionOrder"],
+      "ReturnMasterCombination" -> OptionValue["ReturnMasterCombination"],
       "PaVeEvaluation" -> OptionValue["PaVeEvaluation"],
       "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
       "LoopMomentum" -> OptionValue["LoopMomentum"],
@@ -166,6 +194,7 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
       "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
       "ReturnDiagnostics" -> OptionValue["ReturnDiagnostics"],
       "ReturnRecord" -> OptionValue["ReturnRecord"],
+      "ReturnMasterCombination" -> OptionValue["ReturnMasterCombination"],
       "LoopMomentum" -> OptionValue["LoopMomentum"],
       "ApplyDimReg" -> OptionValue["ApplyDimReg"],
       "BasisFamily" -> OptionValue["BasisFamily"],
@@ -200,6 +229,7 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
       "ReturnDiagnostics" -> OptionValue["ReturnDiagnostics"],
       "ReturnRecord" -> OptionValue["ReturnRecord"],
+      "ReturnMasterCombination" -> OptionValue["ReturnMasterCombination"],
       "LoopMomentum" -> OptionValue["LoopMomentum"],
       "ApplyDimReg" -> OptionValue["ApplyDimReg"],
       "BasisFamily" -> OptionValue["BasisFamily"],
@@ -264,6 +294,10 @@ MaybeWarnHeavyIntegrationRoute[key_, component_, contribution_] :=
     AssociateTo[$AntennaPipelineHeavyRouteNotices, noticeKey -> True];
   ];
 
+(* IntegrateAntennaStoredResultKey[obj, options]
+   =============================================
+   Build a cache key that captures both the selected AntennaObject view and the
+   runtime integration options. *)
 IntegrateAntennaStoredResultKey[obj_AntennaObject, options_Association] :=
   Module[{data},
     data = AntennaObjectData[obj];
@@ -354,6 +388,10 @@ BuildAndIntegrateStoredResultLabel[type_, numFinalParticles_, loopOrder_,
     CanonicalAntennaComponentName[Lookup[options, "Contribution", All]]
   ];
 
+(* FormatFreshIntegrationReturn[result, diagnostics, ...]
+   ======================================================
+   Convert one freshly computed integration result into the requested public
+   return shape. *)
 FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
    returnRecord_, requestedSteps_List, printSteps_,
    routeKind_String:"IntegrateAntenna", recordStages_:Automatic,
@@ -390,8 +428,221 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
     ]
   ];
 
+(* ResolveIntegrationPublicResult[result, diagnostics, returnMasterCombination, routeLabel]
+   =======================================================================================
+   Rewrite the public return value when the caller asks for the master-
+   combination representation instead of the final integrated series. *)
+ResolveIntegrationPublicResult[result_, diagnostics_,
+   returnMasterCombination_, routeLabel_:Automatic] :=
+  Module[{backendDiagnostics, masterCombination, label, reason},
+    If[!TrueQ[returnMasterCombination],
+      Return[{result, diagnostics}]
+    ];
+    If[AssociationQ[diagnostics] &&
+        Lookup[diagnostics, "RequestedResultKind", Missing["Absent"]] ===
+          "MasterCombination",
+      Return[{result, diagnostics}]
+    ];
+    backendDiagnostics =
+      Lookup[diagnostics, "BackendDiagnostics", Missing["NotAvailable"]];
+    masterCombination =
+      If[AssociationQ[backendDiagnostics],
+        Lookup[backendDiagnostics, "RawMasterCombination",
+          Lookup[backendDiagnostics, "MasterMappedExpression",
+            Missing["NotAvailable"]]]
+        ,
+        Missing["NotAvailable"]
+      ];
+    label =
+      If[routeLabel === Automatic,
+        "this route"
+        ,
+        routeLabel
+      ];
+    Which[
+      MatchQ[masterCombination, Missing[__]],
+        Message[IntegrateAntenna::nomaster, label];
+        {
+          $Failed,
+          Join[diagnostics, <|
+            "RequestedResultKind" -> "MasterCombination",
+            "MasterCombinationRequestFailed" -> True,
+            "MasterCombinationRequestReason" -> "NotAvailable"
+          |>]
+        }
+      ,
+      masterCombination === $Failed,
+        reason =
+          Which[
+            AssociationQ[backendDiagnostics] &&
+              KeyExistsQ[backendDiagnostics, "OpenMasterRouteSucceeded"] &&
+              TrueQ[backendDiagnostics["OpenMasterRouteSucceeded"]] === False,
+              "OpenMasterRouteFailed"
+            ,
+            AssociationQ[backendDiagnostics] &&
+              Lookup[backendDiagnostics, "RemainingTojSpOrDotQ", False] === True,
+              "ReductionPipelineIncomplete"
+            ,
+            True,
+              "MasterCombinationFailed"
+          ];
+        {
+          $Failed,
+          Join[diagnostics, <|
+            "RequestedResultKind" -> "MasterCombination",
+            "MasterCombinationRequestFailed" -> True,
+            "MasterCombinationRequestReason" -> reason
+          |>]
+        }
+      ,
+      True,
+        {
+          masterCombination,
+          Join[diagnostics, <|"RequestedResultKind" -> "MasterCombination"|>]
+        }
+    ]
+  ];
+
 LoadMassiveA30IntegratedProvenance[] :=
   Null;
+
+PrintMassiveA30ClosedBridgeNotice[] :=
+  Print[
+    StringRiffle[
+      {
+        "Note: the integrated massive A30 closed-form result currently uses an ad hoc bibliography bridge.",
+        "The intended fully legitimate endpoint is the MX30 master-combination stage.",
+        "At present, however, the public forced-MX30 route is still incomplete: the open-master reduction currently fails with unmatched terms.",
+        "This affects both BuildAndIntegrateAntenna and IntegrateAntenna, so there is not yet a clean public master-combination object to inspect from the runtime route itself.",
+        "To inspect the failure diagnostics of the forced open-master route through BuildAndIntegrateAntenna, evaluate:",
+        "Block[{$MassiveA30ForceIBPMasterRoute = True},",
+        "  Last[BuildAndIntegrateAntenna[A, 3, 0, quarkMass -> mQ, ReturnDiagnostics -> True]]",
+        "]",
+        "",
+        "To inspect the analogous forced-route diagnostics through IntegrateAntenna, evaluate:",
+        "Block[{$MassiveA30ForceIBPMasterRoute = True},",
+        "  Last[IntegrateAntenna[",
+        "    BuildAntennaObject[A, 3, 0, quarkMass -> mQ],",
+        "    quarkMass -> mQ,",
+        "    ReturnDiagnostics -> True",
+        "  ]]",
+        "]"
+      },
+      "\n"
+    ]
+  ];
+
+MassiveA30OpenMasterRouteRecord[obj_AntennaObject, options_Association,
+   routeKind_String:"IntegrateAntenna"] :=
+  Module[{forced},
+    forced =
+      Block[
+        {
+          $MassiveA30ForceIBPMasterRoute = True,
+          $AntennaPipelineBypassStoredResults = True
+        },
+        IntegrateRouteObject[
+          obj,
+          Join[
+            options,
+            <|
+              "ReturnDiagnostics" -> True,
+              "ReturnRecord" -> True,
+              "IntermediateSteps" -> {},
+              "PrintIntermediateSteps" -> False,
+              "UseStoredResults" -> False,
+              "StoreResults" -> False,
+              "RefreshStoredResults" -> False,
+              "RouteKind" -> routeKind
+            |>
+          ]
+        ]
+      ];
+    If[AntennaRunRecordQ[forced], forced, Missing["NotAvailable"]]
+  ];
+
+MassiveA30OpenMasterBackendDiagnostics[obj_AntennaObject,
+   options_Association, routeKind_String:"IntegrateAntenna"] :=
+  Module[{record, data, diagnostics, backendDiagnostics, forced},
+    record = MassiveA30OpenMasterRouteRecord[obj, options, routeKind];
+    If[AntennaRunRecordQ[record],
+      data = AntennaRunRecordData[record];
+      diagnostics = Lookup[data, "Diagnostics", <||>];
+      backendDiagnostics =
+        Lookup[data, "BackendDiagnostics",
+          Lookup[diagnostics, "BackendDiagnostics", <||>]];
+      If[!AssociationQ[backendDiagnostics],
+        backendDiagnostics = <||>
+      ];
+      Return[
+        <|
+          "OpenMasterRouteAvailable" -> True,
+          "OpenMasterRouteSucceeded" -> Lookup[data, "Result",
+            Missing["NotAvailable"]] =!= $Failed,
+          "RawLiteRedCombination" -> Lookup[backendDiagnostics,
+            "RawLiteRedCombination",
+            Missing["NotAvailable"]],
+          "MasterMappedExpression" -> Lookup[backendDiagnostics,
+            "MasterMappedExpression",
+            Missing["NotAvailable"]],
+          "RawMasterCombination" -> Lookup[backendDiagnostics,
+            "RawMasterCombination",
+            Missing["NotAvailable"]],
+          "OpenMasterSubstitutedExpression" -> Lookup[backendDiagnostics,
+            "MasterSubstitutedExpression", Missing["NotAvailable"]],
+          "OpenMasterSeriesResult" -> Lookup[backendDiagnostics,
+            "SeriesResult", Missing["NotAvailable"]],
+          "OpenMasterRouteDiagnostics" -> diagnostics
+        |>
+      ]
+    ];
+    forced =
+      Block[
+        {
+          $MassiveA30ForceIBPMasterRoute = True,
+          $AntennaPipelineBypassStoredResults = True
+        },
+        IntegrateRouteObject[
+          obj,
+          Join[
+            options,
+            <|
+              "ReturnDiagnostics" -> True,
+              "ReturnRecord" -> False,
+              "IntermediateSteps" -> {},
+              "PrintIntermediateSteps" -> False,
+              "UseStoredResults" -> False,
+              "StoreResults" -> False,
+              "RefreshStoredResults" -> False,
+              "RouteKind" -> routeKind
+            |>
+          ]
+        ]
+      ];
+    If[!MatchQ[forced, {_, _Association}],
+      Return[<||>]
+    ];
+    backendDiagnostics =
+      Lookup[forced[[2]], "BackendDiagnostics", <||>];
+    If[!AssociationQ[backendDiagnostics],
+      backendDiagnostics = <||>
+    ];
+    <|
+      "OpenMasterRouteAvailable" -> True,
+      "OpenMasterRouteSucceeded" -> forced[[1]] =!= $Failed,
+      "RawLiteRedCombination" -> Lookup[backendDiagnostics,
+        "RawLiteRedCombination", Missing["NotAvailable"]],
+      "MasterMappedExpression" -> Lookup[backendDiagnostics,
+        "MasterMappedExpression", Missing["NotAvailable"]],
+      "RawMasterCombination" -> Lookup[backendDiagnostics,
+        "RawMasterCombination", Missing["NotAvailable"]],
+      "OpenMasterSubstitutedExpression" -> Lookup[backendDiagnostics,
+        "MasterSubstitutedExpression", Missing["NotAvailable"]],
+      "OpenMasterSeriesResult" -> Lookup[backendDiagnostics,
+        "SeriesResult", Missing["NotAvailable"]],
+      "OpenMasterRouteDiagnostics" -> forced[[2]]
+    |>
+  ];
 
 MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
    profile_Association] :=
@@ -432,6 +683,7 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
         "MassiveA30Source" -> source,
         "MassiveA30BridgeReport" -> bridgeReport
       |>;
+    PrintMassiveA30ClosedBridgeNotice[];
     <|
       "RawIntegrated" -> series,
       "TTerms" -> series,
@@ -448,6 +700,10 @@ A22CombineIntegratedResults[treeResult_List, breveResult_] :=
      comes from the one-loop/self branch. *)
   Join[treeResult, {breveResult}];
 
+(* A22CombineIntegratedComponentDiagnostics[...]
+   =============================================
+   Merge diagnostics from the separate A22 branches into one public
+   association. *)
 A22CombineIntegratedComponentDiagnostics[treeComponentDiags_Association,
    breveDiag_Association, finalIntegrated_List, selectedComponent_,
    returnTTerms_] :=
@@ -495,7 +751,9 @@ A22CombineIntegratedComponentDiagnostics[treeComponentDiags_Association,
 IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
    OptionsPattern[]] :=
   Module[{ApplyFeynCalcOpt, quarkMassOpt, profile, output,
-     intermediateSteps, collectedSteps},
+     intermediateSteps, collectedSteps, ibpNeedsDiagnostics,
+     backendDiagnostics = <||>, diagnostics = <||>, publicResult,
+     publicDiagnostics, ibpResult},
     ApplyFeynCalcOpt = OptionValue["ApplyFeynCalcMS"];
     quarkMassOpt = OptionValue["quarkMass"];
     intermediateSteps = NormalizeIntermediateSteps[OptionValue[
@@ -505,6 +763,9 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
         "KinematicScale"], "ExpansionOrder" -> If[OptionValue[
         "ExpansionOrder"] === Automatic, 2, OptionValue["ExpansionOrder"]]
         |>;
+    ibpNeedsDiagnostics =
+      TrueQ[OptionValue["ReturnDiagnostics"]] ||
+      TrueQ[OptionValue["ReturnMasterCombination"]];
     output =
       Switch[integrationMethod,
         PaVe,
@@ -517,12 +778,18 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
              OptionValue["ApplyDimReg"]]
         ,
         IBP,
-          IntegrateViaIBP[antenna, ExpansionOrder -> profile[
+          ibpResult = IntegrateViaIBP[antenna, ExpansionOrder -> profile[
             "ExpansionOrder"], BasisFamily -> OptionValue["BasisFamily"],
             BasisRoot -> OptionValue["BasisRoot"], GenerateMissingBases ->
              OptionValue["GenerateMissingBases"], ReturnDiagnostics ->
-             OptionValue["ReturnDiagnostics"], DetailedTimingDiagnostics ->
-             OptionValue["DetailedTimingDiagnostics"]]
+             ibpNeedsDiagnostics, DetailedTimingDiagnostics ->
+             OptionValue["DetailedTimingDiagnostics"]];
+          If[TrueQ[ibpNeedsDiagnostics],
+            backendDiagnostics = ibpResult[[2]];
+            ibpResult[[1]]
+            ,
+            ibpResult
+          ]
         ,
         _,
           Print["Unsupported integration backend: ", integrationMethod,
@@ -531,23 +798,41 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
       ];
     output = SelectAntennaComponent[output, Missing["DirectIntegratedObject"],
       OptionValue["Component"]];
+    diagnostics =
+      If[AssociationQ[backendDiagnostics] && Length[backendDiagnostics] > 0,
+        <|"BackendDiagnostics" -> backendDiagnostics|>,
+        <||>
+      ];
+    {publicResult, publicDiagnostics} =
+      ResolveIntegrationPublicResult[
+        output,
+        diagnostics,
+        OptionValue["ReturnMasterCombination"],
+        ToString[integrationMethod, InputForm]
+      ];
     collectedSteps = CollectIntegrationIntermediateSteps[antenna,
       Missing["NotAvailable"], Missing["NotAvailable"], output, output,
-      <||>, <||>, intermediateSteps];
+      backendDiagnostics, publicDiagnostics, intermediateSteps];
     If[TrueQ[OptionValue["PrintIntermediateSteps"]] && Length[
         collectedSteps] > 0,
       PrintIntermediateStepsAssociation[collectedSteps]
     ];
     If[Length[collectedSteps] > 0,
-      {output, collectedSteps}
+      {publicResult, collectedSteps}
       ,
-      output
+      If[TrueQ[OptionValue["ReturnDiagnostics"]],
+        {publicResult, publicDiagnostics},
+        publicResult
+      ]
     ]
   ];
 
 Options[BuildAndIntegrateAntenna] =
   Options[IntegrateAntenna];
 
+(* IntegrateAntenna[obj_AntennaObject, ...]
+   ========================================
+   Main public integration entry point for built antenna objects. *)
 IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
   Module[{data, key, profile, contributionInput, contribution,
      componentInput, componentName, storedComponent, backend, antenna,
@@ -560,7 +845,7 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
      refreshStored, cacheKey, cacheLabel, cacheRoot, loaded, computed,
      computedResult, computedDiagnostics, optionsAssoc, recordStages,
      recordMetadata, diagnosticsWithMetadata, ibpNeedsDiagnostics,
-     quarkMassOpt},
+     quarkMassOpt, publicResult, publicDiagnostics},
     If[!AntennaObjectQ[obj],
       diagnostics = <|"Failed" -> True, "Reason" -> "InvalidAntennaObject"|>;
       Return[
@@ -622,9 +907,16 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
           cacheRoot, cacheLabel];
         If[AssociationQ[loaded],
           PrintStoredResultHit[cacheLabel];
+          {publicResult, publicDiagnostics} =
+            ResolveIntegrationPublicResult[
+              loaded["Result"],
+              loaded["Diagnostics"],
+              OptionValue["ReturnMasterCombination"],
+              ToString[key, InputForm]
+            ];
           Return[
-            FormatStoredResultReturn[loaded["Result"],
-              loaded["Diagnostics"], loaded, OptionValue[
+            FormatStoredResultReturn[publicResult,
+              publicDiagnostics, loaded, OptionValue[
                 "ReturnDiagnostics"], OptionValue["ReturnRecord"],
               intermediateSteps, OptionValue["PrintIntermediateSteps"],
               "IntegrateAntenna", recordMetadata]
@@ -666,8 +958,15 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
         StoreStoredResultEntry["IntegrateAntenna", cacheKey, cacheRoot,
           cacheLabel, computedResult, computedDiagnostics]
       ];
+      {publicResult, publicDiagnostics} =
+        ResolveIntegrationPublicResult[
+          computedResult,
+          computedDiagnostics,
+          OptionValue["ReturnMasterCombination"],
+          ToString[key, InputForm]
+        ];
       Return[
-        FormatFreshIntegrationReturn[computedResult, computedDiagnostics,
+        FormatFreshIntegrationReturn[publicResult, publicDiagnostics,
           OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
           intermediateSteps, OptionValue["PrintIntermediateSteps"],
           "IntegrateAntenna", Automatic, recordMetadata]
@@ -714,8 +1013,47 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
       ];
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
         quarkMassOpt =!= 0 &&
+        TrueQ[OptionValue["ReturnMasterCombination"]] &&
         !TrueQ[$MassiveA30ForceIBPMasterRoute],
-      Module[{routeData, antennaLocal},
+      Return[
+        Block[
+          {
+            $MassiveA30ForceIBPMasterRoute = True,
+            $AntennaPipelineBypassStoredResults = True
+          },
+          IntegrateAntenna[obj,
+            ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
+            quarkMass -> OptionValue["quarkMass"],
+            PaVeEvaluation -> OptionValue["PaVeEvaluation"],
+            ExpansionOrder -> OptionValue["ExpansionOrder"],
+            KinematicScale -> OptionValue["KinematicScale"],
+            NormalizeKinematicScale -> OptionValue["NormalizeKinematicScale"],
+            ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
+            ReturnRecord -> OptionValue["ReturnRecord"],
+            ReturnMasterCombination -> True,
+            LoopMomentum -> OptionValue["LoopMomentum"],
+            ApplyDimReg -> OptionValue["ApplyDimReg"],
+            BasisFamily -> OptionValue["BasisFamily"],
+            BasisRoot -> OptionValue["BasisRoot"],
+            GenerateMissingBases -> OptionValue["GenerateMissingBases"],
+            ReturnTTerms -> OptionValue["ReturnTTerms"],
+            IntermediateSteps -> OptionValue["IntermediateSteps"],
+            PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+            DetailedTimingDiagnostics -> OptionValue[
+              "DetailedTimingDiagnostics"],
+            UseStoredResults -> False,
+            StoreResults -> False,
+            ResultsCacheRoot -> OptionValue["ResultsCacheRoot"],
+            RefreshStoredResults -> False,
+            Component -> OptionValue["Component"],
+            Contribution -> OptionValue["Contribution"]]
+        ]
+      ]
+    ];
+    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
+        quarkMassOpt =!= 0 &&
+        !TrueQ[$MassiveA30ForceIBPMasterRoute],
+      Module[{routeData, antennaLocal, openMasterBackendDiagnostics},
         antennaLocal = Lookup[data, "Antenna", $Failed];
         routeData =
           MassiveA30IntegratedRouteData[
@@ -730,6 +1068,24 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
         selectedIntegrated = routeData["SelectedIntegrated"];
         backendDiagnostics = routeData["BackendDiagnostics"];
         diagnostics = routeData["Diagnostics"];
+        openMasterBackendDiagnostics =
+          If[
+            TrueQ[OptionValue["ReturnRecord"]] ||
+            TrueQ[OptionValue["ReturnDiagnostics"]] ||
+            RequestedIntermediateStepQ[intermediateSteps,
+              "MasterCombination"],
+            MassiveA30OpenMasterBackendDiagnostics[obj, optionsAssoc,
+              "IntegrateAntenna"],
+            <||>
+          ];
+        If[AssociationQ[openMasterBackendDiagnostics] &&
+            Length[openMasterBackendDiagnostics] > 0,
+          backendDiagnostics = Join[backendDiagnostics,
+            openMasterBackendDiagnostics];
+          diagnostics = Join[diagnostics, <|
+              "BackendDiagnostics" -> backendDiagnostics,
+              "OpenMasterRouteAvailable" -> True|>]
+        ];
         collectedSteps = CollectIntegrationIntermediateSteps[antennaLocal,
           rawIntegrated, tTerms, finalIntegrated, selectedIntegrated,
           backendDiagnostics, diagnostics, intermediateSteps];
@@ -745,9 +1101,16 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
         recordStages = CollectIntegrationRecordStages[antennaLocal,
           rawIntegrated, tTerms, finalIntegrated, selectedIntegrated,
           backendDiagnostics, diagnosticsWithMetadata];
+        {publicResult, publicDiagnostics} =
+          ResolveIntegrationPublicResult[
+            selectedIntegrated,
+            diagnosticsWithMetadata,
+            OptionValue["ReturnMasterCombination"],
+            ToString[key, InputForm]
+          ];
         Return[
-          FormatFreshIntegrationReturn[selectedIntegrated,
-            diagnosticsWithMetadata, OptionValue["ReturnDiagnostics"],
+          FormatFreshIntegrationReturn[publicResult,
+            publicDiagnostics, OptionValue["ReturnDiagnostics"],
             OptionValue["ReturnRecord"], intermediateSteps, OptionValue[
               "PrintIntermediateSteps"], "IntegrateAntenna", recordStages,
             recordMetadata]
@@ -943,9 +1306,16 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
             finalIntegrated, finalIntegrated,
             <|"TwoLoopTree" -> treeDiags, "OneLoopSelf" -> breveDiag|>,
             diagnosticsWithMetadata];
+          {publicResult, publicDiagnostics} =
+            ResolveIntegrationPublicResult[
+              finalIntegrated,
+              diagnosticsWithMetadata,
+              OptionValue["ReturnMasterCombination"],
+              ToString[key, InputForm]
+            ];
           Return[
-            FormatFreshIntegrationReturn[finalIntegrated,
-              diagnosticsWithMetadata, OptionValue["ReturnDiagnostics"],
+            FormatFreshIntegrationReturn[publicResult,
+              publicDiagnostics, OptionValue["ReturnDiagnostics"],
               OptionValue["ReturnRecord"], intermediateSteps, OptionValue[
                 "PrintIntermediateSteps"], "IntegrateAntenna", recordStages,
               recordMetadata]
@@ -975,7 +1345,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
     antenna = Lookup[data, "Antenna", $Failed];
     ibpNeedsDiagnostics =
       TrueQ[OptionValue["ReturnDiagnostics"]] ||
-      TrueQ[OptionValue["ReturnRecord"]];
+      TrueQ[OptionValue["ReturnRecord"]] ||
+      TrueQ[OptionValue["ReturnMasterCombination"]];
     rawIntegrated =
       Switch[backend,
         PaVe,
@@ -1067,14 +1438,25 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
     recordStages = CollectIntegrationRecordStages[antenna, rawIntegrated,
       tTerms, finalIntegrated, selectedIntegrated, backendDiagnostics,
       diagnosticsWithMetadata];
-    output = FormatFreshIntegrationReturn[selectedIntegrated,
-      diagnosticsWithMetadata, OptionValue["ReturnDiagnostics"], OptionValue[
+    {publicResult, publicDiagnostics} =
+      ResolveIntegrationPublicResult[
+        selectedIntegrated,
+        diagnosticsWithMetadata,
+        OptionValue["ReturnMasterCombination"],
+        ToString[key, InputForm]
+      ];
+    output = FormatFreshIntegrationReturn[publicResult,
+      publicDiagnostics, OptionValue["ReturnDiagnostics"], OptionValue[
         "ReturnRecord"], intermediateSteps, OptionValue[
         "PrintIntermediateSteps"], "IntegrateAntenna", recordStages,
       recordMetadata];
     output
   ];
 
+(* BuildAndIntegrateAntenna[type, n, loopOrder, ...]
+   =================================================
+   One-shot public route that builds an antenna object and integrates it in one
+   call. *)
 BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
    OptionsPattern[]] :=
   Module[{key, profile, contribution, componentName, antennaObject,
@@ -1083,7 +1465,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
      intermediateSteps, useStored, storeStored, refreshStored, cacheKey,
      cacheLabel, cacheRoot, loaded, computed, computedResult,
      computedDiagnostics, optionsAssoc, recordMetadata, quarkMassOpt,
-     integrationResult, integrationDiagnostics},
+     integrationResult, integrationDiagnostics, publicResult,
+     publicDiagnostics},
     key = {type, numFinalParticles, loopOrder};
     intermediateSteps = NormalizeIntermediateSteps[OptionValue[
       "IntermediateSteps"]];
@@ -1123,9 +1506,16 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
           cacheRoot, cacheLabel];
         If[AssociationQ[loaded],
           PrintStoredResultHit[cacheLabel];
+          {publicResult, publicDiagnostics} =
+            ResolveIntegrationPublicResult[
+              loaded["Result"],
+              loaded["Diagnostics"],
+              OptionValue["ReturnMasterCombination"],
+              ToString[key, InputForm]
+            ];
           Return[
-            FormatStoredResultReturn[loaded["Result"],
-              loaded["Diagnostics"], loaded, OptionValue[
+            FormatStoredResultReturn[publicResult,
+              publicDiagnostics, loaded, OptionValue[
                 "ReturnDiagnostics"], OptionValue["ReturnRecord"],
               intermediateSteps, OptionValue["PrintIntermediateSteps"],
               "BuildAndIntegrateAntenna", recordMetadata]
@@ -1143,6 +1533,8 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
             NormalizeKinematicScale -> OptionValue[
               "NormalizeKinematicScale"],
             ReturnDiagnostics -> True,
+            ReturnMasterCombination -> OptionValue[
+              "ReturnMasterCombination"],
             LoopMomentum -> OptionValue["LoopMomentum"],
             ApplyDimReg -> OptionValue["ApplyDimReg"],
             BasisFamily -> OptionValue["BasisFamily"],
@@ -1168,8 +1560,15 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
         StoreStoredResultEntry["BuildAndIntegrateAntenna", cacheKey,
           cacheRoot, cacheLabel, computedResult, computedDiagnostics]
       ];
+      {publicResult, publicDiagnostics} =
+        ResolveIntegrationPublicResult[
+          computedResult,
+          computedDiagnostics,
+          OptionValue["ReturnMasterCombination"],
+          ToString[key, InputForm]
+        ];
       Return[
-        FormatFreshIntegrationReturn[computedResult, computedDiagnostics,
+        FormatFreshIntegrationReturn[publicResult, publicDiagnostics,
           OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
           intermediateSteps, OptionValue["PrintIntermediateSteps"],
           "BuildAndIntegrateAntenna", Automatic, recordMetadata]
@@ -1262,6 +1661,7 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       NormalizeKinematicScale -> OptionValue["NormalizeKinematicScale"],
       ReturnDiagnostics -> True,
       ReturnRecord -> False,
+      ReturnMasterCombination -> OptionValue["ReturnMasterCombination"],
       LoopMomentum -> OptionValue["LoopMomentum"],
       ApplyDimReg -> OptionValue["ApplyDimReg"],
       BasisFamily -> OptionValue["BasisFamily"],
@@ -1279,7 +1679,14 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     integrationDiagnostics =
       Join[integrationDiagnostics, <|"SourceObject" -> antennaObject,
           "AntennaObject" -> antennaObject|>];
-    FormatFreshIntegrationReturn[integrationResult, integrationDiagnostics,
+    {publicResult, publicDiagnostics} =
+      ResolveIntegrationPublicResult[
+        integrationResult,
+        integrationDiagnostics,
+        OptionValue["ReturnMasterCombination"],
+        ToString[key, InputForm]
+      ];
+    FormatFreshIntegrationReturn[publicResult, publicDiagnostics,
       OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
       intermediateSteps, OptionValue["PrintIntermediateSteps"],
       "BuildAndIntegrateAntenna", Automatic,
@@ -1300,6 +1707,7 @@ LegacyIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     KinematicScale -> OptionValue["KinematicScale"],
     NormalizeKinematicScale -> OptionValue["NormalizeKinematicScale"],
     ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
+    ReturnMasterCombination -> OptionValue["ReturnMasterCombination"],
     LoopMomentum -> OptionValue["LoopMomentum"],
     ApplyDimReg -> OptionValue["ApplyDimReg"],
     BasisFamily -> OptionValue["BasisFamily"],
@@ -1315,6 +1723,11 @@ LegacyIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     RefreshStoredResults -> OptionValue["RefreshStoredResults"],
     Component -> OptionValue["Component"],
     Contribution -> OptionValue["Contribution"]];
+
+(* IntegratedAntennaDiagnostics[key, unintegrated, integrated, profile, context]
+   =============================================================================
+   Construct the standard diagnostics association for integrated routes,
+   including paper checks where reliable targets are available. *)
 IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Association,
    context_:<||>] :=
   Module[{paVeTarget, integratedTarget, integratedResidual, diagnostics,

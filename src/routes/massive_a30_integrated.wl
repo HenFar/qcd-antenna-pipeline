@@ -1,3 +1,20 @@
+(* ::Section:: *)
+(* Massive A30 integrated bridge *)
+
+(* Communicates with:
+   - src/routes/integration_workflows.wl, which delegates here for the current
+     non-forced massive A30 integrated route.
+   - src/routes/massive_a30_unintegrated.wl and
+     src/routes/massive_a30_reconstruction.wl, which define the matching
+     package-side unintegrated conventions.
+   - BuildAndIntegrateAntenna[...], which this file may invoke internally when
+     it needs runtime master-coefficient data.
+
+   Why this file exists:
+   The massive integrated A30 path is presently a convention bridge and
+   provenance layer around encoded literature information plus runtime package
+   data, so it does not fit cleanly inside the generic IBP/PaVe backends. *)
+
 MassiveA30IntegratedSource::usage =
   "MassiveA30IntegratedSource[] returns provenance metadata for the bibliography-facing integrated massive A30 result.";
 
@@ -95,9 +112,15 @@ MassiveA30IntegratedSource[] :=
     }
   |>;
 
+(* MassiveA30IntegratedPaperR0[]
+   =============================
+   Return the threshold variable used by the literature formula. *)
 MassiveA30IntegratedPaperR0[] :=
   1 - (4 mQ^2)/Ecm2;
 
+(* MassiveA30IntegratedPaperMasterI1[]
+   ===================================
+   Encode the first paper master in the literature convention. *)
 MassiveA30IntegratedPaperMasterI1[] :=
   Ecm2^(1 - eps) * MassiveA30IntegratedPaperR0[]^(2 - 2 eps) * 2^(-2 eps) *
     Pi^(-2 + eps) * Gamma[2 - 2 eps] * Gamma[3 - 3 eps] /
@@ -109,6 +132,9 @@ MassiveA30IntegratedPaperMasterI1[] :=
       MassiveA30IntegratedPaperR0[]
     ];
 
+(* MassiveA30IntegratedPaperMasterI2[]
+   ===================================
+   Encode the second paper master in the literature convention. *)
 MassiveA30IntegratedPaperMasterI2[] :=
   Ecm2^(2 - eps) * MassiveA30IntegratedPaperR0[]^(3 - 2 eps) * 2^(1 - 2 eps) *
     Pi^(-2 + eps) * Gamma[3 - 2 eps] * Gamma[4 - 3 eps] /
@@ -120,6 +146,9 @@ MassiveA30IntegratedPaperMasterI2[] :=
       MassiveA30IntegratedPaperR0[]
     ];
 
+(* MassiveA30IntegratedPaperConvention[]
+   =====================================
+   Return the full integrated literature result in its native basis. *)
 MassiveA30IntegratedPaperConvention[] :=
   Module[{r0 = MassiveA30IntegratedPaperR0[]},
     (
@@ -137,6 +166,9 @@ MassiveA30IntegratedPaperConvention[] :=
     )
   ];
 
+(* MassiveA30IntegratedInvariantBridgeRules[]
+   ==========================================
+   State the explicit invariant rename from paper symbols to package symbols. *)
 MassiveA30IntegratedInvariantBridgeRules[] :=
   {
     Ecm2 -> q2,
@@ -144,6 +176,10 @@ MassiveA30IntegratedInvariantBridgeRules[] :=
     MassiveA30IntegratedPaperR0[] -> 1 - (4 m2)/q2
   };
 
+(* MassiveA30IntegratedNormalizationBridge[]
+   =========================================
+   Record the bridge metadata between paper, thesis-side, and runtime package
+   conventions. *)
 MassiveA30IntegratedNormalizationBridge[] :=
   <|
     "PaperConvention" -> <|
@@ -181,15 +217,25 @@ MassiveA30IntegratedNormalizationBridge[] :=
     }
   |>;
 
+(* MassiveA30IntegratedApplyPackageBridge[expr]
+   ============================================
+   Apply the explicit paper-to-package invariant bridge and simplify. *)
 MassiveA30IntegratedApplyPackageBridge[expr_] :=
   expr /. MassiveA30IntegratedInvariantBridgeRules[] //
     Together // FullSimplify;
 
+(* MassiveA30IntegratedPackageMasterI1Candidate[]
+   ==============================================
+   Return the bridged package-side candidate for the undotted paper master. *)
 MassiveA30IntegratedPackageMasterI1Candidate[] :=
   MassiveA30IntegratedApplyPackageBridge[
     MassiveA30IntegratedPaperMasterI1[]
   ];
 
+(* MassiveA30IntegratedPackageMasterI2PaperCandidate[]
+   ===================================================
+   Return the bridged paper numerator master before any runtime-basis
+   conversion. *)
 MassiveA30IntegratedPackageMasterI2PaperCandidate[] :=
   MassiveA30IntegratedApplyPackageBridge[
     MassiveA30IntegratedPaperMasterI2[]

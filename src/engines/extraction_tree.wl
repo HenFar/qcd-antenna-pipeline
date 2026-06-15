@@ -1,3 +1,22 @@
+(* ::Section:: *)
+(* Tree-level antenna extraction *)
+
+(* Communicates with:
+   - src/engines/interference_tree.wl, whose normalized interferences are
+     consumed here.
+   - src/core/kinematics_and_utilities.wl through ApplyFeynCalcRules and
+     ColourTensorCounter.
+   - src/core/profiles.wl through the `Extraction`, `ColourNorm`, and
+     `SectorDefinitions` metadata fields.
+   - src/routes/build_workflows.wl, which calls these helpers to turn raw tree
+     sources into public antenna components.
+
+   Why this file exists:
+   Interference construction and antenna extraction are different steps.  The
+   former produces a physical squared matrix element; the latter divides by the
+   Born/current normalization and projects onto the public component structure
+   required by each antenna family. *)
+
 BCColorFreeQ::usage =
   "BCColorFreeQ[expr] tests whether an expression is free of the B/C color structures handled by the tree extractor.";
 
@@ -22,9 +41,18 @@ SplitAmplitudeBySectors::usage =
 ExtractAntennaComponents::usage =
   "ExtractAntennaComponents[amp, profile] extracts the public tree-level antenna components from a classified amplitude.";
 
+(* BCColorFreeQ[expr]
+   ==================
+   Test whether a candidate extracted component is free of the residual colour
+   structures that should have disappeared by the time the public antenna is
+   formed. *)
 BCColorFreeQ[expr_] :=
   FreeQ[expr, SUNN | CA | CF | Nf | _SUNTF | _SUNF | _SUNFDelta];
 
+(* AmplitudeTerms[amp]
+   ===================
+   Expand an amplitude into an explicit term list so the sector classifier can
+   inspect contributions one by one. *)
 AmplitudeTerms[amp_] :=
   Module[{expanded},
     expanded = Expand[amp];
@@ -35,6 +63,10 @@ AmplitudeTerms[amp_] :=
     ]
   ];
 
+(* TermContainsAnyQ[expr, vars]
+   ============================
+   Small helper used by the sector matcher to ask whether one invariant group is
+   represented in a kinematic term. *)
 TermContainsAnyQ[expr_, vars_List] :=
   Or @@ (!FreeQ[expr, #]& /@ vars);
 (*************************************************)
@@ -48,9 +80,19 @@ TermContainsAnyQ[expr_, vars_List] :=
 
 (*************************************************)
 
+(* SectorMatchQ[kinTerm, invariantGroups]
+   ======================================
+   Decide whether a term belongs to one of the profile-defined invariant
+   sectors.  This is deliberately profile-driven so B40/C40-specific sector
+   logic does not get hard-wired into a generic extractor. *)
 SectorMatchQ[kinTerm_, invariantGroups_List] :=
   And @@ (TermContainsAnyQ[kinTerm, #]& /@ invariantGroups);
 
+(* ClassifyAmplitudeTerm[term, profile]
+   ====================================
+   Assign one amplitude term to a named sector, or mark it ambiguous /
+   unclassified when the profile-defined invariant signatures do not isolate it
+   cleanly. *)
 ClassifyAmplitudeTerm[term_, profile_Association] :=
   Module[{kinTerm, definitions, hits},
     definitions = Lookup[profile, "SectorDefinitions", <||>];
@@ -70,6 +112,10 @@ ClassifyAmplitudeTerm[term_, profile_Association] :=
     ]
   ];
 
+(* ColorTensorCountSafe[expr]
+   ==========================
+   Safe wrapper around ColourTensorCounter for use in diagnostics, especially
+   when a sector happens to be identically zero. *)
 ColorTensorCountSafe[expr_] :=
   If[TrueQ[expr === 0],
     0
@@ -77,6 +123,10 @@ ColorTensorCountSafe[expr_] :=
     ColourTensorCounter[expr]
   ];
 
+(* SplitAmplitudeBySectors[amp, profile]
+   =====================================
+   Partition a tree amplitude into the sectors needed by the four-quark antenna
+   profiles and record diagnostics about the completeness of that partition. *)
 SplitAmplitudeBySectors[amp_, profile_Association] :=
   Module[{terms, classes, sectorNames, labels, sectorTerms, sectorAmps,
      partitionResidual, simplifiedResidual, countDiagnostics, colourDiagnostics,
@@ -128,6 +178,18 @@ SplitAmplitudeBySectors[amp_, profile_Association] :=
 
 (*************************************************)
 
+(* ExtractAntennaComponents[interference, profile, context]
+   =======================================================
+   Convert a normalized tree interference into the public component structure
+   requested by the profile.
+
+   Notes
+     The different extraction modes correspond to genuinely different physics
+     objects:
+     - A20 is normalized to the trivial Born scalar,
+     - A30/A40 expose colour coefficients,
+     - B40/C40 extract scalar antennae only after family-specific colour
+       normalization conventions are applied. *)
 ExtractAntennaComponents[interference_, profile_Association, context_Association
   ] :=
   Module[{mode, bornInterference, norm, colorNorm, lead, subLead, quarkLoop,

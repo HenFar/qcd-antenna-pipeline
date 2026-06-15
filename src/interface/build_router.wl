@@ -1,6 +1,21 @@
 (*************************************************)
 
 (*
+  Public build interface.
+  Communicates with:
+    - src/routes/build_workflows.wl for the antenna-family build workflows.
+    - src/routes/massive_a30_reconstruction.wl for the heavy A30 special case.
+    - src/core/profiles.wl and src/core/result_cache.wl for route metadata and
+      stored-result behavior.
+    - src/interface/integration_router.wl, which consumes the AntennaObject
+      and AntennaRunRecord wrappers defined here.
+
+  Why this file exists:
+    The route layer returns rich internal associations, but users need a stable
+    public API that can return a plain expression, a selected component, an
+    integrable object, or a replayable record.  This file is the adapter
+    between those internal route associations and those public contracts.
+
   Internal one-loop build object.
   This association is for routing and diagnostics.  The public BuildAntenna
   wrapper below converts it back to the natural expression/list returned to
@@ -564,6 +579,10 @@ CanonicalAntennaComponentName[component_] :=
 CanonicalAntennaComponentName[component_String] :=
   component;
 
+(* NormalizeIntermediateSteps[steps]
+   =================================
+   Convert the user-facing step selector into the canonical internal list used
+   by both build and integration routers. *)
 NormalizeIntermediateSteps[steps_] :=
   Module[{normalized},
     normalized =
@@ -598,6 +617,9 @@ IntegrationRecordStepLabels[] :=
   {"InputAntenna", "RawIntegrated", "TTerms", "FinalIntegrated",
     "SelectedIntegrated"};
 
+(* CollectBuildIntermediateSteps[data, fullResult, selectedResult, antennaObject, diagnostics, steps]
+   ================================================================================================
+   Collect only the build stages explicitly requested by the caller. *)
 CollectBuildIntermediateSteps[data_Association, fullResult_, selectedResult_,
    antennaObject_, diagnostics_, steps_List] :=
   Module[{collected = <||>},
@@ -653,6 +675,9 @@ PresentRecordStepValueQ[value_] :=
       True
   ];
 
+(* BuildRecordAmplitudeValue[data]
+   ===============================
+   Choose the most readable amplitude payload for a run record. *)
 BuildRecordAmplitudeValue[data_Association] :=
   Module[{singleAmplitude, multiAmplitude},
     singleAmplitude = Lookup[data, "Amplitude", Missing["NotAvailable"]];
@@ -689,6 +714,9 @@ BuildRecordAmplitudeValue[data_Association] :=
     ]
   ];
 
+(* BuildRecordInterferenceValue[data]
+   ==================================
+   Choose the most readable interference payload for a run record. *)
 BuildRecordInterferenceValue[data_Association] :=
   Module[{interferences},
     interferences = Lookup[data, "Interferences", Missing["NotAvailable"]];
@@ -822,7 +850,17 @@ IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
       "NormalizedBeforeSeries" -> Lookup[backendDiagnostics,
         "NormalizedBeforeSeries", Missing["NotAvailable"]],
       "SeriesResult" -> Lookup[backendDiagnostics, "SeriesResult",
-        Missing["NotAvailable"]]
+        Missing["NotAvailable"]],
+      "OpenMasterRouteAvailable" -> Lookup[backendDiagnostics,
+        "OpenMasterRouteAvailable", Missing["NotAvailable"]],
+      "OpenMasterRouteSucceeded" -> Lookup[backendDiagnostics,
+        "OpenMasterRouteSucceeded", Missing["NotAvailable"]],
+      "OpenMasterSubstitutedExpression" -> Lookup[backendDiagnostics,
+        "OpenMasterSubstitutedExpression", Missing["NotAvailable"]],
+      "OpenMasterSeriesResult" -> Lookup[backendDiagnostics,
+        "OpenMasterSeriesResult", Missing["NotAvailable"]],
+      "OpenMasterRouteDiagnostics" -> Lookup[backendDiagnostics,
+        "OpenMasterRouteDiagnostics", Missing["NotAvailable"]]
     |>
   ];
 
@@ -850,6 +888,9 @@ AntennaRunRecordValue[record_AntennaRunRecord, key_] :=
   Lookup[AntennaRunRecordData[record], key,
     Missing["NotAvailable", key]];
 
+(* BuildRunRecord[routeKind, result, diagnostics, stages, metadata]
+   =================================================================
+   Wrap a completed build call in the public AntennaRunRecord container. *)
 BuildRunRecord[routeKind_String, result_, diagnostics_Association,
    stages_Association, metadata_Association:<||>] :=
   MakeAntennaRunRecord[
@@ -875,6 +916,10 @@ BuildRunRecord[routeKind_String, result_, diagnostics_Association,
     ]
   ];
 
+(* IntegrationRunRecord[routeKind, result, diagnostics, stages, metadata]
+   =======================================================================
+   Wrap a completed integration call in the public AntennaRunRecord container,
+   promoting backend-derived aliases when available. *)
 IntegrationRunRecord[routeKind_String, result_, diagnostics_Association,
    stages_Association, metadata_Association:<||>] :=
   MakeAntennaRunRecord[
@@ -993,6 +1038,10 @@ BuildAntennaObjectStoredResultLabel[type_, numFinalParticles_, loopOrder_,
       {"/" -> "_", " " -> ""}]
   ];
 
+(* FormatFreshBuildReturn[result, diagnostics, ...]
+   ================================================
+   Convert one freshly computed build result into the requested public return
+   shape: plain result, `{result, diagnostics}`, or `AntennaRunRecord`. *)
 FormatFreshBuildReturn[result_, diagnostics_, returnDiagnostics_,
    returnRecord_, requestedSteps_List, printSteps_, routeKind_String:"BuildAntenna",
    recordStages_:Automatic, recordMetadata_Association:<||>] :=
@@ -1094,6 +1143,10 @@ AntennaFullExpression[obj_AntennaObject] :=
   Lookup[AntennaObjectData[obj], "FullAntenna",
     Missing["UnknownFullAntenna"]];
 
+(* MakeAntennaObject[key, data, component, contribution]
+   =====================================================
+   Construct the metadata-rich AntennaObject consumed later by
+   IntegrateAntenna[...]. *)
 MakeAntennaObject[key_, data_Association, component_, contribution_] :=
   Module[{fullResult, selectedResult},
     fullResult = BuildAntennaResult[key, data];
@@ -1131,6 +1184,11 @@ AntennaObjectWithSelection[obj_AntennaObject, component_, contribution_:Automati
       selectedContribution
     ]
   ];
+
+(* BuildAntennaResult[key, data]
+   =============================
+   Convert route-owned component associations into the canonical public result
+   shape for each antenna family. *)
 
 BuildAntennaResult[{A, 2, 0}, data_Association] :=
   data["Components"]["Antenna"];
@@ -1228,6 +1286,10 @@ BuildAntennaDiagnostics[key_, result_, data_Association, runPaperCheck_
       |>]
   ];
 
+(* BuildAntennaObject[type, n, loopOrder, ...]
+   ===========================================
+   Public constructor for an AntennaObject that preserves enough metadata to
+   support later integration, caching, and record replay. *)
 BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
    OptionsPattern[]] :=
   Module[{requestedSteps, useStored, storeStored, refreshStored,
@@ -1359,6 +1421,10 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       RefreshStoredResults -> OptionValue["RefreshStoredResults"]]
   ];
 
+(* BuildAntenna[type, n, loopOrder, ...]
+   =====================================
+   Main public constructor for unintegrated antenna expressions and build
+   records. *)
 BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
   Module[{key, data, result, selectedResult, publicResult, diagnostics,
      diagnosticsWithMetadata, antennaObject, integrableRequested,

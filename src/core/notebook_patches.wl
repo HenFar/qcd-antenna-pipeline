@@ -1,6 +1,24 @@
 (*************************************************)
 
 (*
+  File role and communication map
+  -------------------------------
+  This file is intentionally peripheral to the production pipeline.
+
+  It communicates with:
+    - AntennaPipeline.wl, which loads it last so the patch can see the public
+      build and integration functions without influencing their definitions.
+    - src/interface/build_router.wl through BuildAntenna[...].
+    - src/interface/integration_router.wl through BuildAndIntegrateAntenna[...].
+    - src/interface/paper_targets.wl through A21IntegratedPaper.
+
+  Why this file is separate:
+  The A21 Package-X convention check is useful for physics validation, but it
+  is deliberately kept out of the public route logic.  Mixing this notebook-like
+  validation path into production routing would obscure the difference between
+  the real supported backend workflow and an as-written reproduction of a
+  historical cross-check.
+
   A21 PaXEvaluate convention patch, written out as a notebook-style block.
 
   This is deliberately not part of the production router.  It is a transparent
@@ -28,13 +46,16 @@ If[RunA21PaXAsIsPatch === True,
     A21PaXAsIsEpsilon = Epsilon;
     A21PaXAsIsScaleMu = FeynCalc`ScaleMu;
 
-    (* This is the PaVe-level object equivalent to the notebook antenna after
-       the 18 Pi^2 normalization factor has been applied. *)
+    (* Start from the public build route rather than from hand-entered PaVe
+       objects.  That makes the cross-check sensitive to the same normalization
+       and reduction choices that the user-facing pipeline applies. *)
     A21PaXAsIsPaVeAntenna =
       BuildAntenna[A, 2, 1, ReductionBackend -> "PaVe",
         ApplyDimReg -> True];
 
-    (* Package-X performs the actual B0/C0 evaluation. *)
+    (* Package-X is used here only as the scalar-integral evaluator.  Keeping
+       the algebraic path linear helps isolate whether a mismatch comes from
+       the PaVe-to-Package-X convention bridge rather than from route logic. *)
     A21PaXAsIsPackageXResult =
       FeynCalc`PaXEvaluate[A21PaXAsIsPaVeAntenna];
 
@@ -49,14 +70,20 @@ If[RunA21PaXAsIsPatch === True,
           Log[-(A21PaXAsIsScaleMu^2 / (Pi q2))] -> EulerGamma
         } /. q2 -> 1;
 
-    (* The Package-X epsilon expansion is converted to the paper convention.
-       The factor must be kept through Epsilon^4 because the result begins at
-       1/Epsilon^2 and we compare terms through Epsilon^2. *)
+    (* The conversion factor is expanded deeper than the final answer because
+       infrared poles multiply higher epsilon terms.  Physically this is the
+       standard bookkeeping issue that finite and subleading pieces can descend
+       from higher-order convention factors once the Laurent series is
+       multiplied out. *)
     A21PaXAsIsConventionFactor =
       1 - Pi^2 / 2 A21PaXAsIsEpsilon^2
         + (8 - Pi^2 / 8 - 7 Zeta[3] / 3) A21PaXAsIsEpsilon^3
         + (4 - 7 Pi^2 / 48 + 13 Pi^4 / 1440) A21PaXAsIsEpsilon^4;
 
+    (* Store the full residual explicitly instead of reducing directly to a
+       boolean so that a future investigation can see whether a mismatch is a
+       pure convention offset, a missing transcendental term, or a wrong pole
+       structure. *)
     A21PaXAsIsIntegrated =
       Normal[
         Series[

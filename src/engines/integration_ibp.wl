@@ -1,6 +1,25 @@
 (*************************************************)
 
 (*
+  File role and communication map
+  -------------------------------
+  This file communicates with:
+    - src/core/profiles.wl through AntennaIntegrationProfile[...], whose basis
+      family and expansion metadata are converted into IBP profiles here.
+    - src/routes/integration_workflows.wl, which dispatches into this backend
+      whenever an antenna is integrated through LiteRed / master-integral data.
+    - masterIntegrals/, bases/, and generated_bases/, which provide the on-disk
+      basis definitions and encoded master values consumed by this backend.
+    - src/engines/integrated_antenna_extraction.wl, which post-processes the raw
+      integrated bracket objects returned here into final public antennae.
+
+  Why this file exists:
+  The IBP backend is the heaviest symbolic subsystem in the project.  It has to
+  translate package kinematics into LiteRed conventions, match terms to basis
+  families, reduce them, substitute master values, and normalize the resulting
+  epsilon series.  Those are backend responsibilities, not route-level ones, so
+  they are concentrated here.
+
   IBP reduction infrastructure.
   The public integrator dispatches here when ReductionBackend -> IBP.  This
   file is organised around integration profiles: basis loading, term matching,
@@ -145,7 +164,10 @@ reduceAntenna::usage = "reduceAntenna[antenna, numFinalParticles, numLoops] is t
 
 (*************************************************)
 
-(* LiteRed general setup, loaded only when the IBP backend is called. *)
+(* LiteRed general setup
+   ---------------------
+   LiteRed is loaded lazily because most package use-cases do not need the IBP
+   backend, and its startup cost would otherwise be paid on every kernel load. *)
 
 EnsureLiteRedLoaded[] :=
   Module[{},
@@ -177,7 +199,11 @@ LiteRedScalarProduct[a_, b_] :=
 
 (*************************************************)
 
-(* Aux functions *)
+(* Kinematic bridge helpers
+   ------------------------
+   These functions translate the package’s `k_i`, `sij`, and phase-space
+   conventions into the momentum and scalar-product language used by LiteRed and
+   by the stored basis files. *)
 
 MomentumRules[numFinalParticles_] :=
   Switch[numFinalParticles,
@@ -348,7 +374,11 @@ MX30BasisTopologyAssociation[mass_:quarkMass^2] :=
 
 (*************************************************)
 
-(* IBP profiles *)
+(* IBP profile and basis-discovery layer
+   -------------------------------------
+   An IBP profile is the backend’s internal contract for one basis family:
+   where its bases live, how they should be ordered, which loop count and
+   invariant rules apply, and whether bases may be generated on demand. *)
 
 IBPBasisSymbol[topology_List, prefix_String] :=
   Symbol[prefix <> "Basis" <> StringJoin[ToString /@ topology]];
@@ -1405,6 +1435,12 @@ RewriteScalarProductsToBasis[expr_, basis_, profile_Association] :=
 RewriteScalarProductsToBasis[expr_, basis_] :=
   RewriteScalarProductsToBasis[expr, basis, IBPProfile["X40"]];
 
+(* Term preparation and basis matching
+   -----------------------------------
+   These functions convert a package-level integrand term into the exact
+   LiteRed language expected by one basis family, then test candidate bases
+   until one can represent the term cleanly.  This is the key software bridge
+   between route-level antenna algebra and backend-level reduction data. *)
 PrepareIBPTerm[term_, profile_Association] :=
   Module[{expr},
     If[profile["BasisFamily"] === "A31",
@@ -2287,7 +2323,12 @@ IBPReductionStages[rawReduced_, reduced_, profile_Association] :=
 
 (*************************************************)
 
-(* Public IBP backend *)
+(* Public IBP backend
+   ------------------
+   This final layer orchestrates the whole reduction lifecycle:
+   load or generate bases, reduce each expanded term, substitute master values,
+   normalize the result, and optionally return detailed diagnostics for later
+   performance or physics debugging. *)
 
 Options[IntegrateViaIBP] = {NumFinalParticles -> 3, NumLoops -> 0, BasisFamily
    -> "X30", BasisRoot -> Automatic, GenerateMissingBases -> False, ExpansionOrder

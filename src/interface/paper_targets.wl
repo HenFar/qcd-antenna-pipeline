@@ -1,6 +1,17 @@
 (*************************************************)
 
 (*
+  Encoded paper targets and reference expressions.
+  Communicates with:
+    - src/core/diagnostics.wl and src/interface/build_router.wl for optional
+      build-side literature checks.
+    - src/interface/integration_router.wl for integrated benchmark checks.
+
+  Why this file exists:
+    These expressions are not part of the construction pipeline itself.  They
+    are frozen benchmarks used to validate that package-generated objects match
+    known literature conventions when such a check is meaningful.
+
   A21 reference expression.
   This is only used by the opt-in diagnostics in BuildAntenna and
   RunAntennaDiagnostics; it is not an ingredient in the construction.
@@ -39,6 +50,10 @@ A30Paper = \!\(TraditionalForm\`
 \*FractionBox[\(2\), \(s13\)] - 
 \*FractionBox[\(2\), \(s23\)]\);
 
+(* D30OrderedPaperTerm[sab, sac, sbc]
+   ==================================
+   Return one ordered D30 literature contribution before the symmetrized sum is
+   assembled in D30Paper. *)
 D30OrderedPaperTerm[sab_, sac_, sbc_] :=
   (
     2 q2^2 sac / (sab sbc) +

@@ -1,6 +1,25 @@
 (*************************************************)
 
 (*
+  File role and communication map
+  -------------------------------
+  This file communicates with:
+    - AntennaPipeline.wl, which loads it early so the public interfaces can all
+      share the same stored-result logic.
+    - src/interface/build_router.wl, which uses this subsystem for
+      BuildAntenna and BuildAntennaObject cache keys and payloads.
+    - src/interface/integration_router.wl, which reuses it for
+      IntegrateAntenna and BuildAndIntegrateAntenna.
+    - src/interface/rratio_driver.wl, which reuses the same route-kind pattern
+      for BuildRRatio.
+    - The run-record helpers in the interface layer, which are called from
+      FormatStoredResultReturn[...] so cache hits look like fresh runs.
+
+  Why this file exists:
+  Stored results are a usability optimization, not a second computation engine.
+  The design therefore keeps the cache strictly as a serialization, validation,
+  and return-format layer wrapped around the public routes.
+
   Public result cache utilities.
   The computation pipeline remains the source of truth; this layer only
   stores and restores generated public-route outputs on disk.
@@ -130,6 +149,11 @@ $StoredResultRouteKinds = {
   "BuildRRatio"
 };
 
+(* Root and route-kind helpers
+   ---------------------------
+   These definitions make the public route family part of the cache identity.
+   That prevents collisions between routes that may share physics inputs but
+   return different public objects or diagnostics. *)
 DefaultStoredResultsRoot[] :=
   FileNameJoin[{$AntennaPipelineRoot, "stored_results"}];
 
@@ -181,6 +205,12 @@ NormalizeStoredResultRouteKind[routeKind_Symbol] :=
 
 NormalizeStoredResultRouteKind[routeKind_] := routeKind;
 
+(* Key normalization helpers
+   -------------------------
+   Cached filenames are derived from normalized request associations rather than
+   raw Wolfram expressions.  This matters because semantically identical option
+   sets can otherwise hash differently due to symbol versus string keys, option
+   ordering, or syntactic wrappers. *)
 NormalizeStoredResultOptionAssociation[assoc_Association] :=
   Association @ KeyValueMap[
     With[{normalizedKey =
@@ -259,6 +289,10 @@ StoredResultTypeLabel[type_] :=
     ToString[type, InputForm]
   ];
 
+(* Path construction and on-disk payload helpers
+   ---------------------------------------------
+   Human-readable labels make the cache browsable, while the hash ensures the
+   true cache identity is still determined by the full normalized request. *)
 StoredResultPath[routeKind_String, key_Association, root_, label_String] :=
   Module[{resolvedRoot, subdir, stem, hash},
     resolvedRoot = ResolveStoredResultsRoot[root];
@@ -300,6 +334,10 @@ StoredResultPayload[result_, diagnostics_, routeKind_, key_Association,
       If[AssociationQ[diagnostics], diagnostics, <||>]
   |>;
 
+(* StoredResultLoad and StoredResultPayloadValidQ deliberately distinguish
+   unreadable cache files from structurally invalid payloads.  That makes cache
+   inspection and schema migration debugging much more transparent than
+   collapsing every failure into one generic miss. *)
 StoredResultLoad[path_String] :=
   Module[{data},
     If[!FileExistsQ[path],
@@ -324,6 +362,12 @@ StoredResultPayloadValidQ[data_Association] :=
     True
   ];
 
+(* Inspection helpers
+   ------------------
+   These summarize cached entries without re-running any physics.  The goal is
+   fast human inspection: what route created this file, which request key it
+   corresponds to, and whether its result/diagnostics payload is structurally
+   usable. *)
 StoredResultResultSummary[result_] :=
   <|
     "Head" -> ToString[Head[result], InputForm],
@@ -457,6 +501,12 @@ StoredResultInfoForLabel[label_String, root_String] :=
     ]
   ];
 
+(* Exact entry load/store helpers
+   ------------------------------
+   Loading validates schema version, route kind, and normalized request key
+   before accepting a cache hit.  This is stricter than a plain file existence
+   check because the cache must never silently replay a result for the wrong
+   public request. *)
 LoadStoredResultEntry[routeKind_String, key_Association, root_, label_String] :=
   Module[{path, data},
     path = StoredResultPath[routeKind, key, root, label];
@@ -486,6 +536,12 @@ StoreStoredResultEntry[routeKind_String, key_Association, root_,
     path
   ];
 
+(* Cache-hit metadata helpers
+   --------------------------
+   These functions annotate stored diagnostics so downstream callers can tell
+   that timing and intermediate-step information came from disk rather than from
+   a fresh runtime.  The public return shape is preserved on purpose: a cached
+   result should be easy to consume with the same code path as a fresh one. *)
 StoredResultCacheMetadata[data_Association] :=
   <|
     "LoadedFromStoredResults" -> True,
@@ -610,6 +666,10 @@ Options[ListStoredResults] = {
   RouteKind -> All
 };
 
+(* ListStoredResults and StoredResultInfo form the inspection API for the cache.
+   They intentionally mirror the public route vocabulary so users can ask about
+   cached BuildAntenna / IntegrateAntenna requests without learning a separate
+   internal identifier scheme. *)
 ListStoredResults[OptionsPattern[]] :=
   Module[{root, routeKind, files},
     root = ResolveStoredResultsRoot[OptionValue[ResultsCacheRoot]];

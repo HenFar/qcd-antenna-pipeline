@@ -1,3 +1,22 @@
+(* ::Section:: *)
+(* Build-route orchestration *)
+
+(* Communicates with:
+   - src/core/profiles.wl and src/routes/route_catalog.wl for route metadata.
+   - src/engines/amplitudes_tree.wl, src/engines/interference_tree.wl,
+     src/engines/extraction_tree.wl, and src/engines/color_ordered_a40.wl for
+     the tree-level production pipeline.
+   - src/interface/build_router.wl, which wraps these raw build-data records in
+     the public API.
+   - src/routes/massive_a30_reconstruction.wl and
+     src/routes/massive_a30_unintegrated.wl for the special D30 / massive-A30
+     branches.
+
+   Why this file exists:
+   The engines know how to perform one physical step at a time.  This layer is
+   where those steps are composed into full antenna-specific workflows, with the
+   profile metadata deciding which branch to take. *)
+
 BuildRouteBuildData::usage =
   "BuildRouteBuildData[key, options] dispatches the src build route and returns the raw stage association before public formatting.";
 
@@ -7,6 +26,9 @@ BuildTreeRouteData::usage =
 ResolveTreeSelfInterferenceRoute::usage =
   "ResolveTreeSelfInterferenceRoute[key, amp, profile] returns the tree-level self-interference used by the src route layer.";
 
+(* BuildRouteBuildData[key, options]
+   =================================
+   Dispatch to the build workflow appropriate for the requested loop order. *)
 BuildRouteBuildData[key_, options_Association] :=
   Module[{loopOrder},
     loopOrder = key[[3]];
@@ -45,6 +67,16 @@ BuildRouteBuildData[key_, options_Association] :=
     ]
   ];
 
+(* BuildTreeRouteData[key, options]
+   ================================
+   Run the full tree-level build workflow for one antenna family.
+
+   Notes
+     Although this function is named “tree”, it also owns the route-level
+     special cases that replace the standard massless tree source with a custom
+     reconstruction, such as the massive A30 branch and the D30 source-model
+     route.  Those are still tree-level build stories even though their physics
+     inputs differ from the default A/B/C source. *)
 BuildTreeRouteData[key_, options_Association] :=
   Module[{profile, amp, context, fullInterference, fullExtraction, split,
      sectors, sectorInterference, extraction, colorOrderedData, diagnostics,
@@ -83,6 +115,9 @@ BuildTreeRouteData[key_, options_Association] :=
     ];
     amp = AntennaAmplitude[key];
     context = <|"BornInterference" -> BornInterference[]|>;
+    (* The production mode stored in the profile is the key route switch:
+       it tells us whether this family is a plain self-interference build, a
+       color-ordered special case, or a sector-based four-quark construction. *)
     output =
       Switch[profile["Production"],
         "SelfInterference",
@@ -215,6 +250,11 @@ BuildTreeRouteData[key_, options_Association] :=
     output
   ];
 
+(* ResolveTreeSelfInterferenceRoute[key, amp, profile]
+   ===================================================
+   Resolve the tree-level self-interference source used by the build route,
+   preferring cached profile-level definitions when available and falling back
+   to direct recomputation otherwise. *)
 ResolveTreeSelfInterferenceRoute[key_, amp_, profile_Association] :=
   Module[{interference, storedRuleValue, keyTypeName},
     keyTypeName = SymbolName[First[key]];

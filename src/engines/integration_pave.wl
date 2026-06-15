@@ -1,3 +1,20 @@
+(* ::Section:: *)
+(* PaVe / Package-X integration backend *)
+
+(* Communicates with:
+   - src/core/profiles.wl through AntennaIntegrationProfile[...], which
+     specifies the PaVe family, expansion order, and convention choices.
+   - src/routes/integration_workflows.wl, which dispatches to this backend for
+     PaVe-routed antennae such as A21.
+   - src/engines/integrated_antenna_extraction.wl, which consumes the integrated
+     objects returned here when further T-term extraction is needed.
+
+   Why this file exists:
+   Some low-multiplicity virtual antennae are naturally handled in a PaVe /
+   Package-X workflow rather than by an IBP basis reduction.  This file isolates
+   the scalar-integral evaluation and convention-conversion logic for that
+   backend. *)
+
 IntegrateViaPaVe::usage =
   "IntegrateViaPaVe[antenna, profile, expandPaVeQ, applyFeynCalcQ, quarkMass, ...] runs the PaVe/Package-X integration route.";
 
@@ -17,6 +34,10 @@ Options[IntegrateViaPaVe] = {PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> 2, KinematicScale -> q2, NormalizeKinematicScale ->
     True, LoopMomentum -> l, ApplyDimReg -> True};
 
+(* IntegrateViaPaVe[antenna, profile, ...]
+   =======================================
+   Convert a one-loop antenna to PaVe form if needed and optionally evaluate it
+   with the configured PaVe backend. *)
 IntegrateViaPaVe[antenna_, profile_Association, ExpandPaVeFunction_,
    ApplyFeynCalc_, quarkMass_, OptionsPattern[]] :=
   Module[{paVeAntenna, evaluatedAntenna, output},
@@ -45,6 +66,9 @@ Options[EvaluatePaVeAntenna] = {PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> 2, KinematicScale -> q2, NormalizeKinematicScale ->
     True, ApplyDimReg -> True};
 
+(* EvaluatePaVeAntenna[antenna, profile, applyFeynCalcMS, ...]
+   ============================================================
+   Evaluate a PaVe-level antenna using the selected backend. *)
 EvaluatePaVeAntenna[antenna_, profile_Association, applyFeynCalcMS_,
    OptionsPattern[]] :=
   Module[{evaluation, expansionOrder, kinematicScale, paXResult, output},
@@ -74,6 +98,9 @@ EvaluatePaVeAntenna[antenna_, profile_Association, applyFeynCalcMS_,
 Options[NormalizePaXEvaluateResult] = {ExpansionOrder -> 2,
    KinematicScale -> q2, NormalizeKinematicScale -> True};
 
+(* NormalizePaXEvaluateResult[paXResult, profile, applyFeynCalcMS, ...]
+   ====================================================================
+   Convert a raw Package-X result into the convention requested by the profile. *)
 NormalizePaXEvaluateResult[paXResult_, profile_Association, applyFeynCalcMS_,
    OptionsPattern[]] :=
   Module[{convention, epsilon, scale, scaleMu, output},
@@ -103,6 +130,12 @@ NormalizePaXEvaluateResult[paXResult_, profile_Association, applyFeynCalcMS_,
 Options[NormalizeMasslessTwoPartonPaXResult] = {ExpansionOrder -> 2,
    NormalizeKinematicScale -> True};
 
+(* NormalizeMasslessTwoPartonPaXResult[...]
+   ========================================
+   Apply the branch, scale, and convention conversions used by the massless
+   two-parton A21 paper route.  The extra conversion factor is kept explicit
+   because infrared poles can pull higher epsilon terms down into the final
+   finite orders. *)
 NormalizeMasslessTwoPartonPaXResult[paXResult_, epsilon_, scale_, scaleMu_,
    applyFeynCalcMS_, OptionsPattern[]] :=
   Module[{branchRules, scaledResult, conversionFactor, expandedResult,

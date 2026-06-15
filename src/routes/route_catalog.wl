@@ -1,3 +1,18 @@
+(* ::Section:: *)
+(* Human-readable route stories *)
+
+(* Communicates with:
+   - src/routes/build_workflows.wl and src/routes/integration_workflows.wl,
+     which attach these story associations to their returned diagnostics.
+   - src/interface/build_router.wl and src/interface/integration_router.wl,
+     which expose the resulting metadata publicly.
+
+   Why this file exists:
+   The pipeline is complex enough that a compact narrative description of each
+   route is useful metadata in its own right.  These “stories” give later
+   readers a high-level map of which stages a request went through without
+   forcing them to reconstruct that map from code paths alone. *)
+
 BuildRouteStory::usage =
   "BuildRouteStory[key] returns a readable summary of the route stages used to build the selected antenna in src.";
 

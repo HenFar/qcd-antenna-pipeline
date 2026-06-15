@@ -2,6 +2,17 @@
 
 (*
   Public R-ratio driver.
+  Communicates with:
+    - src/interface/integration_router.wl, which supplies the validated
+      integrated antenna ingredients.
+    - src/interface/build_router.wl for shared intermediate-step formatting.
+    - src/core/result_cache.wl for top-level and nested ingredient reuse.
+
+  Why this file exists:
+    The package ultimately serves observable construction, not just isolated
+    antenna functions.  This file shows how the integrated building blocks are
+    combined into a physics-facing symbolic driver while preserving provenance.
+
   This layer assembles the validated integrated antenna ingredients into the
   symbolic NNLO R-ratio combination used in the thesis notebook package.
 *)
@@ -67,6 +78,9 @@ BuildRRatio::masslessOnly =
 BuildRRatio::ingredientFailure =
   "BuildRRatio[`1`] could not build the required ingredient `2` through the public antenna routes.";
 
+(* CollectRRatioIntermediateSteps[...]
+   ===================================
+   Collect the driver-side stages explicitly requested by the caller. *)
 CollectRRatioIntermediateSteps[ingredientCalls_, ingredients_,
    assemblyExpression_, finalExpression_, diagnostics_, steps_List] :=
   Module[{collected = <||>},
@@ -88,6 +102,10 @@ CollectRRatioIntermediateSteps[ingredientCalls_, ingredients_,
     collected
   ];
 
+(* RRatioFailureResult[result, diagnostics, intermediateSteps, returnDiagnostics]
+   ==============================================================================
+   Format a failing driver evaluation in the same public return style used for
+   successful runs. *)
 RRatioFailureResult[result_, diagnostics_, intermediateSteps_, returnDiagnostics_] :=
   Module[{diagnosticsWithSteps = diagnostics},
     If[Length[intermediateSteps] > 0,
@@ -121,6 +139,9 @@ RRatioModelShellFailure[model_Symbol, returnDiagnostics_, intermediateSteps_] :=
       returnDiagnostics]
   ];
 
+(* FormatFreshRRatioReturn[result, diagnostics, ...]
+   ================================================
+   Convert a fresh driver evaluation into the requested public return shape. *)
 FormatFreshRRatioReturn[result_, diagnostics_, returnDiagnostics_,
    requestedSteps_List, printSteps_] :=
   Module[{selectedSteps},
@@ -174,6 +195,10 @@ EvaluateRRatioStoredIngredient[label_String, expr_] :=
 
 SetAttributes[EvaluateRRatioStoredIngredient, HoldAll];
 
+(* BuildRRatioIngredientCallAssociation[masslessQuarkMass]
+   =======================================================
+   Declare the public antenna calls that furnish the massless SMQCD R-ratio
+   ingredients. *)
 BuildRRatioIngredientCallAssociation[masslessQuarkMass_] :=
   <|
     "intA21" -> HoldForm[
@@ -212,6 +237,10 @@ BuildRRatioIngredientCallAssociation[masslessQuarkMass_] :=
     ]
   |>;
 
+(* BuildRRatioIngredientCacheOptions[options]
+   ==========================================
+   Translate top-level cache preferences into the nested ingredient-call cache
+   policy. *)
 BuildRRatioIngredientCacheOptions[options_Association] :=
   Module[{useStored, storeStored, refreshStored, cacheRoot},
     useStored = TrueQ[Lookup[options, "UseStoredResults", False]];
@@ -243,6 +272,10 @@ BuildRRatioStoredResultLabel[model_Symbol, options_Association] :=
       {" " -> "", "." -> "-", "/" -> "-"}]
   ];
 
+(* BuildRRatioSMQCDIngredients[masslessQuarkMass, options]
+   =======================================================
+   Evaluate and validate the integrated antenna ingredients needed by the
+   massless SMQCD driver. *)
 BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
   Module[{cacheOptions, a21Result, a30Result, a31Result, a22Result,
      a40LeadResult, a40SubResult, b40Result, c40Result, ingredients,

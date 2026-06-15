@@ -1,3 +1,22 @@
+(* ::Section:: *)
+(* Diagnostic and paper-comparison utilities *)
+
+(* Communicates with:
+   - src/interface/paper_targets.wl, which supplies the encoded comparison
+     targets such as A20Paper, A40Paper, and A21Paper.
+   - src/interface/build_router.wl through BuildAntenna[...] in
+     RunAntennaDiagnostics[...].
+   - src/interface/integration_router.wl through BuildAndIntegrateAntenna[...]
+     in the loop-level regression checks.
+   - src/routes/build_workflows.wl and the D30 route files, whose outputs are
+     validated by PaperDiagnosticsFor[...].
+
+   Why this file exists:
+   Diagnostic logic is intentionally kept outside the production routes because
+   physics validation often needs convention bridges, label scans, and numeric
+   probes that would make the build workflow harder to read if they were mixed
+   directly into it. *)
+
 KinematicChanges::usage =
   "KinematicChanges[expr, numFinalParticles] rewrites an expression into the package kinematic convention used by the diagnostics layer.";
 
@@ -34,6 +53,12 @@ PaperDiagnosticsFor::usage =
 RunAntennaDiagnostics::usage =
   "RunAntennaDiagnostics[...] runs the package's built-in regression and paper-check suite.";
 
+(* KinematicChanges[expr, numFinalParticles]
+   =========================================
+   Rewrite both target and computed expressions into one canonical kinematic
+   convention before comparing them.  The point is not algebraic prettiness;
+   it is to avoid mistaking different choices of dependent invariants for a real
+   physics mismatch. *)
 KinematicChanges[expr_, numFinalParticles_] :=
   Module[{changedExpr},
     Which[
@@ -52,6 +77,10 @@ KinematicChanges[expr_, numFinalParticles_] :=
     changedExpr
   ];
 
+(* TestEqualAntennaeQ[paperAnt, compAnt, numFinalParticles]
+   ========================================================
+   Return a strict boolean comparison after both expressions have been pushed
+   into the same kinematic convention and expanded. *)
 TestEqualAntennaeQ[paperAnt_, compAnt_, numFinalParticles_] :=
   Module[{paperAntKin, compAntKin, output},
     paperAntKin =
@@ -68,6 +97,11 @@ TestEqualAntennaeQ[paperAnt_, compAnt_, numFinalParticles_] :=
     TrueQ[output]
   ];
 
+(* TestEqualAntennae[paperAnt, compAnt, numFinalParticles]
+   =======================================================
+   Notebook-oriented printing wrapper around TestEqualAntennaeQ[...].  This is
+   retained for interactive usability even though the boolean-returning helper
+   is what the automated diagnostics primarily use. *)
 TestEqualAntennae[paperAnt_, compAnt_, numFinalParticles_] :=
   Module[{output},
     output = TestEqualAntennaeQ[paperAnt, compAnt, numFinalParticles]
@@ -79,6 +113,11 @@ TestEqualAntennae[paperAnt_, compAnt_, numFinalParticles_] :=
     ]
   ];
 
+(* ExactNumericResidual[paperAnt, compAnt, numFinalParticles]
+   ==========================================================
+   Evaluate the residual at one fixed non-singular phase-space point.  This is
+   a pragmatic fallback for cases where symbolic equality is expensive or
+   inconclusive. *)
 ExactNumericResidual[paperAnt_, compAnt_, numFinalParticles_] :=
   Module[{pointRules, residual},
     pointRules = {q2 -> 23, s13 -> 2, s14 -> 3, s23 -> 5, s24 -> 7, s34
@@ -88,6 +127,10 @@ ExactNumericResidual[paperAnt_, compAnt_, numFinalParticles_] :=
     TimeConstrained[Simplify[residual], 60, $Failed]
   ];
 
+(* SwapFourQuarkPairs[expr]
+   ========================
+   Apply the quark-pair exchange used in four-parton diagnostics.  This is
+   physically motivated by the symmetry structure of the B40/C40 families. *)
 SwapFourQuarkPairs[expr_] :=
   Module[{u12, u13, u14, u23, u24, u34},
     expr /. {s12 -> u12, s13 -> u13, s14 -> u14, s23 -> u23, s24 -> u24,
@@ -95,6 +138,10 @@ SwapFourQuarkPairs[expr_] :=
       -> s24, u34 -> s12}
   ];
 
+(* PermuteSInvariants[expr, perm]
+   ==============================
+   Relabel Mandelstam invariants according to a momentum permutation so
+   convention-level mismatches can be separated from true formula mismatches. *)
 PermuteSInvariants[expr_, perm_List] :=
   Module[{u12, u13, u14, u23, u24, u34, sij},
     sij[i_, j_] := Symbol["s" <> ToString[Min[perm[[i]], perm[[j]]]] 
@@ -104,12 +151,21 @@ PermuteSInvariants[expr_, perm_List] :=
        u23 -> sij[2, 3], u24 -> sij[2, 4], u34 -> sij[3, 4]}
   ];
 
+(* FourPartonMomentumLabelPermutations[]
+   =====================================
+   Enumerate the restricted set of physically relevant four-parton relabelings
+   scanned by MomentumLabelScan[...]. *)
 FourPartonMomentumLabelPermutations[] :=
   {{"identity", {1, 2, 3, 4}}, {"k1<->k2", {2, 1, 3, 4}}, {"k3<->k4",
      {1, 2, 4, 3}}, {"both pair flips", {2, 1, 4, 3}}, {"pair swap", {3, 
     4, 1, 2}}, {"pair swap + first pair flip", {4, 3, 1, 2}}, {"pair swap + second pair flip",
      {3, 4, 2, 1}}, {"pair swap + both flips", {4, 3, 2, 1}}};
 
+(* MomentumLabelScan[paperAnt, compAnt]
+   ====================================
+   Scan allowed four-parton relabelings and report which one, if any, restores
+   agreement.  This is intentionally verbose because its job is to diagnose why
+   a comparison failed, not just whether it failed. *)
 MomentumLabelScan[paperAnt_, compAnt_] :=
   Module[{pointRules, paperKin, compKin, scans, name, perm, permutedPaper,
      numericResidual, exactResidual},
@@ -143,6 +199,11 @@ MomentumLabelScan[paperAnt_, compAnt_] :=
     scans
   ];
 
+(* PrintAntennaDiagnostics[label, diagnostics, paperAnt, compAnt]
+   ===============================================================
+   Print an expanded four-parton diagnostic summary, including swapped-pair and
+   numeric checks that are often more informative than a single exact-match
+   boolean when debugging B40/C40 sector logic. *)
 PrintAntennaDiagnostics[label_, diagnostics_, paperAnt_, compAnt_] :=
   Module[{pointRules, paperValue, compValue, numericResidual, swappedValue,
      paperPlusSwappedResidual},
@@ -193,6 +254,10 @@ PrintAntennaDiagnostics[label_, diagnostics_, paperAnt_, compAnt_] :=
     ]
   ];
 
+(* PaperCheckAvailableQ[key]
+   =========================
+   Report whether the package has an encoded literature target for the requested
+   antenna family. *)
 PaperCheckAvailableQ[key_] :=
   Switch[key,
     {A, 2, 0},
@@ -220,6 +285,12 @@ PaperCheckAvailableQ[key_] :=
       False
   ];
 
+(* PaperDiagnosticsFor[key, result]
+   ================================
+   Build the family-specific paper-comparison diagnostics.  The definitions are
+   specialized because different antennae require different comparison logic:
+   A40 has multiple colour components, A21 may still be in PaVe form, and some
+   routes only admit numeric residual checks rather than one exact identity. *)
 PaperDiagnosticsFor[{A, 2, 0}, result_] :=
   <|"PaperCheckAvailable" -> True, "ExactMatchQ" -> TestEqualAntennaeQ[
     A20Paper, result, 2]|>;
@@ -284,6 +355,12 @@ PaperDiagnosticsFor[_, _] :=
 Options[RunAntennaDiagnostics] = {LoopOrder -> 0, C40Diagnostic -> False
   };
 
+(* RunAntennaDiagnostics[OptionsPattern[]]
+   =======================================
+   Exercise the public routes and print the compact regression checks used
+   during development.  It goes through the interface layer on purpose so the
+   diagnostics cover routing, normalization, and return-shape decisions rather
+   than only private algebra kernels. *)
 RunAntennaDiagnostics[OptionsPattern[]] :=
   Module[{loopOrder, c40Diagnostic, a20, a20Diag, a30, a30Diag, a40, 
     a40Diag, b40, b40Diag, c40, c40Diag, a21, a21Diag, a21Integrated,

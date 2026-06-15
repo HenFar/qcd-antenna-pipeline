@@ -1,3 +1,20 @@
+(* ::Section:: *)
+(* Massive A30 reconstruction route *)
+
+(* Communicates with:
+   - src/engines/interference_tree.wl and src/engines/extraction_tree.wl for
+     the actual source-to-antenna mechanics.
+   - src/core/profiles.wl for reused A30 normalization metadata.
+   - src/routes/build_workflows.wl, which delegates here for nonzero-mass A30
+     builds.
+   - src/routes/massive_a30_unintegrated.wl, whose thesis-facing target is used
+     as the route benchmark.
+
+   Why this file exists:
+   Massive A30 requires a special reconstruction and convention bridge, but the
+   result still needs to fit into the same build-data contract as the standard
+   routes so the rest of the package can consume it uniformly. *)
+
 If[!ValueQ[$MassiveA30ReconstructionPackageLoaded] ||
     !TrueQ[$MassiveA30ReconstructionPackageLoaded],
   $MassiveA30ReconstructionPackageLoaded = True;
@@ -61,6 +78,14 @@ Options[MassiveA30ThesisTarget] = MassiveA30ReconstructionOptions[];
 Options[MassiveA30ThesisAntenna] = MassiveA30ReconstructionOptions[];
 Options[MassiveA30BuildData] = MassiveA30ReconstructionOptions[];
 
+(* MassiveA30FieldState[numFinalParticles]
+   =======================================
+   Return the explicit heavy-quark final state used by the massive A30 route.
+
+   Notes
+     The same helper is reused for the two-parton born channel and the
+     three-parton production channel so the normalization pair stays
+     convention-aligned. *)
 MassiveA30FieldState[numFinalParticles_Integer] :=
   Which[
     numFinalParticles == 2,
@@ -73,6 +98,11 @@ MassiveA30FieldState[numFinalParticles_Integer] :=
       $Failed
   ];
 
+(* MassiveA30CanonicalRules[qm]
+   ============================
+   Declare the on-shell and propagator replacements that rewrite the raw
+   massive expressions into the invariant basis expected by the rest of the
+   package. *)
 MassiveA30CanonicalRules[qm_] :=
   {
     Pair[Momentum[k1, _], Momentum[k1, _]] -> qm ^ 2,
@@ -98,9 +128,17 @@ MassiveA30CanonicalRules[qm_] :=
     ] :> 1 / s23
   };
 
+(* MassiveA30Canonicalize[expr, qm]
+   ================================
+   Push one massive expression into the canonical invariant representation used
+   throughout this route. *)
 MassiveA30Canonicalize[expr_, qm_] :=
   expr /. MassiveA30CanonicalRules[qm] // Together // Expand // Simplify;
 
+(* MassiveA30GeneratedAmplitude[numFinalParticles, qm, printDiagramQ, stripCouplings]
+   ================================================================================
+   Generate the stripped source amplitude for the massive A30 reconstruction
+   track. *)
 MassiveA30GeneratedAmplitude[numFinalParticles_Integer, qm_,
    printDiagramQ_:False, stripCouplings_:AllCouplings] :=
   Module[{outMoms, finalState, diagsTree, ampTree, ampTreeCouplings},
@@ -151,6 +189,9 @@ MassiveA30GeneratedAmplitude[numFinalParticles_Integer, qm_,
     ampTreeCouplings // SUNSimplify // Simplify
   ];
 
+(* MassiveA30StageStatusBlock[name, status, ...]
+   =============================================
+   Build a structured status note for the development-heavy massive route. *)
 MassiveA30StageStatusBlock[name_String, status_String,
    blockedOn_: "None", forcedStep_: "None",
    whyTemporary_: "Not applicable", replaceLater_: "Nothing"] :=
@@ -160,9 +201,12 @@ MassiveA30StageStatusBlock[name_String, status_String,
     "BlockedOn" -> blockedOn,
     "ForcedStepUsed" -> forcedStep,
     "WhyAcceptableTemporarily" -> whyTemporary,
-    "WhatMustBeReplacedLater" -> replaceLater
+      "WhatMustBeReplacedLater" -> replaceLater
   |>;
 
+(* MassiveA30TreeDiagrams[]
+   ========================
+   Return the tree diagrams used by MassiveA30TreeAmplitude[...]. *)
 MassiveA30TreeDiagrams[] :=
   InsertFields[
     CreateTopologies[0, 1 -> 3],
@@ -172,14 +216,24 @@ MassiveA30TreeDiagrams[] :=
     ExcludeParticles -> {}
   ];
 
+(* MassiveA30TreeAmplitude[...]
+   ============================
+   Build the three-parton heavy-quark production amplitude for the route. *)
 MassiveA30TreeAmplitude[OptionsPattern[]] :=
   MassiveA30GeneratedAmplitude[3, OptionValue[quarkMass],
     OptionValue[printDiagram], OptionValue[ApplyStripCouplings]];
 
+(* MassiveA30BornAmplitude[...]
+   ============================
+   Build the two-parton heavy born amplitude used for normalization. *)
 MassiveA30BornAmplitude[OptionsPattern[]] :=
   MassiveA30GeneratedAmplitude[2, OptionValue[quarkMass],
     False, OptionValue[ApplyStripCouplings]];
 
+(* MassiveA30SelfInterference[...]
+   ===============================
+   Compute the heavy qqbar g production self-interference and immediately
+   rewrite it into the route's invariant basis. *)
 MassiveA30SelfInterference[OptionsPattern[]] :=
   Module[{amp},
     amp = MassiveA30TreeAmplitude[quarkMass -> OptionValue[quarkMass],
@@ -194,6 +248,10 @@ MassiveA30SelfInterference[OptionsPattern[]] :=
     ]
   ];
 
+(* MassiveA30BornInterference[...]
+   ===============================
+   Compute the born self-interference that fixes the overall antenna
+   normalization. *)
 MassiveA30BornInterference[OptionsPattern[]] :=
   Module[{amp},
     amp = MassiveA30BornAmplitude[quarkMass -> OptionValue[quarkMass],
@@ -207,6 +265,10 @@ MassiveA30BornInterference[OptionsPattern[]] :=
     ]
   ];
 
+(* MassiveA30ExtractionAssociation[...]
+   ====================================
+   Run the standard extraction machinery on the custom massive source so the
+   special route still returns ordinary package-shaped build data. *)
 MassiveA30ExtractionAssociation[OptionsPattern[]] :=
   Module[{profile, selfInterference, bornInterference, extraction},
     profile = AntennaProfile[{A, 3, 0}];
@@ -228,6 +290,9 @@ MassiveA30ExtractionAssociation[OptionsPattern[]] :=
         "BornInterference" -> bornInterference|>]
   ];
 
+(* MassiveA30NormalizedInterference[...]
+   =====================================
+   Expose the normalized interference returned by the extraction layer. *)
 MassiveA30NormalizedInterference[OptionsPattern[]] :=
   Lookup[
     MassiveA30ExtractionAssociation[quarkMass -> OptionValue[quarkMass],
@@ -238,6 +303,10 @@ MassiveA30NormalizedInterference[OptionsPattern[]] :=
     Missing["NotAvailable"]
   ];
 
+(* MassiveA30ExtractedAntenna[...]
+   ===============================
+   Return the package-side extracted antenna before the thesis-facing bridge is
+   applied. *)
 MassiveA30ExtractedAntenna[OptionsPattern[]] :=
   Module[{components},
     components =
@@ -252,6 +321,10 @@ MassiveA30ExtractedAntenna[OptionsPattern[]] :=
     Lookup[components, "Antenna", components]
   ];
 
+(* MassiveA30ThesisTarget[...]
+   ===========================
+   Re-express the encoded thesis target in the same on-shell variables used by
+   the reconstruction track. *)
 MassiveA30ThesisTarget[OptionsPattern[]] :=
   Module[{qm},
     qm = OptionValue[quarkMass];
@@ -263,6 +336,10 @@ MassiveA30ThesisTarget[OptionsPattern[]] :=
     } // Together // Simplify
   ];
 
+(* MassiveA30ThesisAntenna[...]
+   ============================
+   Apply the explicit notebook-to-thesis normalization bridge to the raw route
+   interference. *)
 MassiveA30ThesisAntenna[OptionsPattern[]] :=
   Module[{qm, rawInterference, thesisBornOnShell},
     qm = OptionValue[quarkMass];
@@ -283,6 +360,10 @@ MassiveA30ThesisAntenna[OptionsPattern[]] :=
     ) /. q2 -> 2 qm ^ 2 + s12 + s13 + s23 // Together // Simplify
   ];
 
+(* MassiveA30BuildData[...]
+   ========================
+   Package the massive route into the same association contract returned by
+   BuildTreeRouteData[...] for ordinary tree antennas. *)
 MassiveA30BuildData[OptionsPattern[]] :=
   Module[{qm, profile, record, thesisAntenna, paperResidual},
     qm = OptionValue[quarkMass];
@@ -331,6 +412,10 @@ MassiveA30BuildData[OptionsPattern[]] :=
     |>
   ];
 
+(* MassiveA30ReconstructionRecord[...]
+   ===================================
+   Collect the major intermediate objects of the massive A30 reconstruction in
+   one provenance association. *)
 MassiveA30ReconstructionRecord[OptionsPattern[]] :=
   Module[{qm, amplitude, bornAmplitude, selfInterference, extraction},
     qm = OptionValue[quarkMass];

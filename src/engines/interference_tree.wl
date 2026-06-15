@@ -1,3 +1,22 @@
+(* ::Section:: *)
+(* Tree-level interference construction *)
+
+(* Communicates with:
+   - src/engines/amplitudes_tree.wl, which supplies the raw amplitudes
+     interfered here.
+   - src/core/kinematics_and_utilities.wl through KinematicRules,
+     SafeDoPolarizationSums, ColourTensorCounter, ReturnColourSpinCouples, and
+     ApplyFeynCalcRules.
+   - src/core/profiles.wl through AntennaSelfInterference[...] and
+     BornInterference[], which memoize the outputs of this layer.
+   - src/engines/extraction_tree.wl, which consumes these interferences to
+     extract public tree-level antenna components.
+
+   Why this file exists:
+   The amplitude builders stop at unsquared matrix elements.  This layer turns
+   them into physical interference objects in a way that respects colour
+   structure, spin sums, and antenna-family-specific polarization handling. *)
+
 InterfereMAmplitudes::usage =
   "InterfereMAmplitudes[amp1, amp2, numFinalParticles, ...] builds the tree-level interference used by the unintegrated antenna extractors.";
 
@@ -16,6 +35,10 @@ SymmetrizedInterference::usage =
 Options[InterfereMAmplitudes] = {ApplyCasimirSubstitution -> True, ApplyDimReg
    -> True, AntennaType -> A, quarkMass -> 0};
 
+(* InterfereMAmplitudes[MAmp1, MAmp2, numFinalParticles, ...]
+   ==========================================================
+   Dispatch to the interference strategy appropriate to the colour complexity
+   of the input amplitudes. *)
 InterfereMAmplitudes[MAmp1_, MAmp2_, numFinalParticles_, OptionsPattern[
   ]] :=
   Module[{ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt,
@@ -52,6 +75,10 @@ InterfereMAmplitudes[MAmp1_, MAmp2_, numFinalParticles_, OptionsPattern[
     ]
   ];
 
+(* InterfereMAmplitudesPair[MAmp1, MAmp2, numFinalParticles, ...]
+   ==============================================================
+   Pairwise interference entry point used when the two amplitudes are not
+   necessarily identical. *)
 InterfereMAmplitudesPair[MAmp1_, MAmp2_, numFinalParticles_, OptionsPattern[
   InterfereMAmplitudes]] :=
   Module[{ApplyCasimirSubstitutionOpt, ApplyDimRegOpt, AntennaTypeOpt,
@@ -82,6 +109,11 @@ InterfereMAmplitudesPair[MAmp1_, MAmp2_, numFinalParticles_, OptionsPattern[
     interference
   ];
 
+(* SymmetrizedInterference[amp1, amp2, numFinalParticles, antennaType]
+   ===================================================================
+   Add the left-right and right-left interferences explicitly.  This keeps the
+   route logic readable for sector-based four-quark constructions where the two
+   amplitude orderings are physically distinct pieces before symmetrization. *)
 SymmetrizedInterference[amp1_, amp2_, numFinalParticles_, antennaType_
   ] :=
   Module[{leftRight, rightLeft, output},
@@ -100,12 +132,19 @@ SymmetrizedInterference[amp1_, amp2_, numFinalParticles_, antennaType_
     output
   ];
 
+(* InterfereMAmp1Count[...]
+   ========================
+   Evaluate the simpler interference path where each amplitude carries a single
+   colour tensor, so the full object can be interfered directly. *)
 InterfereMAmp1Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution_,
    ApplyDimReg_, AntennaType_, quarkMass_] :=
   Module[{interfBare, interfSimp, interfNumPart, interfDiracSimp, interfCalc,
      interfFinal, output},
     KinematicRules[numFinalParticles, QuarkMass -> quarkMass];
     interfBare = ComplexConjugate[MAmp1] * MAmp2;
+    (* Perform colour simplification and external-state sums before the final
+       scalar-product cleanup so the expression is reduced in the same physical
+       order one would use by hand. *)
     interfSimp =
       interfBare //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
@@ -148,6 +187,12 @@ InterfereMAmp1Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution
     output
   ];
 
+(* InterfereMAmp2Count[...]
+   ========================
+   Evaluate the more structured interference path where colour and spin pieces
+   are separated term by term before recombination.  This is needed when the
+   amplitude contains multiple colour tensors and a fully naive conjugate
+   product would obscure the physically meaningful colour decomposition. *)
 InterfereMAmp2Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution_,
    ApplyDimReg_, AntennaType_, quarkMass_] :=
   Module[{listTermsMAmp1, listTermsMAmp2, terms, C1, S1, C2, S2, CCouples,

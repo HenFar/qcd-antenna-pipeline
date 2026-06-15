@@ -1,3 +1,18 @@
+(* ::Section:: *)
+(* Massive A30 unintegrated source bridge *)
+
+(* Communicates with:
+   - src/routes/massive_a30_reconstruction.wl, which uses the same physics
+     target in a full BuildAntennaData-shaped workflow.
+   - src/routes/massive_a30_integrated.wl, which assumes the same package-side
+     convention when constructing the integrated bridge.
+   - thesis-facing encoded targets, which are represented explicitly here.
+
+   Why this file exists:
+   The massive A30 route needs an explicit bridge between thesis notation and
+   the package’s internal unintegrated convention.  This file makes that bridge
+   transparent instead of burying it inside a larger workflow. *)
+
 If[!ValueQ[AntennaPipelineMassiveA30LoadedQ],
   AntennaPipelineMassiveA30LoadedQ = True;
 ];

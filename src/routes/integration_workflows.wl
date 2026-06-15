@@ -1,3 +1,24 @@
+(* ::Section:: *)
+(* Integration-route orchestration *)
+
+(* Communicates with:
+   - src/core/profiles.wl and src/routes/route_catalog.wl for integration
+     metadata and route stories.
+   - src/engines/integration_pave.wl and src/engines/integration_ibp.wl for
+     the actual backend integrations.
+   - src/engines/integrated_antenna_extraction.wl for T-term and final
+     integrated-antenna post-processing.
+   - src/core/result_cache.wl for stored-result reuse and replay.
+   - src/interface/integration_router.wl, which wraps these raw route results
+     in the public API.
+   - src/routes/massive_a30_integrated.wl for the special massive A30 branch.
+
+   Why this file exists:
+   Integration is where the package stops being a collection of isolated engines
+   and becomes a user-facing pipeline: backend selection, cache behavior,
+   component-by-component A22 stitching, and post-integration extraction all
+   need to be coordinated in one place. *)
+
 IntegrateBackendDirectRoute::usage =
   "IntegrateBackendDirectRoute[antenna, backend, options] evaluates the src direct integration route for a raw antenna expression.";
 
@@ -7,6 +28,10 @@ IntegrateRouteObject::usage =
 BuildAndIntegrateRouteResult::usage =
   "BuildAndIntegrateRouteResult[type, n, l, options] evaluates the src build-and-integrate route before public formatting.";
 
+(* IntegrateBackendDirectRoute[antenna, integrationMethod, options]
+   ================================================================
+   Run one backend directly on a raw antenna expression, without any
+   AntennaObject-level orchestration. *)
 IntegrateBackendDirectRoute[antenna_, integrationMethod_, options_Association] :=
   Module[{applyFeynCalcOpt, quarkMassOpt, profile, output,
      intermediateSteps, collectedSteps},
@@ -68,6 +93,10 @@ IntegrateBackendDirectRoute[antenna_, integrationMethod_, options_Association] :
     If[Length[collectedSteps] > 0, {output, collectedSteps}, output]
   ];
 
+(* IntegrateRouteObject[obj, options]
+   ==================================
+   Integrate one AntennaObject through the route layer, including backend
+   selection, cache handling, diagnostics, and final post-processing. *)
 IntegrateRouteObject[obj_, options_Association] :=
   Module[{data, key, profile, contributionInput, contribution,
      componentInput, componentName, storedComponent, backend, antenna,
@@ -223,8 +252,11 @@ IntegrateRouteObject[obj_, options_Association] :=
       profile = Join[profile, <|"BasisFamily" -> "A22TwoLoopTree", "ImplementationStatus" -> "ExperimentalTwoLoopTree"|>]
     ];
     expansionOrder = If[Lookup[options, "ExpansionOrder", Automatic] === Automatic, Lookup[profile, "ExpansionOrder", 0], Lookup[options, "ExpansionOrder", 0]];
+    (* Massive A30 is currently a special route: unless the caller explicitly
+       forces the IBP master route, the package uses the dedicated integrated
+       bridge module rather than the generic backend path. *)
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] && quarkMassOpt =!= 0 && !TrueQ[$MassiveA30ForceIBPMasterRoute],
-      Module[{routeData, antennaLocal},
+      Module[{routeData, antennaLocal, openMasterBackendDiagnostics},
         antennaLocal = Lookup[data, "Antenna", $Failed];
         routeData = MassiveA30IntegratedRouteData[quarkMassOpt, expansionOrder, Lookup[options, "NormalizeKinematicScale", False], profile];
         rawIntegrated = routeData["RawIntegrated"];
@@ -233,6 +265,26 @@ IntegrateRouteObject[obj_, options_Association] :=
         selectedIntegrated = routeData["SelectedIntegrated"];
         backendDiagnostics = routeData["BackendDiagnostics"];
         diagnostics = routeData["Diagnostics"];
+        openMasterBackendDiagnostics =
+          If[
+            TrueQ[Lookup[options, "ReturnRecord", False]] ||
+            TrueQ[Lookup[options, "ReturnDiagnostics", False]] ||
+            TrueQ[Lookup[options, "ReturnMasterCombination", False]] ||
+            RequestedIntermediateStepQ[intermediateSteps, "MasterCombination"],
+            MassiveA30OpenMasterBackendDiagnostics[obj, options, routeKind],
+            <||>
+          ];
+        If[AssociationQ[openMasterBackendDiagnostics] &&
+            Length[openMasterBackendDiagnostics] > 0,
+          backendDiagnostics = Join[backendDiagnostics, openMasterBackendDiagnostics];
+          diagnostics = Join[
+            diagnostics,
+            <|
+              "BackendDiagnostics" -> backendDiagnostics,
+              "OpenMasterRouteAvailable" -> True
+            |>
+          ]
+        ];
         collectedSteps = CollectIntegrationIntermediateSteps[antennaLocal, rawIntegrated, tTerms, finalIntegrated, selectedIntegrated, backendDiagnostics, diagnostics, intermediateSteps];
         diagnosticsWithMetadata =
           Join[
@@ -443,6 +495,10 @@ IntegrateRouteObject[obj_, options_Association] :=
     output
   ];
 
+(* BuildAndIntegrateRouteResult[type, numFinalParticles, loopOrder, options]
+   =========================================================================
+   Compose the build and integration routes end to end, while preserving the
+   same cache and return-shape conventions as the standalone integration route. *)
 BuildAndIntegrateRouteResult[type_, numFinalParticles_Integer, loopOrder_Integer, options_Association] :=
   Module[{key, profile, contribution, componentName, antennaObject,
      buildComponent, selectionComponent, diagnostics, expansionOrder,

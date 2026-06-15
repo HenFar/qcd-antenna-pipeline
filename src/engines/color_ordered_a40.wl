@@ -1,6 +1,22 @@
 (*************************************************)
 
 (*
+  File role and communication map
+  -------------------------------
+  This file communicates with:
+    - src/engines/amplitudes_tree.wl, which supplies the full-colour A40 tree
+      amplitude and Born amplitude analyzed here.
+    - src/core/kinematics_and_utilities.wl through KinematicRules,
+      ApplyFeynCalcRules, and GluonColourBasisNorm.
+    - src/routes/build_workflows.wl, which uses ColorOrderedAntenna[...] for the
+      special A40 route.
+
+  Why this file exists:
+  The published A40 object is not simply the leading full-colour coefficient.
+  It is defined through a specific color-ordered partial amplitude.  That makes
+  A40 qualitatively different from the generic tree extractor, so the
+  color-ordering logic is kept in its own engine module.
+
   Colour-ordered A40 construction.
   The paper A40 is not the full-colour SUNN coefficient.  This block extracts
   the unsquared (1,3,4,2) fundamental colour chain, squares that colour-stripped
@@ -54,9 +70,17 @@ ColorStrippedInterference::usage =
 ColorOrderedAntenna::usage =
   "ColorOrderedAntenna[amp4, bornAmp] builds the paper-style color-ordered A40 antenna from the full-color amplitude and Born normalization.";
 
+(* ColorTensorFreeQ[expr]
+   ======================
+   Test whether a purported color-stripped object is genuinely free of explicit
+   colour tensors. *)
 ColorTensorFreeQ[expr_] :=
   FreeQ[expr, _SUNTF | _SUNF | _SUNFDelta];
 
+(* ExpandUnsquaredColor[amp]
+   =========================
+   Expand the unsquared colour structure enough to isolate individual
+   fundamental chains. *)
 ExpandUnsquaredColor[amp_] :=
   Module[{expanded, colorObjects},
     expanded =
@@ -88,6 +112,10 @@ ReversedChainPairQ[d1_, d2_] :=
   TrueQ[d1["Left"] === d2["Left"] && d1["Right"] === d2["Right"] && d1[
     "Adjoint"] === Reverse[d2["Adjoint"]]];
 
+(* DiscoverTwoGluonChains[orderedAmp]
+   ==================================
+   Locate the reversed two-gluon fundamental chains that encode the A40 partial
+   amplitudes before squaring. *)
 DiscoverTwoGluonChains[orderedAmp_] :=
   Module[{chains, data, pairs},
     chains = DeleteDuplicates[Cases[orderedAmp, c_SUNTF /; TwoGluonChainQ[
@@ -125,6 +153,10 @@ AdjacentPoleScore1342[expr_] :=
       }], True]
   ];
 
+(* ExtractTwoGluonColorOrderedPartials[amp4]
+   =========================================
+   Identify the target (1,3,4,2) partial amplitude and its reversed partner by
+   using pole-structure diagnostics rather than a brittle purely syntactic rule. *)
 ExtractTwoGluonColorOrderedPartials[amp4_] :=
   Module[{ordered, chainData, coeffs, sorted, reconstruction},
     ordered = ExpandUnsquaredColor[amp4];
@@ -195,6 +227,10 @@ SafeDoPolarizationSums[expr_, mom_, ref_, opts___] :=
     expr
   ];
 
+(* ColorStrippedInterference[ampLeft, ampRight, numFinalParticles]
+   ===============================================================
+   Compute the spin-summed interference of two already color-stripped partial
+   amplitudes. *)
 ColorStrippedInterference[ampLeft_, ampRight_, numFinalParticles_] :=
   Module[{bare, pol, dirac, contracted, calc, rules, final},
     KinematicRules[numFinalParticles];
@@ -229,6 +265,10 @@ ColorStrippedInterference[ampLeft_, ampRight_, numFinalParticles_] :=
     final
   ];
 
+(* ColorOrderedAntenna[amp, bornAmp, numFinalParticles, spec]
+   ==========================================================
+   Build the paper-style color-ordered A40 antenna by squaring the selected
+   partial amplitude and normalizing it to the color-stripped Born square. *)
 ColorOrderedAntenna[amp_, bornAmp_, numFinalParticles_, spec_Association
   ] :=
   Module[{numGluons, orderedData, bornData, partialSq, bornSq, antenna

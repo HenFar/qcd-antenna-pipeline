@@ -1,3 +1,22 @@
+(* ::Section:: *)
+(* Loop-level interference construction *)
+
+(* Communicates with:
+   - src/engines/amplitudes_tree.wl and src/engines/amplitudes_loop.wl, whose
+     outputs are interfered here.
+   - src/core/kinematics_and_utilities.wl through KinematicRules,
+     SafeDoPolarizationSums, and ApplyFeynCalcRules.
+   - src/engines/extraction_loop.wl, which consumes the normalized loop
+     interferences produced here.
+   - src/routes/build_workflows.wl, which uses these helpers inside the A21,
+     A31, and A22 virtual-source workflows.
+
+   Why this file exists:
+   Loop interferences have a distinct algebraic shape from tree ones because
+   they may still contain unreduced tensor integrals and because the package
+   adopts an explicit loop-expansion normalization convention.  Those concerns
+   are isolated here rather than mixed into generic interference logic. *)
+
 ReduceLoopIntegrals::usage =
   "ReduceLoopIntegrals[expr, loopMomentum, ...] applies the requested one-loop reduction backend before interference extraction.";
 
@@ -27,6 +46,9 @@ InterfereOneLoopMAmplitudes::usage =
 
 Options[ReduceLoopIntegrals] = {ReductionBackend -> "PaVe"};
 
+(* ReduceLoopIntegrals[expr, loopMomentum, ...]
+   ============================================
+   Apply the chosen one-loop reduction backend before antenna extraction. *)
 ReduceLoopIntegrals[expr_, loopMomentum_, OptionsPattern[]] :=
   Module[{backend, output},
     backend = OptionValue["ReductionBackend"];
@@ -50,6 +72,14 @@ Options[InterfereTreeOneLoopAmplitudes] = {ApplyCasimirSubstitution ->
    True, ApplyDimReg -> False, LoopMomentum -> l, ReductionBackend -> "PaVe"
   };
 
+(* SafeOneLoopTreeConjugate[treeAmp, numFinalParticles]
+   ====================================================
+   Conjugate a tree amplitude in the way required by the one-loop routes.
+
+   Notes
+     The A31 colour structure needs a small convention-preserving workaround so
+     conjugation does not scramble the tensor ordering expected by the later
+     decomposition logic. *)
 SafeOneLoopTreeConjugate[treeAmp_, numFinalParticles_] :=
   Module[{safeTree, safeConjugate, output},
     If[numFinalParticles == 3,
@@ -66,6 +96,9 @@ SafeOneLoopTreeConjugate[treeAmp_, numFinalParticles_] :=
     output
   ];
 
+(* InterfereOneLoopMAmplitudes[treeAmp, loopAmp, numFinalParticles, ...]
+   =====================================================================
+   Build the one-loop/tree interference used by the A21 and A31 routes. *)
 InterfereOneLoopMAmplitudes[treeAmp_, loopAmp_, numFinalParticles_, OptionsPattern[
   InterfereTreeOneLoopAmplitudes]] :=
   Module[{applyCasimirSubstitutionOpt, applyDimRegOpt, loopMomentumOpt,
@@ -79,6 +112,9 @@ InterfereOneLoopMAmplitudes[treeAmp_, loopAmp_, numFinalParticles_, OptionsPatte
     KinematicRules[numFinalParticles];
     conjugateTree = SafeOneLoopTreeConjugate[treeAmp, numFinalParticles
       ];
+    (* The factor of 2 implements the standard real-part convention for
+       tree/loop interference, written explicitly so the normalization is
+       visible at the point where the physical interference is formed. *)
     bare = 2 loopAmp conjugateTree;
     simp =
       bare //
@@ -124,6 +160,8 @@ InterfereOneLoopMAmplitudes[treeAmp_, loopAmp_, numFinalParticles_, OptionsPatte
     output
   ];
 
+(* Keep InterfereTreeOneLoopAmplitudes as the public historical name while
+   routing the implementation through InterfereOneLoopMAmplitudes[...]. *)
 InterfereTreeOneLoopAmplitudes[treeAmp_, loopAmp_, numFinalParticles_,
    OptionsPattern[]] :=
   InterfereOneLoopMAmplitudes[treeAmp, loopAmp, numFinalParticles, ApplyCasimirSubstitution
@@ -147,6 +185,10 @@ NotebookChargeConvention[expr_] :=
 Options[InterfereTreeTwoLoopMAmplitudes] = {ApplyCasimirSubstitution ->
    True, ApplyDimReg -> False, LoopMomenta -> {l1, l2}};
 
+(* InterfereTreeTwoLoopTerm[treeAmp, twoLoopTerm, numFinalParticles]
+   =================================================================
+   Evaluate one tree/two-loop interference contribution before the A22-specific
+   component extraction stage. *)
 InterfereTreeTwoLoopTerm[treeAmp_, twoLoopTerm_, numFinalParticles_] :=
   Module[{conjugateTree, bare, simp, diracSimp, calcExpr},
     conjugateTree = ComplexConjugate[treeAmp];
@@ -163,6 +205,9 @@ InterfereTreeTwoLoopTerm[treeAmp_, twoLoopTerm_, numFinalParticles_] :=
       Simplify
   ];
 
+(* InterfereTreeTwoLoopMAmplitudes[treeAmp, twoLoopAmp, numFinalParticles, ...]
+   =============================================================================
+   Sum all tree/two-loop interference terms for the A22 source route. *)
 InterfereTreeTwoLoopMAmplitudes[treeAmp_, twoLoopAmp_, numFinalParticles_,
    OptionsPattern[]] :=
   Module[{applyCasimirSubstitutionOpt, applyDimRegOpt, terms, output},
@@ -195,6 +240,10 @@ InterfereTreeTwoLoopMAmplitudes[treeAmp_, twoLoopAmp_, numFinalParticles_,
 Options[InterfereOneLoopSelfMAmplitudes] = {ApplyCasimirSubstitution ->
    True, ApplyDimReg -> False};
 
+(* InterfereOneLoopSelfMAmplitudes[leftLoopAmp, rightLoopAmp, numFinalParticles, ...]
+   ===================================================================================
+   Build the one-loop self-interference source used for the breve A22
+   contribution. *)
 InterfereOneLoopSelfMAmplitudes[leftLoopAmp_, rightLoopAmp_,
    numFinalParticles_, OptionsPattern[]] :=
   Module[{applyCasimirSubstitutionOpt, applyDimRegOpt, bare, simp, numPart,
