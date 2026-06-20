@@ -146,7 +146,8 @@ $StoredResultRouteKinds = {
   "BuildAntennaObject",
   "IntegrateAntenna",
   "BuildAndIntegrateAntenna",
-  "BuildRRatio"
+  "BuildRRatio",
+  "TObject"
 };
 
 (* Root and route-kind helpers
@@ -177,6 +178,8 @@ StoredResultsSubdirectory["BuildAndIntegrateAntenna"] := "build_and_integrate";
 
 StoredResultsSubdirectory["BuildRRatio"] := "rratio";
 
+StoredResultsSubdirectory["TObject"] := "tobjects";
+
 StoredResultsSubdirectory[routeKind_] :=
   StringReplace[ToLowerCase[routeKind], " " -> "_"];
 
@@ -192,6 +195,8 @@ StoredResultsRouteKindFromSubdirectory["build_and_integrate"] :=
   "BuildAndIntegrateAntenna";
 
 StoredResultsRouteKindFromSubdirectory["rratio"] := "BuildRRatio";
+
+StoredResultsRouteKindFromSubdirectory["tobjects"] := "TObject";
 
 StoredResultsRouteKindFromSubdirectory[subdir_String] := subdir;
 
@@ -797,4 +802,17 @@ StoredResultInfo[BuildRRatio, model_Symbol, opts___Rule] :=
     key = BuildRRatioStoredResultKey[model, requestOptions];
     label = BuildRRatioStoredResultLabel[model, requestOptions];
     StoredResultInfoRouteRequest["BuildRRatio", label, key, root]
+  ];
+
+StoredResultInfo[TObject, order_Integer, finalState_, opts___Rule] :=
+  Module[{optionsAssoc, root, requestOptions, key, label},
+    optionsAssoc = NormalizeStoredResultOptionAssociation[
+      Association[Flatten[{opts}]]
+    ];
+    root = Lookup[optionsAssoc, ResultsCacheRoot,
+      Lookup[optionsAssoc, "ResultsCacheRoot", Automatic]];
+    requestOptions = KeyDrop[optionsAssoc, {ResultsCacheRoot, "ResultsCacheRoot"}];
+    key = TObjectStoredResultKey[order, finalState, requestOptions];
+    label = TObjectStoredResultLabel[order, finalState, requestOptions];
+    StoredResultInfoRouteRequest["TObject", label, key, root]
   ];

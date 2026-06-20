@@ -22,6 +22,9 @@
 BuildRRatio::usage =
   "BuildRRatio[model, ...] builds the public symbolic R-ratio driver output for the selected model shell.";
 
+TObject::usage =
+  "TObject[order, finalParticles, ...] returns the symbolic paper-level T object for the selected perturbative order and final state, expressed in terms of integrated antennae.";
+
 CollectRRatioIntermediateSteps::usage =
   "CollectRRatioIntermediateSteps[ingredientCalls, ingredients, assemblyExpression, finalExpression, diagnostics, steps] collects the requested driver-side intermediate stages.";
 
@@ -58,8 +61,32 @@ BuildRRatioStoredResultKey::usage =
 BuildRRatioStoredResultLabel::usage =
   "BuildRRatioStoredResultLabel[model, options] builds the human-readable cache label for a BuildRRatio request.";
 
+TObjectStoredResultKey::usage =
+  "TObjectStoredResultKey[order, finalState, options] builds the cache key for a TObject request.";
+
+TObjectStoredResultLabel::usage =
+  "TObjectStoredResultLabel[order, finalState, options] builds the human-readable cache label for a TObject request.";
+
+NormalizeTObjectFinalState::usage =
+  "NormalizeTObjectFinalState[finalState] normalizes the public TObject final-state selector.";
+
+TObjectIngredientOrders::usage =
+  "TObjectIngredientOrders[order] returns the ingredient expansion orders needed to build one public TObject expression.";
+
+NormalizePublicTObjectExpression::usage =
+  "NormalizePublicTObjectExpression[expr] rewrites internal colour symbols into the public TObject output convention.";
+
 BuildRRatioSMQCDIngredients::usage =
   "BuildRRatioSMQCDIngredients[masslessQuarkMass, options] collects the validated integrated antenna ingredients used by the massless SMQCD driver.";
+
+TObjectRequiredIngredientNames::usage =
+  "TObjectRequiredIngredientNames[order, finalState] returns the minimal integrated-antenna ingredients needed by one TObject request.";
+
+BuildSMQCDTObjectIngredients::usage =
+  "BuildSMQCDTObjectIngredients[masslessQuarkMass, order, finalState, options] evaluates only the integrated ingredients needed by one public TObject expression.";
+
+AssembleSMQCDTObject::usage =
+  "AssembleSMQCDTObject[ingredients, order, finalState] assembles one symbolic massless-SMQCD T object from the validated integrated antenna ingredients.";
 
 AssembleSMQCDRRatio::usage =
   "AssembleSMQCDRRatio[ingredients] assembles the final symbolic massless SMQCD R-ratio expression from the validated antenna ingredients.";
@@ -76,6 +103,11 @@ Options[BuildRRatio] = {quarkMass -> 0, ReturnDiagnostics -> False,
    ResultsCacheRoot -> Automatic, RefreshStoredResults -> False,
    ResultForm -> "FiniteMSBar"};
 
+Options[TObject] = {quarkMass -> 0, ExpansionOrder -> Automatic,
+   ReturnDiagnostics -> False, UseStoredResults -> False,
+   StoreResults -> False, ResultsCacheRoot -> Automatic,
+   RefreshStoredResults -> False};
+
 BuildRRatio::unsupportedModel =
   "Unsupported R-ratio model `1`. Supported model shells are SMQCD, SUSY, and HiggsEFT.";
 
@@ -84,6 +116,18 @@ BuildRRatio::masslessOnly =
 
 BuildRRatio::ingredientFailure =
   "BuildRRatio[`1`] could not build the required ingredient `2` through the public antenna routes.";
+
+TObject::masslessOnly =
+  "TObject currently supports only quarkMass -> 0.";
+
+TObject::unsupportedOrder =
+  "Unsupported TObject order `1`. Supported perturbative orders are 2, 4, and 6.";
+
+TObject::unsupportedFinalState =
+  "Unsupported TObject final state `1`. Supported final states are qqbar, qqbarg, qqbarqprimeqprimebar, qqbarqqbar, and qqbargg.";
+
+TObject::ingredientFailure =
+  "TObject[`1`, `2`] could not build the required ingredient `3` through the public antenna routes.";
 
 NormalizeBuildRRatioResultForm[resultForm_] :=
   Module[{normalized},
@@ -99,6 +143,130 @@ NormalizeBuildRRatioResultForm[resultForm_] :=
         "FiniteMSBar"
     ]
   ];
+
+NormalizeTObjectParticleToken[token_] :=
+  Module[{normalized},
+    normalized =
+      ToLowerCase[
+        StringReplace[
+          ToString[Unevaluated[token], InputForm],
+          {" " -> "", "\"" -> "", "-" -> "", "_" -> ""}
+        ]
+      ];
+    Switch[normalized,
+      "q" | "quark",
+        "q"
+      ,
+      "qbar" | "antiquark",
+        "qbar"
+      ,
+      "g" | "gluon",
+        "g"
+      ,
+      "qprime" | "qp" | "quarkprime",
+        "qprime"
+      ,
+      "qprimebar" | "qpbar" | "antiquarkprime",
+        "qprimebar"
+      ,
+      _,
+        normalized
+    ]
+  ];
+
+NormalizeTObjectFinalState[finalState_List] :=
+  NormalizeTObjectFinalState[
+    StringRiffle[NormalizeTObjectParticleToken /@ finalState, ","]
+  ];
+
+NormalizeTObjectFinalState[finalState_String] :=
+  Module[{normalized},
+    normalized =
+      ToLowerCase[
+        StringReplace[finalState, {" " -> "", "\"" -> "", "-" -> "",
+          "_" -> ""}]
+      ];
+    Switch[normalized,
+      "qqbar" | "q,qbar",
+        "qqbar"
+      ,
+      "qqbarg" | "q,qbar,g",
+        "qqbarg"
+      ,
+      "qqbarqprimeqprimebar" | "qqbarqqprimebar" | "q,qbar,qprime,qprimebar",
+        "qqbarqprimeqprimebar"
+      ,
+      "qqbarqqbar" | "q,qbar,q,qbar",
+        "qqbarqqbar"
+      ,
+      "qqbargg" | "q,qbar,g,g",
+        "qqbargg"
+      ,
+      _,
+        normalized
+    ]
+  ];
+
+NormalizeTObjectFinalState[finalState_] :=
+  NormalizeTObjectFinalState[ToString[Unevaluated[finalState], InputForm]];
+
+TObjectStoredResultKey[order_Integer, finalState_, options_Association] :=
+  StoredResultKeyAssociation[
+    "TObject",
+    <|
+      "ImplementationVersion" -> 3,
+      "Order" -> order,
+      "FinalState" -> NormalizeTObjectFinalState[finalState],
+      "quarkMass" -> Lookup[options, "quarkMass", 0],
+      "ExpansionOrder" -> Lookup[options, "ExpansionOrder", Automatic]
+    |>
+  ];
+
+TObjectStoredResultLabel[order_Integer, finalState_, options_Association] :=
+  StringJoin[
+    "TObject-",
+    ToString[order], "-",
+    NormalizeTObjectFinalState[finalState], "-",
+    StringReplace[ToString[Lookup[options, "quarkMass", 0], InputForm],
+      {" " -> "", "." -> "-", "/" -> "-"}], "-",
+    ToLowerCase[ToString[Lookup[options, "ExpansionOrder", Automatic], InputForm]]
+  ];
+
+TObjectIngredientOrders[order_Integer] :=
+  Module[{dependencyOrder},
+    dependencyOrder = order + 1;
+    <|
+      "intA21" -> dependencyOrder,
+      "intA30" -> dependencyOrder,
+      "A31Components" -> order,
+      "A22Components" -> order,
+      "intA40" -> order,
+      "intTildeA40" -> order,
+      "intB40" -> order,
+      "intC40" -> order
+    |>
+  ];
+
+TObjectIngredientOrders[_] :=
+  <|
+    "intA21" -> Automatic,
+    "intA30" -> Automatic,
+    "A31Components" -> Automatic,
+    "A22Components" -> Automatic,
+    "intA40" -> Automatic,
+    "intTildeA40" -> Automatic,
+    "intB40" -> Automatic,
+    "intC40" -> Automatic
+  |>;
+
+FinalizeTObjectExpression[expr_, order_] :=
+  If[IntegerQ[order],
+    IntegratedAntennaSeries[expr, order],
+    expr
+  ];
+
+NormalizePublicTObjectExpression[expr_] :=
+  expr /. SUNN -> System`N;
 
 BuildRRatioSMQCDFiniteExpression[] :=
   Module[{alphaS, n, nf},
@@ -317,14 +485,30 @@ BuildRRatioStoredResultLabel[model_Symbol, options_Association] :=
    Evaluate and validate the integrated antenna ingredients needed by the
    massless SMQCD driver. *)
 BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
-  Module[{cacheOptions, a21Result, a30Result, a31Result, a22Result,
-     a40LeadResult, a40SubResult, b40Result, c40Result, ingredients,
-     ingredientDiagnostics},
+  Module[{cacheOptions, ingredientOrders, a21Result, a30Result, a31Result,
+     a22Result, a40LeadResult, a40SubResult, b40Result, c40Result,
+     ingredients, ingredientDiagnostics},
     cacheOptions = BuildRRatioIngredientCacheOptions[options];
+    ingredientOrders =
+      If[KeyExistsQ[options, "ExpansionOrder"],
+        TObjectIngredientOrders[Lookup[options, "ExpansionOrder", Automatic]]
+        ,
+        <|
+          "intA21" -> Automatic,
+          "intA30" -> 2,
+          "A31Components" -> 0,
+          "A22Components" -> 0,
+          "intA40" -> 0,
+          "intTildeA40" -> 0,
+          "intB40" -> 0,
+          "intC40" -> 0
+        |>
+      ];
     a21Result =
       EvaluateRRatioStoredIngredient["intA21",
         BuildAndIntegrateAntenna[A, 2, 1, quarkMass -> masslessQuarkMass,
           ReturnDiagnostics -> True,
+          ExpansionOrder -> ingredientOrders["intA21"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -333,7 +517,8 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
     a30Result =
       EvaluateRRatioStoredIngredient["intA30",
         BuildAndIntegrateAntenna[A, 3, 0, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 2,
+          ReturnDiagnostics -> True,
+          ExpansionOrder -> ingredientOrders["intA30"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -342,7 +527,8 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
     a31Result =
       EvaluateRRatioStoredIngredient["A31 components",
         BuildAndIntegrateAntenna[A, 3, 1, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          ReturnDiagnostics -> True,
+          ExpansionOrder -> ingredientOrders["A31Components"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -351,7 +537,8 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
     a22Result =
       EvaluateRRatioStoredIngredient["A22 components",
         BuildAndIntegrateAntenna[A, 2, 2, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          ReturnDiagnostics -> True,
+          ExpansionOrder -> ingredientOrders["A22Components"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -361,7 +548,7 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
       EvaluateRRatioStoredIngredient["intA40",
         BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading,
           quarkMass -> masslessQuarkMass, ReturnDiagnostics -> True,
-          ExpansionOrder -> 0,
+          ExpansionOrder -> ingredientOrders["intA40"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -371,7 +558,7 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
       EvaluateRRatioStoredIngredient["intTildeA40",
         BuildAndIntegrateAntenna[A, 4, 0, Component -> Subleading,
           quarkMass -> masslessQuarkMass, ReturnDiagnostics -> True,
-          ExpansionOrder -> 0,
+          ExpansionOrder -> ingredientOrders["intTildeA40"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -380,7 +567,8 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
     b40Result =
       EvaluateRRatioStoredIngredient["intB40",
         BuildAndIntegrateAntenna[B, 4, 0, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          ReturnDiagnostics -> True,
+          ExpansionOrder -> ingredientOrders["intB40"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -389,7 +577,8 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
     c40Result =
       EvaluateRRatioStoredIngredient["intC40",
         BuildAndIntegrateAntenna[C, 4, 0, quarkMass -> masslessQuarkMass,
-          ReturnDiagnostics -> True, ExpansionOrder -> 0,
+          ReturnDiagnostics -> True,
+          ExpansionOrder -> ingredientOrders["intC40"],
           UseStoredResults -> cacheOptions["UseStoredResults"],
           StoreResults -> cacheOptions["StoreResults"],
           RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
@@ -460,6 +649,296 @@ BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
     |>;
     <|"Failed" -> False, "Ingredients" -> ingredients,
       "IngredientDiagnostics" -> ingredientDiagnostics|>
+  ];
+
+TObjectRequiredIngredientNames[2, "qqbar"] := {};
+
+TObjectRequiredIngredientNames[4, "qqbar"] := {"intA21"};
+
+TObjectRequiredIngredientNames[4, "qqbarg"] := {"intA30"};
+
+TObjectRequiredIngredientNames[6, "qqbar"] := {"A22Components"};
+
+TObjectRequiredIngredientNames[6, "qqbarg"] :=
+  {"intA21", "intA30", "A31Components"};
+
+TObjectRequiredIngredientNames[6, "qqbarqprimeqprimebar"] := {"intB40"};
+
+TObjectRequiredIngredientNames[6, "qqbarqqbar"] := {"intB40", "intC40"};
+
+TObjectRequiredIngredientNames[6, "qqbargg"] := {"intA40", "intTildeA40"};
+
+TObjectRequiredIngredientNames[_, _] := $Failed;
+
+BuildSMQCDTObjectIngredients[masslessQuarkMass_, order_Integer,
+   finalState_, options_Association:<||>] :=
+  Module[{cacheOptions, ingredientOrders, required, rawResults, fetchResult,
+     result, ingredients, ingredientDiagnostics},
+    cacheOptions = BuildRRatioIngredientCacheOptions[options];
+    ingredientOrders =
+      TObjectIngredientOrders[Lookup[options, "ExpansionOrder", Automatic]];
+    required = TObjectRequiredIngredientNames[order, finalState];
+    If[required === $Failed,
+      Return[<|"Failed" -> True,
+        "Reason" -> "UnsupportedTObjectIngredientRequest"|>]
+    ];
+    rawResults = <||>;
+    fetchResult[name_String] :=
+      Switch[name,
+        "intA21",
+          EvaluateRRatioStoredIngredient["intA21",
+            BuildAndIntegrateAntenna[A, 2, 1, quarkMass -> masslessQuarkMass,
+              ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["intA21"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        "intA30",
+          EvaluateRRatioStoredIngredient["intA30",
+            BuildAndIntegrateAntenna[A, 3, 0, quarkMass -> masslessQuarkMass,
+              ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["intA30"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        "A31Components",
+          EvaluateRRatioStoredIngredient["A31 components",
+            BuildAndIntegrateAntenna[A, 3, 1, quarkMass -> masslessQuarkMass,
+              ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["A31Components"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        "A22Components",
+          EvaluateRRatioStoredIngredient["A22 components",
+            BuildAndIntegrateAntenna[A, 2, 2, quarkMass -> masslessQuarkMass,
+              ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["A22Components"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        "intA40",
+          EvaluateRRatioStoredIngredient["intA40",
+            BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading,
+              quarkMass -> masslessQuarkMass, ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["intA40"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        "intTildeA40",
+          EvaluateRRatioStoredIngredient["intTildeA40",
+            BuildAndIntegrateAntenna[A, 4, 0, Component -> Subleading,
+              quarkMass -> masslessQuarkMass, ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["intTildeA40"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        "intB40",
+          EvaluateRRatioStoredIngredient["intB40",
+            BuildAndIntegrateAntenna[B, 4, 0, quarkMass -> masslessQuarkMass,
+              ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["intB40"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        "intC40",
+          EvaluateRRatioStoredIngredient["intC40",
+            BuildAndIntegrateAntenna[C, 4, 0, quarkMass -> masslessQuarkMass,
+              ReturnDiagnostics -> True,
+              ExpansionOrder -> ingredientOrders["intC40"],
+              UseStoredResults -> cacheOptions["UseStoredResults"],
+              StoreResults -> cacheOptions["StoreResults"],
+              RefreshStoredResults -> cacheOptions["RefreshStoredResults"],
+              ResultsCacheRoot -> cacheOptions["ResultsCacheRoot"]]
+          ]
+        ,
+        _,
+          $Failed
+      ];
+    Do[
+      result = fetchResult[name];
+      If[RRatioIngredientCallFailedQ[result],
+        Return[<|"Failed" -> True, "Reason" -> "IngredientRouteFailed",
+          "FailedIngredient" -> name|>]
+      ];
+      If[!MatchQ[result, {_, _Association}],
+        Return[<|"Failed" -> True, "Reason" -> "UnexpectedIngredientReturnShape",
+          "FailedIngredient" -> name|>]
+      ];
+      rawResults[name] = result;
+      ,
+      {name, required}
+    ];
+    ingredients = <||>;
+    ingredientDiagnostics = <||>;
+    If[KeyExistsQ[rawResults, "intA21"],
+      ingredients["intA21"] = rawResults["intA21"][[1]];
+      ingredientDiagnostics["intA21"] = rawResults["intA21"][[2]];
+    ];
+    If[KeyExistsQ[rawResults, "intA30"],
+      ingredients["intA30"] = rawResults["intA30"][[1]];
+      ingredientDiagnostics["intA30"] = rawResults["intA30"][[2]];
+    ];
+    If[KeyExistsQ[rawResults, "A31Components"],
+      ingredients["intA31"] = rawResults["A31Components"][[1, 1]];
+      ingredients["intTildeA31"] = rawResults["A31Components"][[1, 2]];
+      ingredients["intHatA31"] = rawResults["A31Components"][[1, 3]];
+      ingredientDiagnostics["A31Components"] = rawResults["A31Components"][[2]];
+    ];
+    If[KeyExistsQ[rawResults, "A22Components"],
+      ingredients["intA22"] = rawResults["A22Components"][[1, 1]];
+      ingredients["intTildeA22"] = rawResults["A22Components"][[1, 2]];
+      ingredients["intHatA22"] = rawResults["A22Components"][[1, 3]];
+      ingredients["intBreveA22"] = rawResults["A22Components"][[1, 4]];
+      ingredientDiagnostics["A22Components"] = rawResults["A22Components"][[2]];
+    ];
+    If[KeyExistsQ[rawResults, "intA40"],
+      ingredients["intA40"] = rawResults["intA40"][[1]];
+      ingredientDiagnostics["intA40"] = rawResults["intA40"][[2]];
+    ];
+    If[KeyExistsQ[rawResults, "intTildeA40"],
+      ingredients["intTildeA40"] = rawResults["intTildeA40"][[1]];
+      ingredientDiagnostics["intTildeA40"] = rawResults["intTildeA40"][[2]];
+    ];
+    If[KeyExistsQ[rawResults, "intB40"],
+      ingredients["intB40"] = rawResults["intB40"][[1]];
+      ingredientDiagnostics["intB40"] = rawResults["intB40"][[2]];
+    ];
+    If[KeyExistsQ[rawResults, "intC40"],
+      ingredients["intC40"] = rawResults["intC40"][[1]];
+      ingredientDiagnostics["intC40"] = rawResults["intC40"][[2]];
+    ];
+    <|"Failed" -> False, "Ingredients" -> ingredients,
+      "IngredientDiagnostics" -> ingredientDiagnostics|>
+  ];
+
+AssembleSMQCDTObject[ingredients_Association, perturbativeOrder_Integer,
+   finalState_, expansionOrder_] :=
+  Module[{eps, n, nf, normalizedFinalState, tqq2, tObjects},
+    eps = FeynCalc`Epsilon;
+    n = SUNN;
+    nf = Nf;
+    normalizedFinalState = NormalizeTObjectFinalState[finalState];
+    tqq2 = 4 n (1 - eps);
+    tObjects = <|
+      "qqbar" -> FinalizeTObjectExpression[tqq2, expansionOrder],
+      "qqbar4" -> FinalizeTObjectExpression[
+        (n - 1 / n) tqq2 ingredients["intA21"],
+        expansionOrder
+      ],
+      "qqbarg" -> FinalizeTObjectExpression[
+        (n - 1 / n) tqq2 ingredients["intA30"],
+        expansionOrder
+      ],
+      "qqbar6" -> FinalizeTObjectExpression[
+        (n - 1 / n) tqq2 (
+          n ingredients["intA22"] +
+          1 / n ingredients["intTildeA22"] +
+          nf ingredients["intHatA22"] +
+          (n - 1 / n) ingredients["intBreveA22"]
+        ),
+        expansionOrder
+      ],
+      "qqbarg6" -> FinalizeTObjectExpression[
+        (n - 1 / n) tqq2 (
+          n (ingredients["intA31"] +
+            ingredients["intA21"] ingredients["intA30"]) -
+          1 / n (ingredients["intTildeA31"] +
+            ingredients["intA21"] ingredients["intA30"]) +
+          nf ingredients["intHatA31"]
+        ),
+        expansionOrder
+      ],
+      "qqbarqprimeqprimebar" -> FinalizeTObjectExpression[
+        (n - 1 / n) tqq2 (nf - 1) ingredients["intB40"],
+        expansionOrder
+      ],
+      "qqbarqqbar" -> FinalizeTObjectExpression[
+        (n - 1 / n) tqq2 (ingredients["intB40"] -
+          1 / n ingredients["intC40"]),
+        expansionOrder
+      ],
+      "qqbargg" -> FinalizeTObjectExpression[
+        (n - 1 / n) tqq2 (
+          n ingredients["intA40"] -
+          1 / n ingredients["intTildeA40"]
+        ),
+        expansionOrder
+      ]
+    |>;
+    Switch[perturbativeOrder,
+      2,
+        If[normalizedFinalState === "qqbar",
+          <|"Expression" -> tObjects["qqbar"],
+            "TObjects" -> <|"Tqq2" -> tObjects["qqbar"]|>|>,
+          $Failed
+        ]
+      ,
+      4,
+        Switch[normalizedFinalState,
+          "qqbar",
+            <|"Expression" -> tObjects["qqbar4"],
+              "TObjects" -> <|"Tqq4" -> tObjects["qqbar4"]|>|>
+          ,
+          "qqbarg",
+            <|"Expression" -> tObjects["qqbarg"],
+              "TObjects" -> <|"Tqqg4" -> tObjects["qqbarg"]|>|>
+          ,
+          _,
+            $Failed
+        ]
+      ,
+      6,
+        Switch[normalizedFinalState,
+          "qqbar",
+            <|"Expression" -> tObjects["qqbar6"],
+              "TObjects" -> <|"Tqq6" -> tObjects["qqbar6"]|>|>
+          ,
+          "qqbarg",
+            <|"Expression" -> tObjects["qqbarg6"],
+              "TObjects" -> <|"Tqqg6" -> tObjects["qqbarg6"]|>|>
+          ,
+          "qqbarqprimeqprimebar",
+            <|"Expression" -> tObjects["qqbarqprimeqprimebar"],
+              "TObjects" -> <|"Tqqqqprime6" ->
+                  tObjects["qqbarqprimeqprimebar"]|>|>
+          ,
+          "qqbarqqbar",
+            <|"Expression" -> tObjects["qqbarqqbar"],
+              "TObjects" -> <|"Tqqqq6" -> tObjects["qqbarqqbar"]|>|>
+          ,
+          "qqbargg",
+            <|"Expression" -> tObjects["qqbargg"],
+              "TObjects" -> <|"Tqqgg6" -> tObjects["qqbargg"]|>|>
+          ,
+          _,
+            $Failed
+        ]
+      ,
+      _,
+        $Failed
+    ]
   ];
 
 AssembleSMQCDRRatio[ingredients_Association] :=
@@ -704,4 +1183,161 @@ BuildRRatio[model_, OptionsPattern[]] :=
       Missing["NotAvailable"], $Failed, diagnostics, intermediateSteps];
     RRatioFailureResult[$Failed, diagnostics, collectedSteps,
       OptionValue[ReturnDiagnostics]]
+  ];
+
+TObject[order_Integer, finalState_, OptionsPattern[]] :=
+  Module[{masslessQuarkMass, expansionOrder, normalizedFinalState, useStored,
+     storeStored, refreshStored, cacheKey, cacheLabel, cacheRoot, loaded,
+     computed, computedResult, computedDiagnostics, optionsAssoc,
+     ingredientResult, ingredients, ingredientDiagnostics, assembled,
+     diagnostics},
+    masslessQuarkMass = OptionValue[quarkMass];
+    expansionOrder = OptionValue["ExpansionOrder"];
+    normalizedFinalState = NormalizeTObjectFinalState[finalState];
+    useStored = TrueQ[OptionValue["UseStoredResults"]];
+    storeStored = TrueQ[OptionValue["StoreResults"]];
+    refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
+    optionsAssoc = <|
+      "quarkMass" -> masslessQuarkMass,
+      "ExpansionOrder" -> expansionOrder,
+      "UseStoredResults" -> useStored,
+      "StoreResults" -> storeStored,
+      "RefreshStoredResults" -> refreshStored,
+      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"]
+    |>;
+    If[!MemberQ[{2, 4, 6}, order],
+      Message[TObject::unsupportedOrder, order];
+      diagnostics = <|"Failed" -> True, "Reason" -> "UnsupportedTObjectOrder",
+        "Order" -> order, "FinalState" -> normalizedFinalState|>;
+      Return[
+        RRatioFailureResult[$Failed, diagnostics, <||>,
+          OptionValue["ReturnDiagnostics"]]
+      ]
+    ];
+    If[!MemberQ[{"qqbar", "qqbarg", "qqbarqprimeqprimebar", "qqbarqqbar",
+         "qqbargg"}, normalizedFinalState],
+      Message[TObject::unsupportedFinalState,
+        ToString[Unevaluated[finalState], InputForm]];
+      diagnostics = <|"Failed" -> True,
+        "Reason" -> "UnsupportedTObjectFinalState", "Order" -> order,
+        "FinalState" -> normalizedFinalState|>;
+      Return[
+        RRatioFailureResult[$Failed, diagnostics, <||>,
+          OptionValue["ReturnDiagnostics"]]
+      ]
+    ];
+    If[!MemberQ[{{2, "qqbar"}, {4, "qqbar"}, {4, "qqbarg"},
+         {6, "qqbar"}, {6, "qqbarg"}, {6, "qqbarqprimeqprimebar"},
+         {6, "qqbarqqbar"}, {6, "qqbargg"}}, {order, normalizedFinalState}],
+      Message[TObject::unsupportedFinalState,
+        ToString[Unevaluated[finalState], InputForm]];
+      diagnostics = <|"Failed" -> True,
+        "Reason" -> "UnsupportedTObjectOrderFinalStateCombination",
+        "Order" -> order, "FinalState" -> normalizedFinalState|>;
+      Return[
+        RRatioFailureResult[$Failed, diagnostics, <||>,
+          OptionValue["ReturnDiagnostics"]]
+      ]
+    ];
+    If[masslessQuarkMass =!= 0,
+      Message[TObject::masslessOnly];
+      diagnostics = <|"Failed" -> True, "Reason" -> "NonzeroQuarkMassUnsupported",
+        "Order" -> order, "FinalState" -> normalizedFinalState,
+        "quarkMass" -> masslessQuarkMass|>;
+      Return[
+        RRatioFailureResult[$Failed, diagnostics, <||>,
+          OptionValue["ReturnDiagnostics"]]
+      ]
+    ];
+    If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
+        StoredResultsEnabledQ[useStored, storeStored, refreshStored],
+      cacheKey = TObjectStoredResultKey[order, normalizedFinalState,
+        optionsAssoc];
+      cacheLabel = TObjectStoredResultLabel[order, normalizedFinalState,
+        optionsAssoc];
+      cacheRoot = OptionValue["ResultsCacheRoot"];
+      If[!refreshStored && useStored,
+        loaded = LoadStoredResultEntry["TObject", cacheKey, cacheRoot,
+          cacheLabel];
+        If[AssociationQ[loaded],
+          PrintStoredResultHit[cacheLabel];
+          Return[
+            FormatStoredResultReturn[loaded["Result"],
+              loaded["Diagnostics"], loaded, OptionValue[
+                "ReturnDiagnostics"], False, {}, False, "TObject"]
+          ]
+        ]
+      ];
+      computed =
+        Block[{$AntennaPipelineBypassStoredResults = True},
+          TObject[order, normalizedFinalState,
+            quarkMass -> masslessQuarkMass,
+            ExpansionOrder -> expansionOrder,
+            ReturnDiagnostics -> True,
+            UseStoredResults -> True,
+            StoreResults -> False,
+            ResultsCacheRoot -> cacheRoot,
+            RefreshStoredResults -> False]
+        ];
+      If[!MatchQ[computed, {_, _Association}],
+        Return[computed]
+      ];
+      {computedResult, computedDiagnostics} = computed;
+      If[computedResult =!= $Failed && (storeStored || refreshStored),
+        StoreStoredResultEntry["TObject", cacheKey, cacheRoot, cacheLabel,
+          computedResult, computedDiagnostics]
+      ];
+      Return[
+        If[TrueQ[OptionValue["ReturnDiagnostics"]],
+          {computedResult, computedDiagnostics},
+          computedResult
+        ]
+      ]
+    ];
+    ingredientResult = BuildSMQCDTObjectIngredients[masslessQuarkMass,
+      order, normalizedFinalState, optionsAssoc];
+    If[TrueQ[Lookup[ingredientResult, "Failed", False]],
+      Message[TObject::ingredientFailure, order, normalizedFinalState,
+        Lookup[ingredientResult, "FailedIngredient", "Unknown"]];
+      diagnostics =
+        Join[ingredientResult, <|"Order" -> order,
+          "FinalState" -> normalizedFinalState,
+          "quarkMass" -> masslessQuarkMass,
+          "ExpansionOrder" -> expansionOrder|>];
+      Return[
+        RRatioFailureResult[$Failed, diagnostics, <||>,
+          OptionValue["ReturnDiagnostics"]]
+      ]
+    ];
+    ingredients = ingredientResult["Ingredients"];
+    ingredientDiagnostics = ingredientResult["IngredientDiagnostics"];
+    assembled = AssembleSMQCDTObject[ingredients, order,
+      normalizedFinalState, expansionOrder];
+    If[assembled === $Failed,
+      diagnostics = <|"Failed" -> True,
+        "Reason" -> "UnsupportedTObjectAssemblyRequest",
+        "Order" -> order, "FinalState" -> normalizedFinalState|>;
+      Return[
+        RRatioFailureResult[$Failed, diagnostics, <||>,
+          OptionValue["ReturnDiagnostics"]]
+      ]
+    ];
+    diagnostics = <|
+      "Order" -> order,
+      "FinalState" -> normalizedFinalState,
+      "quarkMass" -> masslessQuarkMass,
+      "ExpansionOrder" -> expansionOrder,
+      "AssemblySource" -> "ThesisNotebookFormula",
+      "Ingredients" -> ingredients,
+      "IngredientDiagnostics" -> ingredientDiagnostics,
+      "TObjects" -> Map[NormalizePublicTObjectExpression,
+        assembled["TObjects"]],
+      "PresentedExpression" ->
+        NormalizePublicTObjectExpression[assembled["Expression"]]
+    |>;
+    If[TrueQ[OptionValue["ReturnDiagnostics"]],
+      {NormalizePublicTObjectExpression[assembled["Expression"]],
+        diagnostics},
+      NormalizePublicTObjectExpression[assembled["Expression"]]
+    ]
   ];
