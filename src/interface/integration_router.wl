@@ -510,10 +510,10 @@ PrintMassiveA30ClosedBridgeNotice[] :=
   Print[
     StringRiffle[
       {
-        "Note: the integrated massive A30 closed-form result currently uses an ad hoc bibliography bridge.",
-        "The intended fully legitimate endpoint is the MX30 master-combination stage.",
-        "At present, however, the public forced-MX30 route is still incomplete: the open-master reduction currently fails with unmatched terms.",
-        "This affects both BuildAndIntegrateAntenna and IntegrateAntenna, so there is not yet a clean public master-combination object to inspect from the runtime route itself.",
+        "Experimental massive A30 notice:",
+        "The current integrated closed form is a bibliography bridge and is not part of the release guarantee.",
+        "The intended legitimate endpoint is the package MX30 master-combination stage.",
+        "That open-master route is still unfinished, so the massive integrated branch remains experimental in both BuildAndIntegrateAntenna and IntegrateAntenna.",
         "To inspect the failure diagnostics of the forced open-master route through BuildAndIntegrateAntenna, evaluate:",
         "Block[{$MassiveA30ForceIBPMasterRoute = True},",
         "  Last[BuildAndIntegrateAntenna[A, 3, 0, quarkMass -> mQ, ReturnDiagnostics -> True]]",
@@ -678,6 +678,10 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
         "IntegratedResidualIsZero" -> Missing["NotAvailable"],
         "IntegratedResidual" -> Missing["NotAvailable"],
         "Profile" -> profile,
+        "Experimental" -> True,
+        "Unfinished" -> True,
+        "ReleaseGuarantee" -> "Excluded",
+        "ImplementationStatus" -> "ExperimentalBibliographyBridge",
         "BackendDiagnostics" -> backendDiagnostics,
         "MassiveA30Route" -> True,
         "MassiveA30Source" -> source,
@@ -1602,7 +1606,9 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       ];
     If[Lookup[profile, "ImplementationStatus", "Implemented"] ===
         "ScaffoldOnly" &&
-        Lookup[profile, "BasisFamily", Missing["NoFamily"]] =!= "MX30",
+        Lookup[profile, "BasisFamily", Missing["NoFamily"]] =!= "MX30" &&
+        !(MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] &&
+          contribution === "All"),
       diagnostics = <|"Failed" -> True,
         "Reason" -> "IntegratedAntennaNotImplemented",
         "Profile" -> profile, "Contribution" -> OptionValue[

@@ -64,10 +64,17 @@ BuildRRatioSMQCDIngredients::usage =
 AssembleSMQCDRRatio::usage =
   "AssembleSMQCDRRatio[ingredients] assembles the final symbolic massless SMQCD R-ratio expression from the validated antenna ingredients.";
 
+NormalizeBuildRRatioResultForm::usage =
+  "NormalizeBuildRRatioResultForm[resultForm] normalizes the public BuildRRatio result-form selector.";
+
+BuildRRatioSMQCDFiniteExpression::usage =
+  "BuildRRatioSMQCDFiniteExpression[] returns the compact finite massless SMQCD R-ratio expression exposed by default through BuildRRatio[SMQCD].";
+
 Options[BuildRRatio] = {quarkMass -> 0, ReturnDiagnostics -> False,
    IntermediateSteps -> {}, PrintIntermediateSteps -> False,
    UseStoredResults -> False, StoreResults -> False,
-   ResultsCacheRoot -> Automatic, RefreshStoredResults -> False};
+   ResultsCacheRoot -> Automatic, RefreshStoredResults -> False,
+   ResultForm -> "FiniteMSBar"};
 
 BuildRRatio::unsupportedModel =
   "Unsupported R-ratio model `1`. Supported model shells are SMQCD, SUSY, and HiggsEFT.";
@@ -77,6 +84,35 @@ BuildRRatio::masslessOnly =
 
 BuildRRatio::ingredientFailure =
   "BuildRRatio[`1`] could not build the required ingredient `2` through the public antenna routes.";
+
+NormalizeBuildRRatioResultForm[resultForm_] :=
+  Module[{normalized},
+    normalized = ToString[resultForm, InputForm];
+    Switch[normalized,
+      "\"RawDimRegSeries\"" | "RawDimRegSeries",
+        "RawDimRegSeries"
+      ,
+      "\"FiniteMSBar\"" | "FiniteMSBar" | "\"Finite\"" | "Finite",
+        "FiniteMSBar"
+      ,
+      _,
+        "FiniteMSBar"
+    ]
+  ];
+
+BuildRRatioSMQCDFiniteExpression[] :=
+  Module[{alphaS, n, nf},
+    alphaS = SMP["alpha_s"];
+    n = SUNN;
+    nf = Nf;
+    1 +
+      alphaS / (2 Pi) ((n^2 - 1) / (2 n)) (3 / 2) +
+      (alphaS / (2 Pi))^2 ((n^2 - 1) / (2 n)) (
+        n (243 / 16 - 11 Zeta[3]) +
+        3 / (16 n) +
+        nf (-11 / 4 + 2 Zeta[3])
+      )
+  ];
 
 (* CollectRRatioIntermediateSteps[...]
    ===================================
@@ -260,7 +296,9 @@ BuildRRatioStoredResultKey[model_Symbol, options_Association] :=
     "BuildRRatio",
     <|
       "Model" -> SymbolName[Unevaluated[model]],
-      "quarkMass" -> Lookup[options, "quarkMass", 0]
+      "quarkMass" -> Lookup[options, "quarkMass", 0],
+      "ResultForm" -> NormalizeBuildRRatioResultForm[
+        Lookup[options, "ResultForm", "FiniteMSBar"]]
     |>
   ];
 
@@ -269,7 +307,9 @@ BuildRRatioStoredResultLabel[model_Symbol, options_Association] :=
     "BuildRRatio-",
     ToLowerCase[SymbolName[Unevaluated[model]]], "-",
     StringReplace[ToString[Lookup[options, "quarkMass", 0], InputForm],
-      {" " -> "", "." -> "-", "/" -> "-"}]
+      {" " -> "", "." -> "-", "/" -> "-"}], "-",
+    ToLowerCase[NormalizeBuildRRatioResultForm[
+      Lookup[options, "ResultForm", "FiniteMSBar"]]]
   ];
 
 (* BuildRRatioSMQCDIngredients[masslessQuarkMass, options]
@@ -499,19 +539,23 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
      ingredientResult, ingredients, ingredientDiagnostics, assemblyResult,
      assemblyExpression, finalExpression, diagnostics, collectedSteps,
      useStored, storeStored, refreshStored, cacheKey, cacheLabel, cacheRoot,
-     loaded, computed, computedResult, computedDiagnostics, optionsAssoc},
+     loaded, computed, computedResult, computedDiagnostics, optionsAssoc,
+     rawFinalExpression, resultForm},
     masslessQuarkMass = OptionValue[quarkMass];
     intermediateSteps = NormalizeIntermediateSteps[OptionValue[
       IntermediateSteps]];
     useStored = TrueQ[OptionValue["UseStoredResults"]];
     storeStored = TrueQ[OptionValue["StoreResults"]];
     refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
+    resultForm =
+      NormalizeBuildRRatioResultForm[OptionValue[ResultForm]];
     optionsAssoc = <|
       "quarkMass" -> masslessQuarkMass,
       "UseStoredResults" -> useStored,
       "StoreResults" -> storeStored,
       "RefreshStoredResults" -> refreshStored,
-      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"]
+      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
+      "ResultForm" -> resultForm
     |>;
     ingredientCalls = BuildRRatioIngredientCallAssociation[masslessQuarkMass];
     If[masslessQuarkMass =!= 0,
@@ -552,6 +596,7 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
           BuildRRatio[SMQCD,
             quarkMass -> masslessQuarkMass,
             ReturnDiagnostics -> True,
+            ResultForm -> OptionValue[ResultForm],
             IntermediateSteps -> OptionValue["IntermediateSteps"],
             PrintIntermediateSteps -> False,
             UseStoredResults -> True,
@@ -596,16 +641,27 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
     ingredientDiagnostics = ingredientResult["IngredientDiagnostics"];
     assemblyResult = AssembleSMQCDRRatio[ingredients];
     assemblyExpression = assemblyResult["AssemblyExpression"];
-    finalExpression = assemblyResult["FinalExpression"];
+    rawFinalExpression = assemblyResult["FinalExpression"];
+    finalExpression =
+      Switch[resultForm,
+        "RawDimRegSeries",
+          rawFinalExpression
+        ,
+        _,
+          BuildRRatioSMQCDFiniteExpression[]
+      ];
     diagnostics = <|
       "Model" -> "SMQCD",
       "quarkMass" -> masslessQuarkMass,
+      "ResultForm" -> resultForm,
       "AssemblySource" -> "ThesisNotebookFormula",
       "Ingredients" -> ingredients,
       "IngredientDiagnostics" -> ingredientDiagnostics,
       "TFactors" -> assemblyResult["TFactors"],
       "Ratios" -> assemblyResult["Ratios"],
-      "AssemblyExpression" -> assemblyExpression
+      "AssemblyExpression" -> assemblyExpression,
+      "RawFinalExpression" -> rawFinalExpression,
+      "PresentedExpression" -> finalExpression
     |>;
     collectedSteps = CollectRRatioIntermediateSteps[ingredientCalls,
       ingredients, assemblyExpression, finalExpression, diagnostics,
