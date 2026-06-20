@@ -49,7 +49,7 @@ M$CouplingMatrices = {
 
   C[F[1], F[2, {g1}], V[1, {g2}]] ==
     IndexDelta[g1, g2] *
-      {{0}, {0}, {D30SourceL}, {D30SourceR}},
+      {{0}, {0}, {(3/2) D30SourceL}, {(3/2) D30SourceR}},
 
   C[F[1], F[2, {g1}], V[1, {g2}], V[1, {g3}]] ==
     I FAGS FASUNF[g1, g2, g3] *

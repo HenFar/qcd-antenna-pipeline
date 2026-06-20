@@ -208,6 +208,9 @@ BuildD30PaperBuildData[key_, opts:OptionsPattern[BuildAntennaData]] :=
         "ConstructionMethod" -> "PaperTarget",
         "DimensionalForm" -> "FourDimensional",
         "Source" -> "hep-ph/0505111",
+        "Experimental" -> True,
+        "Unfinished" -> True,
+        "ReleaseGuarantee" -> "Excluded",
         "ImplementationStatus" -> Lookup[profile,
           "ImplementationStatus", "Unknown"]
       |>
@@ -227,6 +230,9 @@ BuildD30PendingBuildData[key_] :=
         "Reason" -> "SourceModelOwnedButRouteNotImplemented",
         "ConstructionMethod" -> "SourceModelPending",
         "SourceModel" -> Lookup[profile, "SourceModel", Missing["UnknownModel"]],
+        "Experimental" -> True,
+        "Unfinished" -> True,
+        "ReleaseGuarantee" -> "Excluded",
         "ImplementationStatus" -> Lookup[profile,
           "ImplementationStatus", "Unknown"]
       |>
@@ -234,32 +240,82 @@ BuildD30PendingBuildData[key_] :=
   ];
 
 BuildD30SourceBuildData[key_] :=
-  Module[{profile, bornAmp, sourceAmp, bornInterference, sourceInterference},
+  Module[{profile, bornAmp, sourceAmp, bornInterference, sourceInterference,
+     productionColorReducedQ, bornColorReducedQ, sourceCandidate,
+     sourceCandidateExactMatchQ, sourceCandidateNumericResidual,
+     sourceTermGroups, sourceWardK2ZeroQ, sourceWardK3ZeroQ,
+     diagnostics, sourceRouteReadyQ, components, statusReason},
     profile = AntennaProfile[key];
     bornAmp = D30EffectiveSourceAmplitude[2];
     sourceAmp = D30EffectiveSourceAmplitude[3];
     bornInterference = D30SourceSelfInterference[2];
     sourceInterference = D30SourceSelfInterference[3];
+    bornColorReducedQ =
+      FreeQ[bornInterference, _SUNF | _SUNTF | _SUNDelta | _SUNTrace];
+    productionColorReducedQ =
+      FreeQ[sourceInterference, _SUNF | _SUNTF | _SUNDelta | _SUNTrace];
+    sourceCandidate =
+      D30SourceAntennaCandidate[
+        bornInterference,
+        sourceInterference
+      ];
+    sourceCandidateExactMatchQ =
+      TrueQ[TestEqualAntennaeQ[D30Paper, sourceCandidate, 3]];
+    sourceCandidateNumericResidual =
+      ExactNumericResidual[D30Paper, sourceCandidate, 3];
+    sourceTermGroups = D30SourceAmplitudeTermGroups[];
+    sourceWardK2ZeroQ = D30SourceWardIdentityZeroQ[2];
+    sourceWardK3ZeroQ = D30SourceWardIdentityZeroQ[3];
+    diagnostics = <|
+      "ConstructionMethod" -> "SourceModelInterference",
+      "SourceModel" -> Lookup[profile, "SourceModel", Missing["UnknownModel"]],
+      "SourceBornAmplitudeBuilt" -> True,
+      "SourceProductionAmplitudeBuilt" -> True,
+      "SourceBornInterferenceBuilt" -> True,
+      "SourceProductionInterferenceBuilt" -> True,
+      "SourceBornInterferenceColorReducedQ" -> bornColorReducedQ,
+      "SourceProductionInterferenceColorReducedQ" -> productionColorReducedQ,
+      "SourceCandidateExactMatchQ" -> sourceCandidateExactMatchQ,
+      "SourceCandidateNumericResidual" -> sourceCandidateNumericResidual,
+      "SourceTermGroups" -> sourceTermGroups,
+      "SourceWardIdentityK2ZeroQ" -> sourceWardK2ZeroQ,
+      "SourceWardIdentityK3ZeroQ" -> sourceWardK3ZeroQ
+    |>;
+    sourceRouteReadyQ = D30SourceRouteReadyQ[diagnostics];
+    statusReason =
+      If[sourceRouteReadyQ,
+        None,
+        "ExperimentalSourceRouteNotYetValidatedForRelease"
+      ];
+    components =
+      <|"Antenna" -> If[sourceRouteReadyQ, sourceCandidate, $Failed]|>;
     <|
       "Profile" -> profile,
       "BornAmplitude" -> bornAmp,
       "Amplitude" -> sourceAmp,
+      "SourceTermGroups" -> sourceTermGroups,
       "Interferences" -> <|
         "Born" -> bornInterference,
         "Production" -> sourceInterference
       |>,
-      "Components" -> <|"Antenna" -> $Failed|>,
-      "Diagnostics" -> <|
-        "Failed" -> True,
-        "Reason" -> "SourceInterferenceBuiltButSymbolicExtractionPending",
-        "ConstructionMethod" -> "SourceModelInterference",
-        "SourceModel" -> Lookup[profile, "SourceModel", Missing["UnknownModel"]],
-        "SourceBornAmplitudeBuilt" -> True,
-        "SourceProductionAmplitudeBuilt" -> True,
-        "SourceBornInterferenceBuilt" -> True,
-        "SourceProductionInterferenceBuilt" -> True,
-        "ImplementationStatus" -> "SourceModelInterferenceBuilt"
-      |>
+      "SourceCandidate" -> sourceCandidate,
+      "Components" -> components,
+      "Diagnostics" -> Join[
+        diagnostics,
+        <|
+          "SourceRouteReadyQ" -> sourceRouteReadyQ,
+          "Experimental" -> True,
+          "Unfinished" -> Not[sourceRouteReadyQ],
+          "ReleaseGuarantee" -> "Excluded",
+          "Failed" -> Not[sourceRouteReadyQ],
+          "Reason" -> statusReason,
+          "ImplementationStatus" ->
+            If[sourceRouteReadyQ,
+              "ExperimentalSourceRouteValidatedButStillOutsideReleaseGuarantee",
+              "ExperimentalSourceRouteBuiltButActivationGatesPending"
+            ]
+        |>
+      ]
     |>
   ];
 
@@ -750,6 +806,10 @@ BuildRecordIntermediateStepsView[data_Association, result_, resultLabel_String:"
     {
       "Amplitude" -> BuildRecordAmplitudeValue[data],
       "Interference" -> BuildRecordInterferenceValue[data],
+      "SourceTermGroups" -> Lookup[data, "SourceTermGroups",
+        Missing["NotAvailable"]],
+      "SourceCandidate" -> Lookup[data, "SourceCandidate",
+        Missing["NotAvailable"]],
       resultLabel -> result
     }
   ];

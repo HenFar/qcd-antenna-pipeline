@@ -96,3 +96,86 @@ BuildAllAntennae[model_, OptionsPattern[]] :=
         ];
         builtAntennaeList
     ];
+
+(* build and integrate all antennae *)
+
+Options[BuildAndIntegrateAntennaOrderFromList] = {quarkMass -> 0, ExpansionOrder
+     -> 0};
+
+BuildAndIntegrateAntennaOrderFromList[list_, OptionsPattern[]] :=
+    Module[{qM, eO, listLength, builtAntennaeList},
+        qM = OptionValue["quarkMass"];
+        eO = OptionValue["ExpansionOrder"];
+        listLength = Length[list];
+        builtAntennaeList = {};
+        Do[
+            Print["Building antenna ", list[[i]][[1]], list[[i]][[2]],
+                 list[[i]][[3]]];
+            AppendTo[builtAntennaeList, BuildAndIntegrateAntenna[Sequence
+                 @@ list[[i]], ExpansionOrder -> eO, quarkMass -> qM]];
+            ,
+            {i, listLength}
+        ];
+        builtAntennaeList
+    ];
+
+Options[BuildAndIntegrateAllAntennae] = {ExpansionOrder -> 0, maxOrder
+     -> NNLO, quarkMass -> 0};
+
+BuildAndIntegrateAllAntennae[model_, OptionsPattern[]] :=
+    Module[{eO, maxOrder, qM, type1, type2, type3, loList, nloList, nnloList,
+         builtAntennaeList},
+        eO = OptionValue["ExpansionOrder"];
+        maxOrder = OptionValue["maxOrder"];
+        qM = OptionValue["quarkMass"];
+        If[qM =!= 0,
+            Print["Massive antennae are not yet fully implemented. Only A30 has this feature as of the current build. Aborting..."
+                ];
+            Abort[]
+        ];
+        Switch[model,
+            SMQCD,
+                type1 = A;
+                type2 = B;
+                type3 = C
+            ,
+            SUSY,
+                Print["The SUSY model has not been completely implemented yet. Aborting..."
+                    ];
+                Abort[]
+            ,
+            HiggsEFT,
+                Print["The Higgs to gg EFT model has not been completely implemented yet. Aborting..."
+                    ];
+                Abort[]
+            ,
+            _,
+                Print["At the moment only the SMQCD, SUSY and HiggsEFT models are considered within the scope of the package. Aborting..."
+                    ];
+                Abort[]
+        ];
+        loList = {{type1, 2, 0}};
+        nloList = {{type1, 3, 0}, {type1, 2, 1}};
+        nnloList = {{type1, 4, 0}, {type2, 4, 0}, {type3, 4, 0}, {type1,
+             3, 1}, {type1, 2, 2}};
+        Switch[maxOrder,
+            LO,
+                builtAntennaeList = BuildAndIntegrateAntennaOrderFromList[
+                    loList, ExpansionOrder -> eO, quarkMass -> qM]
+            ,
+            NLO,
+                builtAntennaeList = BuildAndIntegrateAntennaOrderFromList[
+                    Join[loList, nloList], ExpansionOrder -> eO, quarkMass -> qM]
+            ,
+            NNLO,
+                builtAntennaeList = BuildAndIntegrateAntennaOrderFromList[
+                    Join[loList, nloList, nnloList], ExpansionOrder -> eO, quarkMass -> qM
+                    ]
+            ,
+            _,
+                Print["The maximum order at the moment is NNLO. LO and NLO are also implemented. This error might have also been triggered by calling the maxOrder argument using lowercase letters; the correct call uses uppercase. Aborting..."
+                    ];
+                Abort[]
+        ];
+        builtAntennaeList
+    ];

@@ -55,14 +55,51 @@ D30SourceMassRules::usage =
 D30SourceAmplitudeTerms::usage =
   "D30SourceAmplitudeTerms[numFinalParticles] returns the expanded source-amplitude terms used by the D30 source-interference builder.";
 
+D30SourceAmplitudeTermGroups::usage =
+  "D30SourceAmplitudeTermGroups[] returns the current hand-identified grouping of the D30 1->3 source-amplitude terms into the contact, gluino-exchange, and gluon-exchange sectors.";
+
+D30SourceAmplitudeGroupAssociation::usage =
+  "D30SourceAmplitudeGroupAssociation[] returns an association that exposes the grouped D30 1->3 source-amplitude terms sector by sector.";
+
 D30SourceRenameSUNIndices::usage =
-  "D30SourceRenameSUNIndices[expr] renames the explicit SUN indices in one source amplitude copy so self-interference products do not violate Einstein summation.";
+  "D30SourceRenameSUNIndices[expr, numFinalParticles] renames only the internal SUN indices in one source amplitude copy so self-interference products do not violate Einstein summation while the external colour labels still contract between the two copies.";
+
+D30SourceWardContractedAmplitude::usage =
+  "D30SourceWardContractedAmplitude[gluonIndex] replaces one external source-gluon polarization vector by its momentum in the D30 1->3 source amplitude, returning the resulting amplitude-level Ward probe.";
+
+D30SourceWardGroupAssociation::usage =
+  "D30SourceWardGroupAssociation[gluonIndex] returns the grouped D30 source-amplitude sectors after the selected external gluon polarization has been replaced by its momentum.";
+
+D30SourceWardGroupZeroQAssociation::usage =
+  "D30SourceWardGroupZeroQAssociation[gluonIndex] returns the current zero/nonzero status of each grouped D30 Ward-contracted source-amplitude sector after the standard D30 kinematic substitutions.";
+
+D30SourceWardIdentityZeroQ::usage =
+  "D30SourceWardIdentityZeroQ[gluonIndex] tests whether the corresponding D30 source Ward-contracted amplitude vanishes after the current canonicalization steps.";
+
+D30SourceRouteReadyQ::usage =
+  "D30SourceRouteReadyQ[diagnostics] returns True only when the D30 source-model build diagnostics satisfy the hard activation gates for the public build route.";
 
 D30SourceInterferencePair::usage =
   "D30SourceInterferencePair[leftTerm, rightTerm, numFinalParticles] evaluates one source-model interference pair for the D30 reconstruction track.";
 
 D30SourceSelfInterference::usage =
   "D30SourceSelfInterference[numFinalParticles] builds the summed source-model self-interference for the D30 reconstruction track.";
+
+D30SourcePolarizationSum::usage =
+  "D30SourcePolarizationSum[expr, numFinalParticles] applies the physical final-state gluon polarization sums used by the D30 source-model route.";
+
+D30SourceParityOddTraceRules::usage =
+  "D30SourceParityOddTraceRules[] returns the D30-specific rule that drops the parity-odd four-gamma gamma5 traces after the source momentum is identified with the sum of the three massless final-state momenta.";
+
+D30SourceDenominatorRules::usage =
+  "D30SourceDenominatorRules[] returns the explicit D30 source-propagator substitutions that map the remaining source-model denominator channels to the package invariant language.";
+
+D30SourceBridgeExpression::usage =
+  "D30SourceBridgeExpression[expr, numFinalParticles] applies the current D30 source-to-antenna convention bridge to a built source expression.";
+
+D30SourceAntennaCandidate::usage =
+  "D30SourceAntennaCandidate[bornInterference, productionInterference] returns the current source-derived D30 antenna candidate obtained after the explicit auxiliary-source bridge.";
+
 
 (* D30EffectiveModelDirectory[]
    ============================
@@ -343,15 +380,61 @@ D30SourceAmplitudeTerms[numFinalParticles_Integer /; MemberQ[{2, 3}, numFinalPar
       numFinalParticles]]]
   ];
 
-(* D30SourceRenameSUNIndices[expr]
-   ===============================
+(* D30SourceAmplitudeTermGroups[]
+   ==============================
    Summary
-     Rename explicit colour indices in one copy of a source amplitude before
-     multiplying it by another copy.
+     Return the current term-group map for the `1 -> 3` D30 source amplitude.
+
+   Returns
+     Association
+       Mapping from readable group labels to term positions in
+       `D30SourceAmplitudeTerms[3]`.
+
+   Notes
+     The grouping is intentionally explicit rather than reconstructed from
+     pattern matching every time.  At the current stage of the D30 track, the
+     main use of the amplitude is physics debugging, and readable stable labels
+     are more valuable than clever automatic classification. *)
+D30SourceAmplitudeTermGroups[] :=
+  <|
+    "Contact" -> {1},
+    "GluinoExchange" -> {2, 3},
+    "GluonExchange" -> {4, 5, 6, 7, 8}
+  |>;
+
+(* D30SourceAmplitudeGroupAssociation[]
+   ====================================
+   Summary
+     Return the grouped `1 -> 3` D30 source-amplitude sectors.
+
+   Returns
+     Association
+       Group label -> grouped amplitude expression.
+
+   Notes
+     This helper exists so future D30 debugging can work sector by sector
+     without having to remember the current term ordering by hand.  That is a
+     software ergonomics choice motivated by the present physics problem: we
+     need to know whether a mismatch sits in the contact term, the gluino
+     exchange, or the gluon exchange sector. *)
+D30SourceAmplitudeGroupAssociation[] :=
+  Module[{terms, groups},
+    terms = D30SourceAmplitudeTerms[3];
+    groups = D30SourceAmplitudeTermGroups[];
+    Association @ KeyValueMap[#1 -> Total[terms[[#2]]]&, groups]
+  ];
+
+(* D30SourceRenameSUNIndices[expr, numFinalParticles]
+   ==================================================
+   Summary
+     Rename only the internal colour indices in one copy of a source amplitude
+     before multiplying it by another copy.
 
    Parameters
      expr : expression
        One amplitude term or amplitude copy.
+     numFinalParticles : Integer
+       Supported source multiplicity.
 
    Returns
      expression
@@ -360,9 +443,14 @@ D30SourceAmplitudeTerms[numFinalParticles_Integer /; MemberQ[{2, 3}, numFinalPar
    Notes
      This is a software fix for a real colour-algebra issue: without distinct
      dummy indices, self-interference products can violate Einstein summation
-     assumptions and produce spurious contractions. *)
-D30SourceRenameSUNIndices[expr_] :=
-  Module[{indices, rules},
+     assumptions and produce spurious contractions.  However, the external
+     gluon colour labels must be shared between the left and right amplitude
+     copies so the physical external-colour sum still happens.  We therefore
+     protect those external labels and rename only the genuinely internal
+     dummy indices. *)
+D30SourceRenameSUNIndices[expr_,
+   numFinalParticles_Integer /; MemberQ[{2, 3}, numFinalParticles]] :=
+  Module[{indices, protectedIndices, rules},
     indices =
       DeleteDuplicates[
         Cases[
@@ -372,14 +460,358 @@ D30SourceRenameSUNIndices[expr_] :=
           Infinity
         ]
       ];
+    protectedIndices =
+      (SUNIndex /@ Table[
+        Symbol["Glu" <> ToString[i]],
+        {i, 2, numFinalParticles + 1}
+      ]);
     rules =
       Thread[
-        indices ->
-          (indices /. head_[sym_Symbol] :>
+        Complement[indices, protectedIndices] ->
+          (Complement[indices, protectedIndices] /. head_[sym_Symbol] :>
             head[Unique[SymbolName[sym] <> "$r"]])
       ];
     expr /. rules
   ];
+
+(* D30SourcePolarizationSum[expr, numFinalParticles]
+   =================================================
+   Summary
+     Apply the physical polarization sums appropriate to the D30 source route.
+
+   Parameters
+     expr : expression
+       Source interference contribution before final-state gluon sums.
+     numFinalParticles : Integer
+       Supported source multiplicity.
+
+   Returns
+     expression
+       Expression with the source-process gluon polarizations summed.
+
+   Notes
+     The effective D30 source emits real final-state gluons, not a virtual
+     current like the A-family photon source.  We therefore use transverse
+     reference-vector sums here rather than `VirtualBoson -> True`.  This is a
+     physics choice, not just a simplification trick. *)
+D30SourcePolarizationSum[expr_, 2] :=
+  SafeDoPolarizationSums[expr, k2, p];
+
+D30SourcePolarizationSum[expr_, 3] :=
+  SafeDoPolarizationSums[
+    SafeDoPolarizationSums[expr, k2, k3],
+    k3,
+    k2
+  ];
+
+D30SourcePolarizationSum[expr_, _] :=
+  expr;
+
+(* D30SourceWardContractedExpression[expr, gluonIndex]
+   ===================================================
+   Internal helper used by the D30 Ward diagnostics.
+
+   Replace one selected external polarization object by its momentum while
+   preserving the surrounding FeynCalc momentum wrapper used by FCFAConvert. *)
+D30SourceWardContractedExpression[expr_, gluonIndex_Integer] :=
+  Module[{momentum},
+    momentum = Symbol["k" <> ToString[gluonIndex]];
+    expr /. {
+      Momentum[Polarization[momentum, phase_.], dim_.] :>
+        Momentum[momentum, dim],
+      Polarization[momentum, phase_.] :> momentum
+    }
+  ];
+
+(* D30SourceWardContractedAmplitude[gluonIndex]
+   ============================================
+   Summary
+     Build the amplitude-level Ward probe for one of the final-state source
+     gluons.
+
+   Parameters
+     gluonIndex : Integer
+       Supported values are `2` and `3`, matching the D30 `1 -> 3` source
+       final-state gluons.
+
+   Returns
+     expression
+       Source amplitude with the chosen polarization vector replaced by its
+       momentum.
+
+   Notes
+     This is a deliberately low-level diagnostic object.  The D30 route is
+     presently blocked by a source-model mismatch, so exposing the Ward probe
+     directly makes the gauge-consistency question inspectable without forcing
+     users to reconstruct it by hand from the raw amplitude. *)
+D30SourceWardContractedAmplitude[gluonIndex_Integer /; MemberQ[{2, 3},
+    gluonIndex]] :=
+  Module[{amp},
+    amp = D30SourcePolarizationCanonicalize[D30EffectiveSourceAmplitude[3]];
+    D30SourceWardContractedExpression[amp, gluonIndex]
+  ];
+
+(* D30SourceWardGroupAssociation[gluonIndex]
+   =========================================
+   Summary
+     Return the grouped D30 source-amplitude sectors after one Ward
+     contraction.
+
+   Parameters
+     gluonIndex : Integer
+       Supported values are `2` and `3`.
+
+   Returns
+     Association
+       Group label -> Ward-contracted grouped source amplitude.
+
+   Notes
+     This helper exists for D30 debugging rather than the public route.  The
+     immediate question is not only whether the full Ward probe fails, but
+     which source sector is responsible for the failure. *)
+D30SourceWardGroupAssociation[gluonIndex_Integer /; MemberQ[{2, 3},
+    gluonIndex]] :=
+  Module[{groups},
+    groups = D30SourceAmplitudeGroupAssociation[];
+    Association @ KeyValueMap[
+      (#1 -> D30SourceWardContractedExpression[#2, gluonIndex])&,
+      groups
+    ]
+  ];
+
+(* D30SourceWardGroupZeroQAssociation[gluonIndex]
+   ==============================================
+   Summary
+     Return the current zero/nonzero status of each Ward-contracted D30 source
+     sector.
+
+   Parameters
+     gluonIndex : Integer
+       Supported values are `2` and `3`.
+
+   Returns
+     Association
+       Group label -> Boolean zero test after the current canonicalization
+       steps.
+
+   Notes
+     The same substitutions used by D30SourceWardIdentityZeroQ[...] are applied
+     here so the grouped readout stays consistent with the full-route gate. *)
+D30SourceWardGroupZeroQAssociation[gluonIndex_Integer /; MemberQ[{2, 3},
+    gluonIndex]] :=
+  Module[{groups, canonicalizeProbe},
+    groups = D30SourceWardGroupAssociation[gluonIndex];
+    canonicalizeProbe[expr_] :=
+      expr //
+      ReplaceAll[D30SourceMassRules[]] //
+      ReplaceAll[D30SourceCanonicalKinematicRules[3]] //
+      ReplaceAll[D -> 4 - 2 Epsilon] //
+      Expand;
+    Association @ KeyValueMap[
+      (#1 -> TrueQ[
+        canonicalizeProbe[#2] === 0 ||
+        Simplify[canonicalizeProbe[#2] == 0]
+      ])&,
+      groups
+    ]
+  ];
+
+(* D30SourceWardIdentityZeroQ[gluonIndex]
+   ======================================
+   Summary
+     Test whether the amplitude-level Ward probe currently vanishes.
+
+   Parameters
+     gluonIndex : Integer
+       Supported values are `2` and `3`.
+
+   Returns
+     Boolean
+       `True` only when the current canonicalized Ward-contracted amplitude
+       simplifies to zero.
+
+   Notes
+     This helper is intentionally strict.  Returning `False` is not treated as
+     a harmless numerical mismatch; for the D30 reconstruction track it is a
+     meaningful indicator that the effective source model still needs physics
+     scrutiny before the public antenna route can be promoted. *)
+D30SourceWardIdentityZeroQ[gluonIndex_Integer /; MemberQ[{2, 3},
+    gluonIndex]] :=
+  Module[{probe},
+    probe =
+      D30SourceWardContractedAmplitude[gluonIndex] //
+      ReplaceAll[D30SourceMassRules[]] //
+      ReplaceAll[D30SourceCanonicalKinematicRules[3]] //
+      ReplaceAll[D -> 4 - 2 Epsilon] //
+      Expand;
+    TrueQ[probe === 0 || Simplify[probe == 0]]
+  ];
+
+(* D30SourceRouteReadyQ[diagnostics]
+   =================================
+   Summary
+     Evaluate the hard source-model acceptance gates for the public D30 build
+     route.
+
+   Parameters
+     diagnostics : Association
+       Diagnostics returned by the D30 source-route build data.
+
+   Returns
+     Boolean
+       `True` only when every required model, interference, and paper-match
+       gate is satisfied.
+
+   Notes
+     Keeping this gate in one helper prevents the public activation policy from
+     being duplicated across the build router, dev scripts, and future runtime
+     checks. *)
+D30SourceRouteReadyQ[diagnostics_Association] :=
+  TrueQ @ And[
+    Lookup[diagnostics, "SourceBornAmplitudeBuilt", False],
+    Lookup[diagnostics, "SourceProductionAmplitudeBuilt", False],
+    Lookup[diagnostics, "SourceBornInterferenceBuilt", False],
+    Lookup[diagnostics, "SourceProductionInterferenceBuilt", False],
+    Lookup[diagnostics, "SourceBornInterferenceColorReducedQ", False],
+    Lookup[diagnostics, "SourceProductionInterferenceColorReducedQ", False],
+    Lookup[diagnostics, "SourceWardIdentityK2ZeroQ", False],
+    Lookup[diagnostics, "SourceWardIdentityK3ZeroQ", False],
+    Lookup[diagnostics, "SourceCandidateExactMatchQ", False]
+  ];
+
+(* D30SourceParityOddTraceRules[]
+   ==============================
+   Summary
+     Return the D30-specific parity-odd trace rules used in the auxiliary
+     source bridge.
+
+   Returns
+     list
+       Replacement rules setting the four-gamma gamma5 source traces to zero.
+
+   Notes
+     After the D30 source kinematics are imposed, the incoming source momentum
+     satisfies `p = k1 + k2 + k3` with all final-state momenta massless.  The
+     parity-odd traces therefore reduce to Levi-Civita contractions of four
+     linearly dependent vectors and vanish identically.  Making that step
+     explicit keeps the source bridge readable and auditable. *)
+D30SourceParityOddTraceRules[] :=
+  {
+    DiracTrace[
+      DiracGamma[Momentum[a_, _], _] .
+      DiracGamma[Momentum[b_, _], _] .
+      DiracGamma[Momentum[c_, _], _] .
+      DiracGamma[Momentum[p, _], _] .
+      DiracGamma[5]
+    ] /; Sort[{a, b, c}] === Sort[{k1, k2, k3}] :> 0,
+
+    DiracTrace[
+      DiracGamma[Momentum[p, _], _] .
+      DiracGamma[Momentum[a_, _], _] .
+      DiracGamma[Momentum[b_, _], _] .
+      DiracGamma[Momentum[c_, _], _] .
+      DiracGamma[5]
+    ] /; Sort[{a, b, c}] === Sort[{k1, k2, k3}] :> 0
+  };
+
+(* D30SourceDenominatorRules[]
+   ===========================
+   Summary
+     Return the remaining explicit source-propagator substitutions used by the
+     D30 auxiliary-source bridge.
+
+   Returns
+     list
+       Rules mapping the surviving source channels onto `s12` and `s13`.
+
+   Notes
+     After the main FeynCalc normalization pass, the D30 source route still
+     leaves two explicit propagator channels visible.  Calling them out here
+     makes the last source-to-antenna convention step explicit rather than
+     relying on more opaque downstream simplification. *)
+D30SourceDenominatorRules[] :=
+  {
+    FeynAmpDenominator[
+      PropagatorDenominator[-Momentum[k1, _] - Momentum[k2, _], 0]
+    ] -> 1 / s12,
+    FeynAmpDenominator[
+      PropagatorDenominator[-Momentum[k1, _] - Momentum[k3, _], 0]
+    ] -> 1 / s13,
+    FeynAmpDenominator[
+      PropagatorDenominator[
+        Plus[Times[-1, Momentum[k1, _]], Times[-1, Momentum[k2, _]]],
+        0
+      ]
+    ] -> 1 / s12,
+    FeynAmpDenominator[
+      PropagatorDenominator[
+        Plus[Times[-1, Momentum[k1, _]], Times[-1, Momentum[k3, _]]],
+        0
+      ]
+    ] -> 1 / s13
+  };
+
+(* D30SourceBridgeExpression[expr, numFinalParticles]
+   ==================================================
+   Summary
+     Apply the current explicit D30 source-to-antenna convention bridge.
+
+   Parameters
+     expr : expression
+       Source-side amplitude or interference object.
+     numFinalParticles : Integer
+       Source multiplicity carried by the object.
+
+   Returns
+     expression
+       Bridged source expression in the package invariant language.
+
+   Notes
+     This helper packages the current state of the legitimate D30 bridge:
+     physical polarization bookkeeping has already happened upstream, colour is
+     reduced, parity-odd source traces are removed for the kinematic reason
+     explained above, the leftover source denominators are mapped to invariants,
+     and the final result is projected onto the four-dimensional tree-level
+     convention used by the encoded D30 paper target. *)
+D30SourceBridgeExpression[expr_, numFinalParticles_Integer /; MemberQ[{2, 3},
+    numFinalParticles]] :=
+  expr //
+  ReplaceAll[D30SourceParityOddTraceRules[]] //
+  ReplaceAll[D30SourceDenominatorRules[]] //
+  ReplaceAll[CasimirSubs] //
+  ReplaceAll[Epsilon -> 0] //
+  Together //
+  Simplify //
+  Expand;
+
+(* D30SourceAntennaCandidate[bornInterference, productionInterference]
+   ===================================================================
+   Summary
+     Return the current source-derived D30 antenna candidate.
+
+   Parameters
+     bornInterference : expression
+       D30 source `1 -> 2` self-interference.
+     productionInterference : expression
+       D30 source `1 -> 3` self-interference.
+
+   Returns
+     expression
+       Current D30 antenna candidate obtained from the explicit source bridge.
+
+   Notes
+     The ratio strips the common source coupling through the `1 -> 2`
+     normalization and then removes the extra strong coupling and adjoint color
+     factor of the extra emitted gluon.  This is the physically motivated
+     source candidate we compare to the literature.  It is intentionally named
+     a candidate because the final paper-validated D30 bridge is not yet fully
+     closed. *)
+D30SourceAntennaCandidate[bornInterference_, productionInterference_] :=
+  D30SourceBridgeExpression[productionInterference, 3] /
+    (D30SourceBridgeExpression[bornInterference, 2] SUNN SMP["g_s"]^2) //
+  Together //
+  Simplify //
+  Expand;
 
 (* D30SourceInterferencePair[leftTerm, rightTerm, numFinalParticles]
    =================================================================
@@ -406,12 +838,12 @@ D30SourceRenameSUNIndices[expr_] :=
      than maximizing terseness. *)
 D30SourceInterferencePair[leftTerm_, rightTerm_,
    numFinalParticles_Integer /; MemberQ[{2, 3}, numFinalParticles]] :=
-  Module[{left, bare, summed, polarized, expanded, evaluated, gluonMomenta,
+  Module[{left, bare, summed, polarized, expanded, evaluated,
      final},
     KinematicRules[numFinalParticles];
     (* Rename indices only on one side of the product so the resulting colour
        contractions represent the intended independent amplitude copies. *)
-    left = D30SourceRenameSUNIndices[leftTerm];
+    left = D30SourceRenameSUNIndices[leftTerm, numFinalParticles];
     bare = ComplexConjugate[left] * rightTerm;
     (* Perform colour simplification before the polarization algebra gets too
        large.  This is mainly a usability and performance decision: smaller
@@ -420,17 +852,7 @@ D30SourceInterferencePair[leftTerm_, rightTerm_,
       bare //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
       FermionSpinSum;
-    gluonMomenta =
-      If[numFinalParticles === 2,
-        {k2},
-        {k2, k3}
-      ];
-    polarized =
-      Fold[
-        SafeDoPolarizationSums[#1, #2, 0, VirtualBoson -> True]&,
-        summed,
-        gluonMomenta
-      ];
+    polarized = D30SourcePolarizationSum[summed, numFinalParticles];
     expanded = DiracSigmaExplicit[polarized];
     evaluated = Calc[expanded];
     (* The final replacement chain is the bridge from the source-model algebra
@@ -445,6 +867,7 @@ D30SourceInterferencePair[leftTerm_, rightTerm_,
       ReplaceAll[CasimirSubs] //
       ReplaceAll[D -> 4 - 2 Epsilon] //
       SUNSimplify //
+      ReplaceAll[CasimirSubs] //
       Together;
     final
   ];

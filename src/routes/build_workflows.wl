@@ -86,19 +86,16 @@ BuildTreeRouteData[key_, options_Association] :=
     quarkMassOpt = Lookup[options, "quarkMass", 0];
     If[key === {D, 3, 0},
       Return[
-        If[TrueQ[Lookup[options, "UseSourceModelRoute", False]],
-          BuildD30SourceBuildData[key]
+        If[TrueQ[Lookup[options, "AllowPrototypeTargets", False]] &&
+            !TrueQ[Lookup[options, "UseSourceModelRoute", False]],
+          BuildD30PaperBuildData[key,
+            quarkMass -> quarkMassOpt,
+            ApplyStripCouplings -> Lookup[options, "ApplyStripCouplings", AllCouplings],
+            ApplyCasimirSubstitution -> Lookup[options, "ApplyCasimirSubstitution", True],
+            ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
+            AllowPrototypeTargets -> True]
           ,
-          If[TrueQ[Lookup[options, "AllowPrototypeTargets", False]],
-            BuildD30PaperBuildData[key,
-              quarkMass -> quarkMassOpt,
-              ApplyStripCouplings -> Lookup[options, "ApplyStripCouplings", AllCouplings],
-              ApplyCasimirSubstitution -> Lookup[options, "ApplyCasimirSubstitution", True],
-              ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
-              AllowPrototypeTargets -> True]
-            ,
-            BuildD30PendingBuildData[key]
-          ]
+          BuildD30SourceBuildData[key]
         ]
       ]
     ];
