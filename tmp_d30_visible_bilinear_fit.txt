@@ -1,0 +1,16 @@
+visible-class-scores:
+  core-class: {1, 14}
+  mixed-class(core,second): {1, 17}
+  mixed-class(core,first): {1, 17}
+  target-common: {1, 86}
+class-difference-scores:
+  core-minus-mixed: {1, 20}
+  mixed-minus-mixedAlt: {1, 23}
+two-class-fit:
+  solutionAB: {}
+  residualAB-score: {1, 141}
+  residualAB: -4*s12^4 - 8*s12^3*s13 - 12*s12^2*s13^2 + 4*a*s12^2*s13^2 + 4*b*D30SourceL^2*s12^2*s13^2 - 8*s12*s13^3 - 4*s13^4 - 8*s12^3*s23 - 13*s12^2*s13*s23 + a*s12^2*s13*s23 + b*D30SourceL^2*s12^2*s13*s23 - 13*s12*s13^2*s23 + a*s12*s13^2*s23 + b*D30SourceL^2*s12*s13^2*s23 - 8*s13^3*s23 - 6*s12^2*s23^2 - 6*s12*s13*s23^2 - 6*s13^2*s23^2 - 2*s13*s23^3
+three-class-fit:
+  solutionABC: {}
+  residualABC-score: {1, 173}
+  residualABC: -4*s12^4 - 8*s12^3*s13 - 12*s12^2*s13^2 + 4*a*s12^2*s13^2 + 4*b*D30SourceL^2*s12^2*s13^2 + 4*c*D30SourceR^2*s12^2*s13^2 - 8*s12*s13^3 - 4*s13^4 - 8*s12^3*s23 - 13*s12^2*s13*s23 + a*s12^2*s13*s23 + b*D30SourceL^2*s12^2*s13*s23 + c*D30SourceR^2*s12^2*s13*s23 - 13*s12*s13^2*s23 + a*s12*s13^2*s23 + b*D30SourceL^2*s12*s13^2*s23 + c*D30SourceR^2*s12*s13^2*s23 - 8*s13^3*s23 - 6*s12^2*s23^2 - 6*s12*s13*s23^2 - 6*s13^2*s23^2 - 2*s13*s23^3

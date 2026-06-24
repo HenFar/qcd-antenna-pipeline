@@ -1,0 +1,50 @@
+Core
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-numerator-score: {1, 11}
+CorePlus6Sum
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-numerator-score: {1, 11}
+CorePlus7Sum
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-numerator-score: {1, 11}
+CorePlus6SumPlus7Sum
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-numerator-score: {1, 11}
+CorePlus6DiffPlus7Diff
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-numerator-score: {1, 11}
+CorePlusFirstMembers
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-numerator-score: {1, 21}
+Core vs CorePlus6Sum
+  square-difference-score: {0, 0}
+  antenna-difference-score: {0, 0}
+  common-numerator-difference-score: {0, 0}
+Core vs CorePlus7Sum
+  square-difference-score: {0, 0}
+  antenna-difference-score: {0, 0}
+  common-numerator-difference-score: {0, 0}
+Core vs CorePlus6SumPlus7Sum
+  square-difference-score: {0, 0}
+  antenna-difference-score: {0, 0}
+  common-numerator-difference-score: {0, 0}
+Core vs CorePlus6DiffPlus7Diff
+  square-difference-score: {0, 0}
+  antenna-difference-score: {0, 0}
+  common-numerator-difference-score: {0, 0}
+Core vs CorePlusFirstMembers
+  square-difference-score: {1, 25}
+  antenna-difference-score: {1, 39}
+  common-numerator-difference-score: {1, 23}

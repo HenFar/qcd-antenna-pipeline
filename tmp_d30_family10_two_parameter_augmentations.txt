@@ -1,0 +1,2903 @@
+core-label: FineFamily10Sum
+core-common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily9Difference@-1/2
+  built: False
+  square-score: Missing[NotBuilt]
+  antenna-score: Missing[NotBuilt]
+  common-residual-score: Missing[NotBuilt]
+FineFamily6Sum@-1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1/2 + FineFamily9Difference@1/2
+  built: False
+  square-score: Missing[NotBuilt]
+  antenna-score: Missing[NotBuilt]
+  common-residual-score: Missing[NotBuilt]
+FineFamily6Sum@1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Sum@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Sum@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Sum@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Sum@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Sum@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Sum@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Sum@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Sum@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Sum@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Sum@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Sum@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Sum@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Sum@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Sum@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Sum@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Sum@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@-1 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily9Sum@-1
+  built: False
+  square-score: Missing[NotBuilt]
+  antenna-score: Missing[NotBuilt]
+  common-residual-score: Missing[NotBuilt]
+FineFamily7Sum@1/2 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily6Difference@1
+  built: False
+  square-score: Missing[NotBuilt]
+  antenna-score: Missing[NotBuilt]
+  common-residual-score: Missing[NotBuilt]
+FineFamily7Sum@-1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily6Difference@1
+  built: False
+  square-score: Missing[NotBuilt]
+  antenna-score: Missing[NotBuilt]
+  common-residual-score: Missing[NotBuilt]
+FineFamily7Sum@1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Sum@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Sum@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Sum@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Sum@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Sum@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Sum@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Sum@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Sum@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Sum@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Sum@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@-1 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Sum@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Sum@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Sum@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Sum@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily7Difference@-1/2
+  built: False
+  square-score: Missing[NotBuilt]
+  antenna-score: Missing[NotBuilt]
+  common-residual-score: Missing[NotBuilt]
+FineFamily8Sum@1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Sum@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Sum@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Sum@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Sum@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Sum@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Sum@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Sum@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Sum@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Sum@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Sum@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@-1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily6Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily6Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily6Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily6Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily9Sum@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Sum@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Sum@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Sum@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Sum@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Sum@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Sum@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Sum@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Sum@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Sum@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@-1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily7Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily7Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily7Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily7Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily6Difference@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Difference@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Difference@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Difference@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Difference@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Difference@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Difference@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily6Difference@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily6Difference@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily6Difference@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@-1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily8Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily8Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily8Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily8Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily7Difference@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Difference@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Difference@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Difference@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Difference@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Difference@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Difference@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily7Difference@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily7Difference@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily7Difference@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@-1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1/2 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1/2 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1/2 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1/2 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1 + FineFamily9Difference@-1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1 + FineFamily9Difference@-1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1 + FineFamily9Difference@1/2
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@1 + FineFamily9Difference@1
+  built: True
+  square-score: {1, 29}
+  antenna-score: {1, 27}
+  common-residual-score: {1, 121}
+FineFamily8Difference@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Difference@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Difference@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Difference@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Difference@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Difference@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Difference@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily8Difference@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily8Difference@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily8Difference@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@-1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Difference@-1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@-1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Difference@-1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@-1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Difference@-1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@-1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Difference@-1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@1/2 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Difference@1/2 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@1/2 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Difference@1/2 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@1 + GluonFirstMembers@-1
+  built: True
+  square-score: {1, 25}
+  antenna-score: {1, 39}
+  common-residual-score: {1, 306}
+FineFamily9Difference@1 + GluonFirstMembers@-1/2
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+FineFamily9Difference@1 + GluonFirstMembers@1/2
+  built: True
+  square-score: {1, 33}
+  antenna-score: {1, 47}
+  common-residual-score: {1, 337}
+FineFamily9Difference@1 + GluonFirstMembers@1
+  built: True
+  square-score: {1, 31}
+  antenna-score: {1, 45}
+  common-residual-score: {1, 337}
+top-results:
+  FineFamily6Sum@1/2 + FineFamily9Difference@1/2 -> Missing[NotBuilt]
+  FineFamily6Sum@-1 + FineFamily9Difference@-1/2 -> Missing[NotBuilt]
+  FineFamily7Sum@1/2 + FineFamily6Difference@1 -> Missing[NotBuilt]
+  FineFamily7Sum@1/2 + FineFamily9Sum@-1 -> Missing[NotBuilt]
+  FineFamily7Sum@-1 + FineFamily6Difference@1 -> Missing[NotBuilt]
+  FineFamily8Sum@1 + FineFamily7Difference@-1/2 -> Missing[NotBuilt]
+  FineFamily6Difference@-1/2 + FineFamily7Difference@-1 -> {1, 121}
+  FineFamily6Difference@-1/2 + FineFamily7Difference@1 -> {1, 121}
+  FineFamily6Difference@1/2 + FineFamily7Difference@-1 -> {1, 121}
+  FineFamily6Difference@1/2 + FineFamily7Difference@1 -> {1, 121}
+  FineFamily6Difference@-1/2 + FineFamily7Difference@-1/2 -> {1, 121}
+  FineFamily6Difference@-1/2 + FineFamily7Difference@1/2 -> {1, 121}
+  FineFamily6Difference@1/2 + FineFamily7Difference@-1/2 -> {1, 121}
+  FineFamily6Difference@1/2 + FineFamily7Difference@1/2 -> {1, 121}
+  FineFamily6Difference@-1/2 + FineFamily8Difference@-1 -> {1, 121}
+  FineFamily6Difference@-1/2 + FineFamily8Difference@1 -> {1, 121}
+  FineFamily6Difference@1/2 + FineFamily8Difference@-1 -> {1, 121}
+  FineFamily6Difference@1/2 + FineFamily8Difference@1 -> {1, 121}
+  FineFamily6Difference@-1/2 + FineFamily8Difference@-1/2 -> {1, 121}
+  FineFamily6Difference@-1/2 + FineFamily8Difference@1/2 -> {1, 121}

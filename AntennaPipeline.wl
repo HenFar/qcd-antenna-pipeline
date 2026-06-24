@@ -59,6 +59,9 @@ Get[FileNameJoin[{packageRoot, "src", "engines", "extraction_loop.wl"
 Get[FileNameJoin[{packageRoot, "src", "engines", "color_ordered_a40.wl"
    }]];
 
+Get[FileNameJoin[{packageRoot, "src", "engines", "color_ordered_d30.wl"
+   }]];
+
 Get[FileNameJoin[{packageRoot, "src", "routes", "route_catalog.wl"}]];
 
 Get[FileNameJoin[{packageRoot, "src", "routes", "massive_a30_unintegrated.wl"

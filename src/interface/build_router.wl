@@ -240,46 +240,100 @@ BuildD30PendingBuildData[key_] :=
   ];
 
 BuildD30SourceBuildData[key_] :=
-  Module[{profile, bornAmp, sourceAmp, bornInterference, sourceInterference,
-     productionColorReducedQ, bornColorReducedQ, sourceCandidate,
+  Module[{profile, bornAmp, sourceAmp, orderedRouteData, bornInterference,
+     sourceInterference, productionColorReducedQ, bornColorReducedQ,
+     legacySourceCandidate, legacySourceCandidateExactMatchQ,
+     legacySourceCandidateNumericResidual, sourceCandidate,
      sourceCandidateExactMatchQ, sourceCandidateNumericResidual,
+     orderedAntennaExactMatchQ, exchangedOrderedAntennaExactMatchQ,
      sourceTermGroups, sourceWardK2ZeroQ, sourceWardK3ZeroQ,
      diagnostics, sourceRouteReadyQ, components, statusReason},
     profile = AntennaProfile[key];
     bornAmp = D30EffectiveSourceAmplitude[2];
     sourceAmp = D30EffectiveSourceAmplitude[3];
-    bornInterference = D30SourceSelfInterference[2];
-    sourceInterference = D30SourceSelfInterference[3];
-    bornColorReducedQ =
-      FreeQ[bornInterference, _SUNF | _SUNTF | _SUNDelta | _SUNTrace];
-    productionColorReducedQ =
-      FreeQ[sourceInterference, _SUNF | _SUNTF | _SUNDelta | _SUNTrace];
+    orderedRouteData = ColorOrderedD30Antenna[
+      sourceAmp,
+      bornAmp,
+      3,
+      Lookup[profile, "ColorOrderedSpec", <|"Name" -> "D30", "NumGluons" -> 1|>]
+    ];
+    bornInterference = Missing["DeferredLegacyDiagnostics"];
+    sourceInterference = Missing["DeferredLegacyDiagnostics"];
+    bornColorReducedQ = Missing["DeferredLegacyDiagnostics"];
+    productionColorReducedQ = Missing["DeferredLegacyDiagnostics"];
+    legacySourceCandidate = Missing["DeferredLegacyDiagnostics"];
+    legacySourceCandidateExactMatchQ = Missing["DeferredLegacyDiagnostics"];
+    legacySourceCandidateNumericResidual = Missing["DeferredLegacyDiagnostics"];
     sourceCandidate =
-      D30SourceAntennaCandidate[
-        bornInterference,
-        sourceInterference
+      If[AssociationQ[orderedRouteData],
+        orderedRouteData["Antenna"],
+        $Failed
+      ];
+    orderedAntennaExactMatchQ =
+      If[AssociationQ[orderedRouteData],
+        Lookup[orderedRouteData["Diagnostics"], "OrderedAntennaExactMatchQ",
+          False],
+        False
+      ];
+    exchangedOrderedAntennaExactMatchQ =
+      If[AssociationQ[orderedRouteData],
+        Lookup[orderedRouteData["Diagnostics"],
+          "ExchangedOrderedAntennaExactMatchQ", False],
+        False
       ];
     sourceCandidateExactMatchQ =
-      TrueQ[TestEqualAntennaeQ[D30Paper, sourceCandidate, 3]];
+      If[AssociationQ[orderedRouteData],
+        Lookup[orderedRouteData["Diagnostics"], "FullAntennaExactMatchQ",
+          False],
+        False
+      ];
     sourceCandidateNumericResidual =
-      ExactNumericResidual[D30Paper, sourceCandidate, 3];
-    sourceTermGroups = D30SourceAmplitudeTermGroups[];
-    sourceWardK2ZeroQ = D30SourceWardIdentityZeroQ[2];
-    sourceWardK3ZeroQ = D30SourceWardIdentityZeroQ[3];
+      If[AssociationQ[orderedRouteData],
+        Lookup[orderedRouteData["Diagnostics"], "FullAntennaNumericResidual",
+          Missing["NotBuilt"]],
+        Missing["NotBuilt"]
+      ];
+    sourceTermGroups = Missing["DeferredLegacyDiagnostics"];
+    sourceWardK2ZeroQ = Missing["DeferredLegacyDiagnostics"];
+    sourceWardK3ZeroQ = Missing["DeferredLegacyDiagnostics"];
     diagnostics = <|
-      "ConstructionMethod" -> "SourceModelInterference",
+      "ConstructionMethod" -> "OrderedColorStrippedSource",
       "SourceModel" -> Lookup[profile, "SourceModel", Missing["UnknownModel"]],
       "SourceBornAmplitudeBuilt" -> True,
       "SourceProductionAmplitudeBuilt" -> True,
-      "SourceBornInterferenceBuilt" -> True,
-      "SourceProductionInterferenceBuilt" -> True,
+      "OrderedBornPartialBuilt" -> AssociationQ[orderedRouteData],
+      "OrderedProductionPartialBuilt" -> AssociationQ[orderedRouteData],
+      "OrderedAntennaExactMatchQ" -> orderedAntennaExactMatchQ,
+      "OrderedAntennaNumericResidual" ->
+        If[AssociationQ[orderedRouteData],
+          Lookup[orderedRouteData["Diagnostics"],
+            "OrderedAntennaNumericResidual", Missing["NotBuilt"]],
+          Missing["NotBuilt"]
+        ],
+      "ExchangedOrderedAntennaExactMatchQ" ->
+        exchangedOrderedAntennaExactMatchQ,
+      "ExchangedOrderedAntennaNumericResidual" ->
+        If[AssociationQ[orderedRouteData],
+          Lookup[orderedRouteData["Diagnostics"],
+            "ExchangedOrderedAntennaNumericResidual",
+            Missing["NotBuilt"]],
+          Missing["NotBuilt"]
+        ],
+      "SourceBornInterferenceBuilt" -> Missing["DeferredLegacyDiagnostics"],
+      "SourceProductionInterferenceBuilt" -> Missing["DeferredLegacyDiagnostics"],
       "SourceBornInterferenceColorReducedQ" -> bornColorReducedQ,
       "SourceProductionInterferenceColorReducedQ" -> productionColorReducedQ,
       "SourceCandidateExactMatchQ" -> sourceCandidateExactMatchQ,
       "SourceCandidateNumericResidual" -> sourceCandidateNumericResidual,
+      "LegacySourceCandidateExactMatchQ" ->
+        legacySourceCandidateExactMatchQ,
+      "LegacySourceCandidateNumericResidual" ->
+        legacySourceCandidateNumericResidual,
       "SourceTermGroups" -> sourceTermGroups,
       "SourceWardIdentityK2ZeroQ" -> sourceWardK2ZeroQ,
-      "SourceWardIdentityK3ZeroQ" -> sourceWardK3ZeroQ
+      "SourceWardIdentityK3ZeroQ" -> sourceWardK3ZeroQ,
+      "LegacyBranchAgreementNumericResidual" ->
+        Missing["DeferredLegacyDiagnostics"]
     |>;
     sourceRouteReadyQ = D30SourceRouteReadyQ[diagnostics];
     statusReason =
@@ -296,9 +350,26 @@ BuildD30SourceBuildData[key_] :=
       "SourceTermGroups" -> sourceTermGroups,
       "Interferences" -> <|
         "Born" -> bornInterference,
-        "Production" -> sourceInterference
+        "Production" -> sourceInterference,
+        "OrderedBorn" ->
+          If[AssociationQ[orderedRouteData],
+            orderedRouteData["BornSquare"],
+            Missing["NotBuilt"]
+          ],
+        "OrderedProduction" ->
+          If[AssociationQ[orderedRouteData],
+            orderedRouteData["OrderedSquare"],
+            Missing["NotBuilt"]
+          ],
+        "OrderedProductionExchanged" ->
+          If[AssociationQ[orderedRouteData],
+            orderedRouteData["ExchangedOrderedSquare"],
+            Missing["NotBuilt"]
+          ]
       |>,
       "SourceCandidate" -> sourceCandidate,
+      "LegacySourceCandidate" -> legacySourceCandidate,
+      "OrderedRouteData" -> orderedRouteData,
       "Components" -> components,
       "Diagnostics" -> Join[
         diagnostics,
@@ -311,8 +382,8 @@ BuildD30SourceBuildData[key_] :=
           "Reason" -> statusReason,
           "ImplementationStatus" ->
             If[sourceRouteReadyQ,
-              "ExperimentalSourceRouteValidatedButStillOutsideReleaseGuarantee",
-              "ExperimentalSourceRouteBuiltButActivationGatesPending"
+              "OrderedColorStrippedSourceRouteValidatedButStillOutsideReleaseGuarantee",
+              "OrderedColorStrippedSourceRouteBuiltButLiteratureMatchPending"
             ]
         |>
       ]

@@ -69,7 +69,8 @@ IntegrateBackendDirectRoute[antenna_, integrationMethod_, options_Association] :
             BasisRoot -> Lookup[options, "BasisRoot", Automatic],
             GenerateMissingBases -> Lookup[options, "GenerateMissingBases", False],
             ReturnDiagnostics -> Lookup[options, "ReturnDiagnostics", False],
-            DetailedTimingDiagnostics -> Lookup[options, "DetailedTimingDiagnostics", False]
+            DetailedTimingDiagnostics -> Lookup[options, "DetailedTimingDiagnostics", False],
+            MassSymbol -> Lookup[profile, "MassSymbol", Automatic]
           ]
         ,
         _,
@@ -266,14 +267,7 @@ IntegrateRouteObject[obj_, options_Association] :=
         backendDiagnostics = routeData["BackendDiagnostics"];
         diagnostics = routeData["Diagnostics"];
         openMasterBackendDiagnostics =
-          If[
-            TrueQ[Lookup[options, "ReturnRecord", False]] ||
-            TrueQ[Lookup[options, "ReturnDiagnostics", False]] ||
-            TrueQ[Lookup[options, "ReturnMasterCombination", False]] ||
-            RequestedIntermediateStepQ[intermediateSteps, "MasterCombination"],
-            MassiveA30OpenMasterBackendDiagnostics[obj, options, routeKind],
-            <||>
-          ];
+          MassiveA30OpenMasterBackendDiagnostics[obj, options, routeKind];
         If[AssociationQ[openMasterBackendDiagnostics] &&
             Length[openMasterBackendDiagnostics] > 0,
           backendDiagnostics = Join[backendDiagnostics, openMasterBackendDiagnostics];
@@ -302,16 +296,38 @@ IntegrateRouteObject[obj_, options_Association] :=
           ];
         recordStages = CollectIntegrationRecordStages[antennaLocal, rawIntegrated, tTerms, finalIntegrated, selectedIntegrated, backendDiagnostics, diagnosticsWithMetadata];
         Return[
-          FormatFreshIntegrationReturn[
-            selectedIntegrated,
-            diagnosticsWithMetadata,
-            Lookup[options, "ReturnDiagnostics", False],
-            Lookup[options, "ReturnRecord", False],
-            intermediateSteps,
-            Lookup[options, "PrintIntermediateSteps", False],
-            routeKind,
-            recordStages,
-            recordMetadata
+          With[
+            {
+              publicReturn =
+                If[TrueQ[Lookup[options, "ReturnMasterCombination", False]],
+                  ResolveIntegrationPublicResult[
+                    selectedIntegrated,
+                    diagnosticsWithMetadata,
+                    True,
+                    ToString[key, InputForm]
+                  ]
+                  ,
+                  MassiveA30DefaultMasterEndpointResult[
+                    obj,
+                    options,
+                    routeKind,
+                    selectedIntegrated,
+                    diagnosticsWithMetadata,
+                    ToString[key, InputForm]
+                  ]
+                ]
+            },
+            FormatFreshIntegrationReturn[
+              publicReturn[[1]],
+              publicReturn[[2]],
+              Lookup[options, "ReturnDiagnostics", False],
+              Lookup[options, "ReturnRecord", False],
+              intermediateSteps,
+              Lookup[options, "PrintIntermediateSteps", False],
+              routeKind,
+              recordStages,
+              recordMetadata
+            ]
           ]
         ]
       ]
@@ -434,7 +450,8 @@ IntegrateRouteObject[obj_, options_Association] :=
             GenerateMissingBases -> Lookup[options, "GenerateMissingBases", False],
             ExpansionOrder -> expansionOrder,
             ReturnDiagnostics -> ibpNeedsDiagnostics,
-            DetailedTimingDiagnostics -> Lookup[options, "DetailedTimingDiagnostics", False]
+            DetailedTimingDiagnostics -> Lookup[options, "DetailedTimingDiagnostics", False],
+            MassSymbol -> Lookup[profile, "MassSymbol", Automatic]
           ];
           If[TrueQ[ibpNeedsDiagnostics],
             backendDiagnostics = ibpResult[[2]];
@@ -650,17 +667,28 @@ BuildAndIntegrateRouteResult[type_, numFinalParticles_Integer, loopOrder_Integer
       ]
     ];
     {integrationResult, integrationDiagnostics} =
-      IntegrateRouteObject[
+      IntegrateAntenna[
         antennaObject,
-        Join[options, <|
-          "ReturnDiagnostics" -> True,
-          "ReturnRecord" -> False,
-          "IntermediateSteps" -> If[TrueQ[Lookup[options, "ReturnRecord", False]], IntegrationRecordStepLabels[], Lookup[options, "IntermediateSteps", {}]],
-          "PrintIntermediateSteps" -> False,
-          "Component" -> selectionComponent,
-          "Contribution" -> Lookup[options, "Contribution", All],
-          "RouteKind" -> "BuildAndIntegrateAntenna"
-        |>]
+        ApplyFeynCalcMS -> Lookup[options, "ApplyFeynCalcMS", True],
+        quarkMass -> Lookup[options, "quarkMass", 0],
+        PaVeEvaluation -> Lookup[options, "PaVeEvaluation", Automatic],
+        ExpansionOrder -> Lookup[options, "ExpansionOrder", Automatic],
+        KinematicScale -> Lookup[options, "KinematicScale", q2],
+        NormalizeKinematicScale -> Lookup[options, "NormalizeKinematicScale", False],
+        ReturnDiagnostics -> True,
+        ReturnRecord -> False,
+        ReturnMasterCombination -> Lookup[options, "ReturnMasterCombination", False],
+        LoopMomentum -> Lookup[options, "LoopMomentum", l],
+        ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
+        BasisFamily -> Lookup[options, "BasisFamily", Automatic],
+        BasisRoot -> Lookup[options, "BasisRoot", Automatic],
+        GenerateMissingBases -> Lookup[options, "GenerateMissingBases", False],
+        ReturnTTerms -> Lookup[options, "ReturnTTerms", False],
+        IntermediateSteps -> If[TrueQ[Lookup[options, "ReturnRecord", False]], IntegrationRecordStepLabels[], Lookup[options, "IntermediateSteps", {}]],
+        PrintIntermediateSteps -> False,
+        DetailedTimingDiagnostics -> Lookup[options, "DetailedTimingDiagnostics", False],
+        Component -> selectionComponent,
+        Contribution -> Lookup[options, "Contribution", All]
       ];
     integrationDiagnostics = Join[integrationDiagnostics, <|"SourceObject" -> antennaObject, "AntennaObject" -> antennaObject|>];
     FormatFreshIntegrationReturn[

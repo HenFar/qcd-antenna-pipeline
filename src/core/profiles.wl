@@ -228,10 +228,11 @@ AntennaProfile[{C, 4, 0}] :=
 
 AntennaProfile[{D, 3, 0}] :=
   <|"Key" -> {D, 3, 0}, "Name" -> "D30", "AntennaType" -> D,
-    "NumFinalParticles" -> 3, "Production" -> "EffectiveSourcePending",
+    "NumFinalParticles" -> 3, "Production" -> "OrderedColorStrippedSource",
     "Extraction" -> "ColourNormScalar", "ColourNorm" -> 1,
     "SourceModel" -> D30EffectiveModelName[],
-    "ImplementationStatus" -> "ModelOwnedSourcePendingRoute"|>;
+    "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>,
+    "ImplementationStatus" -> "ModelOwnedOrderedSourceRouteInProgress"|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 0}] :=
   <|"Key" -> {type, 2, 0}, "Name" -> "A20", "AntennaType" -> type,
@@ -273,10 +274,11 @@ AntennaProfile[{type_Symbol /; SymbolName[type] === "C", 4, 0}] :=
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "D", 3, 0}] :=
   <|"Key" -> {type, 3, 0}, "Name" -> "D30", "AntennaType" -> type,
-    "NumFinalParticles" -> 3, "Production" -> "EffectiveSourcePending",
+    "NumFinalParticles" -> 3, "Production" -> "OrderedColorStrippedSource",
     "Extraction" -> "ColourNormScalar", "ColourNorm" -> 1,
     "SourceModel" -> D30EffectiveModelName[],
-    "ImplementationStatus" -> "ModelOwnedSourcePendingRoute"|>;
+    "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>,
+    "ImplementationStatus" -> "ModelOwnedOrderedSourceRouteInProgress"|>;
 
 (* AntennaAmplitude[key]
    =====================

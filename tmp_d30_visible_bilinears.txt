@@ -1,0 +1,77 @@
+bilinear-scores:
+CoreCore
+  built: True
+  raw-score: {1, 32}
+  bridged-score: {1, 29}
+  ratio-score: {1, 27}
+  finalized-score: {1, 27}
+  common-score: {1, 14}
+  common-residual-score: {1, 121}
+SecondSecond
+  built: True
+  raw-score: {1, 28}
+  bridged-score: {1, 25}
+  ratio-score: {1, 39}
+  finalized-score: {1, 39}
+  common-score: {1, 17}
+  common-residual-score: {1, 306}
+FirstFirst
+  built: True
+  raw-score: {1, 28}
+  bridged-score: {1, 25}
+  ratio-score: {1, 39}
+  finalized-score: {1, 39}
+  common-score: {1, 17}
+  common-residual-score: {1, 306}
+CoreSecond
+  built: True
+  raw-score: {1, 28}
+  bridged-score: {1, 25}
+  ratio-score: {1, 39}
+  finalized-score: {1, 39}
+  common-score: {1, 17}
+  common-residual-score: {1, 306}
+SecondCore
+  built: True
+  raw-score: {1, 28}
+  bridged-score: {1, 25}
+  ratio-score: {1, 39}
+  finalized-score: {1, 39}
+  common-score: {1, 17}
+  common-residual-score: {1, 306}
+CoreFirst
+  built: True
+  raw-score: {1, 28}
+  bridged-score: {1, 25}
+  ratio-score: {1, 39}
+  finalized-score: {1, 39}
+  common-score: {1, 17}
+  common-residual-score: {1, 306}
+FirstCore
+  built: True
+  raw-score: {1, 28}
+  bridged-score: {1, 25}
+  ratio-score: {1, 39}
+  finalized-score: {1, 39}
+  common-score: {1, 17}
+  common-residual-score: {1, 306}
+SecondFirst
+  built: True
+  raw-score: {0, 0}
+  bridged-score: {0, 0}
+  ratio-score: {0, 0}
+  finalized-score: {0, 0}
+  common-score: {0, 0}
+  common-residual-score: {1, 86}
+FirstSecond
+  built: True
+  raw-score: {0, 0}
+  bridged-score: {0, 0}
+  ratio-score: {0, 0}
+  finalized-score: {0, 0}
+  common-score: {0, 0}
+  common-residual-score: {1, 86}
+symmetric-cross-scores:
+  core-second sym common-score: {1, 18}
+  core-first sym common-score: {1, 18}
+  second-first sym common-score: {0, 0}

@@ -1083,6 +1083,45 @@ ExpandMX30NumeratorShiftedForms[expr_, mass_] :=
     Together[expandedNumerator / denominator]
   ];
 
+MX30PublicMassSquareSymbol[mass_] :=
+  Module[{heldMass},
+    heldMass = Unevaluated[mass];
+    If[Head[heldMass] === Symbol,
+      Symbol[Context[heldMass] <> SymbolName[heldMass] <> "2"]
+      ,
+      heldMass^2
+    ]
+  ];
+
+MX30PublicizeValue[value_, profile_Association] :=
+  Module[{mass, massSquareSymbol, publicRules},
+    mass = Lookup[profile, "MassSymbol", quarkMass];
+    massSquareSymbol =
+      MX30PublicMassSquareSymbol[
+        mass
+      ];
+    publicRules =
+      If[Head[Unevaluated[mass]] === Symbol,
+        {
+          HoldPattern[Power[mass, n_Integer?EvenQ]] :>
+            massSquareSymbol^(n/2),
+          m2 -> massSquareSymbol
+        }
+        ,
+        {m2 -> massSquareSymbol}
+      ];
+    Which[
+      AssociationQ[value],
+        AssociationMap[MX30PublicizeValue[#, profile]&, value]
+      ,
+      ListQ[value],
+        MX30PublicizeValue[#, profile]& /@ value
+      ,
+      True,
+        value /. publicRules
+    ]
+  ];
+
 PrepareMX30IBPTerm[term_, profile_Association] :=
   Module[{expr, mass},
     mass = Lookup[profile, "MassSymbol", quarkMass];
@@ -2332,7 +2371,8 @@ IBPReductionStages[rawReduced_, reduced_, profile_Association] :=
 
 Options[IntegrateViaIBP] = {NumFinalParticles -> 3, NumLoops -> 0, BasisFamily
    -> "X30", BasisRoot -> Automatic, GenerateMissingBases -> False, ExpansionOrder
-   -> 0, ReturnDiagnostics -> False, DetailedTimingDiagnostics -> False};
+   -> 0, ReturnDiagnostics -> False, DetailedTimingDiagnostics -> False,
+   MassSymbol -> Automatic};
 
 IntegrateViaIBP[antenna_, OptionsPattern[]] :=
   Module[{family, profile, basisLoad, reduction, integrated, diagnostics,
@@ -2356,7 +2396,8 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
               GenerateMissingBases], ExpansionOrder -> OptionValue[
               ExpansionOrder], ReturnDiagnostics -> OptionValue[
               ReturnDiagnostics], DetailedTimingDiagnostics -> OptionValue[
-              DetailedTimingDiagnostics]]
+              DetailedTimingDiagnostics], MassSymbol -> OptionValue[
+              MassSymbol]]
         ]& /@ antenna;
       Return[
         If[OptionValue[ReturnDiagnostics] === True,
@@ -2385,7 +2426,7 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
        -> OptionValue["BasisRoot"], "GenerateMissingBases" -> OptionValue["GenerateMissingBases"
       ], "ExpansionOrder" -> OptionValue["ExpansionOrder"], "NumFinalParticles"
        -> OptionValue["NumFinalParticles"], "NumLoops" -> OptionValue["NumLoops"
-      ]|>]&;
+      ], "MassSymbol" -> OptionValue["MassSymbol"]|>]&;
     If[TrueQ[Lookup[profile, "Failed", False]],
       diagnostics = <|"Failed" -> True, "Reason" -> profile["Reason"],
          "Profile" -> profile|>;
@@ -2434,6 +2475,10 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
         IBPToSeriesWithDiagnostics[reduction["RawReducedTerms"],
           reduction["ReducedTerms"], profile]
       ];
+    If[Lookup[profile, "BasisFamily", Missing["NoFamily"]] === "MX30",
+      reduction = MX30PublicizeValue[reduction, profile];
+      timedSeries = MX30PublicizeValue[timedSeries, profile]
+    ];
     integrated = timedSeries["Integrated"];
     reductionStages = timedSeries["Stages"];
     masterSymbols =

@@ -1,0 +1,13 @@
+FineFamily6Sum:True
+FineFamily7Sum:True
+FineFamily8Sum:True
+FineFamily9Sum:True
+FineFamily10Sum:True
+FineFamily6Difference:True
+FineFamily7Difference:True
+FineFamily8Difference:True
+FineFamily9Difference:True
+FineFamily10Difference:True
+GluonFirstMembers:True
+GluonSecondMembers:True
+GluonFirstMinusSecond:True

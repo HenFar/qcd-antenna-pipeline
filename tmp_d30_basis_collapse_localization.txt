@@ -1,0 +1,36 @@
+stage-scores:
+Core
+  built: True
+  raw-square-score: {1, 32}
+  bridged-square-score: {1, 29}
+  raw-ratio-score: {1, 27}
+  finalized-ratio-score: {1, 27}
+Second
+  built: True
+  raw-square-score: {1, 28}
+  bridged-square-score: {1, 25}
+  raw-ratio-score: {1, 39}
+  finalized-ratio-score: {1, 39}
+First
+  built: True
+  raw-square-score: {1, 28}
+  bridged-square-score: {1, 25}
+  raw-ratio-score: {1, 39}
+  finalized-ratio-score: {1, 39}
+NullCandidate
+  built: True
+  raw-square-score: {0, 0}
+  bridged-square-score: {0, 0}
+  raw-ratio-score: {0, 0}
+  finalized-ratio-score: {0, 0}
+difference-tests:
+CoreMinusSecondMinusFirst
+  raw-square-diff-score: {0, 0}
+  bridged-square-diff-score: {0, 0}
+  raw-ratio-diff-score: {0, 0}
+  finalized-ratio-diff-score: {0, 0}
+NullCandidate
+  raw-square-diff-score: {0, 0}
+  bridged-square-diff-score: {0, 0}
+  raw-ratio-diff-score: {0, 0}
+  finalized-ratio-diff-score: {0, 0}

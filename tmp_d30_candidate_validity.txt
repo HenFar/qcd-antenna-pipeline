@@ -1,0 +1,10 @@
+FineFamily6Sum:Integer
+FineFamily7Sum:Integer
+FineFamily8Sum:Integer
+FineFamily9Sum:Integer
+FineFamily10Sum:Times
+FineFamily6Difference:Integer
+FineFamily7Difference:Integer
+FineFamily8Difference:Integer
+FineFamily9Difference:Integer
+FineFamily10Difference:Times

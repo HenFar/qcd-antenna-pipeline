@@ -76,8 +76,17 @@ D30SourceWardGroupZeroQAssociation::usage =
 D30SourceWardIdentityZeroQ::usage =
   "D30SourceWardIdentityZeroQ[gluonIndex] tests whether the corresponding D30 source Ward-contracted amplitude vanishes after the current canonicalization steps.";
 
+D30SourceWardStageAssociation::usage =
+  "D30SourceWardStageAssociation[gluonIndex] returns the staged D30 Ward probe after each canonicalization step used during source-route debugging.";
+
+D30SourceWardGroupStageAssociation::usage =
+  "D30SourceWardGroupStageAssociation[gluonIndex] returns the staged Ward probes for each grouped D30 source-amplitude sector.";
+
 D30SourceRouteReadyQ::usage =
   "D30SourceRouteReadyQ[diagnostics] returns True only when the D30 source-model build diagnostics satisfy the hard activation gates for the public build route.";
+
+D30SourceWardReduce::usage =
+  "D30SourceWardReduce[expr] applies the D30-specific momentum-conservation and Dirac-chain cleanup used by the Ward diagnostics.";
 
 D30SourceInterferencePair::usage =
   "D30SourceInterferencePair[leftTerm, rightTerm, numFinalParticles] evaluates one source-model interference pair for the D30 reconstruction track.";
@@ -96,6 +105,9 @@ D30SourceDenominatorRules::usage =
 
 D30SourceBridgeExpression::usage =
   "D30SourceBridgeExpression[expr, numFinalParticles] applies the current D30 source-to-antenna convention bridge to a built source expression.";
+
+D30SourceBridgeStageAssociation::usage =
+  "D30SourceBridgeStageAssociation[expr, numFinalParticles] returns the staged D30 source-to-antenna bridge so intermediate residuals can be inspected.";
 
 D30SourceAntennaCandidate::usage =
   "D30SourceAntennaCandidate[bornInterference, productionInterference] returns the current source-derived D30 antenna candidate obtained after the explicit auxiliary-source bridge.";
@@ -326,7 +338,8 @@ D30SourceCanonicalKinematicRules[2] :=
 
 D30SourceCanonicalKinematicRules[3] :=
   {
-    Pair[Momentum[p, _], Momentum[p, _]] -> q2,
+    q2 -> s12 + s13 + s23,
+    Pair[Momentum[p, _], Momentum[p, _]] -> s12 + s13 + s23,
     Pair[Momentum[p, _], Momentum[k1, _]] -> (s12 + s13) / 2,
     Pair[Momentum[k1, _], Momentum[p, _]] -> (s12 + s13) / 2,
     Pair[Momentum[p, _], Momentum[k2, _]] -> (s12 + s23) / 2,
@@ -551,6 +564,52 @@ D30SourceWardContractedAmplitude[gluonIndex_Integer /; MemberQ[{2, 3},
     D30SourceWardContractedExpression[amp, gluonIndex]
   ];
 
+D30SourceWardStageAssociation[gluonIndex_Integer /; MemberQ[{2, 3},
+    gluonIndex]] :=
+  Module[{amp, raw, polarized, massed, kinematic, dimensional},
+    amp = D30SourcePolarizationCanonicalize[D30EffectiveSourceAmplitude[3]];
+    raw = D30SourceWardContractedExpression[amp, gluonIndex];
+    polarized = raw;
+    massed = polarized /. D30SourceMassRules[];
+    kinematic = massed /. D30SourceCanonicalKinematicRules[3];
+    dimensional = Expand[kinematic /. D -> 4 - 2 Epsilon];
+    <|
+      "Raw" -> raw,
+      "PolarizationCanonicalized" -> polarized,
+      "MassRulesApplied" -> massed,
+      "CanonicalKinematicsApplied" -> kinematic,
+      "DimensionalExpanded" -> dimensional,
+      "BridgeApplied" -> D30SourceBridgeStageAssociation[dimensional, 3][
+        "Expanded"]
+    |>
+  ];
+
+D30SourceWardGroupStageAssociation[gluonIndex_Integer /; MemberQ[{2, 3},
+    gluonIndex]] :=
+  Module[{groups},
+    groups = D30SourceAmplitudeGroupAssociation[];
+    Association @ KeyValueMap[
+      (#1 -> Module[{sector, raw, polarized, massed, kinematic, dimensional},
+          sector = D30SourcePolarizationCanonicalize[#2];
+          raw = D30SourceWardContractedExpression[sector, gluonIndex];
+          polarized = raw;
+          massed = polarized /. D30SourceMassRules[];
+          kinematic = massed /. D30SourceCanonicalKinematicRules[3];
+          dimensional = Expand[kinematic /. D -> 4 - 2 Epsilon];
+          <|
+            "Raw" -> raw,
+            "PolarizationCanonicalized" -> polarized,
+            "MassRulesApplied" -> massed,
+            "CanonicalKinematicsApplied" -> kinematic,
+            "DimensionalExpanded" -> dimensional,
+            "BridgeApplied" -> D30SourceBridgeStageAssociation[
+              dimensional, 3]["Expanded"]
+          |>
+        ])&,
+      groups
+    ]
+  ];
+
 (* D30SourceWardGroupAssociation[gluonIndex]
    =========================================
    Summary
@@ -605,8 +664,8 @@ D30SourceWardGroupZeroQAssociation[gluonIndex_Integer /; MemberQ[{2, 3},
       expr //
       ReplaceAll[D30SourceMassRules[]] //
       ReplaceAll[D30SourceCanonicalKinematicRules[3]] //
-      ReplaceAll[D -> 4 - 2 Epsilon] //
-      Expand;
+      ReplaceAll[D -> 4] //
+      D30SourceWardReduce;
     Association @ KeyValueMap[
       (#1 -> TrueQ[
         canonicalizeProbe[#2] === 0 ||
@@ -642,9 +701,29 @@ D30SourceWardIdentityZeroQ[gluonIndex_Integer /; MemberQ[{2, 3},
       D30SourceWardContractedAmplitude[gluonIndex] //
       ReplaceAll[D30SourceMassRules[]] //
       ReplaceAll[D30SourceCanonicalKinematicRules[3]] //
-      ReplaceAll[D -> 4 - 2 Epsilon] //
-      Expand;
+      ReplaceAll[D -> 4] //
+      D30SourceWardReduce;
     TrueQ[probe === 0 || Simplify[probe == 0]]
+  ];
+
+D30SourceWardReduce[expr_] :=
+  Module[{reduced},
+    reduced =
+      expr //
+      ReplaceAll[{
+        Momentum[p, dim_.] :>
+          Momentum[k1 + k2 + k3, dim],
+        Momentum[-p, dim_.] :>
+          Momentum[-k1 - k2 - k3, dim]
+      }] //
+      FeynCalc`DiracSigmaExplicit //
+      FeynCalc`DiracSimplify //
+      Expand //
+      FeynCalc`ChangeDimension[#, 4]& //
+      FeynCalc`Contract //
+      FeynCalc`DiracSimplify //
+      Expand;
+    reduced
   ];
 
 (* D30SourceRouteReadyQ[diagnostics]
@@ -670,12 +749,10 @@ D30SourceRouteReadyQ[diagnostics_Association] :=
   TrueQ @ And[
     Lookup[diagnostics, "SourceBornAmplitudeBuilt", False],
     Lookup[diagnostics, "SourceProductionAmplitudeBuilt", False],
-    Lookup[diagnostics, "SourceBornInterferenceBuilt", False],
-    Lookup[diagnostics, "SourceProductionInterferenceBuilt", False],
-    Lookup[diagnostics, "SourceBornInterferenceColorReducedQ", False],
-    Lookup[diagnostics, "SourceProductionInterferenceColorReducedQ", False],
-    Lookup[diagnostics, "SourceWardIdentityK2ZeroQ", False],
-    Lookup[diagnostics, "SourceWardIdentityK3ZeroQ", False],
+    Lookup[diagnostics, "OrderedBornPartialBuilt", False],
+    Lookup[diagnostics, "OrderedProductionPartialBuilt", False],
+    Lookup[diagnostics, "OrderedAntennaExactMatchQ", False],
+    Lookup[diagnostics, "ExchangedOrderedAntennaExactMatchQ", False],
     Lookup[diagnostics, "SourceCandidateExactMatchQ", False]
   ];
 
@@ -698,6 +775,16 @@ D30SourceRouteReadyQ[diagnostics_Association] :=
 D30SourceParityOddTraceRules[] :=
   {
     DiracTrace[
+      chain___ .
+      DiracGamma[Momentum[a_, _], _] .
+      DiracGamma[5] .
+      tail___
+    ] /; SubsetQ[{k1, k2, k3, p},
+      DeleteDuplicates[Cases[{chain, DiracGamma[Momentum[a, D], D], tail},
+        DiracGamma[Momentum[mom_, _], _] :> mom, Infinity]]
+    ] :> 0,
+
+    DiracTrace[
       DiracGamma[Momentum[a_, _], _] .
       DiracGamma[Momentum[b_, _], _] .
       DiracGamma[Momentum[c_, _], _] .
@@ -713,6 +800,29 @@ D30SourceParityOddTraceRules[] :=
       DiracGamma[5]
     ] /; Sort[{a, b, c}] === Sort[{k1, k2, k3}] :> 0
   };
+
+D30SourceBridgeStageAssociation[expr_,
+   numFinalParticles_Integer /; MemberQ[{2, 3}, numFinalParticles]] :=
+  Module[{parityOddRemoved, denominatorsMapped, casimirReduced,
+     epsilonProjected, combined, simplified, expanded},
+    parityOddRemoved = expr /. D30SourceParityOddTraceRules[];
+    denominatorsMapped = parityOddRemoved /. D30SourceDenominatorRules[];
+    casimirReduced = denominatorsMapped /. CasimirSubs;
+    epsilonProjected = casimirReduced /. Epsilon -> 0;
+    combined = Together[epsilonProjected];
+    simplified = Simplify[combined];
+    expanded = Expand[simplified];
+    <|
+      "Input" -> expr,
+      "ParityOddRemoved" -> parityOddRemoved,
+      "DenominatorsMapped" -> denominatorsMapped,
+      "CasimirReduced" -> casimirReduced,
+      "EpsilonProjected" -> epsilonProjected,
+      "Together" -> combined,
+      "Simplified" -> simplified,
+      "Expanded" -> expanded
+    |>
+  ];
 
 (* D30SourceDenominatorRules[]
    ===========================
@@ -775,14 +885,7 @@ D30SourceDenominatorRules[] :=
      convention used by the encoded D30 paper target. *)
 D30SourceBridgeExpression[expr_, numFinalParticles_Integer /; MemberQ[{2, 3},
     numFinalParticles]] :=
-  expr //
-  ReplaceAll[D30SourceParityOddTraceRules[]] //
-  ReplaceAll[D30SourceDenominatorRules[]] //
-  ReplaceAll[CasimirSubs] //
-  ReplaceAll[Epsilon -> 0] //
-  Together //
-  Simplify //
-  Expand;
+  D30SourceBridgeStageAssociation[expr, numFinalParticles]["Expanded"];
 
 (* D30SourceAntennaCandidate[bornInterference, productionInterference]
    ===================================================================
@@ -852,7 +955,11 @@ D30SourceInterferencePair[leftTerm_, rightTerm_,
       bare //
       SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
       FermionSpinSum;
-    polarized = D30SourcePolarizationSum[summed, numFinalParticles];
+    polarized =
+      D30SourcePolarizationSum[
+        D30SourcePolarizationCanonicalize[summed],
+        numFinalParticles
+      ];
     expanded = DiracSigmaExplicit[polarized];
     evaluated = Calc[expanded];
     (* The final replacement chain is the bridge from the source-model algebra

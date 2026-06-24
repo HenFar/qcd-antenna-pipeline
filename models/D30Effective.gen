@@ -90,5 +90,5 @@ M$FlippingRules = {
       dm : _FADiracMatrix | _FADiracSlash,
       FAChiralityProjector[pm_]
     ] ->
-    -FANonCommutative[dm, FAChiralityProjector[-pm]]
+    FANonCommutative[dm, FAChiralityProjector[-pm]]
 };

@@ -94,6 +94,9 @@ LoadMassiveA30IntegratedProvenance::usage =
 MassiveA30IntegratedRouteData::usage =
   "MassiveA30IntegratedRouteData[qm, order, normalizeScale, profile] returns the package-shaped integrated-result bundle used by the public massive A30 integration routes.";
 
+MassiveA30DefaultMasterEndpointResult::usage =
+  "MassiveA30DefaultMasterEndpointResult[obj, options, routeKind, integratedFallback, diagnostics, routeLabel] returns the public massive A30 master-combination endpoint together with updated diagnostics.";
+
 Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
    PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> Automatic, KinematicScale -> q2, NormalizeKinematicScale ->
@@ -112,6 +115,9 @@ IntegrateAntenna::heavy =
 
 IntegrateAntenna::nomaster =
   "Master-combination form is not available for `1`.";
+
+IntegrateAntenna::mx30endpoint =
+  "Massive A30 with nonzero quarkMass currently stops at the MX30 master-integral linear combination. Returning that expression for `1`.";
 
 IntegratedResidualListZeroQ[residuals_] :=
   ListQ[residuals] && And @@ (TrueQ[# === 0]& /@ residuals);
@@ -216,36 +222,58 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
 
 BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
    OptionsPattern[]] :=
-  BuildAndIntegrateRouteResult[
-    type,
-    numFinalParticles,
-    loopOrder,
-    <|
-      "ApplyFeynCalcMS" -> OptionValue["ApplyFeynCalcMS"],
-      "quarkMass" -> OptionValue["quarkMass"],
-      "PaVeEvaluation" -> OptionValue["PaVeEvaluation"],
-      "ExpansionOrder" -> OptionValue["ExpansionOrder"],
-      "KinematicScale" -> OptionValue["KinematicScale"],
-      "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
-      "ReturnDiagnostics" -> OptionValue["ReturnDiagnostics"],
-      "ReturnRecord" -> OptionValue["ReturnRecord"],
-      "ReturnMasterCombination" -> OptionValue["ReturnMasterCombination"],
-      "LoopMomentum" -> OptionValue["LoopMomentum"],
-      "ApplyDimReg" -> OptionValue["ApplyDimReg"],
-      "BasisFamily" -> OptionValue["BasisFamily"],
-      "BasisRoot" -> OptionValue["BasisRoot"],
-      "GenerateMissingBases" -> OptionValue["GenerateMissingBases"],
-      "ReturnTTerms" -> OptionValue["ReturnTTerms"],
-      "IntermediateSteps" -> OptionValue["IntermediateSteps"],
-      "PrintIntermediateSteps" -> OptionValue["PrintIntermediateSteps"],
-      "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"],
-      "UseStoredResults" -> OptionValue["UseStoredResults"],
-      "StoreResults" -> OptionValue["StoreResults"],
-      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
-      "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
-      "Component" -> OptionValue["Component"],
-      "Contribution" -> OptionValue["Contribution"]
-    |>
+  Module[{buildComponent, selectionComponent, antennaObject},
+    buildComponent =
+      If[OptionValue["Component"] === All,
+        All,
+        OptionValue["Component"]
+      ];
+    selectionComponent =
+      If[buildComponent === All,
+        OptionValue["Component"],
+        All
+      ];
+    antennaObject =
+      BuildAntennaObject[
+        type,
+        numFinalParticles,
+        loopOrder,
+        quarkMass -> OptionValue["quarkMass"],
+        ApplyDimReg -> OptionValue["ApplyDimReg"],
+        LoopMomentum -> OptionValue["LoopMomentum"],
+        Component -> buildComponent,
+        Contribution -> OptionValue["Contribution"]
+      ];
+    If[antennaObject === $Failed,
+      Return[$Failed]
+    ];
+    IntegrateAntenna[
+      antennaObject,
+      ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
+      quarkMass -> OptionValue["quarkMass"],
+      PaVeEvaluation -> OptionValue["PaVeEvaluation"],
+      ExpansionOrder -> OptionValue["ExpansionOrder"],
+      KinematicScale -> OptionValue["KinematicScale"],
+      NormalizeKinematicScale -> OptionValue["NormalizeKinematicScale"],
+      ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
+      ReturnRecord -> OptionValue["ReturnRecord"],
+      ReturnMasterCombination -> OptionValue["ReturnMasterCombination"],
+      LoopMomentum -> OptionValue["LoopMomentum"],
+      ApplyDimReg -> OptionValue["ApplyDimReg"],
+      BasisFamily -> OptionValue["BasisFamily"],
+      BasisRoot -> OptionValue["BasisRoot"],
+      GenerateMissingBases -> OptionValue["GenerateMissingBases"],
+      ReturnTTerms -> OptionValue["ReturnTTerms"],
+      IntermediateSteps -> OptionValue["IntermediateSteps"],
+      PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+      DetailedTimingDiagnostics -> OptionValue["DetailedTimingDiagnostics"],
+      UseStoredResults -> OptionValue["UseStoredResults"],
+      StoreResults -> OptionValue["StoreResults"],
+      ResultsCacheRoot -> OptionValue["ResultsCacheRoot"],
+      RefreshStoredResults -> OptionValue["RefreshStoredResults"],
+      Component -> selectionComponent,
+      Contribution -> OptionValue["Contribution"]
+    ]
   ];
 
 If[!ValueQ[$AntennaPipelineHeavyRouteNotices],
@@ -503,6 +531,65 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
     ]
   ];
 
+MassiveA30DefaultMasterEndpointResult[obj_AntennaObject,
+   options_Association, routeKind_String, integratedFallback_,
+   diagnostics_Association, routeLabel_String] :=
+  Module[{qm, backendDiagnostics, masterCombination},
+    qm = Lookup[options, "quarkMass", quarkMass];
+    backendDiagnostics = Lookup[diagnostics, "BackendDiagnostics", <||>];
+    If[!AssociationQ[backendDiagnostics],
+      backendDiagnostics = <||>
+    ];
+    If[MatchQ[
+         Lookup[backendDiagnostics, "RawMasterCombination",
+           Missing["NotAvailable"]],
+         Missing[__]
+       ] ||
+       Lookup[backendDiagnostics, "RawMasterCombination",
+         Missing["NotAvailable"]] === $Failed,
+      backendDiagnostics =
+        Join[
+          backendDiagnostics,
+          MassiveA30OpenMasterBackendDiagnostics[obj, options, routeKind]
+        ]
+    ];
+    masterCombination =
+      Lookup[backendDiagnostics, "RawMasterCombination",
+        Missing["NotAvailable"]];
+    Message[IntegrateAntenna::mx30endpoint, routeLabel];
+    Which[
+      MatchQ[masterCombination, Missing[__]] || masterCombination === $Failed,
+        {
+          integratedFallback,
+          Join[
+            diagnostics,
+            <|
+              "BackendDiagnostics" -> backendDiagnostics,
+              "RequestedResultKind" -> "ClosedBridgeFallback",
+              "MassiveA30EndpointWarningEmitted" -> True,
+              "MassiveA30EndpointReached" -> False
+            |>
+          ]
+        }
+      ,
+      True,
+        {
+          masterCombination,
+          Join[
+            diagnostics,
+            <|
+              "BackendDiagnostics" -> backendDiagnostics,
+              "RequestedResultKind" -> "MasterCombination",
+              "MassiveA30EndpointWarningEmitted" -> True,
+              "MassiveA30EndpointReached" -> True,
+              "MassiveA30ClosedBridgeResult" -> integratedFallback,
+              "MassiveA30MassSymbol" -> qm
+            |>
+          ]
+        }
+    ]
+  ];
+
 LoadMassiveA30IntegratedProvenance[] :=
   Null;
 
@@ -687,7 +774,6 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
         "MassiveA30Source" -> source,
         "MassiveA30BridgeReport" -> bridgeReport
       |>;
-    PrintMassiveA30ClosedBridgeNotice[];
     <|
       "RawIntegrated" -> series,
       "TTerms" -> series,
@@ -787,7 +873,8 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
             BasisRoot -> OptionValue["BasisRoot"], GenerateMissingBases ->
              OptionValue["GenerateMissingBases"], ReturnDiagnostics ->
              ibpNeedsDiagnostics, DetailedTimingDiagnostics ->
-             OptionValue["DetailedTimingDiagnostics"]];
+             OptionValue["DetailedTimingDiagnostics"], MassSymbol -> Lookup[
+              profile, "MassSymbol", Automatic]];
           If[TrueQ[ibpNeedsDiagnostics],
             backendDiagnostics = ibpResult[[2]];
             ibpResult[[1]]
@@ -1073,15 +1160,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
         backendDiagnostics = routeData["BackendDiagnostics"];
         diagnostics = routeData["Diagnostics"];
         openMasterBackendDiagnostics =
-          If[
-            TrueQ[OptionValue["ReturnRecord"]] ||
-            TrueQ[OptionValue["ReturnDiagnostics"]] ||
-            RequestedIntermediateStepQ[intermediateSteps,
-              "MasterCombination"],
-            MassiveA30OpenMasterBackendDiagnostics[obj, optionsAssoc,
-              "IntegrateAntenna"],
-            <||>
-          ];
+          MassiveA30OpenMasterBackendDiagnostics[obj, optionsAssoc,
+            "IntegrateAntenna"];
         If[AssociationQ[openMasterBackendDiagnostics] &&
             Length[openMasterBackendDiagnostics] > 0,
           backendDiagnostics = Join[backendDiagnostics,
@@ -1106,11 +1186,22 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
           rawIntegrated, tTerms, finalIntegrated, selectedIntegrated,
           backendDiagnostics, diagnosticsWithMetadata];
         {publicResult, publicDiagnostics} =
-          ResolveIntegrationPublicResult[
-            selectedIntegrated,
-            diagnosticsWithMetadata,
-            OptionValue["ReturnMasterCombination"],
-            ToString[key, InputForm]
+          If[TrueQ[OptionValue["ReturnMasterCombination"]],
+            ResolveIntegrationPublicResult[
+              selectedIntegrated,
+              diagnosticsWithMetadata,
+              True,
+              ToString[key, InputForm]
+            ]
+            ,
+            MassiveA30DefaultMasterEndpointResult[
+              obj,
+              optionsAssoc,
+              "IntegrateAntenna",
+              selectedIntegrated,
+              diagnosticsWithMetadata,
+              ToString[key, InputForm]
+            ]
           ];
         Return[
           FormatFreshIntegrationReturn[publicResult,
@@ -1373,7 +1464,8 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
                 "GenerateMissingBases"], ExpansionOrder -> expansionOrder,
               ReturnDiagnostics -> ibpNeedsDiagnostics,
               DetailedTimingDiagnostics -> OptionValue[
-                "DetailedTimingDiagnostics"]];
+                "DetailedTimingDiagnostics"], MassSymbol -> Lookup[profile,
+                "MassSymbol", Automatic]];
           If[TrueQ[ibpNeedsDiagnostics],
             backendDiagnostics = ibpResult[[2]];
             ibpResult[[1]]
@@ -1463,241 +1555,36 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
    call. *)
 BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
    OptionsPattern[]] :=
-  Module[{key, profile, contribution, componentName, antennaObject,
-     buildComponent, selectionComponent,
-     diagnostics, expansionOrder,
-     intermediateSteps, useStored, storeStored, refreshStored, cacheKey,
-     cacheLabel, cacheRoot, loaded, computed, computedResult,
-     computedDiagnostics, optionsAssoc, recordMetadata, quarkMassOpt,
-     integrationResult, integrationDiagnostics, publicResult,
-     publicDiagnostics},
-    key = {type, numFinalParticles, loopOrder};
-    intermediateSteps = NormalizeIntermediateSteps[OptionValue[
-      "IntermediateSteps"]];
-    useStored = TrueQ[OptionValue["UseStoredResults"]];
-    storeStored = TrueQ[OptionValue["StoreResults"]];
-    refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
-    optionsAssoc = <|
+  BuildAndIntegrateRouteResult[
+    type,
+    numFinalParticles,
+    loopOrder,
+    <|
       "ApplyFeynCalcMS" -> OptionValue["ApplyFeynCalcMS"],
       "quarkMass" -> OptionValue["quarkMass"],
       "PaVeEvaluation" -> OptionValue["PaVeEvaluation"],
       "ExpansionOrder" -> OptionValue["ExpansionOrder"],
       "KinematicScale" -> OptionValue["KinematicScale"],
       "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
+      "ReturnDiagnostics" -> OptionValue["ReturnDiagnostics"],
+      "ReturnRecord" -> OptionValue["ReturnRecord"],
+      "ReturnMasterCombination" -> OptionValue["ReturnMasterCombination"],
       "LoopMomentum" -> OptionValue["LoopMomentum"],
       "ApplyDimReg" -> OptionValue["ApplyDimReg"],
       "BasisFamily" -> OptionValue["BasisFamily"],
       "BasisRoot" -> OptionValue["BasisRoot"],
       "GenerateMissingBases" -> OptionValue["GenerateMissingBases"],
       "ReturnTTerms" -> OptionValue["ReturnTTerms"],
+      "IntermediateSteps" -> OptionValue["IntermediateSteps"],
+      "PrintIntermediateSteps" -> OptionValue["PrintIntermediateSteps"],
+      "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"],
+      "UseStoredResults" -> OptionValue["UseStoredResults"],
+      "StoreResults" -> OptionValue["StoreResults"],
+      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
+      "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
       "Component" -> OptionValue["Component"],
-      "Contribution" -> OptionValue["Contribution"],
-      "DetailedTimingDiagnostics" -> OptionValue[
-        "DetailedTimingDiagnostics"]
-    |>;
-    recordMetadata =
-      <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
-        "Contribution" -> OptionValue["Contribution"]|>;
-    If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
-        StoredResultsEnabledQ[useStored, storeStored, refreshStored],
-      cacheKey = BuildAndIntegrateStoredResultKey[type,
-        numFinalParticles, loopOrder, optionsAssoc];
-      cacheLabel = BuildAndIntegrateStoredResultLabel[type,
-        numFinalParticles, loopOrder, optionsAssoc];
-      cacheRoot = OptionValue["ResultsCacheRoot"];
-      If[!refreshStored && useStored,
-        loaded = LoadStoredResultEntry["BuildAndIntegrateAntenna", cacheKey,
-          cacheRoot, cacheLabel];
-        If[AssociationQ[loaded],
-          PrintStoredResultHit[cacheLabel];
-          {publicResult, publicDiagnostics} =
-            ResolveIntegrationPublicResult[
-              loaded["Result"],
-              loaded["Diagnostics"],
-              OptionValue["ReturnMasterCombination"],
-              ToString[key, InputForm]
-            ];
-          Return[
-            FormatStoredResultReturn[publicResult,
-              publicDiagnostics, loaded, OptionValue[
-                "ReturnDiagnostics"], OptionValue["ReturnRecord"],
-              intermediateSteps, OptionValue["PrintIntermediateSteps"],
-              "BuildAndIntegrateAntenna", recordMetadata]
-          ]
-        ]
-      ];
-      computed =
-        Block[{$AntennaPipelineBypassStoredResults = True},
-          BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
-            ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
-            quarkMass -> OptionValue["quarkMass"],
-            PaVeEvaluation -> OptionValue["PaVeEvaluation"],
-            ExpansionOrder -> OptionValue["ExpansionOrder"],
-            KinematicScale -> OptionValue["KinematicScale"],
-            NormalizeKinematicScale -> OptionValue[
-              "NormalizeKinematicScale"],
-            ReturnDiagnostics -> True,
-            ReturnMasterCombination -> OptionValue[
-              "ReturnMasterCombination"],
-            LoopMomentum -> OptionValue["LoopMomentum"],
-            ApplyDimReg -> OptionValue["ApplyDimReg"],
-            BasisFamily -> OptionValue["BasisFamily"],
-            BasisRoot -> OptionValue["BasisRoot"],
-            GenerateMissingBases -> OptionValue["GenerateMissingBases"],
-            ReturnTTerms -> OptionValue["ReturnTTerms"],
-            IntermediateSteps -> IntegrationRecordStepLabels[],
-            PrintIntermediateSteps -> False,
-            DetailedTimingDiagnostics -> OptionValue[
-              "DetailedTimingDiagnostics"],
-            UseStoredResults -> False,
-            StoreResults -> False,
-            ResultsCacheRoot -> cacheRoot,
-            RefreshStoredResults -> False,
-            Component -> OptionValue["Component"],
-            Contribution -> OptionValue["Contribution"]]
-        ];
-      If[!MatchQ[computed, {_, _Association}],
-        Return[computed]
-      ];
-      {computedResult, computedDiagnostics} = computed;
-      If[computedResult =!= $Failed && (storeStored || refreshStored),
-        StoreStoredResultEntry["BuildAndIntegrateAntenna", cacheKey,
-          cacheRoot, cacheLabel, computedResult, computedDiagnostics]
-      ];
-      {publicResult, publicDiagnostics} =
-        ResolveIntegrationPublicResult[
-          computedResult,
-          computedDiagnostics,
-          OptionValue["ReturnMasterCombination"],
-          ToString[key, InputForm]
-        ];
-      Return[
-        FormatFreshIntegrationReturn[publicResult, publicDiagnostics,
-          OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
-          intermediateSteps, OptionValue["PrintIntermediateSteps"],
-          "BuildAndIntegrateAntenna", Automatic, recordMetadata]
-      ]
-    ];
-    MaybeWarnHeavyIntegrationRoute[key, OptionValue["Component"],
-      OptionValue["Contribution"]];
-    quarkMassOpt = OptionValue["quarkMass"];
-    profile = AntennaIntegrationProfile[key];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
-        quarkMassOpt =!= 0,
-      profile = Join[profile, <|"BasisFamily" -> "MX30",
-        "MassSymbol" -> quarkMassOpt|>]
-    ];
-    contribution = CanonicalAntennaComponentName[OptionValue[
-       "Contribution"]];
-    componentName = CanonicalAntennaComponentName[OptionValue["Component"]];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] && contribution === "OneLoopSelf",
-      profile = Join[profile, <|"BasisFamily" -> "A22OneLoopSelf",
-          "ImplementationStatus" -> "ExperimentalOneLoopSelfOnly"|>]
-    ];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] && contribution === "TwoLoopTree",
-      profile = Join[profile, <|"BasisFamily" -> "A22TwoLoopTree",
-          "ImplementationStatus" -> "ExperimentalTwoLoopTree"|>]
-    ];
-    expansionOrder =
-      If[OptionValue["ExpansionOrder"] === Automatic,
-        Lookup[profile, "ExpansionOrder", 0]
-        ,
-        OptionValue["ExpansionOrder"]
-      ];
-    If[Lookup[profile, "ImplementationStatus", "Implemented"] ===
-        "ScaffoldOnly" &&
-        Lookup[profile, "BasisFamily", Missing["NoFamily"]] =!= "MX30" &&
-        !(MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] &&
-          contribution === "All"),
-      diagnostics = <|"Failed" -> True,
-        "Reason" -> "IntegratedAntennaNotImplemented",
-        "Profile" -> profile, "Contribution" -> OptionValue[
-          "Contribution"]|>;
-      Return[
-        FormatFreshIntegrationReturn[$Failed, diagnostics, OptionValue[
-            "ReturnDiagnostics"], OptionValue["ReturnRecord"],
-          intermediateSteps, OptionValue["PrintIntermediateSteps"],
-          "BuildAndIntegrateAntenna",
-          CollectIntegrationRecordStages[Missing["NotAvailable"], $Failed,
-            $Failed, $Failed, $Failed, <||>, diagnostics], recordMetadata]
-      ]
-    ];
-    buildComponent =
-      If[OptionValue["Component"] === All,
-        All
-        ,
-        OptionValue["Component"]
-      ];
-    selectionComponent =
-      If[buildComponent === All,
-        OptionValue["Component"]
-        ,
-        All
-      ];
-    antennaObject = BuildAntennaObject[type, numFinalParticles, loopOrder,
-      quarkMass -> OptionValue["quarkMass"],
-      ApplyDimReg -> OptionValue["ApplyDimReg"],
-      LoopMomentum -> OptionValue["LoopMomentum"],
-      Component -> buildComponent, Contribution -> OptionValue[
-       "Contribution"]];
-    If[antennaObject === $Failed,
-      Return[
-        FormatFreshIntegrationReturn[$Failed,
-          <|"Failed" -> True, "Reason" -> "InvalidComponentSelection",
-            "SelectedComponent" -> OptionValue["Component"],
-            "Contribution" -> OptionValue["Contribution"]|>, OptionValue[
-            "ReturnDiagnostics"], OptionValue["ReturnRecord"],
-          intermediateSteps, OptionValue["PrintIntermediateSteps"],
-          "BuildAndIntegrateAntenna",
-          CollectIntegrationRecordStages[Missing["NotAvailable"], $Failed,
-            $Failed, $Failed, $Failed, <||>,
-            <|"Failed" -> True, "Reason" -> "InvalidComponentSelection",
-              "SelectedComponent" -> OptionValue["Component"],
-              "Contribution" -> OptionValue["Contribution"]|>],
-          recordMetadata]
-      ]
-    ];
-    {integrationResult, integrationDiagnostics} =
-      IntegrateAntenna[antennaObject,
-      ApplyFeynCalcMS -> OptionValue["ApplyFeynCalcMS"],
-      quarkMass -> OptionValue["quarkMass"],
-      PaVeEvaluation -> OptionValue["PaVeEvaluation"],
-      ExpansionOrder -> OptionValue["ExpansionOrder"],
-      KinematicScale -> OptionValue["KinematicScale"],
-      NormalizeKinematicScale -> OptionValue["NormalizeKinematicScale"],
-      ReturnDiagnostics -> True,
-      ReturnRecord -> False,
-      ReturnMasterCombination -> OptionValue["ReturnMasterCombination"],
-      LoopMomentum -> OptionValue["LoopMomentum"],
-      ApplyDimReg -> OptionValue["ApplyDimReg"],
-      BasisFamily -> OptionValue["BasisFamily"],
-      BasisRoot -> OptionValue["BasisRoot"],
-      GenerateMissingBases -> OptionValue["GenerateMissingBases"],
-      ReturnTTerms -> OptionValue["ReturnTTerms"],
-      IntermediateSteps -> If[TrueQ[OptionValue["ReturnRecord"]],
-        IntegrationRecordStepLabels[],
-        OptionValue["IntermediateSteps"]
-      ],
-      PrintIntermediateSteps -> False,
-      DetailedTimingDiagnostics -> OptionValue["DetailedTimingDiagnostics"],
-      Component -> selectionComponent,
-      Contribution -> OptionValue["Contribution"]];
-    integrationDiagnostics =
-      Join[integrationDiagnostics, <|"SourceObject" -> antennaObject,
-          "AntennaObject" -> antennaObject|>];
-    {publicResult, publicDiagnostics} =
-      ResolveIntegrationPublicResult[
-        integrationResult,
-        integrationDiagnostics,
-        OptionValue["ReturnMasterCombination"],
-        ToString[key, InputForm]
-      ];
-    FormatFreshIntegrationReturn[publicResult, publicDiagnostics,
-      OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
-      intermediateSteps, OptionValue["PrintIntermediateSteps"],
-      "BuildAndIntegrateAntenna", Automatic,
-      Join[recordMetadata, <|"SourceObject" -> antennaObject,
-          "AntennaObject" -> antennaObject|>]]
+      "Contribution" -> OptionValue["Contribution"]
+    |>
   ];
 
 Options[LegacyIntegrateAntenna] =

@@ -1,0 +1,2 @@
+family10-term-indices: {19, 20}
+candidate-labels: {FineFamily10Sum, FineFamily10Difference, GluonSecondMembers}
