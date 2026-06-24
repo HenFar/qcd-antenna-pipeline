@@ -110,6 +110,54 @@ massive A30                     yes     partial     experimental
 D30                             partial no          experimental
 ```
 
+## Prerequisites
+
+The package is a Wolfram Language runtime that delegates substantial symbolic
+work to the standard high-energy-physics toolchain used by the repo.
+
+For the supported massless release workflow, you should assume the following
+are available in the Wolfram environment used to load the package:
+
+- Wolfram Kernel / `wolframscript`
+- `FeynCalc`
+- `FeynArts`
+- `FeynHelpers`
+
+The runtime checks the `FeynCalc` version it was validated against and currently
+expects `FeynCalc 9.3.1`.
+
+Some supported integration routes also rely on checked-in basis or master-value
+artifacts already present in the repository:
+
+- `bases/`
+- `generated_bases/`
+- `masterIntegrals/master_values_runtime.wl`
+
+Additional integration and development workflows may require the following
+tools as well:
+
+- `LiteRed` for IBP basis loading or basis generation
+- `Package-X`, used through `FeynCalc`/`FeynHelpers` for `PaVe` evaluation
+
+These extra tools are part of the runtime architecture even when a particular
+user session does not touch every backend.
+
+## Environment Assumptions
+
+The repository is designed to be loaded from a checked-out working tree, not as
+an installed paclet. The normal expectation is:
+
+- you have the full repository locally
+- the bundled `bases/`, `generated_bases/`, and `masterIntegrals/` directories
+  are present
+- you load [AntennaPipeline.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/AntennaPipeline.wl)
+  from that checkout
+
+The package does not require the full derivation tree to be recomputed on
+startup. In particular, the runtime loads the checked-in
+`masterIntegrals/master_values_runtime.wl` artifact rather than rebuilding the
+master-integral provenance layer on each load.
+
 ## Loading
 
 From a Wolfram notebook or kernel:
@@ -127,6 +175,16 @@ cd /path/to/antenna_pipeline
 ```
 
 `AntennaPipeline.wl` is the only canonical loader.
+
+If you want the shortest realistic first-run sequence from the terminal:
+
+```sh
+cd /path/to/antenna_pipeline
+bash dev/run_release_verification.sh
+```
+
+That command is intended to answer the practical question “does this checkout
+work as a supported package installation?”
 
 ## Public API
 
@@ -148,6 +206,17 @@ The usual user-facing story is:
 2. optionally build an integration-ready object with `BuildAntennaObject[...]`
 3. integrate with `IntegrateAntenna[...]`
 4. or use `BuildAndIntegrateAntenna[...]` for the one-shot route
+
+For `A22`, that distinction matters more than for the one-loop routes.
+`BuildAntenna[A, 2, 2, ...]` returns the unintegrated two-loop object split
+into its public components; it does not promise a `PaVe`-reduced form.
+The package's `PaVe` machinery is a one-loop reduction path, so it is the
+natural build-side representation for objects such as `A21`, but not for the
+full two-loop/tree `A22` contribution.  The current reduced `A22` route lives
+on the integration side through `IntegrateAntenna[...]` /
+`BuildAndIntegrateAntenna[...]`, where the two-loop branch is handled through
+the package's dedicated `A22` master-integral machinery rather than through a
+generic `PaVe` basis.
 
 ## Happy Path
 
@@ -225,6 +294,18 @@ bash dev/run_release_verification.sh
 That script checks only the supported release matrix. It is the intended
 “does this package installation work?” command for external users.
 
+Operational notes:
+
+- it requires `wolframscript` on `PATH`
+- it uses the repo-local `AntennaPipeline.wl` loader for each test case
+- it excludes experimental massive `A30` and `D30`
+- it is more than a trivial smoke test: it exercises representative supported
+  build, integrate, record, and driver routes
+
+The exact runtime depends strongly on the local Wolfram setup and symbolic
+backend performance, so the README does not promise a fixed duration. Treat it
+as the canonical acceptance run rather than as a near-instant probe.
+
 A lighter smoke test is:
 
 ```sh
@@ -294,6 +375,24 @@ cd /path/to/antenna_pipeline
 bash masterIntegrals/run_kernel.sh -run 'Get["dev/validate_runtime_master_values.wl"]; Exit[]'
 ```
 
+## Caches And Generated Artifacts
+
+The runtime includes a repo-local stored-result cache under `stored_results/`.
+This is a usability feature, not a second source of truth: cached results are
+replays of public-route outputs, while the route implementations remain the
+authoritative computation layer.
+
+Two kinds of checked-in artifacts matter operationally:
+
+- `stored_results/` contains reusable public-route outputs
+- `bases/`, `generated_bases/`, and
+  `masterIntegrals/master_values_runtime.wl` support integration backends and
+  runtime master substitution
+
+Normal users do not need to regenerate these on every run. If you are doing
+derivation or backend work, then the relevant `dev/` and `masterIntegrals/`
+scripts become part of the workflow.
+
 ## Repository Layout
 
 The release-facing surface is intentionally small:
@@ -313,6 +412,28 @@ for the runtime architecture walkthrough and
 [dev/README.md](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/dev/README.md)
 for the development-script map.
 
+## Troubleshooting
+
+- If `bash dev/run_release_verification.sh` fails immediately with
+  `wolframscript was not found on PATH`, make sure the Wolfram command-line
+  tools are installed and visible in the shell environment running the script.
+- If package load fails early inside `src/core/setup.wl`, the most likely cause
+  is a missing or incompatible `FeynCalc` / `FeynArts` / `FeynHelpers`
+  installation.
+- If a route fails inside the `IBP` backend, check that the repository basis
+  directories are present and that the required runtime artifacts have not been
+  removed from `bases/`, `generated_bases/`, or `masterIntegrals/`.
+- If an experimental route such as massive `A30` or `D30` returns `$Failed`,
+  that is not automatically an installation failure. Those branches are
+  intentionally callable but outside the supported release guarantee.
+- If a bulk helper aborts on nonzero `quarkMass`, lowercase `maxOrder`, or
+  unsupported models such as `SUSY` / `HiggsEFT`, that is current package
+  behavior rather than a broken installation.
+- If you modify derivation-side master-integral files and then see mismatches in
+  integrated routes, refresh and revalidate
+  `masterIntegrals/master_values_runtime.wl` before assuming the runtime route
+  is wrong.
+
 ## Known Non-Goals
 
 This release does not claim:
@@ -325,3 +446,276 @@ This release does not claim:
 
 The project is considered complete around the massless package goal, not
 around finishing every exploratory physics branch.
+
+## Internal Architecture For Modifying Routes
+
+Users who want to extend the package, add a new branch, or change the behavior
+of an existing antenna family should read the code as a profile-driven system
+rather than as one long chain of direct function calls.
+
+The shortest accurate mental model is:
+
+```text
+public API call
+  -> normalize a route key {type, multiplicity, loop order}
+  -> look up metadata for that key
+  -> run the workflow selected by that metadata
+  -> format the result into a stable public shape
+```
+
+That metadata lookup is the center of gravity of the runtime.
+
+If you want the shortest contributor path through the codebase, start in this
+order:
+
+1. `src/core/profiles.wl`
+2. `src/routes/build_workflows.wl`
+3. `src/routes/integration_workflows.wl`
+4. `src/interface/build_router.wl`
+5. `src/interface/integration_router.wl`
+
+That sequence shows the package in the order it actually thinks: declare route
+metadata first, then define route workflows, then adapt those workflows into a
+stable public API.
+
+### Why the package is profile-centric
+
+The package supports several antenna families that are close enough to share a
+public API but different enough that they should not be forced through one
+hard-coded production formula.
+
+Examples:
+
+- `A30` tree level is a straightforward self-interference route.
+- `A40` needs a color-ordered reconstruction layer.
+- `B40` and `C40` are easier to build sector by sector.
+- `A21` is naturally built through a one-loop `PaVe`-style route.
+- `A31` and `A22` need different extraction logic and different integration
+  backends even though they are both loop-level objects.
+- massive `A30` and `D30` are genuine runtime branches, but they need to carry
+  explicit honesty about experimental status.
+
+If all of those choices were written directly into the public functions, the
+API layer would become a long nest of family-specific `Switch` statements and
+special cases. The profile-centric design avoids that. Instead, the public and
+workflow layers ask a registry:
+
+- what family is this?
+- how should it be produced?
+- how should it be extracted?
+- what normalization applies?
+- which backend should integration use?
+- which diagnostics and route story should be attached?
+
+That design makes the code easier to audit. It also makes branch work much
+safer: most modifications are localized to metadata plus one workflow, instead
+of requiring invasive edits across the entire package.
+
+### The central object: the route key
+
+Nearly all runtime dispatch starts from a key of the form:
+
+```wl
+{type, numFinalParticles, loopOrder}
+```
+
+Typical examples are:
+
+- `{A, 3, 0}` for `A30`
+- `{A, 2, 1}` for `A21`
+- `{A, 2, 2}` for `A22`
+- `{B, 4, 0}` for `B40`
+
+That key is the compact identifier passed between the public interface, the
+profile registry, the route workflows, and the integration layer.
+
+### What lives in the profile registry
+
+The main registry lives in `src/core/profiles.wl`. It is split into a few
+closely related functions.
+
+`AntennaProfile[key]` is the main build-side metadata record. Depending on the
+family, it can specify:
+
+- a readable name such as `A30` or `C40`
+- the antenna type and multiplicity
+- the production mode, such as `SelfInterference`,
+  `ColorOrderedAntenna`, `SectorSelfInterference`, or
+  `SectorSymmetrizedInterference`
+- the extraction mode, such as `BornScalar`, `TreeColorCoefficients`,
+  `LoopScalar`, `LoopColorCoefficients`, or `TwoLoopTTermComponents`
+- normalization data such as `ColourNorm`
+- sector definitions for routes that are built from sector splits
+- component and contribution lists for multi-part routes such as `A22`
+- implementation-status markers for experimental branches
+
+`AntennaReductionProfile[key]` stores build-side loop-reduction preferences.
+This is separate because “how to reduce the loop object before extraction” is
+not always the same question as “how to integrate the final antenna later.”
+
+`AntennaIntegrationProfile[key]` stores integration-side routing metadata:
+
+- default backend, usually `PaVe` or `IBP`
+- basis family, when the route is basis-driven
+- expansion order
+- convention metadata for routes such as `A21`
+- branch-specific integration status when the route is still scaffolded or
+  experimental
+
+Two further helpers live in the same file and are important to understand:
+
+- `AntennaAmplitude[key]`
+- `AntennaSelfInterference[key]`
+
+These lazily memoize reusable tree-level ingredients. The point is not only
+speed. It also makes the source of shared Born objects explicit, so different
+routes do not quietly drift toward different normalizations or “almost the same”
+tree inputs.
+
+### How build routing works
+
+The public build functions live in `src/interface/build_router.wl`, but they do
+not directly perform the physics work. Their main job is:
+
+1. build the route key
+2. collect options into a normalized association
+3. ask for route data
+4. format that route data into a plain result, an `AntennaObject`, diagnostics,
+   or an `AntennaRunRecord`
+
+The actual route orchestration happens in `src/routes/build_workflows.wl`.
+
+At that layer the package asks `AntennaProfile[key]` what kind of route it is
+dealing with. The crucial field is usually `Production`.
+
+That `Production` field selects the workflow branch:
+
+- `SelfInterference` means “build the amplitude, form the self-interference,
+  then extract the antenna.”
+- `ColorOrderedAntenna` means “build the full object, but also run the
+  color-ordered reconstruction layer and expose its diagnostics.”
+- `SectorSelfInterference` means “split the amplitude into named sectors and
+  interfere only the route-relevant pieces.”
+- `SectorSymmetrizedInterference` means “build the sector decomposition and
+  then combine it through the symmetrized interference story required by that
+  family.”
+
+The extraction step is profile-driven too. The workflow does not hard-code one
+universal “turn interference into antenna” rule. Instead it passes the raw
+production object plus the profile to the extraction layer, whose behavior is
+chosen by profile metadata such as `Extraction`, `ColourNorm`, components, and
+contributions.
+
+This is one of the main reasons the package is maintainable: the route layer
+knows the family story, while the engine layer only has to know how to perform
+one physical operation at a time.
+
+### How integration routing works
+
+The integration side follows the same architecture, but with a different
+registry.
+
+`IntegrateAntenna[...]` and `BuildAndIntegrateAntenna[...]` live in
+`src/interface/integration_router.wl`. They consume an `AntennaObject`, recover
+its key and selection metadata, and then ask `AntennaIntegrationProfile[key]`
+how that object should be integrated.
+
+That profile decides things such as:
+
+- whether the route defaults to `PaVe` or `IBP`
+- which basis family is the natural one for the route
+- which expansion order is the default target
+- whether a branch needs route-specific handling
+
+The orchestration itself lives in `src/routes/integration_workflows.wl`. That
+file coordinates:
+
+- backend selection
+- special-route handling such as the current massive `A30` integrated bridge
+- contribution-by-contribution stitching for routes like `A22`
+- backend diagnostics
+- T-term construction
+- final integrated-antenna extraction
+
+The important design point is that build metadata and integration metadata are
+deliberately separate. An object may be most natural to build in one symbolic
+language and most natural to integrate in another. `A21` is the clearest
+example: its build-side and integration-side stories are related, but not
+identical, and the architecture keeps that distinction explicit.
+
+### Why records and diagnostics matter in this design
+
+Because the package is profile-driven, the internal data returned by each route
+is association-shaped before it is turned into a public result. That is not an
+accident and it is not just for debugging.
+
+Those associations let the package carry:
+
+- the resolved profile
+- the route story
+- intermediate amplitudes or interferences
+- extracted components
+- backend diagnostics
+- component and contribution metadata
+- stored-result reconstruction data
+
+That is what makes `ReturnRecord`, `IntermediateSteps`, and diagnostics useful
+without forcing the normal user-facing API to expose raw internal machinery by
+default.
+
+For branch work, this is especially valuable. When a new route is not yet
+release-complete, the code can still return an honest structured record that
+explains:
+
+- what was built successfully
+- what is still provisional
+- where the route stopped
+- whether the result is experimental, partial, or fully supported
+
+That is exactly how the current massive `A30` and `D30` branches are kept
+callable without pretending they are finished massless release routes.
+
+### How to think about adding a new branch
+
+The intended extension path is usually:
+
+1. decide the new route key
+2. add or extend its `AntennaProfile[key]`
+3. add or extend its `AntennaIntegrationProfile[key]` if integration is needed
+4. teach the build workflow how to interpret the chosen `Production` and
+   `Extraction` settings
+5. add any route-specific helper module if the branch is exceptional enough to
+   deserve its own file
+6. expose stable diagnostics and route stories
+7. only then widen the public “supported” claim in the README and verification
+   scripts
+
+In practice, the easiest way to go wrong is to skip step 2 and encode branch
+behavior directly in the interface layer. That usually feels faster at first,
+but it weakens the architecture quickly because future readers can no longer
+see the route definition in one place.
+
+### Why this architecture is a good fit for this repository
+
+This repository sits in an awkward but productive middle ground:
+
+- it is not just a one-off notebook;
+- it is not a generic symbolic algebra framework;
+- and it is not a package where every family is physically interchangeable.
+
+The profile-centric design is what lets it behave like a package without
+flattening away the physical differences between antenna families.
+
+It gives the codebase:
+
+- one stable public API
+- one auditable metadata layer where family-specific choices are declared
+- reusable engine functions for the small symbolic operations
+- route files that read like workflow stories rather than backend tangles
+- an honest place to keep experimental branches inside the runtime without
+  overstating their status
+
+If you are modifying the code into new branches, that is the main principle to
+preserve. Try to add new physics by teaching the registry and route layer about
+the branch, not by letting branch-specific assumptions leak outward into every
+public function.
