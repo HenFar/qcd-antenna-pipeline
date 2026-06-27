@@ -14,6 +14,23 @@ research notebook. It is a package with a completed massless target and two
 callable experimental branches that are intentionally outside the release
 guarantee.
 
+## How To Read This README
+
+This README is meant to serve three readers at once:
+
+- package users who want to know what is supported and how to run it
+- thesis/supervision readers who need to understand the package contract and
+  current status honestly
+- contributors who want to inspect or extend the runtime
+
+The guiding rule is:
+
+- supported routes are documented as the intended public package contract
+- experimental routes are documented as callable but outside the release
+  guarantee
+- known contract mismatches are called out explicitly rather than silently
+  normalized as if they were correct public behavior
+
 ## Release Promise
 
 The release-complete package surface is:
@@ -109,6 +126,37 @@ BuildAndIntegrateAllAntennae    yes     yes         supported convenience
 massive A30                     yes     partial     experimental
 D30                             partial no          experimental
 ```
+
+## Current Contract Notes
+
+The intended public contract of the package is:
+
+- `BuildAntenna[...]` should expose package-facing antenna objects in the
+  package normalization/renormalization convention
+- `IntegrateAntenna[...]` and `BuildAndIntegrateAntenna[...]` should consume and
+  return objects in that same public convention
+- bare or pre-counterterm intermediate expressions are provenance-level objects,
+  not the default public endpoint
+
+Not yet implemented or not yet repaired:
+
+- some loop-family behavior, especially around `A31`, still needs cleanup so the
+  public build-side result always matches that intended renormalized contract
+- the README therefore documents the intended package boundary and flags the
+  current mismatch instead of treating the present accidental behavior as the
+  desired API
+- an explicit public bare-output option is not yet implemented or documented as
+  a stable route; it remains a design target rather than a released interface
+
+## Route Status Notes
+
+- supported massless routes are the ones in the release matrix and in
+  `dev/run_release_verification.sh`
+- massive `A30` is callable and useful, but experimental
+- `D30` is callable for diagnostics and source-route inspection, but
+  experimental
+- loop-route normalization and renormalization notes matter for interpreting the
+  public contract, especially for `A21` and `A31`
 
 ## Prerequisites
 
@@ -207,16 +255,363 @@ The usual user-facing story is:
 3. integrate with `IntegrateAntenna[...]`
 4. or use `BuildAndIntegrateAntenna[...]` for the one-shot route
 
-For `A22`, that distinction matters more than for the one-loop routes.
-`BuildAntenna[A, 2, 2, ...]` returns the unintegrated two-loop object split
-into its public components; it does not promise a `PaVe`-reduced form.
-The package's `PaVe` machinery is a one-loop reduction path, so it is the
-natural build-side representation for objects such as `A21`, but not for the
-full two-loop/tree `A22` contribution.  The current reduced `A22` route lives
-on the integration side through `IntegrateAntenna[...]` /
-`BuildAndIntegrateAntenna[...]`, where the two-loop branch is handled through
-the package's dedicated `A22` master-integral machinery rather than through a
-generic `PaVe` basis.
+### API Reference
+
+`BuildAntenna[type, numFinalParticles, loopOrder, ...]`
+
+- Purpose: build the public unintegrated antenna result for one route key.
+- Input shape: an antenna key such as `{A,3,0}` written as
+  `BuildAntenna[A, 3, 0, ...]`.
+- Normal result shape: a scalar antenna expression, or a list of ordered public
+  components when that family has a multi-component public output.
+- Inspection variants: may instead return diagnostics, raw build data,
+  an `AntennaObject[...]`, or an `AntennaRunRecord[...]` depending on options.
+- Scope: this is the main build-side public function for both supported
+  massless routes and callable experimental branches.
+
+`BuildAntennaObject[type, numFinalParticles, loopOrder, ...]`
+
+- Purpose: wrap a build result together with the metadata required by
+  `IntegrateAntenna[...]`.
+- Input shape: same route key as `BuildAntenna[...]`.
+- Normal result shape: `AntennaObject[...]`.
+- Scope: use this when you want explicit control over build and integration as
+  separate stages.
+
+`IntegrateAntenna[antennaObject, ...]`
+
+- Purpose: integrate a built antenna object through the route-selected backend.
+- Input shape: an `AntennaObject[...]` produced by `BuildAntennaObject[...]` or
+  by `BuildAntenna[..., ReturnAntennaObject -> True]`.
+- Normal result shape: an integrated scalar or integrated component list in the
+  public package convention.
+- Inspection variants: may return diagnostics, T-terms, master combinations,
+  intermediate stages, or a full run record.
+- Scope: this is the canonical explicit integration entry point.
+
+`BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder, ...]`
+
+- Purpose: run the build and integration pipeline in one public call.
+- Input shape: same route key as `BuildAntenna[...]`.
+- Normal result shape: the same public integrated result you would obtain by
+  composing `BuildAntennaObject[...]` and `IntegrateAntenna[...]`.
+- Scope: this is the easiest way to reach the supported integrated endpoints.
+
+`BuildRRatio[model, ...]`
+
+- Purpose: assemble the symbolic NNLO observable-level driver result from the
+  supported antenna ingredients.
+- Input shape: currently the supported release target is
+  `BuildRRatio[SMQCD, quarkMass -> 0, ...]`.
+- Normal result shape: by default the finite `MSbar`-convention result, or the
+  raw dimensional-regularization series when requested.
+- Scope: this is a massless release driver, not an experimental massive route.
+
+`BuildAllAntennae[model, ...]`
+
+- Purpose: bulk-build the supported massless antenna list up to `LO`, `NLO`, or
+  `NNLO`.
+- Input shape: `BuildAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO, ...]`.
+- Normal result shape: a list of built public antenna results.
+- Scope: a convenience wrapper for supported massless `SMQCD` routes only.
+
+`BuildAndIntegrateAllAntennae[model, ...]`
+
+- Purpose: bulk-build and bulk-integrate the supported massless antenna list.
+- Input shape: `BuildAndIntegrateAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO,
+  ExpansionOrder -> 0, ...]`.
+- Normal result shape: a list of integrated public antenna results.
+- Scope: a convenience wrapper over the one-shot route, not an independent
+  physics implementation.
+
+### Public Options Reference
+
+The public API uses one shared family of option names. Not every option is
+meaningful for every route, so the most useful way to read them is by behavior.
+
+Selection options:
+
+- `Component`
+  Select one public component such as `Leading`, `Subleading`, `Nf`, or
+  `Breve` when the chosen route has a component split.
+- `Contribution`
+  Select one internal contribution, such as `TwoLoopTree` or `OneLoopSelf`,
+  when the route exposes a contribution-level split.
+
+Inspection and return-shape options:
+
+- `ReturnDiagnostics`
+  Return `{result, diagnostics}` rather than only the result.
+- `ReturnRecord`
+  Return an `AntennaRunRecord[...]` with the result, diagnostics, and stable
+  intermediate-stage view.
+- `IntermediateSteps`
+  Request selected named intermediate stages.
+- `PrintIntermediateSteps`
+  Print the requested stages to the kernel output.
+- `ReturnBuildData`
+  Return the internal build-side association used by the route layer.
+- `ReturnAntennaObject`
+  Return an `AntennaObject[...]` instead of only the plain antenna expression.
+- `IntegrableForm`
+  Request the build-side expression in the form used by downstream integration
+  plumbing.
+- `ReturnMasterCombination`
+  Return the master-combination view when the chosen integration route has one.
+- `ReturnTTerms`
+  Return the T-term object from the integration layer when meaningful.
+
+Stored-result options:
+
+- `UseStoredResults`
+  Reuse a matching stored public result when available.
+- `StoreResults`
+  Persist a newly computed public result to the stored-results cache.
+- `RefreshStoredResults`
+  Force recomputation and refresh the stored cache entry.
+- `ResultsCacheRoot`
+  Override the default repo-local stored-results directory.
+
+Build and integration routing options:
+
+- `quarkMass`
+  Selects the massive branch when supported; the release target is massless
+  unless stated otherwise.
+- `ReductionBackend`
+  Build-side loop reduction selector.
+- `PaVeEvaluation`
+  Controls whether the `PaVe` route is evaluated through `PaXEvaluate`.
+- `ApplyFeynCalcMS`
+  Controls whether the `FeynCalc`/`Package-X` normalization bridge is applied on
+  the relevant `PaVe` integration routes.
+- `ExpansionOrder`
+  Sets the target epsilon-series order.
+- `KinematicScale`
+  Selects the symbolic scale variable used by the integration normalization
+  layer.
+- `NormalizeKinematicScale`
+  Controls whether the selected kinematic scale is normalized to `1` in the
+  final result.
+- `GenerateMissingBases`
+  Allow the IBP backend to generate a missing basis when that route supports it.
+- `BasisFamily`, `BasisRoot`
+  Low-level integration-backend overrides for IBP-family routing.
+- `LoopMomentum`, `LoopMomenta`
+  Loop-momentum selectors used by loop routes.
+- `ApplyDimReg`
+  Apply the package’s dimensional-regularization substitution.
+- `ApplyStripCouplings`
+  Control build-side coupling stripping.
+- `ApplyCasimirSubstitution`
+  Control replacement of abstract Casimirs by explicit `SU(N)` expressions.
+
+Workflow and diagnostics options:
+
+- `RunPaperCheck`
+  Request paper-target validation when that route has a paper-check layer.
+- `AllowPrototypeTargets`
+  Permit explicitly prototype or provisional target routes when supported.
+- `UseSourceModelRoute`
+  Force the source-model route where that experimental branch supports it.
+- `DetailedTimingDiagnostics`
+  Request extended timing diagnostics from heavy integration routes.
+- `printDiagram`, `Verbose`, `prefactor`
+  Build-side workflow controls used mainly for route inspection and derivation.
+
+Driver-specific options:
+
+- `ResultForm`
+  For `BuildRRatio[...]`, the current public forms are `"FiniteMSBar"` and
+  `"RawDimRegSeries"`.
+- `maxOrder`
+  For bulk helpers, choose `LO`, `NLO`, or `NNLO` using uppercase order tags.
+
+Function-to-option notes:
+
+- `BuildAntenna[...]` has the richest build-side option surface.
+- `BuildAntennaObject[...]` uses the `BuildAntenna[...]` option set except for
+  `ReturnRecord`.
+- `IntegrateAntenna[...]` and `BuildAndIntegrateAntenna[...]` share the same
+  integration option surface.
+- `BuildRRatio[...]` exposes inspection and stored-result options, but not the
+  full low-level integration-routing surface.
+- bulk helpers currently expose only `quarkMass`, `maxOrder`, and
+  `ExpansionOrder` where relevant; they do not currently expose the full
+  stored-result option family directly.
+
+### Components And Contributions
+
+Several public routes return more than one physically meaningful piece. The
+README should be read with a distinction between component splits and
+contribution splits.
+
+Component split:
+
+- a route returns multiple public package-facing pieces that all belong to the
+  same family
+- these are selected with `Component -> ...`
+
+Contribution split:
+
+- a route is assembled from multiple build or integration contributions that are
+  meaningful to inspect separately
+- these are selected with `Contribution -> ...`
+
+The current canonical component orders are:
+
+- `A40`: `{Leading, Subleading}`
+- `A31`: `{Leading, Subleading, Nf}`
+- `A22`: `{Leading, Subleading, Nf, Breve}`
+
+How to read those names:
+
+- `Leading` and `Subleading` refer to the public color-structure split exposed
+  by the package
+- `Nf` is the fermion-flavor contribution exposed as its own public component
+  on routes such as `A31` and `A22`
+- `Breve` is the extra public `A22` component associated with the one-loop/self
+  route contribution
+
+The most important route-shape cases are:
+
+- `A40`-family routes return a two-component public structure
+- `A31` returns three public integrated components, which feed the
+  `BuildRRatio[...]` assembly as `intA31`, `intTildeA31`, and `intHatA31`
+- `A22` returns four public integrated components, which feed
+  `BuildRRatio[...]` as `intA22`, `intTildeA22`, `intHatA22`, and
+  `intBreveA22`
+- `A22` also has a contribution split at the route level, most notably
+  `TwoLoopTree` and `OneLoopSelf`
+
+Examples:
+
+```wl
+BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading]
+BuildAndIntegrateAntenna[A, 3, 1, Component -> Nf]
+BuildAntenna[A, 2, 2, Contribution -> TwoLoopTree, ReturnDiagnostics -> True]
+BuildAndIntegrateAntenna[A, 2, 2, Contribution -> OneLoopSelf, ReturnRecord -> True]
+BuildAndIntegrateAntenna[A, 3, 1, ReturnDiagnostics -> True]
+```
+
+For `A22`, the build/integration distinction matters more than for the one-loop
+routes. `BuildAntenna[A, 2, 2, ...]` returns the unintegrated two-loop object
+split into its public components; it does not promise a generic
+`PaVe`-reduced form. The reduced `A22` route lives on the integration side,
+where the two-loop branch is handled through the package’s dedicated
+master-integral machinery rather than through a generic one-loop `PaVe` basis.
+
+### Normalization And Renormalization State
+
+The intended public contract is:
+
+- `BuildAntenna[...]` should expose package-facing results in the package
+  normalization and renormalization convention
+- `IntegrateAntenna[...]` and `BuildAndIntegrateAntenna[...]` should preserve
+  that same public convention
+- raw pre-counterterm or bare algebra is an internal/provenance object unless a
+  future explicit option exposes it intentionally
+
+The package currently uses `q2` as the canonical kinematic normalization scale
+for public integrated routes. The integration layer exposes this explicitly
+through:
+
+- `KinematicScale -> q2` by default
+- `NormalizeKinematicScale -> True` by default on the integration surface
+
+For loop routes there are two distinct normalization layers to keep separate:
+
+- build-side loop-amplitude normalization inside the package extraction logic
+- integration-side convention conversion after `PaVe` or `IBP` reduction
+
+In particular:
+
+- the loop build/extraction layer uses `LoopExpansionNormalization[1] = 8 Pi^2`
+  and `LoopExpansionNormalization[2] = (8 Pi^2)^2` when converting loop objects
+  into the package expansion convention
+- a `PaVe`-reduced loop antenna is therefore not automatically identical to the
+  final public integrated result seen by users
+- when the package evaluates a `PaVe` object through `PaXEvaluate`, the result
+  must still pass through the route-specific normalization/convention bridge
+  rather than being interpreted as the final public package value “as is”
+
+On the `PaVe` / `Package-X` side:
+
+- `PaVeEvaluation -> "PaXEvaluate"` is the default public evaluation mode
+- `ApplyFeynCalcMS -> True` is the default integration-side setting
+- for the massless two-parton `A21` route, the integration backend applies an
+  explicit Package-X-to-paper conversion factor rather than treating the raw
+  `PaXEvaluate` output as already in the final package convention
+
+Current implementation status:
+
+- the intended contract is that public build results are already in the package
+  renormalization state
+- some loop-family behavior, especially around `A31`, still needs repair to make
+  that build-side contract hold uniformly
+- until that repair lands, the README should be read as documenting the intended
+  public boundary, with this mismatch recorded openly rather than hidden
+
+Not yet implemented:
+
+- an explicit bare/prototype option to expose pre-counterterm or other internal
+  forms for derivation work
+- any stable public promise that those internal states are selectable through the
+  top-level API
+
+Until those parts are implemented, the README does not treat bare or prototype
+states as part of the stable public API.
+
+### Stored Results And Transparent Reuse
+
+The runtime includes a stored-result layer for public-route reuse. The intended
+contract is that stored results should be usable transparently across the public
+route family rather than as a private notebook trick.
+
+The user-facing controls are:
+
+- `UseStoredResults`
+  Attempt to load a matching stored public result instead of recomputing it.
+- `StoreResults`
+  Save a successful newly computed public result.
+- `RefreshStoredResults`
+  Recompute the route and overwrite the matching stored entry.
+- `ResultsCacheRoot`
+  Use a non-default cache root.
+
+Behavioral notes:
+
+- stored results are replays of public-route outputs, not a second derivation
+  engine
+- when a stored result is used, the route still formats the return into the same
+  public shape expected by the caller
+- diagnostics are annotated so callers can distinguish cached reuse from a fresh
+  run
+
+Current public coverage:
+
+- explicit stored-result options exist on `BuildAntenna[...]`
+- explicit stored-result options exist on `BuildAntennaObject[...]`
+- explicit stored-result options exist on `IntegrateAntenna[...]`
+- explicit stored-result options exist on `BuildAndIntegrateAntenna[...]`
+- explicit stored-result options exist on `BuildRRatio[...]`
+- explicit stored-result options exist on `TObject[...]`
+- bulk helper wrappers do not currently expose the full stored-result option
+  family directly
+
+Not yet implemented:
+
+- transparent stored-result controls on the bulk helper wrappers
+- a fully uniform user-facing cache story across every top-level public entry
+  point
+
+Examples:
+
+```wl
+BuildAndIntegrateAntenna[A, 3, 0, UseStoredResults -> True]
+BuildAndIntegrateAntenna[A, 3, 0, StoreResults -> True]
+BuildRRatio[SMQCD, quarkMass -> 0, UseStoredResults -> True]
+BuildAntenna[A, 3, 1, ReturnRecord -> True, StoreResults -> True]
+```
 
 ## Happy Path
 
@@ -375,14 +770,14 @@ cd /path/to/antenna_pipeline
 bash masterIntegrals/run_kernel.sh -run 'Get["dev/validate_runtime_master_values.wl"]; Exit[]'
 ```
 
-## Caches And Generated Artifacts
+## Stored Results And Runtime Artifacts
 
 The runtime includes a repo-local stored-result cache under `stored_results/`.
 This is a usability feature, not a second source of truth: cached results are
 replays of public-route outputs, while the route implementations remain the
 authoritative computation layer.
 
-Two kinds of checked-in artifacts matter operationally:
+Checked-in runtime artifacts matter in two different ways:
 
 - `stored_results/` contains reusable public-route outputs
 - `bases/`, `generated_bases/`, and
