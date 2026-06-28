@@ -19,9 +19,17 @@
 
 BuildAntennaOrderFromList::usage = "Runs BuildAntenna[] for all elements of a list containing antennae definitions (list {A, 2, 0}) and returns a list of the built antenna. The function is initiated as BuildAntennaeOrderFromList[list, quarkMass -> 0]";
 
-BuildAllAntennae::usage = "Runs BuildAntennaOrderFromList[] for increasing orders of complexity (LO, NLO, NNLO) and returns the built antennae list based on the model chosen and the maximum order of complexity chosen. The function is initiated as BuildAllAntennae[model, maxOrder -> NNLO, quarkMass -> 0]. The other two maxOrder options as LO and NLO. The maxOrder argument must be called using uppercase letters.";
+BuildAllAntennae::usage = "Runs BuildAntennaOrderFromList[] for increasing orders of complexity (LO, NLO, NNLO) and returns the built antennae list based on the model chosen and the maximum order of complexity chosen. The function is initiated as BuildAllAntennae[model, maxOrder -> NNLO, quarkMass -> 0]. The other two maxOrder options as LO and NLO. The maxOrder argument accepts the uppercase symbols LO, NLO, NNLO and the corresponding uppercase strings.";
 
 Options[BuildAntennaOrderFromList] = {quarkMass -> 0};
+
+bulkRouteProgressPrint[routeKind_String, key_List, index_Integer,
+   total_Integer, status_String] :=
+    Print[
+        "[", DateString[{"ISODate", " ", "Time"}], "] ",
+        routeKind, " [", index, "/", total, "]: ", status, " ",
+        key[[1]], key[[2]], key[[3]]
+    ];
 
 BuildAntennaOrderFromList[list_, OptionsPattern[]] :=
     Module[{qM, listLength, builtAntennaeList},
@@ -29,10 +37,12 @@ BuildAntennaOrderFromList[list_, OptionsPattern[]] :=
         listLength = Length[list];
         builtAntennaeList = {};
         Do[
-            Print["Building antenna ", list[[i]][[1]], list[[i]][[2]],
-                 list[[i]][[3]]];
+            bulkRouteProgressPrint["BuildAllAntennae", list[[i]], i,
+                listLength, "starting"];
             AppendTo[builtAntennaeList, BuildAntenna[Sequence @@ list
                 [[i]], quarkMass -> qM]];
+            bulkRouteProgressPrint["BuildAllAntennae", list[[i]], i,
+                listLength, "finished"];
             ,
             {i, listLength}
         ];
@@ -41,10 +51,37 @@ BuildAntennaOrderFromList[list_, OptionsPattern[]] :=
 
 Options[BuildAllAntennae] = {maxOrder -> NNLO, quarkMass -> 0};
 
+normalizeBulkMaxOrder[maxOrder_] :=
+    Module[{normalized},
+        normalized = ToString[Unevaluated[maxOrder], InputForm];
+        Switch[normalized,
+            "LO",
+                LO
+            ,
+            "\"LO\"",
+                LO
+            ,
+            "NLO",
+                NLO
+            ,
+            "\"NLO\"",
+                NLO
+            ,
+            "NNLO",
+                NNLO
+            ,
+            "\"NNLO\"",
+                NNLO
+            ,
+            _,
+                maxOrder
+        ]
+    ];
+
 BuildAllAntennae[model_, OptionsPattern[]] :=
     Module[{maxOrder, qM, type1, type2, type3, loList, nloList, nnloList,
          builtAntennaeList},
-        maxOrder = OptionValue["maxOrder"];
+        maxOrder = normalizeBulkMaxOrder[OptionValue["maxOrder"]];
         qM = OptionValue["quarkMass"];
         If[qM =!= 0,
             Print["Massive antennae are not yet fully implemented. Only A30 has this feature as of the current build. Aborting..."
@@ -109,10 +146,12 @@ BuildAndIntegrateAntennaOrderFromList[list_, OptionsPattern[]] :=
         listLength = Length[list];
         builtAntennaeList = {};
         Do[
-            Print["Building antenna ", list[[i]][[1]], list[[i]][[2]],
-                 list[[i]][[3]]];
+            bulkRouteProgressPrint["BuildAndIntegrateAllAntennae", list[[i]],
+                i, listLength, "starting"];
             AppendTo[builtAntennaeList, BuildAndIntegrateAntenna[Sequence
                  @@ list[[i]], ExpansionOrder -> eO, quarkMass -> qM]];
+            bulkRouteProgressPrint["BuildAndIntegrateAllAntennae", list[[i]],
+                i, listLength, "finished"];
             ,
             {i, listLength}
         ];
@@ -126,7 +165,7 @@ BuildAndIntegrateAllAntennae[model_, OptionsPattern[]] :=
     Module[{eO, maxOrder, qM, type1, type2, type3, loList, nloList, nnloList,
          builtAntennaeList},
         eO = OptionValue["ExpansionOrder"];
-        maxOrder = OptionValue["maxOrder"];
+        maxOrder = normalizeBulkMaxOrder[OptionValue["maxOrder"]];
         qM = OptionValue["quarkMass"];
         If[qM =!= 0,
             Print["Massive antennae are not yet fully implemented. Only A30 has this feature as of the current build. Aborting..."

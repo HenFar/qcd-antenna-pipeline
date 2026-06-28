@@ -129,6 +129,26 @@ AntennaObjectData::usage =
 AntennaRunRecordQ::usage =
   "AntennaRunRecordQ[expr] returns True when expr is a valid AntennaRunRecord wrapper.";
 
+longBuildRouteQ[key_] :=
+  MemberQ[{{A, 3, 1}, {A, 2, 2}, {A, 4, 0}, {B, 4, 0}, {C, 4, 0}}, key];
+
+buildRouteProgressLabel[key_, component_, contribution_] :=
+  StringJoin[
+    ToString[key, InputForm],
+    " with Component -> ",
+    CanonicalAntennaComponentName[component],
+    ", Contribution -> ",
+    CanonicalAntennaComponentName[contribution]
+  ];
+
+buildRouteProgressPrint[key_, component_, contribution_, current_Integer,
+   total_Integer, label_String] :=
+  Print[
+    "[", DateString[{"ISODate", " ", "Time"}], "] ",
+    "BuildAntenna [", current, "/", total, "]: ", label, " ",
+    buildRouteProgressLabel[key, component, contribution]
+  ];
+
 AntennaRunRecordData::usage =
   "AntennaRunRecordData[record] returns the association stored inside an AntennaRunRecord.";
 
@@ -1561,7 +1581,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
      diagnosticsWithMetadata, antennaObject, integrableRequested,
      reductionBackend, intermediateSteps, collectedSteps, recordStages,
      useStored, storeStored, refreshStored, cacheKey, cacheLabel, cacheRoot,
-     loaded, computed, optionsAssoc, recordMetadata},
+     loaded, computed, optionsAssoc, recordMetadata, progressActive},
     useStored = TrueQ[OptionValue["UseStoredResults"]];
     storeStored = TrueQ[OptionValue["StoreResults"]];
     refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
@@ -1591,6 +1611,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
         "Contribution" -> OptionValue["Contribution"],
         "quarkMass" -> OptionValue["quarkMass"]|>;
+    progressActive = longBuildRouteQ[key];
     If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
         StoredResultsEnabledQ[useStored, storeStored, refreshStored],
       cacheKey = BuildAntennaStoredResultKey[type, numFinalParticles,
@@ -1679,6 +1700,14 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
         ,
         OptionValue["ReductionBackend"]
       ];
+    If[TrueQ[progressActive],
+      buildRouteProgressPrint[key, OptionValue["Component"],
+        OptionValue["Contribution"], 1, 5, "resolving route setup"]
+    ];
+    If[TrueQ[progressActive],
+      buildRouteProgressPrint[key, OptionValue["Component"],
+        OptionValue["Contribution"], 2, 5, "building route data"]
+    ];
     data =
       BuildRouteBuildData[
         key,
@@ -1697,6 +1726,10 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
         |>
       ];
+    If[TrueQ[progressActive],
+      buildRouteProgressPrint[key, OptionValue["Component"],
+        OptionValue["Contribution"], 3, 5, "extracting public result"]
+    ];
     If[OptionValue["ReturnBuildData"] === True &&
         !TrueQ[OptionValue["ReturnRecord"]],
       Return[data]
@@ -1706,6 +1739,10 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
        "Component"]];
     antennaObject = MakeAntennaObject[key, data, OptionValue["Component"],
       OptionValue["Contribution"]];
+    If[TrueQ[progressActive],
+      buildRouteProgressPrint[key, OptionValue["Component"],
+        OptionValue["Contribution"], 4, 5, "building diagnostics"]
+    ];
     If[integrableRequested,
       If[antennaObject === $Failed,
         diagnostics = BuildAntennaDiagnostics[key, result, data, OptionValue[
@@ -1742,6 +1779,10 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
             <|"IntermediateSteps" -> collectedSteps|>,
             <||>
           ]];
+      If[TrueQ[progressActive],
+        buildRouteProgressPrint[key, OptionValue["Component"],
+          OptionValue["Contribution"], 5, 5, "formatting public return"]
+      ];
       Return[
         FormatFreshBuildReturn[antennaObject, diagnosticsWithMetadata,
           OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
@@ -1769,6 +1810,10 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           <|"IntermediateSteps" -> collectedSteps|>,
           <||>
         ]];
+    If[TrueQ[progressActive],
+      buildRouteProgressPrint[key, OptionValue["Component"],
+        OptionValue["Contribution"], 5, 5, "formatting public return"]
+    ];
     FormatFreshBuildReturn[publicResult, diagnosticsWithMetadata, OptionValue[
         "ReturnDiagnostics"], OptionValue["ReturnRecord"], intermediateSteps,
       OptionValue["PrintIntermediateSteps"], "BuildAntenna", recordStages,

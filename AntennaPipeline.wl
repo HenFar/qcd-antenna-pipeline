@@ -110,3 +110,6 @@ Get[FileNameJoin[{packageRoot, "src", "interface", "rratio_driver.wl"
 
 Get[FileNameJoin[{packageRoot, "src", "interface", "build_all_antennae.wl"
    }]];
+
+Get[FileNameJoin[{packageRoot, "src", "interface", "runtime_reports.wl"
+   }]];

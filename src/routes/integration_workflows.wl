@@ -110,7 +110,7 @@ IntegrateRouteObject[obj_, options_Association] :=
      refreshStored, cacheKey, cacheLabel, cacheRoot, loaded, computed,
      computedResult, computedDiagnostics, optionsAssoc, recordStages,
      recordMetadata, diagnosticsWithMetadata, ibpNeedsDiagnostics,
-     quarkMassOpt, routeKind},
+     quarkMassOpt, routeKind, progressActive, finishProgress},
     routeKind = Lookup[options, "RouteKind", "IntegrateAntenna"];
     If[!AntennaObjectQ[obj],
       diagnostics = <|"Failed" -> True, "Reason" -> "InvalidAntennaObject"|>;
@@ -246,11 +246,22 @@ IntegrateRouteObject[obj_, options_Association] :=
     contribution = CanonicalAntennaComponentName[contributionInput];
     componentInput = If[Lookup[options, "Component", All] === All, Lookup[data, "SelectedComponent", All], Lookup[options, "Component", All]];
     componentName = CanonicalAntennaComponentName[componentInput];
+    progressActive = HeavyIntegrationRouteQ[key, componentInput,
+      contributionInput];
+    finishProgress :=
+      If[TrueQ[progressActive],
+        heavyIntegrationProgressPrint[routeKind, key, componentInput,
+          contributionInput, 6, 6, "finished"]
+      ];
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] && contribution === "OneLoopSelf",
       profile = Join[profile, <|"BasisFamily" -> "A22OneLoopSelf", "ImplementationStatus" -> "ExperimentalOneLoopSelfOnly"|>]
     ];
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] && contribution === "TwoLoopTree",
       profile = Join[profile, <|"BasisFamily" -> "A22TwoLoopTree", "ImplementationStatus" -> "ExperimentalTwoLoopTree"|>]
+    ];
+    If[TrueQ[progressActive],
+      heavyIntegrationProgressPrint[routeKind, key, componentInput,
+        contributionInput, 1, 6, "resolving route profile"]
     ];
     expansionOrder = If[Lookup[options, "ExpansionOrder", Automatic] === Automatic, Lookup[profile, "ExpansionOrder", 0], Lookup[options, "ExpansionOrder", 0]];
     (* Massive A30 is currently a special route: unless the caller explicitly
@@ -351,6 +362,10 @@ IntegrateRouteObject[obj_, options_Association] :=
           ]
         ,
         "All",
+          If[TrueQ[progressActive],
+            heavyIntegrationProgressPrint[routeKind, key, componentInput,
+              contributionInput, 2, 6, "integrating component branches"]
+          ];
           leadingCall = IntegrateRouteObject[AntennaObjectWithSelection[obj, Leading, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
           subleadingCall = IntegrateRouteObject[AntennaObjectWithSelection[obj, Subleading, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
           nfCall = IntegrateRouteObject[AntennaObjectWithSelection[obj, Nf, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
@@ -369,6 +384,7 @@ IntegrateRouteObject[obj_, options_Association] :=
                 "AntennaObject" -> obj,
                 "RouteStory" -> IntegrationRouteStory[key]
               |>;
+            finishProgress;
             Return[
               FormatFreshIntegrationReturn[
                 $Failed,
@@ -383,11 +399,24 @@ IntegrateRouteObject[obj_, options_Association] :=
               ]
             ]
           ];
+          If[TrueQ[progressActive],
+            heavyIntegrationProgressPrint[routeKind, key, componentInput,
+              contributionInput, 3, 6, "combining integrated components"]
+          ];
           finalIntegrated = A22CombineIntegratedResults[{leadingResult, subleadingResult, nfResult}, breveResult];
           treeDiags = <|"Leading" -> leadingDiag, "Subleading" -> subleadingDiag, "Nf" -> nfDiag|>;
+          If[TrueQ[progressActive],
+            heavyIntegrationProgressPrint[routeKind, key, componentInput,
+              contributionInput, 4, 6, "collecting diagnostics"]
+          ];
           diagnostics = A22CombineIntegratedComponentDiagnostics[treeDiags, breveDiag, finalIntegrated, componentInput, Lookup[options, "ReturnTTerms", False]];
           diagnosticsWithMetadata = Join[diagnostics, <|"SourceObject" -> obj, "AntennaObject" -> obj, "RouteStory" -> IntegrationRouteStory[key]|>];
           recordStages = CollectIntegrationRecordStages[Lookup[data, "Antenna", $Failed], Lookup[diagnostics, "RawIntegrated", Missing["NotAvailable"]], Lookup[diagnostics, "TTerms", Missing["NotAvailable"]], finalIntegrated, finalIntegrated, <|"TwoLoopTree" -> treeDiags, "OneLoopSelf" -> breveDiag|>, diagnosticsWithMetadata];
+          If[TrueQ[progressActive],
+            heavyIntegrationProgressPrint[routeKind, key, componentInput,
+              contributionInput, 5, 6, "formatting public return"]
+          ];
+          finishProgress;
           Return[
             FormatFreshIntegrationReturn[
               finalIntegrated,
@@ -405,6 +434,7 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     If[Lookup[profile, "ImplementationStatus", "Implemented"] === "ScaffoldOnly" && Lookup[profile, "BasisFamily", Missing["NoFamily"]] =!= "MX30",
       diagnostics = <|"Failed" -> True, "Reason" -> "IntegratedAntennaNotImplemented", "Profile" -> profile, "Contribution" -> contributionInput|>;
+      finishProgress;
       Return[
         FormatFreshIntegrationReturn[
           $Failed,
@@ -423,6 +453,10 @@ IntegrateRouteObject[obj_, options_Association] :=
     storedComponent = Lookup[data, "SelectedComponent", All];
     antenna = Lookup[data, "Antenna", $Failed];
     ibpNeedsDiagnostics = TrueQ[Lookup[options, "ReturnDiagnostics", False]] || TrueQ[Lookup[options, "ReturnRecord", False]];
+    If[TrueQ[progressActive],
+      heavyIntegrationProgressPrint[routeKind, key, componentInput,
+        contributionInput, 2, 6, "running backend reduction"]
+    ];
     rawIntegrated =
       Switch[backend,
         PaVe,
@@ -470,12 +504,24 @@ IntegrateRouteObject[obj_, options_Association] :=
         $Failed,
         IntegratedAntennaTTerms[key, rawIntegrated, ExpansionOrder -> expansionOrder, Component -> storedComponent]
       ];
+    If[TrueQ[progressActive],
+      heavyIntegrationProgressPrint[routeKind, key, componentInput,
+        contributionInput, 3, 6, "constructing T-terms"]
+    ];
     finalIntegrated =
       If[rawIntegrated === $Failed,
         $Failed,
         If[Lookup[options, "ReturnTTerms", False] === True, tTerms, ExtractIntegratedAntenna[key, tTerms, ExpansionOrder -> expansionOrder]]
       ];
+    If[TrueQ[progressActive],
+      heavyIntegrationProgressPrint[routeKind, key, componentInput,
+        contributionInput, 4, 6, "extracting integrated result"]
+    ];
     selectedIntegrated = SelectAntennaComponent[finalIntegrated, key, If[storedComponent === All, componentInput, All]];
+    If[TrueQ[progressActive],
+      heavyIntegrationProgressPrint[routeKind, key, componentInput,
+        contributionInput, 5, 6, "collecting diagnostics"]
+    ];
     diagnostics = Join[
       IntegratedAntennaDiagnostics[key, antenna, finalIntegrated, profile, <|"RawIntegrated" -> rawIntegrated, "TTerms" -> tTerms, "ReturnTTerms" -> Lookup[options, "ReturnTTerms", False], "ExpansionOrder" -> expansionOrder, "SelectedComponent" -> componentInput, "BuildComponent" -> storedComponent|>],
       If[rawIntegrated === $Failed && AssociationQ[backendDiagnostics] && KeyExistsQ[backendDiagnostics, "Reason"], <|"Failed" -> True, "Reason" -> backendDiagnostics["Reason"]|>, <||>],
@@ -509,6 +555,11 @@ IntegrateRouteObject[obj_, options_Association] :=
         recordStages,
         recordMetadata
       ];
+    If[TrueQ[progressActive],
+      heavyIntegrationProgressPrint[routeKind, key, componentInput,
+        contributionInput, 6, 6, "formatting public return"]
+    ];
+    finishProgress;
     output
   ];
 
@@ -648,6 +699,10 @@ BuildAndIntegrateRouteResult[type_, numFinalParticles_Integer, loopOrder_Integer
       quarkMass -> Lookup[options, "quarkMass", 0],
       ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
       LoopMomentum -> Lookup[options, "LoopMomentum", l],
+      UseStoredResults -> Lookup[options, "UseStoredResults", False],
+      StoreResults -> Lookup[options, "StoreResults", False],
+      ResultsCacheRoot -> Lookup[options, "ResultsCacheRoot", Automatic],
+      RefreshStoredResults -> Lookup[options, "RefreshStoredResults", False],
       Component -> buildComponent,
       Contribution -> Lookup[options, "Contribution", All]
     ];

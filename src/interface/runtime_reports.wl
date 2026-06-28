@@ -1,0 +1,276 @@
+(* ::Section:: *)
+(* Runtime convention and profile reports *)
+
+(* Communicates with:
+   - AntennaPipeline.wl, which loads this file after the public interfaces and
+     profile registry are available.
+   - src/core/setup.wl, whose shared backend startup choices are surfaced here
+     as inspectable package state.
+   - src/core/profiles.wl and src/routes/route_catalog.wl, whose metadata are
+     assembled into route-facing summaries.
+
+   Why this file exists:
+   The README now documents the intended public contract, current
+   implementation reality, and several convention-level caveats.  This file
+   gives users and thesis readers a code-level way to inspect that same state
+   without pretending unresolved physics questions are already configurable or
+   fully settled. *)
+
+AntennaPipelineConventionReport::usage =
+  "AntennaPipelineConventionReport[] returns a structured report of package-wide public defaults, backend expectations, and current convention status notes.";
+
+AntennaRouteProfileReport::usage =
+  "AntennaRouteProfileReport[type, numFinalParticles, loopOrder] returns a structured report of the resolved build and integration metadata for one antenna route.";
+
+NormalizeOptionAssociationKeys[assoc_Association] :=
+  KeyMap[
+    If[StringQ[#],
+      #
+      ,
+      ToString[Unevaluated[#], InputForm]
+    ]&,
+    assoc
+  ];
+
+PublicOptionDefaultsAssociation[head_Symbol] :=
+  NormalizeOptionAssociationKeys[Association[Options[head]]];
+
+SelectPublicOptionDefaults[head_Symbol, keys_List] :=
+  KeyTake[PublicOptionDefaultsAssociation[head], keys];
+
+AssociationOrEmpty[expr_] :=
+  If[AssociationQ[expr],
+    expr
+    ,
+    <||>
+  ];
+
+SupportedMasslessReleaseRouteQ[key_] :=
+  MemberQ[
+    {
+      {A, 2, 0},
+      {A, 3, 0},
+      {A, 2, 1},
+      {A, 4, 0},
+      {B, 4, 0},
+      {C, 4, 0},
+      {A, 3, 1},
+      {A, 2, 2}
+    },
+    key
+  ];
+
+RouteContractStatus[key_] :=
+  Module[{buildProfile, integrationProfile, buildConvention,
+     integrationConvention, notes},
+    buildProfile = AntennaProfile[key];
+    integrationProfile = AntennaIntegrationProfile[key];
+    buildConvention = Lookup[buildProfile, "ConventionProfile", <||>];
+    integrationConvention = Lookup[integrationProfile, "ConventionProfile",
+      <||>];
+    notes = DeleteCases[
+      {
+        If[StringQ[Lookup[buildConvention, "CurrentImplementationNote",
+            Missing["NotAvailable"]]],
+          buildConvention["CurrentImplementationNote"],
+          Nothing
+        ],
+        If[StringQ[Lookup[integrationConvention,
+            "CurrentImplementationNote", Missing["NotAvailable"]]],
+          integrationConvention["CurrentImplementationNote"],
+          Nothing
+        ],
+        If[Lookup[buildProfile, "ImplementationStatus", Missing["NotAvailable"]] === "ExperimentalSourceProduction",
+          "Build profile note: this route still carries an experimental-source-production marker internally.",
+          Nothing
+        ],
+        If[Lookup[integrationProfile, "ImplementationStatus", Missing["NotAvailable"]] === "ScaffoldOnly",
+          "Integration profile note: the registry still labels this route scaffolded even though the package exposes a public stitched route around it.",
+          Nothing
+        ]
+      },
+      Nothing
+    ];
+    <|
+      "SupportedMasslessReleaseRoute" -> SupportedMasslessReleaseRouteQ[key],
+      "BuildImplementationStatus" -> Lookup[buildProfile, "ImplementationStatus", "Implemented"],
+      "IntegrationImplementationStatus" -> Lookup[integrationProfile, "ImplementationStatus", "Implemented"],
+      "Notes" -> notes
+    |>
+  ];
+
+AntennaPipelineConventionReport[] :=
+  Module[{model},
+    model = AntennaPipelineConventionModel[];
+    <|
+    "PublicDefaultOptions" -> <|
+      "BuildAntenna" ->
+        SelectPublicOptionDefaults[
+          BuildAntenna,
+          {
+            "quarkMass",
+            "ApplyDimReg",
+            "ReductionBackend",
+            "AllowPrototypeTargets",
+            "UseSourceModelRoute",
+            "UseStoredResults",
+            "StoreResults",
+            "ResultsCacheRoot",
+            "RefreshStoredResults"
+          }
+        ],
+      "IntegrateAntenna" ->
+        SelectPublicOptionDefaults[
+          IntegrateAntenna,
+          {
+            "ApplyFeynCalcMS",
+            "quarkMass",
+            "PaVeEvaluation",
+            "ExpansionOrder",
+            "KinematicScale",
+            "NormalizeKinematicScale",
+            "ApplyDimReg",
+            "BasisFamily",
+            "BasisRoot",
+            "GenerateMissingBases",
+            "UseStoredResults",
+            "StoreResults",
+            "ResultsCacheRoot",
+            "RefreshStoredResults"
+          }
+        ],
+      "BuildAndIntegrateAntenna" ->
+        SelectPublicOptionDefaults[
+          BuildAndIntegrateAntenna,
+          {
+            "ApplyFeynCalcMS",
+            "quarkMass",
+            "PaVeEvaluation",
+            "ExpansionOrder",
+            "KinematicScale",
+            "NormalizeKinematicScale",
+            "ApplyDimReg",
+            "UseStoredResults",
+            "StoreResults",
+            "ResultsCacheRoot",
+            "RefreshStoredResults"
+          }
+        ],
+      "BuildRRatio" ->
+        SelectPublicOptionDefaults[
+          BuildRRatio,
+          {
+            "quarkMass",
+            "UseStoredResults",
+            "StoreResults",
+            "ResultsCacheRoot",
+            "RefreshStoredResults",
+            "ResultForm"
+          }
+        ],
+      "TObject" ->
+        SelectPublicOptionDefaults[
+          TObject,
+          {
+            "quarkMass",
+            "ExpansionOrder",
+            "UseStoredResults",
+            "StoreResults",
+            "ResultsCacheRoot",
+            "RefreshStoredResults"
+          }
+        ]
+    |>,
+    "BackendEnvironment" -> <|
+      "ValidatedFeynCalcVersion" -> "9.3.1",
+      "StartupAddOns" -> $LoadAddOns,
+      "RenameFeynCalcObjects" -> $RenameFeynCalcObjects
+    |>,
+    "ConventionState" -> Join[
+      model,
+      <|
+        "PrototypeSurface" -> Join[
+          Lookup[model, "PrototypeSurface", <||>],
+          <|
+            "AllowPrototypeTargetsDefault" -> Lookup[
+              PublicOptionDefaultsAssociation[BuildAntenna],
+              "AllowPrototypeTargets", False],
+            "UseSourceModelRouteDefault" -> Lookup[
+              PublicOptionDefaultsAssociation[BuildAntenna],
+              "UseSourceModelRoute", False]
+          |>
+        ],
+        "PaVeBridge" -> Join[
+          Lookup[model, "PaVeBridge", <||>],
+          <|
+            "DefaultPaVeEvaluation" -> Lookup[
+              PublicOptionDefaultsAssociation[IntegrateAntenna],
+              "PaVeEvaluation", "PaXEvaluate"],
+            "ApplyFeynCalcMSDefault" -> Lookup[
+              PublicOptionDefaultsAssociation[IntegrateAntenna],
+              "ApplyFeynCalcMS", True]
+          |>
+        ],
+        "ScaleNormalization" -> Join[
+          Lookup[model, "ScaleNormalization", <||>],
+          <|
+            "PublicKinematicScale" -> Lookup[
+              PublicOptionDefaultsAssociation[IntegrateAntenna],
+              "KinematicScale", q2],
+            "NormalizeKinematicScaleDefault" -> Lookup[
+              PublicOptionDefaultsAssociation[IntegrateAntenna],
+              "NormalizeKinematicScale", True]
+          |>
+        ]
+      |>
+    ]
+  |>];
+
+AntennaRouteProfileReport[type_, numFinalParticles_Integer,
+   loopOrder_Integer] :=
+  AntennaRouteProfileReport[{type, numFinalParticles, loopOrder}];
+
+AntennaRouteProfileReport[key_List] :=
+  Module[{buildProfile, reductionProfile, integrationProfile,
+     buildDefaults, integrationDefaults},
+    buildProfile = AntennaProfile[key];
+    reductionProfile = AssociationOrEmpty[AntennaReductionProfile[key]];
+    integrationProfile = AssociationOrEmpty[AntennaIntegrationProfile[key]];
+    buildDefaults = PublicOptionDefaultsAssociation[BuildAntenna];
+    integrationDefaults = PublicOptionDefaultsAssociation[IntegrateAntenna];
+    <|
+      "Key" -> key,
+      "Name" -> Lookup[buildProfile, "Name", Missing["NotAvailable"]],
+      "BuildProfile" -> buildProfile,
+      "BuildReductionProfile" -> reductionProfile,
+      "IntegrationProfile" -> integrationProfile,
+      "ResolvedRouteDefaults" -> <|
+        "BuildAntenna" -> <|
+          "quarkMass" -> Lookup[buildDefaults, "quarkMass", 0],
+          "ApplyDimReg" -> Lookup[buildDefaults, "ApplyDimReg", True],
+          "ReductionBackend" -> Lookup[reductionProfile, "DefaultBackend",
+            Lookup[buildDefaults, "ReductionBackend", Automatic]]
+        |>,
+        "IntegrateAntenna" -> <|
+          "quarkMass" -> Lookup[integrationDefaults, "quarkMass", 0],
+          "PaVeEvaluation" -> Lookup[integrationDefaults, "PaVeEvaluation",
+            "PaXEvaluate"],
+          "ExpansionOrder" -> Lookup[integrationProfile, "ExpansionOrder",
+            Lookup[integrationDefaults, "ExpansionOrder", Automatic]],
+          "KinematicScale" -> Lookup[integrationProfile, "KinematicScale",
+            Lookup[integrationDefaults, "KinematicScale", q2]],
+          "NormalizeKinematicScale" -> Lookup[integrationDefaults,
+            "NormalizeKinematicScale", True],
+          "ApplyDimReg" -> Lookup[integrationDefaults, "ApplyDimReg",
+            True],
+          "DefaultBackend" -> Lookup[integrationProfile, "DefaultBackend",
+            IBP]
+        |>
+      |>,
+      "RouteStories" -> <|
+        "Build" -> BuildRouteStory[key],
+        "Integration" -> IntegrationRouteStory[key]
+      |>,
+      "ContractStatus" -> RouteContractStatus[key]
+    |>
+  ];

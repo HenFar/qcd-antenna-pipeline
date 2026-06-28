@@ -31,6 +31,44 @@ The guiding rule is:
 - known contract mismatches are called out explicitly rather than silently
   normalized as if they were correct public behavior
 
+## Active Implementation Plan
+
+This repository is currently being advanced through a strict task-by-task
+implementation checklist rather than through unrelated opportunistic edits. The
+current execution order is:
+
+1. convention and public-contract foundation
+2. build-side semantics repair
+3. defaults, cache, and validation
+4. massive `A30`, examples, and extensions
+
+The active task list is:
+
+- Task 1: stabilize the convention metadata model
+- Task 2: add effective route/environment resolution reporting
+- Task 3: declare dimensional-regularization scheme status in code
+- Task 4: introduce an explicit public vs bare/prototype output boundary
+- Task 5: repair `A31` build-side normalization and renormalization semantics
+- Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
+- Task 7: add an explicit bare/prototype public option
+- Task 8: add a supported global default environment mechanism
+- Task 9: re-audit stored-result semantics after semantics repair
+- Task 10: build a physics-aware validation layer
+- Task 11: complete the massive `A30` second-master derivation
+- Task 12: finish quickstart/examples/benchmarks
+- Task 13: prototype the longer-term extension ideas
+
+Current execution status:
+
+- done
+  Task 1: stabilize the convention metadata model
+- not yet done
+  Tasks 2-13
+
+The checklist is intentionally dependency-driven. In particular, semantics
+repair happens before cache re-audits, broader validation, or user-facing
+polish that would otherwise document the wrong boundary.
+
 ## Release Promise
 
 The release-complete package surface is:
@@ -93,6 +131,10 @@ The current `D30` status is:
 
 - the effective source-model infrastructure exists under `src/`
 - source amplitudes and source interferences are built by the runtime
+- the default `BuildAntenna[D, 3, 0, ...]` call remains callable through the
+  source-model route
+- `AllowPrototypeTargets -> True` switches the build toward the prototype or
+  paper-style branch instead of the default source-model route
 - the public `BuildAntenna[D, 3, 0, ...]` route exposes that started work
   through diagnostics and run records
 - the final symbolic extraction into a validated public `D30` antenna is still
@@ -168,14 +210,22 @@ are available in the Wolfram environment used to load the package:
 
 - Wolfram Kernel / `wolframscript`
 - `FeynCalc`
-- `FeynArts`
 - `FeynHelpers`
+- `FeynArts`
+- `LiteRed2`
 
 The runtime checks the `FeynCalc` version it was validated against and currently
 expects `FeynCalc 9.3.1`.
 
-Some supported integration routes also rely on checked-in basis or master-value
-artifacts already present in the repository:
+Dependency note:
+
+- `FeynHelpers` and `FeynArts` are used through the `FeynCalc` environment
+- `LiteRed2` is required by the IBP-backed integration routes
+- once those dependencies are present, package startup itself is only
+  `Get["AntennaPipeline.wl"]`
+
+Some supported integration routes also rely on checked-in repo-owned basis or
+master-value artifacts already present in the repository:
 
 - `bases/`
 - `generated_bases/`
@@ -205,6 +255,17 @@ The package does not require the full derivation tree to be recomputed on
 startup. In particular, the runtime loads the checked-in
 `masterIntegrals/master_values_runtime.wl` artifact rather than rebuilding the
 master-integral provenance layer on each load.
+
+## Tested Environments
+
+The package has been tested in at least the following local environments:
+
+- macOS on an Apple Silicon MacBook Pro M4
+- Windows on an Intel desktop PC
+
+The README does not currently make detailed runtime or memory promises across
+machines. Treat those environments as confirmed test platforms, not as a full
+compatibility matrix.
 
 ## Loading
 
@@ -244,8 +305,11 @@ BuildAntennaObject[type, numFinalParticles, loopOrder, ...]
 IntegrateAntenna[antennaObject, ...]
 BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder, ...]
 BuildRRatio[model, ...]
+TObject[order, finalState, ...]
 BuildAllAntennae[model, ...]
 BuildAndIntegrateAllAntennae[model, ...]
+AntennaPipelineConventionReport[]
+AntennaRouteProfileReport[type, numFinalParticles, loopOrder]
 ```
 
 The usual user-facing story is:
@@ -264,6 +328,9 @@ The usual user-facing story is:
   `BuildAntenna[A, 3, 0, ...]`.
 - Normal result shape: a scalar antenna expression, or a list of ordered public
   components when that family has a multi-component public output.
+- Contract note: for some loop families, especially around `A31`, the intended
+  public normalization/renormalization boundary is documented below and is not
+  yet enforced uniformly by the current implementation.
 - Inspection variants: may instead return diagnostics, raw build data,
   an `AntennaObject[...]`, or an `AntennaRunRecord[...]` depending on options.
 - Scope: this is the main build-side public function for both supported
@@ -306,6 +373,35 @@ The usual user-facing story is:
 - Normal result shape: by default the finite `MSbar`-convention result, or the
   raw dimensional-regularization series when requested.
 - Scope: this is a massless release driver, not an experimental massive route.
+
+`TObject[order, finalState, ...]`
+
+- Purpose: build one public symbolic `T` object from the integrated antenna
+  ingredients used by the massless `SMQCD` driver layer.
+- Input shape: currently supported public calls use perturbative orders `2`,
+  `4`, or `6` together with one of the supported final-state selectors such as
+  `qqbar`, `qqbarg`, `qqbarqprimeqprimebar`, `qqbarqqbar`, or `qqbargg`.
+- Normal result shape: a symbolic expression in the package's presented public
+  convention, or `{result, diagnostics}` when requested.
+- Scope: this is a literature-facing massless helper built on top of the same
+  validated integrated ingredients as `BuildRRatio[...]`.
+
+`AntennaPipelineConventionReport[]`
+
+- Purpose: report the package-wide public defaults, backend expectations, and
+  the current convention state in a code-inspectable association.
+- Scope: this is an introspection helper, not a route executor.
+- Contract note: it distinguishes intended public contract from current
+  implementation reality and does not pretend unresolved dim-reg or
+  renormalization questions are already settled.
+
+`AntennaRouteProfileReport[type, numFinalParticles, loopOrder]`
+
+- Purpose: report the resolved build profile, integration profile, route
+  stories, and route-level contract notes for one antenna key.
+- Scope: this is an introspection helper for users, thesis readers, and route
+  developers who want to inspect metadata without stepping through the routing
+  code manually.
 
 `BuildAllAntennae[model, ...]`
 
@@ -424,7 +520,8 @@ Driver-specific options:
   For `BuildRRatio[...]`, the current public forms are `"FiniteMSBar"` and
   `"RawDimRegSeries"`.
 - `maxOrder`
-  For bulk helpers, choose `LO`, `NLO`, or `NNLO` using uppercase order tags.
+  For bulk helpers, choose `LO`, `NLO`, or `NNLO` either as uppercase symbols
+  or as the corresponding uppercase strings.
 
 Function-to-option notes:
 
@@ -502,6 +599,16 @@ master-integral machinery rather than through a generic one-loop `PaVe` basis.
 
 ### Normalization And Renormalization State
 
+Task 1 status:
+
+- done: the package now has a canonical code-level convention model in the core
+  metadata registry rather than relying only on README prose or ad hoc runtime
+  report assembly
+- done: build and integration profiles now carry route-level convention
+  subrecords
+- not yet done: the actual loop-family build-side boundary repair, especially
+  around `A31`
+
 The intended public contract is:
 
 - `BuildAntenna[...]` should expose package-facing results in the package
@@ -551,6 +658,14 @@ Current implementation status:
 - until that repair lands, the README should be read as documenting the intended
   public boundary, with this mismatch recorded openly rather than hidden
 
+The same state is now inspectable in code:
+
+```wl
+AntennaPipelineConventionModel[]
+AntennaPipelineConventionReport[]
+AntennaRouteProfileReport[A, 3, 1]
+```
+
 Not yet implemented:
 
 - an explicit bare/prototype option to expose pre-counterterm or other internal
@@ -586,6 +701,9 @@ Behavioral notes:
   public shape expected by the caller
 - diagnostics are annotated so callers can distinguish cached reuse from a fresh
   run
+- the one-shot `BuildAndIntegrateAntenna[...]` route forwards its stored-result
+  controls consistently into the delegated build stage as well as its own
+  top-level cache layer
 
 Current public coverage:
 
@@ -635,6 +753,42 @@ BuildAllAntennae[SMQCD, maxOrder -> NNLO]
 BuildAndIntegrateAllAntennae[SMQCD, maxOrder -> NNLO, ExpansionOrder -> 0]
 ```
 
+## What Success Looks Like
+
+For a basic external-user installation check, the important thing is not the
+exact algebraic form of every expression, but whether the public routes return
+the expected kind of object without manual setup beyond `Get[...]`.
+
+Typical successful result shapes are:
+
+- `BuildAntenna[A, 2, 0]`
+  returns a plain Wolfram expression for the selected antenna.
+- `BuildAntenna[A, 3, 1]`
+  returns a multi-part list corresponding to the route's public component
+  structure unless `Component` or `Contribution` narrows it.
+- `BuildAntennaObject[...]`
+  returns an `AntennaObject[...]` suitable for later integration.
+- `IntegrateAntenna[...]` and `BuildAndIntegrateAntenna[...]`
+  return the plain integrated result by default and an `AntennaRunRecord[...]`
+  when `ReturnRecord -> True`.
+- `BuildRRatio[SMQCD, quarkMass -> 0]`
+  returns the assembled public `R`-ratio expression in the selected
+  `ResultForm`.
+- `BuildAllAntennae[...]` and `BuildAndIntegrateAllAntennae[...]`
+  return ordered lists following the documented route order for the supported
+  massless release set.
+
+If you ask for a record:
+
+```wl
+rec = BuildAndIntegrateAntenna[A, 3, 0, ReturnRecord -> True];
+Keys[rec]
+```
+
+you should expect stable top-level entries such as `"Result"`,
+`"Diagnostics"`, and `"IntermediateSteps"`, with additional route-dependent
+fields documented later in this README.
+
 ## Bulk Workflows
 
 For the fully implemented massless SMQCD release target, the package also
@@ -648,7 +802,8 @@ chosen perturbative order:
 Their current scope is intentionally narrow:
 
 - they are implemented for `SMQCD`
-- they use uppercase order tags `LO`, `NLO`, and `NNLO`
+- they accept either uppercase order symbols `LO`, `NLO`, and `NNLO` or the
+  corresponding uppercase strings
 - their massless target is the same supported `A`, `B`, and `C` release set
 - they are convenience wrappers over `BuildAntenna[...]` and
   `BuildAndIntegrateAntenna[...]`, not independent physics routes
@@ -658,6 +813,15 @@ The current SMQCD lists are:
 - `LO`: `A20`
 - `NLO`: `A20`, `A30`, `A21`
 - `NNLO`: `A20`, `A30`, `A21`, `A40`, `B40`, `C40`, `A31`, `A22`
+
+The return value follows that order directly:
+
+- `BuildAllAntennae[...]` returns a list of built results in the `LO`, `NLO`,
+  or `NNLO` route order above
+- `BuildAndIntegrateAllAntennae[...]` returns a list of integrated results in
+  the same order
+- keyed wrappers may be added later, but they are not the current public
+  contract
 
 They are not yet the right entry point for experimental massive work:
 
@@ -701,6 +865,10 @@ The exact runtime depends strongly on the local Wolfram setup and symbolic
 backend performance, so the README does not promise a fixed duration. Treat it
 as the canonical acceptance run rather than as a near-instant probe.
 
+Long-running public routes now emit lightweight start/finish progress prints so
+users can tell the difference between a genuinely active heavy computation and a
+silent stall.
+
 A lighter smoke test is:
 
 ```sh
@@ -714,6 +882,39 @@ The benchmark harness remains available, but it is not the acceptance test:
 cd /path/to/antenna_pipeline
 /Applications/Wolfram.app/Contents/MacOS/WolframKernel -noprompt -script dev/run_public_route_benchmarks.wl
 ```
+
+Tracked future work:
+
+- publish representative timing benchmarks for the supported release routes on
+  the tested environments
+- keep those timings separate from the correctness-facing acceptance workflow so
+  performance notes do not get confused with release validation
+
+## Glossary
+
+- `Route`
+  One public or internal execution path identified by an antenna family and
+  the metadata needed to build or integrate it.
+- `Profile`
+  The registry entry that tells the package how a route should be built,
+  normalized, integrated, and post-processed.
+- `Component`
+  A structural part of a multi-piece antenna family such as `Leading`,
+  `Subleading`, `Nf`, or `Breve`.
+- `Contribution`
+  A physics-source selector used on routes that split by origin, for example a
+  self-energy or loop-insertion contribution.
+- `AntennaObject`
+  The metadata-carrying wrapper used to transport a built antenna cleanly into
+  the integration layer.
+- `AntennaRunRecord`
+  The inspectable result container returned by `ReturnRecord -> True`.
+- `Stored result`
+  A cached build or integration result reused through
+  `UseStoredResults` / `StoreResults`.
+- `Open master values`
+  Runtime master-integral replacements loaded from the checked-in
+  `master_values_runtime.wl` artifact rather than regenerated on the fly.
 
 ## Experimental Inspection
 
@@ -769,6 +970,34 @@ Validate it against the live derivation layer:
 cd /path/to/antenna_pipeline
 bash masterIntegrals/run_kernel.sh -run 'Get["dev/validate_runtime_master_values.wl"]; Exit[]'
 ```
+
+## Provenance And Source Mapping
+
+The runtime is package code, but several targets and master-integral inputs are
+deliberately tied to explicit literature provenance. The current top-level map
+is:
+
+- `hep-ph/0403057`
+  source for the `R`-ratio and `T`-object construction, and for the `A31` and
+  `A22` master-integral provenance used by the package
+- `hep-ph/0311276`
+  source for the `A40`, `B40`, and `C40` master-integral provenance
+- `hep-ph/0505111`
+  source for the remaining main antenna targets and comparison objects used by
+  the package
+
+This does not mean every runtime expression is merely copied from the papers.
+The package distinguishes between:
+
+- package-owned routing, normalization, diagnostics, and integration plumbing
+- imported or provenance-tied targets and master values
+- explicit experimental branches where the package still exposes honest partial
+  or literature-bridged results rather than claiming a fully internal
+  derivation
+
+That distinction is important for thesis use, supervision, and open-source
+readers: the package is meant to be both executable software and an honest map
+of where each result comes from.
 
 ## Stored Results And Runtime Artifacts
 
@@ -841,6 +1070,451 @@ This release does not claim:
 
 The project is considered complete around the massless package goal, not
 around finishing every exploratory physics branch.
+
+## API Appendix
+
+This appendix is the function-by-function reference complement to the earlier
+grouped option overview. It is intentionally exhaustive at the option-name
+level, so users and supervisors can cross-check the public API against the live
+package surface directly.
+
+### `BuildAntenna[...]`
+
+Purpose:
+
+- build the public unintegrated antenna result for one route key
+
+Options:
+
+- `ReturnDiagnostics`
+  Return `{result, diagnostics}`.
+- `ReturnBuildData`
+  Return the route-owned build association instead of only the public result.
+- `ReturnAntennaObject`
+  Return an `AntennaObject[...]`.
+- `IntegrableForm`
+  Request the build-side expression in the form used for downstream
+  integration.
+- `ReturnRecord`
+  Return an `AntennaRunRecord[...]`.
+- `RunPaperCheck`
+  Enable route-specific paper-target validation when available.
+- `Verbose`
+  Enable extra route-level printing where implemented.
+- `printDiagram`
+  Print or expose the diagram-generation stage on routes that support it.
+- `prefactor`
+  Override the build-side overall prefactor.
+- `quarkMass`
+  Select the massive branch when that route supports it.
+- `ApplyStripCouplings`
+  Control coupling stripping.
+- `ApplyCasimirSubstitution`
+  Control replacement of abstract Casimirs by explicit `SU(N)` expressions.
+- `ApplyDimReg`
+  Apply the package dimensional-regularization substitution.
+- `LoopMomentum`
+  Choose the one-loop momentum symbol.
+- `ReductionBackend`
+  Choose the build-side loop reduction backend.
+- `Component`
+  Select one public component from a multi-component route.
+- `IntermediateSteps`
+  Request named build-side intermediate stages.
+- `PrintIntermediateSteps`
+  Print the requested intermediate stages.
+- `LoopMomenta`
+  Choose the two-loop momentum pair.
+- `Contribution`
+  Select one route contribution where exposed.
+- `AllowPrototypeTargets`
+  Permit prototype or provisional targets where that branch allows them.
+- `UseSourceModelRoute`
+  Force the source-model route where implemented.
+- `UseStoredResults`
+  Reuse a matching stored public result if available.
+- `StoreResults`
+  Store the computed public result.
+- `ResultsCacheRoot`
+  Override the default stored-result root.
+- `RefreshStoredResults`
+  Recompute and refresh a matching stored result.
+
+### `BuildAntennaObject[...]`
+
+Purpose:
+
+- build an `AntennaObject[...]` carrying the metadata needed by
+  `IntegrateAntenna[...]`
+
+Options:
+
+- identical to `BuildAntenna[...]` except `ReturnRecord`
+
+### `IntegrateAntenna[...]`
+
+Purpose:
+
+- integrate an `AntennaObject[...]` through the route-selected backend
+
+Options:
+
+- `ApplyFeynCalcMS`
+  Apply the `FeynCalc`/`Package-X` convention bridge on relevant `PaVe` routes.
+- `quarkMass`
+  Select the massive branch when supported.
+- `PaVeEvaluation`
+  Select the `PaVe` evaluation mode, currently defaulting to
+  `"PaXEvaluate"`.
+- `ExpansionOrder`
+  Set the target epsilon-series order.
+- `KinematicScale`
+  Set the symbolic kinematic scale, default `q2`.
+- `NormalizeKinematicScale`
+  Normalize the chosen scale to `1` in the final result.
+- `ReturnDiagnostics`
+  Return `{result, diagnostics}`.
+- `ReturnRecord`
+  Return an `AntennaRunRecord[...]`.
+- `ReturnMasterCombination`
+  Return the master-combination view when available.
+- `LoopMomentum`
+  Set the loop momentum symbol for `PaVe` routes.
+- `ApplyDimReg`
+  Apply the package dimensional-regularization substitution.
+- `BasisFamily`
+  Override the IBP basis family.
+- `BasisRoot`
+  Override the IBP basis root on disk.
+- `GenerateMissingBases`
+  Allow missing basis generation where the route supports it.
+- `ReturnTTerms`
+  Return the T-term object where meaningful.
+- `Component`
+  Select one public component.
+- `Contribution`
+  Select one contribution-level route branch.
+- `IntermediateSteps`
+  Request named integration-side intermediate stages.
+- `PrintIntermediateSteps`
+  Print the requested intermediate stages.
+- `DetailedTimingDiagnostics`
+  Request extended timing diagnostics from heavy integration routes.
+- `UseStoredResults`
+  Reuse a matching stored public result.
+- `StoreResults`
+  Store the computed public result.
+- `ResultsCacheRoot`
+  Override the stored-result root.
+- `RefreshStoredResults`
+  Recompute and refresh a matching stored result.
+
+### `BuildAndIntegrateAntenna[...]`
+
+Purpose:
+
+- run the public build and integration pipeline in one call
+
+Options:
+
+- identical to `IntegrateAntenna[...]`
+
+### `BuildRRatio[...]`
+
+Purpose:
+
+- assemble the supported symbolic NNLO R-ratio driver
+
+Options:
+
+- `quarkMass`
+  Currently the supported release target is `quarkMass -> 0`.
+- `ReturnDiagnostics`
+  Return `{result, diagnostics}`.
+- `IntermediateSteps`
+  Request named driver-side intermediate stages.
+- `PrintIntermediateSteps`
+  Print the requested stages.
+- `UseStoredResults`
+  Reuse cached public driver results and ingredient calls where applicable.
+- `StoreResults`
+  Store the resulting public driver output.
+- `ResultsCacheRoot`
+  Override the stored-result root.
+- `RefreshStoredResults`
+  Recompute and refresh a matching stored result.
+- `ResultForm`
+  Select `"FiniteMSBar"` or `"RawDimRegSeries"`.
+
+### `TObject[...]`
+
+Purpose:
+
+- build one public symbolic `T` object from the massless `SMQCD` integrated
+  antenna ingredients
+
+Options:
+
+- `quarkMass`
+  Currently the supported release target is `quarkMass -> 0`.
+- `ExpansionOrder`
+  Set the epsilon-series order used by the assembled public expression.
+- `ReturnDiagnostics`
+  Return `{result, diagnostics}`.
+- `UseStoredResults`
+  Reuse cached public `T`-object results and nested ingredient calls where
+  applicable.
+- `StoreResults`
+  Store the resulting public `T`-object output.
+- `ResultsCacheRoot`
+  Override the stored-result root.
+- `RefreshStoredResults`
+  Recompute and refresh a matching stored result.
+
+### `BuildAllAntennae[...]`
+
+Purpose:
+
+- bulk-build the supported massless antenna list for `SMQCD`
+
+Normal return shape:
+
+- an ordered list following the documented `LO`, `NLO`, or `NNLO` route order
+
+Options:
+
+- `maxOrder`
+  Choose `LO`, `NLO`, or `NNLO`, either as symbols or uppercase strings.
+- `quarkMass`
+  Present in the signature, but nonzero mass currently aborts in the bulk
+  helper.
+
+### `BuildAndIntegrateAllAntennae[...]`
+
+Purpose:
+
+- bulk-build and bulk-integrate the supported massless antenna list for `SMQCD`
+
+Normal return shape:
+
+- an ordered list following the documented `LO`, `NLO`, or `NNLO` route order
+
+Options:
+
+- `ExpansionOrder`
+  Set the target epsilon-series order for the integrated outputs.
+- `maxOrder`
+  Choose `LO`, `NLO`, or `NNLO`, either as symbols or uppercase strings.
+- `quarkMass`
+  Present in the signature, but nonzero mass currently aborts in the bulk
+  helper.
+
+### `AntennaPipelineConventionReport[]`
+
+Purpose:
+
+- return a structured package-level report of public defaults, backend startup
+  expectations, and current convention-status notes
+
+Normal return shape:
+
+- an association grouped into package-wide defaults, backend environment, and
+  convention-state notes
+
+### `AntennaRouteProfileReport[...]`
+
+Purpose:
+
+- return a structured route-level report of the resolved build and integration
+  metadata for one antenna key
+
+Normal return shape:
+
+- an association containing the build profile, build reduction profile,
+  integration profile, route stories, and contract-status notes
+
+### Option Meaning Notes
+
+- `Component` only matters on routes with public component splits such as
+  `A40`, `A31`, and `A22`.
+- `Contribution` only matters on routes with a contribution-level split, most
+  notably `A22`.
+- `UseStoredResults`, `StoreResults`, `ResultsCacheRoot`, and
+  `RefreshStoredResults` are first-class public controls on the main build,
+  integration, and driver routes, but not yet exposed through the bulk helper
+  wrappers.
+- `AllowPrototypeTargets` and `UseSourceModelRoute` are branch-level
+  or derivation-level controls and should not be read as part of the stable
+  release contract.
+
+## Record And Object Appendix
+
+The package exposes two important metadata wrappers:
+
+- `AntennaObject[...]`
+- `AntennaRunRecord[...]`
+
+These are part of the inspection and workflow surface and should be understood
+as public containers, even though many of their fields are route-owned.
+
+### `AntennaObject[...]`
+
+Purpose:
+
+- carry a built antenna together with the route metadata needed by
+  `IntegrateAntenna[...]`
+
+Core fields:
+
+- `Key`
+  The route key `{type, multiplicity, loopOrder}`.
+- `Profile`
+  The resolved `AntennaProfile[...]` metadata.
+- `BuildData`
+  The route-owned internal build association.
+- `FullAntenna`
+  The full unselected public build result.
+- `Antenna`
+  The currently selected antenna payload.
+- `SelectedComponent`
+  The current component selector.
+- `SelectedComponentName`
+  The normalized string form of the selected component.
+- `Contribution`
+  The current contribution selector.
+- `ContributionName`
+  The normalized string form of the selected contribution.
+
+Related accessors:
+
+- `AntennaKey[obj]`
+- `AntennaComponent[obj]`
+- `AntennaContribution[obj]`
+- `AntennaExpression[obj]`
+- `AntennaFullExpression[obj]`
+- `AntennaObjectData[obj]`
+
+### `AntennaRunRecord[...]`
+
+Purpose:
+
+- package the result, diagnostics, and a stable view of intermediate stages for
+  a completed public route
+
+Guaranteed minimal fields:
+
+- `RouteKind`
+  The public route that produced the record, such as `BuildAntenna` or
+  `IntegrateAntenna`.
+- `Result`
+  The final selected public result.
+- `Diagnostics`
+  The route diagnostics association.
+- `IntermediateSteps`
+  The stable stage view exposed for record inspection.
+
+Build-side record fields:
+
+- `BuildData`
+  The route-owned internal build association.
+- `FullBuildResult`
+  The full public build result before component selection.
+- `SelectedBuildResult`
+  The selected build result.
+- `AntennaObject`
+  The integration-ready `AntennaObject[...]` when relevant.
+- `BuildDiagnostics`
+  The build diagnostics alias.
+
+Integration-side record fields:
+
+- `SourceObject`
+  The build-side source object used as integration input.
+- `AntennaObject`
+  The integration input object.
+- `StoredResultCache`
+  Stored-result metadata when the output came from cache machinery.
+- `InputAntenna`
+  The antenna expression fed into the integration route.
+- `RawIntegrated`
+  The pre-T-term integrated expression.
+- `TTerms`
+  The T-term object.
+- `FinalIntegrated`
+  The integrated result before final selection.
+- `SelectedIntegrated`
+  The selected integrated result.
+- `BackendDiagnostics`
+  The backend-specific diagnostics association.
+- `IntegrationDiagnostics`
+  The top-level integration diagnostics alias.
+
+Route-dependent integration aliases that may appear when meaningful:
+
+- `IntegratedResultKind`
+- `OpenMasterValuesQ`
+- `RawLiteRedCombination`
+- `MasterMappedExpression`
+- `RawMasterCombination`
+- `MasterCombination`
+- `MasterSubstitutedExpression`
+- `NormalizedBeforeSeries`
+- `SeriesResult`
+- `OpenMasterRouteAvailable`
+- `OpenMasterRouteSucceeded`
+- `OpenMasterSubstitutedExpression`
+- `OpenMasterSeriesResult`
+- `OpenMasterRouteDiagnostics`
+
+Important interpretation note:
+
+- not every record contains every field above
+- some fields are guaranteed by record kind
+- others appear only when the chosen route and backend make them meaningful
+- missing values are represented honestly rather than hidden
+
+### `IntermediateSteps`
+
+`IntermediateSteps` is the stable inspection view intended for human reading and
+notebook-style debugging. The exact contents depend on route kind, but the
+record helpers deliberately preserve a small set of canonical stage names.
+
+Typical build-side stages include:
+
+- `Amplitude`
+- `Interference`
+- `Result`
+- `Diagnostics`
+
+Typical integration-side stages include:
+
+- `BuiltAntenna`
+- `Method`
+- `MasterCombination`
+- `DimensionExpression`
+- `Result`
+
+Driver-side `BuildRRatio[...]` intermediate-step labels currently include:
+
+- `IngredientCalls`
+- `Ingredients`
+- `AssemblyExpression`
+- `FinalExpression`
+- `DriverDiagnostics`
+
+### Record Usage Examples
+
+```wl
+rec = BuildAntenna[A, 3, 1, ReturnRecord -> True];
+rec["Result"]
+rec["Diagnostics"]
+rec["IntermediateSteps"]
+
+intRec = BuildAndIntegrateAntenna[A, 3, 0, ReturnRecord -> True];
+intRec["MasterCombination"]
+intRec["TTerms"]
+intRec["IntermediateSteps"]
+```
 
 ## Internal Architecture For Modifying Routes
 
@@ -957,10 +1631,23 @@ not always the same question as “how to integrate the final antenna later.”
 - branch-specific integration status when the route is still scaffolded or
   experimental
 
+The same registry file now also owns the canonical package convention model used
+by the runtime reports. In other words, the top-level convention story is no
+longer meant to live only in README prose or ad hoc report assembly; it is part
+of the core metadata layer alongside the route profiles themselves.
+
 Two further helpers live in the same file and are important to understand:
 
 - `AntennaAmplitude[key]`
 - `AntennaSelfInterference[key]`
+
+Task 1 implementation note:
+
+- the same metadata registry now also owns `AntennaPipelineConventionModel[]`,
+  `BuildAntennaConventionProfile[...]`, and
+  `IntegrationAntennaConventionProfile[...]`
+- in other words, the top-level convention story is now part of the core code
+  metadata layer itself, not only part of documentation prose
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different

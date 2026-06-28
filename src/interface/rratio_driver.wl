@@ -1065,8 +1065,8 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
           Return[
             FormatStoredResultReturn[loaded["Result"],
               loaded["Diagnostics"], loaded, OptionValue[
-                "ReturnDiagnostics"], intermediateSteps, OptionValue[
-                "PrintIntermediateSteps"]]
+                "ReturnDiagnostics"], False, intermediateSteps, OptionValue[
+                "PrintIntermediateSteps"], "BuildRRatio"]
           ]
         ]
       ];

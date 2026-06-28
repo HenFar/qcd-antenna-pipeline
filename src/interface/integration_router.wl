@@ -322,6 +322,14 @@ MaybeWarnHeavyIntegrationRoute[key_, component_, contribution_] :=
     AssociateTo[$AntennaPipelineHeavyRouteNotices, noticeKey -> True];
   ];
 
+heavyIntegrationProgressPrint[routeKind_String, key_, component_,
+   contribution_, current_Integer, total_Integer, label_String] :=
+  Print[
+    "[", DateString[{"ISODate", " ", "Time"}], "] ",
+    routeKind, " [", current, "/", total, "]: ", label, " ",
+    HeavyIntegrationRouteLabel[key, component, contribution]
+  ];
+
 (* IntegrateAntennaStoredResultKey[obj, options]
    =============================================
    Build a cache key that captures both the selected AntennaObject view and the
