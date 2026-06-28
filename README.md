@@ -44,10 +44,10 @@ current execution order is:
 
 The active task list is:
 
-- Task 1: stabilize the convention metadata model
-- Task 2: add effective route/environment resolution reporting
-- Task 3: declare dimensional-regularization scheme status in code
-- Task 4: introduce an explicit public vs bare/prototype output boundary
+- Task 1: stabilize the convention metadata model (done)
+- Task 2: add effective route/environment resolution reporting (done)
+- Task 3: declare dimensional-regularization scheme status in code (done)
+- Task 4: introduce an explicit public vs bare/prototype output boundary (done)
 - Task 5: repair `A31` build-side normalization and renormalization semantics
 - Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
 - Task 7: add an explicit bare/prototype public option
@@ -63,8 +63,10 @@ Current execution status:
 - done
   Task 1: stabilize the convention metadata model
   Task 2: add effective route/environment resolution reporting
+  Task 3: declare dimensional-regularization scheme status in code
+  Task 4: introduce an explicit public vs bare/prototype output boundary
 - not yet done
-  Tasks 3-13
+  Tasks 5-13
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -397,6 +399,15 @@ The usual user-facing story is:
   implementation reality and does not pretend unresolved dim-reg or
   renormalization questions are already settled.
 
+`AntennaPipelineDimRegDeclaration[]`
+
+- Purpose: report the explicit code-level dimensional-regularization
+  declaration used by the package convention model.
+- Scope: this is a focused introspection helper for the current package-wide
+  `D -> 4 - 2 Epsilon` continuation and its support status.
+- Contract note: it does not claim that separately supported `CDR`, `HV`,
+  `GDR`, or similar user-selectable variants already exist.
+
 `AntennaRouteProfileReport[type, numFinalParticles, loopOrder]`
 
 - Purpose: report the resolved build profile, integration profile, route
@@ -631,6 +642,31 @@ Task 2 status:
 - not yet done: configurable global default overrides; the current report
   reflects built-in route/profile/default resolution only
 
+Task 3 status:
+
+- done: the package now declares its dim-reg state explicitly in code rather
+  than leaving it as an unresolved placeholder
+- done: the declaration records one package-wide
+  `D -> 4 - 2 Epsilon` continuation controlled by `ApplyDimReg`
+- done: the declaration explicitly says this is not yet a supported
+  user-selectable `CDR` / `HV` / `GDR` distinction
+- not yet done: validated convention toggles or route-selectable
+  external-state prescriptions
+
+Task 4 status:
+
+- done: build-route data now carries an explicit output-boundary record with
+  separate `Public` and `Prototype` branches
+- done: `BuildAntenna[...]` and `BuildAntennaObject[...]` now read the public
+  branch intentionally instead of treating the route-native component payload
+  as an implicit contract by accident
+- done: build records, diagnostics, and `ReturnBuildData -> True` now retain
+  the prototype branch alongside the public branch for inspection and later
+  semantic repair work
+- not yet done: route-specific cases where the public and prototype branches
+  should differ physically still need the actual semantics repair, especially
+  for loop routes such as `A31`
+
 The intended public contract is:
 
 - `BuildAntenna[...]` should expose package-facing results in the package
@@ -671,6 +707,16 @@ On the `PaVe` / `Package-X` side:
   explicit Package-X-to-paper conversion factor rather than treating the raw
   `PaXEvaluate` output as already in the final package convention
 
+Dimensional-regularization declaration:
+
+- the package now explicitly declares a single code-level dimensional
+  continuation of the form `D -> 4 - 2 Epsilon`
+- that continuation is activated through `ApplyDimReg`
+- it is currently a package-wide working assumption, not a menu of separately
+  supported external-state prescriptions
+- the code now says something more precise than “undeclared”, while still not
+  overclaiming support for `CDR`, `HV`, `GDR`, or related toggles
+
 Current implementation status:
 
 - the intended contract is that public build results are already in the package
@@ -685,6 +731,7 @@ The same state is now inspectable in code:
 ```wl
 AntennaPipelineConventionModel[]
 AntennaPipelineConventionReport[]
+AntennaPipelineDimRegDeclaration[]
 AntennaRouteProfileReport[A, 3, 1]
 AntennaRouteEnvironmentReport[A, 3, 1]
 ```
@@ -1344,6 +1391,18 @@ Normal return shape:
 - an association grouped into package-wide defaults, backend environment, and
   convention-state notes
 
+### `AntennaPipelineDimRegDeclaration[]`
+
+Purpose:
+
+- return the explicit code-level dimensional-regularization declaration used by
+  the package convention model
+
+Normal return shape:
+
+- an association describing the current package-wide `D -> 4 - 2 Epsilon`
+  continuation, its activation control, and its present support boundaries
+
 ### `AntennaRouteProfileReport[...]`
 
 Purpose:
@@ -1692,6 +1751,25 @@ Task 2 implementation note:
 - the profile report answers “what kind of route is this?”, while the
   environment report answers “how would the current package defaults resolve if
   I called this route now?”
+
+Task 3 implementation note:
+
+- the metadata registry now also owns `AntennaPipelineDimRegDeclaration[]`
+- the convention model consumes that declaration directly instead of storing an
+  unresolved “not yet explicitly declared” placeholder
+- the declaration is intentionally narrow: it records the actual
+  `D -> 4 - 2 Epsilon` continuation in use without pretending that separately
+  supported `CDR` / `HV` / `GDR` branches already exist
+
+Task 4 implementation note:
+
+- build-side route associations now carry a canonical `BuildOutputBoundary`
+  subrecord with explicit `Public` and `Prototype` branches
+- the default public build formatter reads only the `Public` branch, while
+  records and build data keep the `Prototype` branch attached for provenance
+- this does not yet mean all routes have distinct prototype physics payloads;
+  on routes that have not been semantically repaired yet, the prototype branch
+  may still coincide with the current route-native payload
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different

@@ -57,6 +57,9 @@ AntennaIntegrationProfile::usage =
 AntennaPipelineConventionModel::usage =
   "AntennaPipelineConventionModel[] returns the canonical package-level convention metadata used by route profiles and runtime reports.";
 
+AntennaPipelineDimRegDeclaration::usage =
+  "AntennaPipelineDimRegDeclaration[] returns the explicit code-level dimensional-regularization declaration currently used by the package.";
+
 BuildAntennaConventionProfile::usage =
   "BuildAntennaConventionProfile[key] returns the build-side convention metadata for one antenna route.";
 
@@ -64,6 +67,19 @@ IntegrationAntennaConventionProfile::usage =
   "IntegrationAntennaConventionProfile[key] returns the integration-side convention metadata for one antenna route.";
 
 colourNorm = SUNN - 1 / SUNN;
+
+AntennaPipelineDimRegDeclaration[] :=
+  <|
+    "DeclaredStatus" -> "DeclaredWorkingAssumption",
+    "SchemeTag" -> "UndifferentiatedDMinus2EpsilonContinuation",
+    "DimensionRule" -> HoldForm[D -> 4 - 2 Epsilon],
+    "DimensionalVariable" -> Epsilon,
+    "ActivationControl" -> "ApplyDimReg",
+    "Scope" -> "Package-wide symbolic continuation used in build extraction, diagnostics, and integration-side epsilon-series handling.",
+    "ClosestPublicDescription" -> "The package explicitly uses a single global D -> 4 - 2 Epsilon continuation, but does not yet expose a defended public distinction between CDR, HV, GDR, or related external-state prescriptions.",
+    "SupportedUserToggle" -> False,
+    "StatusNote" -> "The code-level declaration is now explicit, but the package still does not claim user-selectable or separately validated CDR/HV/GDR variants as part of the stable public contract."
+  |>;
 
 AntennaPipelineConventionModel[] :=
   <|
@@ -78,12 +94,14 @@ AntennaPipelineConventionModel[] :=
       "The A21 PaVe route carries an explicit Package-X-to-paper convention bridge through the PaperRealMasslessTwoParton profile metadata rather than treating raw PaXEvaluate output as final public form.",
       "Some loop-family build outputs, especially around A31, still do not realize the intended public renormalization boundary uniformly."
     },
-    "DimensionalRegularizationScheme" -> <|
-      "InspectableState" -> "ApplyDimReg is exposed as a public option and epsilon-series processing is used throughout the package.",
-      "DeclaredSchemeTag" -> Missing["NotYetExplicitlyDeclared"],
-      "SupportedUserToggle" -> False,
-      "StatusNote" -> "The package does not yet expose a settled code-level declaration such as GDR, CDR, or HV as part of the public contract."
-    |>,
+    "DimensionalRegularizationScheme" -> Join[
+      AntennaPipelineDimRegDeclaration[],
+      <|
+        "InspectableState" -> "ApplyDimReg is exposed as a public option and epsilon-series processing is used throughout the package.",
+        "ExternalStatePrescriptionStatus" -> "NotSeparatelyDeclared",
+        "ImplementationReality" -> "The runtime uses one package-wide dimensional continuation rather than route-selectable CDR/HV/GDR-style branches."
+      |>
+    ],
     "PrototypeSurface" -> <|
       "AllowPrototypeTargetsDefault" -> False,
       "UseSourceModelRouteDefault" -> False,

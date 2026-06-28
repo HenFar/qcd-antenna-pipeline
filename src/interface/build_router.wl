@@ -96,6 +96,9 @@ BuildAntennaObjectStoredResultLabel::usage =
 BuildAntennaResult::usage =
   "BuildAntennaResult[key, data] converts internal build data into the natural public antenna expression or component list.";
 
+BuildAntennaPrototypeResult::usage =
+  "BuildAntennaPrototypeResult[key, data] converts internal build data into the attached prototype or route-native result view.";
+
 AntennaComponentOrder::usage =
   "AntennaComponentOrder[key] returns the canonical component ordering used when a route has multiple public components.";
 
@@ -793,6 +796,11 @@ CollectBuildRecordStages[data_Association, fullResult_, selectedResult_,
   <|
     "BuildData" -> data,
     "FullBuildResult" -> fullResult,
+    "PrototypeBuildResult" -> BuildAntennaPrototypeResult[
+      Lookup[Lookup[data, "Profile", <||>], "Key",
+        Lookup[data, "Key", Missing["UnknownKey"]]],
+      data
+    ],
     "SelectedBuildResult" -> selectedResult,
     "AntennaObject" -> antennaObject
   |>;
@@ -900,6 +908,8 @@ BuildRecordIntermediateStepsView[data_Association, result_, resultLabel_String:"
       "SourceTermGroups" -> Lookup[data, "SourceTermGroups",
         Missing["NotAvailable"]],
       "SourceCandidate" -> Lookup[data, "SourceCandidate",
+        Missing["NotAvailable"]],
+      "BuildOutputBoundary" -> Lookup[data, "BuildOutputBoundary",
         Missing["NotAvailable"]],
       resultLabel -> result
     }
@@ -1057,6 +1067,8 @@ BuildRunRecord[routeKind_String, result_, diagnostics_Association,
         "BuildData" -> Lookup[stages, "BuildData", Missing["NotAvailable"]],
         "FullBuildResult" -> Lookup[stages, "FullBuildResult",
           Missing["NotAvailable"]],
+        "PrototypeBuildResult" -> Lookup[stages, "PrototypeBuildResult",
+          Missing["NotAvailable"]],
         "SelectedBuildResult" -> Lookup[stages, "SelectedBuildResult",
           Missing["NotAvailable"]],
         "AntennaObject" -> Lookup[stages, "AntennaObject",
@@ -1111,6 +1123,173 @@ PrintIntermediateStepsAssociation[steps_Association] :=
     ];
     Null
   ];
+
+BuildOutputBoundaryAssociation[key_, data_Association] :=
+  Module[{profile, conventionProfile, existingBoundary, publicBranch,
+     prototypeBranch, publicComponents, prototypeComponents,
+     implementationRelation},
+    profile = Lookup[data, "Profile", <||>];
+    conventionProfile = Lookup[profile, "ConventionProfile", <||>];
+    existingBoundary = Lookup[data, "BuildOutputBoundary", <||>];
+    publicBranch = Lookup[existingBoundary, "Public", <||>];
+    prototypeBranch = Lookup[existingBoundary, "Prototype", <||>];
+    publicComponents =
+      Lookup[publicBranch, "Components",
+        Lookup[data, "PublicComponents", Lookup[data, "Components", <||>]]];
+    prototypeComponents =
+      Lookup[prototypeBranch, "Components",
+        Lookup[data, "PrototypeComponents",
+          Lookup[data, "Components", publicComponents]]];
+    implementationRelation =
+      If[publicComponents === prototypeComponents,
+        "Current route-native component payload is being promoted as both the public and prototype view until a route-specific semantic split is implemented.",
+        "The route carries distinct public and prototype component payloads."
+      ];
+    <|
+      "Public" -> Join[
+        <|
+          "Label" -> "Public",
+          "ContractRole" -> "IntendedPublicResult",
+          "Components" -> publicComponents,
+          "RenormalizationStatus" -> Lookup[conventionProfile,
+            "RenormalizationStatus", Missing["NotAvailable"]],
+          "NormalizationStatus" -> Lookup[conventionProfile,
+            "ScaleNormalizationStatus", Missing["NotAvailable"]],
+          "StatusNote" ->
+            "This branch is the package-facing build result used by BuildAntenna and AntennaObject by default."
+        |>,
+        KeyDrop[publicBranch, {"Label", "ContractRole", "Components",
+          "RenormalizationStatus", "NormalizationStatus", "StatusNote"}]
+      ],
+      "Prototype" -> Join[
+        <|
+          "Label" -> "Prototype",
+          "ContractRole" -> "PrototypeOrRouteNativeResult",
+          "Components" -> prototypeComponents,
+          "RenormalizationStatus" ->
+            "Prototype or route-native state; may coincide with the public branch until a route-specific bare/pre-counterterm split exists.",
+          "NormalizationStatus" ->
+            "Prototype or route-native state; inspect route diagnostics before treating this branch as a stable convention boundary.",
+          "StatusNote" ->
+            "This branch preserves the route-native or provisional component payload for provenance, diagnostics, and later semantic repair."
+        |>,
+        KeyDrop[prototypeBranch, {"Label", "ContractRole", "Components",
+          "RenormalizationStatus", "NormalizationStatus", "StatusNote"}]
+      ],
+      "CurrentImplementationRelation" -> implementationRelation,
+      "Key" -> key
+    |>
+  ];
+
+NormalizeBuildDataOutputBoundary[key_, data_Association] :=
+  Module[{boundary},
+    boundary = BuildOutputBoundaryAssociation[key, data];
+    Join[
+      data,
+      <|
+        "PublicComponents" -> Lookup[boundary["Public"], "Components", <||>],
+        "PrototypeComponents" -> Lookup[boundary["Prototype"],
+          "Components", <||>],
+        "BuildOutputBoundary" -> boundary
+      |>
+    ]
+  ];
+
+NormalizeBuildDataOutputBoundary[_, data_] :=
+  data;
+
+BuildAntennaResultFromBranch[key_, data_Association, branch_String] :=
+  Module[{branchAssociation, components},
+    branchAssociation =
+      Lookup[Lookup[data, "BuildOutputBoundary", <||>], branch, <||>];
+    components =
+      Lookup[branchAssociation, "Components",
+        Switch[branch,
+          "Prototype",
+            Lookup[data, "PrototypeComponents",
+              Lookup[data, "Components", <||>]]
+          ,
+          _,
+            Lookup[data, "PublicComponents",
+              Lookup[data, "Components", <||>]]
+        ]];
+    BuildAntennaResultFromComponents[key, components, data]
+  ];
+
+BuildAntennaResultFromComponents[{A, 2, 0}, components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[{A, 3, 0}, components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[{A, 4, 0}, components_Association,
+   data_Association] :=
+  {components["Antenna"], data["FullColorComponents"]["SubLead"]};
+
+BuildAntennaResultFromComponents[{B, 4, 0}, components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[{C, 4, 0}, components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[{D, 3, 0}, components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[{A, 2, 1}, components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[{A, 3, 1}, components_Association, ___] :=
+  {components["Lead"], components["SubLead"], components["QuarkLoop"]};
+
+BuildAntennaResultFromComponents[{A, 2, 2}, components_Association, ___] :=
+  {components["Lead"], components["SubLead"], components["QuarkLoop"],
+    components["Breve"]};
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "A", 2, 0},
+   components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "A", 3, 0},
+   components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "A", 4, 0},
+   components_Association, data_Association] :=
+  {components["Antenna"], data["FullColorComponents"]["SubLead"]};
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "B", 4, 0},
+   components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "C", 4, 0},
+   components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "D", 3, 0},
+   components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "A", 2, 1},
+   components_Association, ___] :=
+  components["Antenna"];
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "A", 3, 1},
+   components_Association, ___] :=
+  {components["Lead"], components["SubLead"], components["QuarkLoop"]};
+
+BuildAntennaResultFromComponents[
+   {type_Symbol /; SymbolName[type] === "A", 2, 2},
+   components_Association, ___] :=
+  {components["Lead"], components["SubLead"], components["QuarkLoop"],
+    components["Breve"]};
 
 BuildAntennaStoredResultKey[type_, numFinalParticles_, loopOrder_,
    options_Association] :=
@@ -1299,9 +1478,13 @@ AntennaFullExpression[obj_AntennaObject] :=
    Construct the metadata-rich AntennaObject consumed later by
    IntegrateAntenna[...]. *)
 MakeAntennaObject[key_, data_Association, component_, contribution_] :=
-  Module[{fullResult, selectedResult},
+  Module[{fullResult, selectedResult, prototypeFullResult,
+     prototypeSelectedResult},
     fullResult = BuildAntennaResult[key, data];
+    prototypeFullResult = BuildAntennaPrototypeResult[key, data];
     selectedResult = SelectAntennaComponent[fullResult, key, component];
+    prototypeSelectedResult =
+      SelectAntennaComponent[prototypeFullResult, key, component];
     If[selectedResult === $Failed,
       Return[$Failed]
     ];
@@ -1311,7 +1494,9 @@ MakeAntennaObject[key_, data_Association, component_, contribution_] :=
         "Profile" -> Lookup[data, "Profile", <|"Key" -> key|>],
         "BuildData" -> data,
         "FullAntenna" -> fullResult,
+        "PrototypeFullAntenna" -> prototypeFullResult,
         "Antenna" -> selectedResult,
+        "PrototypeAntenna" -> prototypeSelectedResult,
         "SelectedComponent" -> component,
         "SelectedComponentName" -> CanonicalAntennaComponentName[component],
         "Contribution" -> contribution,
@@ -1342,78 +1527,77 @@ AntennaObjectWithSelection[obj_AntennaObject, component_, contribution_:Automati
    shape for each antenna family. *)
 
 BuildAntennaResult[{A, 2, 0}, data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{A, 2, 0}, data, "Public"];
 
 BuildAntennaResult[{A, 3, 0}, data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{A, 3, 0}, data, "Public"];
 
 BuildAntennaResult[{A, 4, 0}, data_Association] :=
-  {data["Components"]["Antenna"], data["FullColorComponents"]["SubLead"
-    ]};
+  BuildAntennaResultFromBranch[{A, 4, 0}, data, "Public"];
 
 BuildAntennaResult[{B, 4, 0}, data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{B, 4, 0}, data, "Public"];
 
 BuildAntennaResult[{C, 4, 0}, data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{C, 4, 0}, data, "Public"];
 
 BuildAntennaResult[{D, 3, 0}, data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{D, 3, 0}, data, "Public"];
 
 BuildAntennaResult[{A, 2, 1}, data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{A, 2, 1}, data, "Public"];
 
 BuildAntennaResult[{A, 3, 1}, data_Association] :=
-  {data["Components"]["Lead"], data["Components"]["SubLead"], data["Components"
-    ]["QuarkLoop"]};
+  BuildAntennaResultFromBranch[{A, 3, 1}, data, "Public"];
 
 BuildAntennaResult[{A, 2, 2}, data_Association] :=
-  {data["Components"]["Lead"], data["Components"]["SubLead"], data["Components"
-    ]["QuarkLoop"], data["Components"]["Breve"]};
+  BuildAntennaResultFromBranch[{A, 2, 2}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 0},
    data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{type, 2, 0}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 3, 0},
    data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{type, 3, 0}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 4, 0},
    data_Association] :=
-  {data["Components"]["Antenna"], data["FullColorComponents"]["SubLead"]};
+  BuildAntennaResultFromBranch[{type, 4, 0}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "B", 4, 0},
    data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{type, 4, 0}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "C", 4, 0},
    data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{type, 4, 0}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "D", 3, 0},
    data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{type, 3, 0}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 1},
    data_Association] :=
-  data["Components"]["Antenna"];
+  BuildAntennaResultFromBranch[{type, 2, 1}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 3, 1},
    data_Association] :=
-  {data["Components"]["Lead"], data["Components"]["SubLead"],
-    data["Components"]["QuarkLoop"]};
+  BuildAntennaResultFromBranch[{type, 3, 1}, data, "Public"];
 
 BuildAntennaResult[{type_Symbol /; SymbolName[type] === "A", 2, 2},
    data_Association] :=
-  {data["Components"]["Lead"], data["Components"]["SubLead"],
-    data["Components"]["QuarkLoop"], data["Components"]["Breve"]};
+  BuildAntennaResultFromBranch[{type, 2, 2}, data, "Public"];
+
+BuildAntennaPrototypeResult[key_, data_Association] :=
+  BuildAntennaResultFromBranch[key, data, "Prototype"];
 
 BuildAntennaDiagnostics[key_, result_, data_Association, runPaperCheck_
   ] :=
-  Module[{paperDiagnostics, quarkMassOpt},
+  Module[{paperDiagnostics, quarkMassOpt, boundary},
     quarkMassOpt = Lookup[data, "quarkMass",
       Lookup[Lookup[data, "Diagnostics", <||>], "quarkMass", 0]];
+    boundary = Lookup[data, "BuildOutputBoundary", Missing["NotAvailable"]];
     paperDiagnostics =
       If[result === $Failed,
         <|"PaperCheckAvailable" -> False, "Skipped" -> "BuildFailed"|>
@@ -1433,7 +1617,9 @@ BuildAntennaDiagnostics[key_, result_, data_Association, runPaperCheck_
         ,
         <|"PaperCheckAvailable" -> False|>
       ]]];
-    Join[data["Diagnostics"], <|"PaperDiagnostics" -> paperDiagnostics
+    Join[data["Diagnostics"], <|
+        "BuildOutputBoundary" -> boundary,
+        "PaperDiagnostics" -> paperDiagnostics
       |>]
   ];
 
@@ -1726,6 +1912,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
         |>
       ];
+    data = NormalizeBuildDataOutputBoundary[key, data];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
         OptionValue["Contribution"], 3, 5, "extracting public result"]
