@@ -48,7 +48,7 @@ The active task list is:
 - Task 2: add effective route/environment resolution reporting (done)
 - Task 3: declare dimensional-regularization scheme status in code (done)
 - Task 4: introduce an explicit public vs bare/prototype output boundary (done)
-- Task 5: repair `A31` build-side normalization and renormalization semantics
+- Task 5: repair `A31` build-side normalization and renormalization semantics (largely done)
 - Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
 - Task 7: add an explicit bare/prototype public option
 - Task 8: add a supported global default environment mechanism
@@ -65,8 +65,9 @@ Current execution status:
   Task 2: add effective route/environment resolution reporting
   Task 3: declare dimensional-regularization scheme status in code
   Task 4: introduce an explicit public vs bare/prototype output boundary
+  Task 5: repair `A31` build-side normalization and renormalization semantics (largely done)
 - not yet done
-  Tasks 5-13
+  Tasks 6-13
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -666,6 +667,23 @@ Task 4 status:
 - not yet done: route-specific cases where the public and prototype branches
   should differ physically still need the actual semantics repair, especially
   for loop routes such as `A31`
+
+Task 5 status:
+
+- done: the `A31` build route now distinguishes its public branch from the raw
+  prototype branch in a physically meaningful way rather than only structurally
+- done: the public `A31` build branch now applies the explicit lower-`A30` UV
+  counterterm pattern, while the prototype branch preserves the pre-counterterm
+  extracted one-loop components
+- done: the previously suspicious `A31` quark-loop / `Nf` build-side behavior
+  is now confined to the prototype branch; the public branch carries a nonzero
+  `Nf` contribution as intended
+- done: the integration path for `A31` now consumes the prototype branch for
+  raw backend work so the existing integrated counterterm machinery is not
+  double-applied
+- not yet done: the integrated leading and subleading `A31` residuals are
+  still nonzero, which now points to the later convention/integration bridge
+  rather than to the original raw-vs-public build boundary confusion
 
 The intended public contract is:
 
@@ -1770,6 +1788,19 @@ Task 4 implementation note:
 - this does not yet mean all routes have distinct prototype physics payloads;
   on routes that have not been semantically repaired yet, the prototype branch
   may still coincide with the current route-native payload
+
+Task 5 implementation note:
+
+- the `A31` build route now specializes its public branch instead of exposing
+  the raw extracted one-loop color decomposition as the default package result
+- the public `A31` branch applies the lower-`A30` UV counterterm pattern to
+  the leading and `Nf` components, while the prototype branch preserves the
+  pre-counterterm route-native output for inspection
+- the `A31` integration path now reads `PrototypeAntenna` when available so
+  the integrated-side counterterm bookkeeping remains attached to the raw
+  backend object rather than to the repaired public build view
+- the remaining nonzero integrated `A31` residuals are therefore now treated
+  as a later convention-bridge problem to be addressed in Task 6
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different

@@ -451,7 +451,12 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     backend = profile["DefaultBackend"];
     storedComponent = Lookup[data, "SelectedComponent", All];
-    antenna = Lookup[data, "Antenna", $Failed];
+    antenna =
+      If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 1}],
+        Lookup[data, "PrototypeAntenna", Lookup[data, "Antenna", $Failed]]
+        ,
+        Lookup[data, "Antenna", $Failed]
+      ];
     ibpNeedsDiagnostics = TrueQ[Lookup[options, "ReturnDiagnostics", False]] || TrueQ[Lookup[options, "ReturnRecord", False]];
     If[TrueQ[progressActive],
       heavyIntegrationProgressPrint[routeKind, key, componentInput,

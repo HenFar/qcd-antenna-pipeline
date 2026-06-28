@@ -1445,7 +1445,12 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
     ];
     backend = profile["DefaultBackend"];
     storedComponent = Lookup[data, "SelectedComponent", All];
-    antenna = Lookup[data, "Antenna", $Failed];
+    antenna =
+      If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 1}],
+        Lookup[data, "PrototypeAntenna", Lookup[data, "Antenna", $Failed]]
+        ,
+        Lookup[data, "Antenna", $Failed]
+      ];
     ibpNeedsDiagnostics =
       TrueQ[OptionValue["ReturnDiagnostics"]] ||
       TrueQ[OptionValue["ReturnRecord"]] ||

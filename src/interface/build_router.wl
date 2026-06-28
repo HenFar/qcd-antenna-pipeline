@@ -99,6 +99,9 @@ BuildAntennaResult::usage =
 BuildAntennaPrototypeResult::usage =
   "BuildAntennaPrototypeResult[key, data] converts internal build data into the attached prototype or route-native result view.";
 
+A31PublicBuildComponents::usage =
+  "A31PublicBuildComponents[key, data, options] builds the package-facing renormalized A31 component association while preserving the prototype branch separately.";
+
 AntennaComponentOrder::usage =
   "AntennaComponentOrder[key] returns the canonical component ordering used when a route has multiple public components.";
 
@@ -1124,22 +1127,80 @@ PrintIntermediateStepsAssociation[steps_Association] :=
     Null
   ];
 
-BuildOutputBoundaryAssociation[key_, data_Association] :=
+ResolveA31LowerAntenna[key_, options_Association] :=
+  Module[{keyType, lowerData},
+    keyType = First[key];
+    lowerData =
+      BuildRouteBuildData[
+        {keyType, 3, 0},
+        <|
+          "printDiagram" -> Lookup[options, "printDiagram", False],
+          "prefactor" -> Lookup[options, "prefactor", 1],
+          "quarkMass" -> Lookup[options, "quarkMass", 0],
+          "ApplyStripCouplings" -> Lookup[options, "ApplyStripCouplings",
+            AllCouplings],
+          "ApplyCasimirSubstitution" -> Lookup[options,
+            "ApplyCasimirSubstitution", True],
+          "ApplyDimReg" -> Lookup[options, "ApplyDimReg", True],
+          "LoopMomentum" -> Lookup[options, "LoopMomentum", l],
+          "ReductionBackend" -> Lookup[options, "ReductionBackend",
+            Automatic],
+          "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}],
+          "Contribution" -> Lookup[options, "Contribution", All],
+          "AllowPrototypeTargets" -> False,
+          "UseSourceModelRoute" -> False
+        |>
+      ];
+    Lookup[Lookup[lowerData, "Components", <||>], "Antenna", $Failed]
+  ];
+
+A31PublicBuildComponents[key_, data_Association, options_Association] :=
+  Module[{prototypeComponents, lowerAntenna, eps},
+    prototypeComponents =
+      Lookup[data, "PrototypeComponents", Lookup[data, "Components", <||>]];
+    lowerAntenna = ResolveA31LowerAntenna[key, options];
+    eps = Epsilon;
+    If[lowerAntenna === $Failed || !AssociationQ[prototypeComponents],
+      Return[prototypeComponents]
+    ];
+    <|
+      "Lead" -> Simplify[
+        prototypeComponents["Lead"] - 11/(6 eps) lowerAntenna
+      ],
+      "SubLead" -> prototypeComponents["SubLead"],
+      "QuarkLoop" -> Simplify[
+        prototypeComponents["QuarkLoop"] - (-2/(6 eps)) lowerAntenna
+      ]
+    |>
+  ];
+
+BuildOutputBoundaryAssociation[key_, data_Association,
+   options_Association:<||>] :=
   Module[{profile, conventionProfile, existingBoundary, publicBranch,
-     prototypeBranch, publicComponents, prototypeComponents,
-     implementationRelation},
+     prototypeBranch, defaultPublicComponents, publicComponents,
+     prototypeComponents, implementationRelation},
     profile = Lookup[data, "Profile", <||>];
     conventionProfile = Lookup[profile, "ConventionProfile", <||>];
     existingBoundary = Lookup[data, "BuildOutputBoundary", <||>];
     publicBranch = Lookup[existingBoundary, "Public", <||>];
     prototypeBranch = Lookup[existingBoundary, "Prototype", <||>];
-    publicComponents =
-      Lookup[publicBranch, "Components",
-        Lookup[data, "PublicComponents", Lookup[data, "Components", <||>]]];
     prototypeComponents =
       Lookup[prototypeBranch, "Components",
         Lookup[data, "PrototypeComponents",
-          Lookup[data, "Components", publicComponents]]];
+          Lookup[data, "Components", <||>]]];
+    defaultPublicComponents =
+      Lookup[publicBranch, "Components",
+        Lookup[data, "PublicComponents", prototypeComponents]];
+    publicComponents =
+      Which[
+        MatchQ[key, {type_Symbol /; SymbolName[type] === "A", 3, 1}],
+          A31PublicBuildComponents[key,
+            Join[data, <|"PrototypeComponents" -> prototypeComponents|>],
+            options]
+        ,
+        True,
+          defaultPublicComponents
+      ];
     implementationRelation =
       If[publicComponents === prototypeComponents,
         "Current route-native component payload is being promoted as both the public and prototype view until a route-specific semantic split is implemented.",
@@ -1181,9 +1242,10 @@ BuildOutputBoundaryAssociation[key_, data_Association] :=
     |>
   ];
 
-NormalizeBuildDataOutputBoundary[key_, data_Association] :=
+NormalizeBuildDataOutputBoundary[key_, data_Association,
+   options_Association:<||>] :=
   Module[{boundary},
-    boundary = BuildOutputBoundaryAssociation[key, data];
+    boundary = BuildOutputBoundaryAssociation[key, data, options];
     Join[
       data,
       <|
@@ -1195,7 +1257,7 @@ NormalizeBuildDataOutputBoundary[key_, data_Association] :=
     ]
   ];
 
-NormalizeBuildDataOutputBoundary[_, data_] :=
+NormalizeBuildDataOutputBoundary[_, data_, ___] :=
   data;
 
 BuildAntennaResultFromBranch[key_, data_Association, branch_String] :=
@@ -1912,7 +1974,19 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
         |>
       ];
-    data = NormalizeBuildDataOutputBoundary[key, data];
+    data = NormalizeBuildDataOutputBoundary[key, data, <|
+        "printDiagram" -> OptionValue["printDiagram"],
+        "prefactor" -> OptionValue["prefactor"],
+        "quarkMass" -> OptionValue["quarkMass"],
+        "ApplyStripCouplings" -> OptionValue["ApplyStripCouplings"],
+        "ApplyCasimirSubstitution" -> OptionValue[
+          "ApplyCasimirSubstitution"],
+        "ApplyDimReg" -> OptionValue["ApplyDimReg"],
+        "LoopMomentum" -> OptionValue["LoopMomentum"],
+        "ReductionBackend" -> reductionBackend,
+        "LoopMomenta" -> OptionValue["LoopMomenta"],
+        "Contribution" -> OptionValue["Contribution"]
+      |>];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
         OptionValue["Contribution"], 3, 5, "extracting public result"]

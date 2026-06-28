@@ -138,10 +138,10 @@ BuildAntennaConventionProfile[key_] :=
       {A, 3, 1},
         <|
           "ConventionModel" -> "PackagePublicBuildBoundary",
-          "RenormalizationStatus" -> "ImplementationMismatchRecorded",
+          "RenormalizationStatus" -> "PublicCountertermBridgeImplemented",
           "PrototypeExposureStatus" -> "NoStablePublicPrototypeOption",
-          "CurrentImplementationNote" -> model["RenormalizationBoundary",
-            "A31Status"]
+          "CurrentImplementationNote" ->
+            "The public A31 build branch now applies the explicit lower-A30 UV counterterm pattern, while the prototype branch preserves the pre-counterterm extracted components for inspection."
         |>
       ,
       {A, 2, 2},
