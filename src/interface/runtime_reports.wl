@@ -22,6 +22,9 @@ AntennaPipelineConventionReport::usage =
 AntennaRouteProfileReport::usage =
   "AntennaRouteProfileReport[type, numFinalParticles, loopOrder] returns a structured report of the resolved build and integration metadata for one antenna route.";
 
+AntennaRouteEnvironmentReport::usage =
+  "AntennaRouteEnvironmentReport[type, numFinalParticles, loopOrder] returns a structured report of the effective build, integration, and one-shot pipeline defaults that govern one antenna route.";
+
 NormalizeOptionAssociationKeys[assoc_Association] :=
   KeyMap[
     If[StringQ[#],
@@ -58,6 +61,165 @@ SupportedMasslessReleaseRouteQ[key_] :=
       {A, 2, 2}
     },
     key
+  ];
+
+RouteMassHandlingProfile[key_] :=
+  Switch[key,
+    {A, 3, 0},
+      <|
+        "DefaultquarkMass" -> 0,
+        "MassiveSupportStatus" -> "ExperimentalMassiveA30Branch",
+        "MassHandlingNote" -> "Massless A30 is supported; nonzero quarkMass selects the experimental massive A30 branch."
+      |>
+    ,
+    {D, 3, 0},
+      <|
+        "DefaultquarkMass" -> 0,
+        "MassiveSupportStatus" -> "NotApplicable",
+        "MassHandlingNote" -> "D30 is a source-model route rather than a quark-mass branch split."
+      |>
+    ,
+    _,
+      <|
+        "DefaultquarkMass" -> 0,
+        "MassiveSupportStatus" -> "MasslessPublicDefault",
+        "MassHandlingNote" -> "The supported public default is quarkMass -> 0."
+      |>
+  ];
+
+BuildRouteEnvironmentResolution[key_List] :=
+  Module[{buildProfile, reductionProfile, buildDefaults, massProfile,
+     conventionProfile},
+    buildProfile = AntennaProfile[key];
+    reductionProfile = AssociationOrEmpty[AntennaReductionProfile[key]];
+    buildDefaults = PublicOptionDefaultsAssociation[BuildAntenna];
+    massProfile = RouteMassHandlingProfile[key];
+    conventionProfile = Lookup[buildProfile, "ConventionProfile", <||>];
+    <|
+      "ResolvedDefaults" -> <|
+        "quarkMass" -> massProfile["DefaultquarkMass"],
+        "ApplyDimReg" -> Lookup[buildDefaults, "ApplyDimReg", True],
+        "ReductionBackend" -> Lookup[reductionProfile, "DefaultBackend",
+          Lookup[buildDefaults, "ReductionBackend", Automatic]],
+        "AllowPrototypeTargets" -> Lookup[buildDefaults,
+          "AllowPrototypeTargets", False],
+        "UseSourceModelRoute" -> Lookup[buildDefaults,
+          "UseSourceModelRoute", False]
+      |>,
+      "CachePolicy" -> <|
+        "UseStoredResults" -> Lookup[buildDefaults, "UseStoredResults",
+          False],
+        "StoreResults" -> Lookup[buildDefaults, "StoreResults", False],
+        "RefreshStoredResults" -> Lookup[buildDefaults,
+          "RefreshStoredResults", False],
+        "ResultsCacheRoot" -> Lookup[buildDefaults, "ResultsCacheRoot",
+          Automatic]
+      |>,
+      "MassHandling" -> massProfile,
+      "PrototypeRouting" -> <|
+        "AllowPrototypeTargetsDefault" -> Lookup[buildDefaults,
+          "AllowPrototypeTargets", False],
+        "UseSourceModelRouteDefault" -> Lookup[buildDefaults,
+          "UseSourceModelRoute", False],
+        "ConventionStatus" -> Lookup[conventionProfile,
+          "PrototypeExposureStatus", Missing["NotAvailable"]]
+      |>,
+      "ResolvedConventionProfile" -> conventionProfile
+    |>
+  ];
+
+IntegrationRouteEnvironmentResolution[key_List] :=
+  Module[{integrationProfile, integrationDefaults, massProfile,
+     conventionProfile},
+    integrationProfile = AssociationOrEmpty[AntennaIntegrationProfile[key]];
+    integrationDefaults = PublicOptionDefaultsAssociation[IntegrateAntenna];
+    massProfile = RouteMassHandlingProfile[key];
+    conventionProfile = Lookup[integrationProfile, "ConventionProfile",
+      <||>];
+    <|
+      "ResolvedDefaults" -> <|
+        "quarkMass" -> massProfile["DefaultquarkMass"],
+        "DefaultBackend" -> Lookup[integrationProfile, "DefaultBackend",
+          IBP],
+        "PaVeEvaluation" -> Lookup[integrationDefaults, "PaVeEvaluation",
+          "PaXEvaluate"],
+        "ExpansionOrder" -> Lookup[integrationProfile, "ExpansionOrder",
+          Lookup[integrationDefaults, "ExpansionOrder", Automatic]],
+        "KinematicScale" -> Lookup[integrationProfile, "KinematicScale",
+          Lookup[integrationDefaults, "KinematicScale", q2]],
+        "NormalizeKinematicScale" -> Lookup[integrationDefaults,
+          "NormalizeKinematicScale", True],
+        "ApplyFeynCalcMS" -> Lookup[integrationDefaults,
+          "ApplyFeynCalcMS", True],
+        "ApplyDimReg" -> Lookup[integrationDefaults, "ApplyDimReg", True],
+        "BasisFamily" -> Lookup[integrationProfile, "BasisFamily",
+          Lookup[integrationDefaults, "BasisFamily", Automatic]],
+        "BasisRoot" -> Lookup[integrationDefaults, "BasisRoot", Automatic],
+        "GenerateMissingBases" -> Lookup[integrationDefaults,
+          "GenerateMissingBases", False]
+      |>,
+      "CachePolicy" -> <|
+        "UseStoredResults" -> Lookup[integrationDefaults,
+          "UseStoredResults", False],
+        "StoreResults" -> Lookup[integrationDefaults, "StoreResults",
+          False],
+        "RefreshStoredResults" -> Lookup[integrationDefaults,
+          "RefreshStoredResults", False],
+        "ResultsCacheRoot" -> Lookup[integrationDefaults,
+          "ResultsCacheRoot", Automatic]
+      |>,
+      "MassHandling" -> massProfile,
+      "ResolvedConventionProfile" -> conventionProfile
+    |>
+  ];
+
+BuildAndIntegrateRouteEnvironmentResolution[key_List] :=
+  Module[{routeDefaults, buildResolution, integrationResolution},
+    routeDefaults =
+      PublicOptionDefaultsAssociation[BuildAndIntegrateAntenna];
+    buildResolution = BuildRouteEnvironmentResolution[key];
+    integrationResolution = IntegrationRouteEnvironmentResolution[key];
+    <|
+      "ResolvedDefaults" -> <|
+        "quarkMass" -> Lookup[routeDefaults, "quarkMass", 0],
+        "ApplyFeynCalcMS" -> Lookup[routeDefaults, "ApplyFeynCalcMS",
+          True],
+        "PaVeEvaluation" -> Lookup[routeDefaults, "PaVeEvaluation",
+          "PaXEvaluate"],
+        "ExpansionOrder" -> Lookup[
+          integrationResolution["ResolvedDefaults"], "ExpansionOrder",
+          Lookup[routeDefaults, "ExpansionOrder", Automatic]],
+        "KinematicScale" -> Lookup[
+          integrationResolution["ResolvedDefaults"], "KinematicScale",
+          Lookup[routeDefaults, "KinematicScale", q2]],
+        "NormalizeKinematicScale" -> Lookup[routeDefaults,
+          "NormalizeKinematicScale", True],
+        "ApplyDimReg" -> Lookup[routeDefaults, "ApplyDimReg", True],
+        "BasisFamily" -> Lookup[
+          integrationResolution["ResolvedDefaults"], "BasisFamily",
+          Lookup[routeDefaults, "BasisFamily", Automatic]],
+        "BasisRoot" -> Lookup[routeDefaults, "BasisRoot", Automatic],
+        "GenerateMissingBases" -> Lookup[routeDefaults,
+          "GenerateMissingBases", False],
+        "AllowPrototypeTargets" -> Lookup[
+          buildResolution["ResolvedDefaults"], "AllowPrototypeTargets",
+          False],
+        "UseSourceModelRoute" -> Lookup[
+          buildResolution["ResolvedDefaults"], "UseSourceModelRoute",
+          False]
+      |>,
+      "CachePolicy" -> <|
+        "UseStoredResults" -> Lookup[routeDefaults, "UseStoredResults",
+          False],
+        "StoreResults" -> Lookup[routeDefaults, "StoreResults", False],
+        "RefreshStoredResults" -> Lookup[routeDefaults,
+          "RefreshStoredResults", False],
+        "ResultsCacheRoot" -> Lookup[routeDefaults, "ResultsCacheRoot",
+          Automatic]
+      |>,
+      "MassHandling" -> buildResolution["MassHandling"],
+      "PipelineInterpretation" -> "BuildAndIntegrateAntenna inherits build-side route-selection defaults and integration-side backend defaults, then applies the one-shot top-level option surface over them."
+    |>
   ];
 
 RouteContractStatus[key_] :=
@@ -274,3 +436,18 @@ AntennaRouteProfileReport[key_List] :=
       "ContractStatus" -> RouteContractStatus[key]
     |>
   ];
+
+AntennaRouteEnvironmentReport[type_, numFinalParticles_Integer,
+   loopOrder_Integer] :=
+  AntennaRouteEnvironmentReport[{type, numFinalParticles, loopOrder}];
+
+AntennaRouteEnvironmentReport[key_List] :=
+  <|
+    "Key" -> key,
+    "Name" -> Lookup[AntennaProfile[key], "Name", Missing["NotAvailable"]],
+    "BuildAntenna" -> BuildRouteEnvironmentResolution[key],
+    "IntegrateAntenna" -> IntegrationRouteEnvironmentResolution[key],
+    "BuildAndIntegrateAntenna" ->
+      BuildAndIntegrateRouteEnvironmentResolution[key],
+    "ContractStatus" -> RouteContractStatus[key]
+  |>;

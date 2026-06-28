@@ -62,8 +62,9 @@ Current execution status:
 
 - done
   Task 1: stabilize the convention metadata model
+  Task 2: add effective route/environment resolution reporting
 - not yet done
-  Tasks 2-13
+  Tasks 3-13
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -310,6 +311,7 @@ BuildAllAntennae[model, ...]
 BuildAndIntegrateAllAntennae[model, ...]
 AntennaPipelineConventionReport[]
 AntennaRouteProfileReport[type, numFinalParticles, loopOrder]
+AntennaRouteEnvironmentReport[type, numFinalParticles, loopOrder]
 ```
 
 The usual user-facing story is:
@@ -402,6 +404,15 @@ The usual user-facing story is:
 - Scope: this is an introspection helper for users, thesis readers, and route
   developers who want to inspect metadata without stepping through the routing
   code manually.
+
+`AntennaRouteEnvironmentReport[type, numFinalParticles, loopOrder]`
+
+- Purpose: report the effective build, integration, and one-shot pipeline
+  defaults that would govern one route key under the current package
+  environment.
+- Scope: this is an introspection helper for users who want to know not only
+  what a route is, but how the package currently resolves backend, scale,
+  cache, prototype-routing, and mass-handling defaults for it.
 
 `BuildAllAntennae[model, ...]`
 
@@ -609,6 +620,17 @@ Task 1 status:
 - not yet done: the actual loop-family build-side boundary repair, especially
   around `A31`
 
+Task 2 status:
+
+- done: the package now exposes a separate route-environment report so users
+  can inspect effective build/integration defaults rather than only raw option
+  declarations or route-profile metadata
+- done: the report includes effective backend, `PaVeEvaluation`, scale
+  normalization, cache-policy defaults, prototype-routing defaults, and
+  mass-handling notes
+- not yet done: configurable global default overrides; the current report
+  reflects built-in route/profile/default resolution only
+
 The intended public contract is:
 
 - `BuildAntenna[...]` should expose package-facing results in the package
@@ -664,6 +686,7 @@ The same state is now inspectable in code:
 AntennaPipelineConventionModel[]
 AntennaPipelineConventionReport[]
 AntennaRouteProfileReport[A, 3, 1]
+AntennaRouteEnvironmentReport[A, 3, 1]
 ```
 
 Not yet implemented:
@@ -1333,6 +1356,19 @@ Normal return shape:
 - an association containing the build profile, build reduction profile,
   integration profile, route stories, and contract-status notes
 
+### `AntennaRouteEnvironmentReport[...]`
+
+Purpose:
+
+- return a structured route-level report of the effective build,
+  integration, and one-shot pipeline defaults for one antenna key
+
+Normal return shape:
+
+- an association containing separate `BuildAntenna`,
+  `IntegrateAntenna`, and `BuildAndIntegrateAntenna` environment summaries,
+  together with route contract-status notes
+
 ### Option Meaning Notes
 
 - `Component` only matters on routes with public component splits such as
@@ -1648,6 +1684,14 @@ Task 1 implementation note:
   `IntegrationAntennaConventionProfile[...]`
 - in other words, the top-level convention story is now part of the core code
   metadata layer itself, not only part of documentation prose
+
+Task 2 implementation note:
+
+- the runtime now also exposes `AntennaRouteEnvironmentReport[...]` as the
+  companion to `AntennaRouteProfileReport[...]`
+- the profile report answers “what kind of route is this?”, while the
+  environment report answers “how would the current package defaults resolve if
+  I called this route now?”
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different
