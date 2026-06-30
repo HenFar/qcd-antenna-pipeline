@@ -1,8 +1,14 @@
-# Antenna Pipeline
+# AntCalc
 
-`antenna_pipeline` is a Wolfram Language package for building and integrating
-QCD antenna functions through a small public API. The release target of this
-repo is now explicit:
+`AntCalc` is the official package name of this Wolfram Language project.
+The repository is still named `antenna_pipeline`, and the current canonical
+loader file remains `AntennaPipeline.wl`, but the package should be referred to
+in the README and in ordinary use as `AntCalc`, in the style of established
+field-standard names such as `FeynCalc`, which also inspired the naming.
+
+`AntCalc` is a Wolfram Language package for building and integrating QCD
+antenna functions through a small public API. The release target of this repo
+is now explicit:
 
 ```text
 Load one package, call a small set of public functions, and reproduce the
@@ -10,9 +16,9 @@ massless A-type antenna story needed for the NNLO SMQCD R-ratio workflow.
 ```
 
 This repo is no longer presented as an open-ended “finish every branch”
-research notebook. It is a package with a completed massless target and two
-callable experimental branches that are intentionally outside the release
-guarantee.
+research notebook. It is a package, `AntCalc`, with a completed massless target
+and two callable experimental branches that are intentionally outside the
+release guarantee.
 
 ## How To Read This README
 
@@ -276,6 +282,10 @@ compatibility matrix.
 
 ## Loading
 
+The package name is `AntCalc`, but the current checked-in loader is still
+`AntennaPipeline.wl`. So for now the practical load command continues to use
+the loader filename rather than a renamed `AntCalc.wl` entry point.
+
 From a Wolfram notebook or kernel:
 
 ```wl
@@ -290,7 +300,8 @@ cd /path/to/antenna_pipeline
 /Applications/Wolfram.app/Contents/MacOS/WolframKernel -noprompt -run 'Get["AntennaPipeline.wl"]; Exit[]'
 ```
 
-`AntennaPipeline.wl` is the only canonical loader.
+`AntennaPipeline.wl` is the only canonical loader at present, even though the
+package itself is now referred to as `AntCalc`.
 
 If you want the shortest realistic first-run sequence from the terminal:
 
