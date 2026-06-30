@@ -70,7 +70,11 @@ IntegrateBackendDirectRoute[antenna_, integrationMethod_, options_Association] :
             GenerateMissingBases -> Lookup[options, "GenerateMissingBases", False],
             ReturnDiagnostics -> Lookup[options, "ReturnDiagnostics", False],
             DetailedTimingDiagnostics -> Lookup[options, "DetailedTimingDiagnostics", False],
-            MassSymbol -> Lookup[profile, "MassSymbol", Automatic]
+            MassSymbol -> Lookup[profile, "MassSymbol", Automatic],
+            ApplyFeynCalcMS -> Lookup[options, "ApplyFeynCalcMS", False],
+            KinematicScale -> Lookup[options, "KinematicScale", q2],
+            NormalizeKinematicScale -> Lookup[options,
+              "NormalizeKinematicScale", False]
           ]
         ,
         _,
@@ -159,6 +163,20 @@ IntegrateRouteObject[obj_, options_Association] :=
         "AntennaObject" -> obj,
         "RouteStory" -> IntegrationRouteStory[key]
       |>;
+    contributionInput =
+      If[Lookup[options, "Contribution", All] === All,
+        Lookup[data, "Contribution", All]
+        ,
+        Lookup[options, "Contribution", All]
+      ];
+    componentInput =
+      If[Lookup[options, "Component", All] === All,
+        Lookup[data, "SelectedComponent", All]
+        ,
+        Lookup[options, "Component", All]
+      ];
+    progressActive = HeavyIntegrationRouteQ[key, componentInput,
+      contributionInput];
     If[key === Missing["UnknownKey"],
       diagnostics = <|"Failed" -> True, "Reason" -> "MissingAntennaObjectKey", "SourceObject" -> obj, "AntennaObject" -> obj|>;
       Return[
@@ -242,12 +260,8 @@ IntegrateRouteObject[obj_, options_Association] :=
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] && quarkMassOpt =!= 0,
       profile = Join[profile, <|"BasisFamily" -> "MX30", "MassSymbol" -> quarkMassOpt|>]
     ];
-    contributionInput = If[Lookup[options, "Contribution", All] === All, Lookup[data, "Contribution", All], Lookup[options, "Contribution", All]];
     contribution = CanonicalAntennaComponentName[contributionInput];
-    componentInput = If[Lookup[options, "Component", All] === All, Lookup[data, "SelectedComponent", All], Lookup[options, "Component", All]];
     componentName = CanonicalAntennaComponentName[componentInput];
-    progressActive = HeavyIntegrationRouteQ[key, componentInput,
-      contributionInput];
     finishProgress :=
       If[TrueQ[progressActive],
         heavyIntegrationProgressPrint[routeKind, key, componentInput,
@@ -451,12 +465,7 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     backend = profile["DefaultBackend"];
     storedComponent = Lookup[data, "SelectedComponent", All];
-    antenna =
-      If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 1}],
-        Lookup[data, "PrototypeAntenna", Lookup[data, "Antenna", $Failed]]
-        ,
-        Lookup[data, "Antenna", $Failed]
-      ];
+    antenna = Lookup[data, "Antenna", $Failed];
     ibpNeedsDiagnostics = TrueQ[Lookup[options, "ReturnDiagnostics", False]] || TrueQ[Lookup[options, "ReturnRecord", False]];
     If[TrueQ[progressActive],
       heavyIntegrationProgressPrint[routeKind, key, componentInput,
@@ -490,7 +499,12 @@ IntegrateRouteObject[obj_, options_Association] :=
             ExpansionOrder -> expansionOrder,
             ReturnDiagnostics -> ibpNeedsDiagnostics,
             DetailedTimingDiagnostics -> Lookup[options, "DetailedTimingDiagnostics", False],
-            MassSymbol -> Lookup[profile, "MassSymbol", Automatic]
+            MassSymbol -> Lookup[profile, "MassSymbol", Automatic],
+            ApplyFeynCalcMS -> Lookup[options, "ApplyFeynCalcMS", False],
+            KinematicScale -> Lookup[profile, "KinematicScale",
+              Lookup[options, "KinematicScale", q2]],
+            NormalizeKinematicScale -> Lookup[options,
+              "NormalizeKinematicScale", False]
           ];
           If[TrueQ[ibpNeedsDiagnostics],
             backendDiagnostics = ibpResult[[2]];

@@ -158,6 +158,10 @@ IBPToSeries::usage = "IBPToSeries[reduced, profile] converts a reduced master co
 IBPToSeriesWithDiagnostics::usage = "IBPToSeriesWithDiagnostics[rawReduced, reduced, profile] converts a reduced master combination into a final series while recording timing and size diagnostics.";
 IBPReductionStages::usage = "IBPReductionStages[rawReduced, reduced, profile] returns the named post-reduction stages recorded in backend diagnostics.";
 IntegrateViaIBP::usage = "IntegrateViaIBP[antenna, ...] runs the full LiteRed-backed IBP integration pipeline.";
+IBPConventionBridgeFactor::usage = "IBPConventionBridgeFactor[profile, applyFeynCalcMS, order] returns the explicit backend-to-public convention factor applied after IBP master substitution.";
+IBPConventionBridgeSeriesOrder::usage = "IBPConventionBridgeSeriesOrder[profile, order] returns the epsilon depth required to expand the backend-to-public convention bridge safely for a given IBP family.";
+NormalizeIBPIntegratedResult::usage = "NormalizeIBPIntegratedResult[withMasters, profile, applyFeynCalcMS, ...] applies IBP normalization, convention bridging, and optional kinematic-scale normalization before epsilon-series truncation.";
+SummarizeIBPComponentDiagnostics::usage = "SummarizeIBPComponentDiagnostics[componentDiagnostics] promotes inspectable top-level summaries from a list of per-component IBP backend diagnostics.";
 ReduceAntennaIBP::usage = "ReduceAntennaIBP[antenna, numFinalParticles, numLoops] is the legacy reduction helper kept for the original notebooks.";
 basisMatch::usage = "basisMatch[term, basesList] is the legacy basis-matching helper kept for older notebook-driven IBP tests.";
 reduceAntenna::usage = "reduceAntenna[antenna, numFinalParticles, numLoops] is the legacy top-level reduction helper kept for older notebook-driven IBP tests.";
@@ -2284,22 +2288,112 @@ IBPNormalization[profile_Association] :=
       1
   ];
 
-IBPToSeries[reduced_, profile_Association] :=
+IBPConventionBridgeSeriesOrder[profile_Association, order_Integer] :=
+  Module[{family},
+    family = Lookup[profile, "BasisFamily", "Unknown"];
+    Switch[family,
+      "A31",
+        Max[2, order + 4]
+      ,
+      "A22OneLoopSelf" | "A22TwoLoopTree" | "A22",
+        Max[2, order + 4]
+      ,
+      _,
+        Max[0, order + 2]
+    ]
+  ];
+
+IBPConventionBridgeFactor[profile_Association, applyFeynCalcMS_,
+   order_Integer] :=
+  Module[{family, eps, bridgeOrder},
+    family = Lookup[profile, "BasisFamily", "Unknown"];
+    eps = FeynCalc`Epsilon;
+    bridgeOrder = IBPConventionBridgeSeriesOrder[profile, order];
+    Switch[family,
+      "A31",
+        If[TrueQ[applyFeynCalcMS],
+          Normal[Series[Exp[2 eps EulerGamma] / Gamma[1 - eps]^2,
+            {eps, 0, bridgeOrder}]]
+          ,
+          1
+        ]
+      ,
+      "A22OneLoopSelf" | "A22TwoLoopTree" | "A22",
+        If[TrueQ[applyFeynCalcMS],
+          Normal[Series[Exp[2 eps EulerGamma] / Gamma[1 - eps]^2,
+            {eps, 0, bridgeOrder}]]
+          ,
+          1
+        ]
+      ,
+      _,
+        1
+    ]
+  ];
+
+Options[NormalizeIBPIntegratedResult] = {
+  ApplyFeynCalcMS -> True,
+  KinematicScale -> q2,
+  NormalizeKinematicScale -> True
+};
+
+NormalizeIBPIntegratedResult[withMasters_, profile_Association,
+   OptionsPattern[]] :=
+  Module[{eps, scaleSymbol, normalizedScaleQ, expansionOrder, baseNormalized,
+     conventionFactor, output},
+    eps = FeynCalc`Epsilon;
+    scaleSymbol = OptionValue[KinematicScale];
+    normalizedScaleQ = TrueQ[OptionValue[NormalizeKinematicScale]];
+    expansionOrder = Lookup[profile, "ExpansionOrder", 0];
+    baseNormalized =
+      withMasters * IBPNormalization[profile] //
+      ReplaceAll[#, d -> 4 - 2 eps]& //
+      Together //
+      Simplify;
+    conventionFactor =
+      IBPConventionBridgeFactor[profile, OptionValue[ApplyFeynCalcMS],
+        expansionOrder];
+    output =
+      conventionFactor * baseNormalized //
+      If[normalizedScaleQ,
+        ReplaceAll[#, scaleSymbol -> 1]&,
+        Identity
+      ] //
+      Together //
+      Simplify;
+    <|
+      "ConventionBridgeFactor" -> conventionFactor,
+      "NormalizedResult" -> output
+    |>
+  ];
+
+Options[IBPToSeries] = {
+  ApplyFeynCalcMS -> True,
+  KinematicScale -> q2,
+  NormalizeKinematicScale -> True
+};
+
+IBPToSeries[reduced_, profile_Association, opts:OptionsPattern[]] :=
   Module[{timed},
     timed = IBPToSeriesWithDiagnostics[Missing["NotAvailable"], reduced,
-      profile];
+      profile, opts];
     timed["Integrated"]
   ];
 
-IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association] :=
-  Module[{rawLiteRed, rawMapped, withMasters, normalized, series,
-     rawLiteRedSeconds, rawMappedSeconds, masterSubstitutionSeconds,
-     normalizationSeconds, seriesSeconds},
+Options[IBPToSeriesWithDiagnostics] = Options[IBPToSeries];
+
+IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association,
+   opts:OptionsPattern[]] :=
+  Module[{rawLiteRed, rawMapped, withMasters, normalizationAssociation,
+     conventionFactor, normalized, series, rawLiteRedSeconds,
+     rawMappedSeconds, masterSubstitutionSeconds, normalizationSeconds,
+     seriesSeconds},
     If[reduced === $Failed,
       Return[<|"Integrated" -> $Failed, "Stages" -> <|"RawLiteRedCombination"
             -> $Failed, "MasterMappedExpression" -> $Failed,
             "RawMasterCombination" -> $Failed,
             "MasterSubstitutedExpression" -> $Failed,
+            "ConventionBridgeFactor" -> $Failed,
             "NormalizedBeforeSeries" -> $Failed, "SeriesResult" -> $Failed|>,
           "TimingDiagnostics" -> <|"RawLiteRedCombinationSeconds" -> 0.,
             "RawMasterCombinationSeconds" -> 0.,
@@ -2318,13 +2412,18 @@ IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association] :=
     {rawMappedSeconds, rawMapped} = AbsoluteTiming[Total[reduced]];
     {masterSubstitutionSeconds, withMasters} =
       AbsoluteTiming[rawMapped /. IBPMasterValues[profile]];
-    {normalizationSeconds, normalized} =
+    {normalizationSeconds, normalizationAssociation} =
       AbsoluteTiming[
-        withMasters * IBPNormalization[profile] //
-        ReplaceAll[#, {d -> 4 - 2 eps, q2 -> 1}]& //
-        Together //
-        Simplify
+        NormalizeIBPIntegratedResult[
+          withMasters,
+          profile,
+          ApplyFeynCalcMS -> OptionValue[ApplyFeynCalcMS],
+          KinematicScale -> OptionValue[KinematicScale],
+          NormalizeKinematicScale -> OptionValue[NormalizeKinematicScale]
+        ]
       ];
+    conventionFactor = normalizationAssociation["ConventionBridgeFactor"];
+    normalized = normalizationAssociation["NormalizedResult"];
     {seriesSeconds, series} =
       AbsoluteTiming[
         Series[normalized, {eps, 0, profile["ExpansionOrder"]}] //
@@ -2337,6 +2436,7 @@ IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association] :=
          rawLiteRed, "MasterMappedExpression" -> rawMapped,
         "RawMasterCombination" -> rawMapped,
         "MasterSubstitutedExpression" -> withMasters,
+        "ConventionBridgeFactor" -> conventionFactor,
         "NormalizedBeforeSeries" -> normalized, "SeriesResult" -> series|>,
       "TimingDiagnostics" -> <|"RawLiteRedCombinationSeconds" ->
          rawLiteRedSeconds, "RawMasterCombinationSeconds" ->
@@ -2354,9 +2454,12 @@ IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association] :=
          -> LeafCount[series]|>|>
   ];
 
-IBPReductionStages[rawReduced_, reduced_, profile_Association] :=
+Options[IBPReductionStages] = Options[IBPToSeries];
+
+IBPReductionStages[rawReduced_, reduced_, profile_Association,
+   opts:OptionsPattern[]] :=
   Module[{timed},
-    timed = IBPToSeriesWithDiagnostics[rawReduced, reduced, profile];
+    timed = IBPToSeriesWithDiagnostics[rawReduced, reduced, profile, opts];
     timed["Stages"]
   ];
 
@@ -2372,7 +2475,21 @@ IBPReductionStages[rawReduced_, reduced_, profile_Association] :=
 Options[IntegrateViaIBP] = {NumFinalParticles -> 3, NumLoops -> 0, BasisFamily
    -> "X30", BasisRoot -> Automatic, GenerateMissingBases -> False, ExpansionOrder
    -> 0, ReturnDiagnostics -> False, DetailedTimingDiagnostics -> False,
-   MassSymbol -> Automatic};
+   MassSymbol -> Automatic, ApplyFeynCalcMS -> True, KinematicScale -> q2,
+   NormalizeKinematicScale -> True};
+
+SummarizeIBPComponentDiagnostics[componentDiagnostics_List] :=
+  <|
+    "ComponentDiagnostics" -> componentDiagnostics,
+    "ConventionBridgeFactor" -> (Lookup[#, "ConventionBridgeFactor",
+        Missing["NotAvailable"]]& /@ componentDiagnostics),
+    "NormalizedBeforeSeries" -> (Lookup[#, "NormalizedBeforeSeries",
+        Missing["NotAvailable"]]& /@ componentDiagnostics),
+    "SeriesResult" -> (Lookup[#, "SeriesResult",
+        Missing["NotAvailable"]]& /@ componentDiagnostics),
+    "TimingDiagnostics" -> (Lookup[#, "TimingDiagnostics",
+        Missing["NotAvailable"]]& /@ componentDiagnostics)
+  |>;
 
 IntegrateViaIBP[antenna_, OptionsPattern[]] :=
   Module[{family, profile, basisLoad, reduction, integrated, diagnostics,
@@ -2397,12 +2514,15 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
               ExpansionOrder], ReturnDiagnostics -> OptionValue[
               ReturnDiagnostics], DetailedTimingDiagnostics -> OptionValue[
               DetailedTimingDiagnostics], MassSymbol -> OptionValue[
-              MassSymbol]]
+              MassSymbol], ApplyFeynCalcMS -> OptionValue[ApplyFeynCalcMS],
+             KinematicScale -> OptionValue[KinematicScale],
+             NormalizeKinematicScale -> OptionValue[
+               NormalizeKinematicScale]]
         ]& /@ antenna;
       Return[
         If[OptionValue[ReturnDiagnostics] === True,
-          {componentResults[[All, 1]], <|"ComponentDiagnostics" ->
-             componentResults[[All, 2]]|>}
+          {componentResults[[All, 1]],
+            SummarizeIBPComponentDiagnostics[componentResults[[All, 2]]]}
           ,
           componentResults
         ]
@@ -2473,7 +2593,11 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
     {seriesSeconds, timedSeries} =
       AbsoluteTiming[
         IBPToSeriesWithDiagnostics[reduction["RawReducedTerms"],
-          reduction["ReducedTerms"], profile]
+          reduction["ReducedTerms"], profile,
+          ApplyFeynCalcMS -> OptionValue[ApplyFeynCalcMS],
+          KinematicScale -> OptionValue[KinematicScale],
+          NormalizeKinematicScale -> OptionValue[
+            NormalizeKinematicScale]]
       ];
     If[Lookup[profile, "BasisFamily", Missing["NoFamily"]] === "MX30",
       reduction = MX30PublicizeValue[reduction, profile];
@@ -2519,6 +2643,7 @@ IntegrateViaIBP[antenna_, OptionsPattern[]] :=
       "MasterMappedExpression" -> reductionStages["MasterMappedExpression"],
       "RawMasterCombination" -> reductionStages["RawMasterCombination"],
       "MasterSubstitutedExpression" -> reductionStages["MasterSubstitutedExpression"],
+      "ConventionBridgeFactor" -> reductionStages["ConventionBridgeFactor"],
       "NormalizedBeforeSeries" -> reductionStages["NormalizedBeforeSeries"],
       "SeriesResult" -> reductionStages["SeriesResult"]|>;
     If[OptionValue["ReturnDiagnostics"] === True,

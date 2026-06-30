@@ -92,6 +92,7 @@ AntennaPipelineConventionModel[] :=
       "The package uses q2 as the canonical public integrated kinematic scale and normalizes that scale to 1 by default on the integration surface.",
       "The loop extraction layer applies LoopExpansionNormalization[1] = 8 Pi^2 and LoopExpansionNormalization[2] = (8 Pi^2)^2 when converting loop objects into the package expansion convention.",
       "The A21 PaVe route carries an explicit Package-X-to-paper convention bridge through the PaperRealMasslessTwoParton profile metadata rather than treating raw PaXEvaluate output as final public form.",
+      "The IBP integration layer now also carries an explicit backend-to-public convention bridge for loop families such as A31 and A22 instead of assuming the raw master-substituted series is already in the final package convention.",
       "Some loop-family build outputs, especially around A31, still do not realize the intended public renormalization boundary uniformly."
     },
     "DimensionalRegularizationScheme" -> Join[
@@ -187,23 +188,23 @@ IntegrationAntennaConventionProfile[key_] :=
       {A, 3, 1},
         <|
           "ConventionModel" -> "PackagePublicIntegratedBoundary",
-          "BackendConventionBridge" -> "IBPMasterSubstitution",
+          "BackendConventionBridge" -> "IBPMasterSubstitutionPlusConventionFactor",
           "ScaleNormalization" -> model["ScaleNormalization",
             "PublicKinematicScale"],
           "NormalizeKinematicScaleDefault" -> model["ScaleNormalization",
             "NormalizeKinematicScaleDefault"],
-          "CurrentImplementationNote" -> "The integrated A31 route is already exposed publicly, but the build-side public boundary still needs repair."
+          "CurrentImplementationNote" -> "The integrated A31 route now applies an explicit IBP backend-to-public convention bridge after master substitution; remaining residual checks are treated as route-validation work rather than an undeclared backend normalization accident."
         |>
       ,
       {A, 2, 2},
         <|
           "ConventionModel" -> "PackagePublicIntegratedBoundary",
-          "BackendConventionBridge" -> "IBPContributionStitching",
+          "BackendConventionBridge" -> "IBPContributionStitchingPlusConventionFactor",
           "ScaleNormalization" -> model["ScaleNormalization",
             "PublicKinematicScale"],
           "NormalizeKinematicScaleDefault" -> model["ScaleNormalization",
             "NormalizeKinematicScaleDefault"],
-          "CurrentImplementationNote" -> "The A22 integration route is public, but its profile still carries scaffold and contribution-specific implementation markers internally."
+          "CurrentImplementationNote" -> "The A22 integration route now shares the explicit IBP convention-bridge layer used to move master-substituted results into the public package convention, while still carrying scaffold and contribution-specific implementation markers internally."
         |>
       ,
       _,

@@ -62,6 +62,15 @@ A31TTermTargets::usage =
 A31IntegratedAntennaTargets::usage =
   "A31IntegratedAntennaTargets[order] returns the encoded literature targets for the final integrated A31 antennae.";
 
+A31TTermTargetForComponent::usage =
+  "A31TTermTargetForComponent[component, order] returns the encoded T-function target for one public A31 component.";
+
+A31IntegratedAntennaTargetForComponent::usage =
+  "A31IntegratedAntennaTargetForComponent[component, order] returns the encoded final integrated target for one public A31 component.";
+
+A31TargetResidualAssociation::usage =
+  "A31TargetResidualAssociation[result, targets] returns the residual of one A31 expression against each public component target label.";
+
 A31IntegratedResiduals::usage =
   "A31IntegratedResiduals[result, targets] computes diagnostic residuals for the integrated A31 route.";
 
@@ -323,6 +332,50 @@ A31IntegratedAntennaTargets[order_Integer] :=
         (109/24 - 7 Pi^2/24 - 25 Zeta[3]/9)
     };
     IntegratedAntennaSeries[#, order]& /@ targets
+  ];
+
+A31TTermTargetForComponent[component_, order_Integer] :=
+  Module[{componentName, targets},
+    componentName = CanonicalAntennaComponentName[component];
+    targets = A31TTermTargets[order];
+    Switch[componentName,
+      "Leading",
+        targets[[1]]
+      ,
+      "Subleading",
+        targets[[2]]
+      ,
+      "Nf",
+        targets[[3]]
+      ,
+      _,
+        Missing["UnknownA31Component", componentName]
+    ]
+  ];
+
+A31IntegratedAntennaTargetForComponent[component_, order_Integer] :=
+  Module[{componentName, targets},
+    componentName = CanonicalAntennaComponentName[component];
+    targets = A31IntegratedAntennaTargets[order];
+    Switch[componentName,
+      "Leading",
+        targets[[1]]
+      ,
+      "Subleading",
+        targets[[2]]
+      ,
+      "Nf",
+        targets[[3]]
+      ,
+      _,
+        Missing["UnknownA31Component", componentName]
+    ]
+  ];
+
+A31TargetResidualAssociation[result_, targets_List] :=
+  AssociationThread[
+    {"Leading", "Subleading", "Nf"},
+    SafeIntegratedResidualSimplify[result - #]& /@ targets
   ];
 
 A31IntegratedResiduals[result_List, targets_List] :=

@@ -1693,7 +1693,7 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
    OptionsPattern[]] :=
   Module[{requestedSteps, useStored, storeStored, refreshStored,
      cacheKey, cacheLabel, cacheRoot, loaded, computed, result, diagnostics,
-     optionsAssoc},
+     optionsAssoc, output},
     requestedSteps = NormalizeIntermediateSteps[OptionValue[
       "IntermediateSteps"]];
     useStored = TrueQ[OptionValue["UseStoredResults"]];
@@ -1728,10 +1728,16 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
         If[AssociationQ[loaded],
           PrintStoredResultHit[cacheLabel];
           Return[
-            FormatStoredResultReturn[loaded["Result"],
-              loaded["Diagnostics"], loaded, OptionValue[
-                "ReturnDiagnostics"], False, requestedSteps,
-              OptionValue["PrintIntermediateSteps"], "BuildAntennaObject"]
+            FormatStoredResultReturn[
+              loaded["Result"],
+              loaded["Diagnostics"],
+              loaded,
+              OptionValue["ReturnDiagnostics"],
+              False,
+              requestedSteps,
+              OptionValue["PrintIntermediateSteps"],
+              "BuildAntennaObject"
+            ]
           ]
         ]
       ];
@@ -1785,7 +1791,8 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
             "PrintIntermediateSteps"], "BuildAntennaObject"]
       ]
     ];
-    BuildAntenna[type, numFinalParticles, loopOrder,
+    output =
+      BuildAntenna[type, numFinalParticles, loopOrder,
       ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
       ReturnBuildData -> False,
       ReturnAntennaObject -> False,
@@ -1817,7 +1824,8 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       UseStoredResults -> OptionValue["UseStoredResults"],
       StoreResults -> OptionValue["StoreResults"],
       ResultsCacheRoot -> OptionValue["ResultsCacheRoot"],
-      RefreshStoredResults -> OptionValue["RefreshStoredResults"]]
+      RefreshStoredResults -> OptionValue["RefreshStoredResults"]];
+    output
   ];
 
 (* BuildAntenna[type, n, loopOrder, ...]

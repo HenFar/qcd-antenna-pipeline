@@ -48,8 +48,8 @@ The active task list is:
 - Task 2: add effective route/environment resolution reporting (done)
 - Task 3: declare dimensional-regularization scheme status in code (done)
 - Task 4: introduce an explicit public vs bare/prototype output boundary (done)
-- Task 5: repair `A31` build-side normalization and renormalization semantics (largely done)
-- Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
+- Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
+- Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (implemented, route verification pending)
 - Task 7: add an explicit bare/prototype public option
 - Task 8: add a supported global default environment mechanism
 - Task 9: re-audit stored-result semantics after semantics repair
@@ -65,9 +65,10 @@ Current execution status:
   Task 2: add effective route/environment resolution reporting
   Task 3: declare dimensional-regularization scheme status in code
   Task 4: introduce an explicit public vs bare/prototype output boundary
-  Task 5: repair `A31` build-side normalization and renormalization semantics (largely done)
+  Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
+  Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (implemented, route verification pending)
 - not yet done
-  Tasks 6-13
+  Tasks 7-13
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -678,12 +679,12 @@ Task 5 status:
 - done: the previously suspicious `A31` quark-loop / `Nf` build-side behavior
   is now confined to the prototype branch; the public branch carries a nonzero
   `Nf` contribution as intended
-- done: the integration path for `A31` now consumes the prototype branch for
-  raw backend work so the existing integrated counterterm machinery is not
-  double-applied
-- not yet done: the integrated leading and subleading `A31` residuals are
-  still nonzero, which now points to the later convention/integration bridge
-  rather than to the original raw-vs-public build boundary confusion
+- done: Task `5a` is treated as complete; default public
+  `BuildAntenna[A, 3, 1, ...]` now exposes the repaired build-side branch
+  while the older route-native object flow is left intact
+- deferred: Task `5b`; the integrated leading and subleading `A31` residuals
+  are still nonzero, so the deeper integrated correctness work is being kept
+  separate from the build-side presentation repair
 
 The intended public contract is:
 
@@ -725,6 +726,23 @@ On the `PaVe` / `Package-X` side:
   explicit Package-X-to-paper conversion factor rather than treating the raw
   `PaXEvaluate` output as already in the final package convention
 
+Task 6 status:
+
+- done: the integration backend now distinguishes raw IBP master-substituted
+  expressions from the final public integrated convention instead of treating
+  them as automatically identical
+- done: the IBP layer now applies an explicit backend-to-public convention
+  factor for loop families such as `A31` and `A22`
+- done: `KinematicScale`, `NormalizeKinematicScale`, and `ApplyFeynCalcMS` now
+  flow through the IBP normalization stage itself rather than only through the
+  higher-level integration interface
+- done: backend diagnostics now expose the applied
+  `"ConventionBridgeFactor"` so convention debugging is inspectable in code
+- verified locally: a direct `WolframKernel` probe confirms that the A31 IBP
+  convention factor is now present in `NormalizeIBPIntegratedResult[...]`
+- not yet verified end to end: the heavy full-route `BuildAndIntegrateAntenna[A, 3, 1,
+  ReturnDiagnostics -> True]` residual recheck still needs a completed run
+
 Dimensional-regularization declaration:
 
 - the package now explicitly declares a single code-level dimensional
@@ -741,6 +759,9 @@ Current implementation status:
   renormalization state
 - some loop-family behavior, especially around `A31`, still needs repair to make
   that build-side contract hold uniformly
+- the integration-side convention bridge for `A21` and the IBP loop families is
+  now explicit in code, but the heavy `A31` end-to-end residual recheck is
+  still treated as pending verification rather than silently assumed correct
 - until that repair lands, the README should be read as documenting the intended
   public boundary, with this mismatch recorded openly rather than hidden
 
@@ -1796,11 +1817,27 @@ Task 5 implementation note:
 - the public `A31` branch applies the lower-`A30` UV counterterm pattern to
   the leading and `Nf` components, while the prototype branch preserves the
   pre-counterterm route-native output for inspection
-- the `A31` integration path now reads `PrototypeAntenna` when available so
-  the integrated-side counterterm bookkeeping remains attached to the raw
-  backend object rather than to the repaired public build view
-- the remaining nonzero integrated `A31` residuals are therefore now treated
-  as a later convention-bridge problem to be addressed in Task 6
+- the older route-native object/integrable flow has been restored for
+  integration-facing work, so the public/default `BuildAntenna[...]` repair is
+  now a build-side presentation boundary rather than a redefinition of the
+  object route
+- the remaining nonzero integrated `A31` residuals are now explicitly treated
+  as deferred `Task 5b` work rather than as part of the completed build-side
+  `Task 5a` repair
+
+Task 6 implementation note:
+
+- the IBP backend now has an explicit `NormalizeIBPIntegratedResult[...]`
+  boundary that applies the family-dependent backend-to-public convention
+  factor before epsilon-series truncation
+- `IntegrateViaIBP[...]`, `IBPToSeriesWithDiagnostics[...]`, and the interface
+  routing code now propagate `ApplyFeynCalcMS`, `KinematicScale`, and
+  `NormalizeKinematicScale` all the way into that normalization boundary
+- backend diagnostics now record the applied `"ConventionBridgeFactor"` beside
+  the raw master-substituted and normalized pre-series expressions
+- for `A31`, the convention bridge now expands deeply enough in `Epsilon` to
+  survive multiplication against the route's higher poles rather than being
+  truncated away prematurely
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different
