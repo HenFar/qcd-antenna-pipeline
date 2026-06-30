@@ -1838,6 +1838,10 @@ Task 6 implementation note:
 - for `A31`, the convention bridge now expands deeply enough in `Epsilon` to
   survive multiplication against the route's higher poles rather than being
   truncated away prematurely
+- a repeatable local verifier for this task now lives at
+  `dev/verify_task6_convention_bridge.wl`; it checks the explicit A21 public
+  target match and the presence of inspectable A31 convention-bridge backend
+  diagnostics on the restored route-native object flow
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different
