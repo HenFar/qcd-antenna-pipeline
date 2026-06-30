@@ -49,8 +49,8 @@ The active task list is:
 - Task 3: declare dimensional-regularization scheme status in code (done)
 - Task 4: introduce an explicit public vs bare/prototype output boundary (done)
 - Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
-- Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (implemented, route verification pending)
-- Task 7: add an explicit bare/prototype public option
+- Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (done)
+- Task 7: add an explicit bare/prototype public option (done for direct `BuildAntenna[...]` expression output)
 - Task 8: add a supported global default environment mechanism
 - Task 9: re-audit stored-result semantics after semantics repair
 - Task 10: build a physics-aware validation layer
@@ -66,9 +66,10 @@ Current execution status:
   Task 3: declare dimensional-regularization scheme status in code
   Task 4: introduce an explicit public vs bare/prototype output boundary
   Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
-  Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (implemented, route verification pending)
+  Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
+  Task 7: add an explicit bare/prototype public option (direct `BuildAntenna[...]` expression output only)
 - not yet done
-  Tasks 7-13
+  Tasks 8-13
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -192,8 +193,9 @@ Not yet implemented or not yet repaired:
 - the README therefore documents the intended package boundary and flags the
   current mismatch instead of treating the present accidental behavior as the
   desired API
-- an explicit public bare-output option is not yet implemented or documented as
-  a stable route; it remains a design target rather than a released interface
+- object-facing and integration-facing prototype output is not yet a supported
+  public route; `BuildAntennaObject[...]`, `ReturnAntennaObject -> True`, and
+  `IntegrableForm -> True` remain pinned to the public branch intentionally
 
 ## Route Status Notes
 
@@ -476,6 +478,10 @@ Inspection and return-shape options:
 - `IntegrableForm`
   Request the build-side expression in the form used by downstream integration
   plumbing.
+- `BuildOutputBranch`
+  Select `"Public"` or `"Prototype"` for direct `BuildAntenna[...]`
+  expression output. `"Prototype"` is currently an internal/provisional
+  inspection path and is rejected on object/integrable returns.
 - `ReturnMasterCombination`
   Return the master-combination view when the chosen integration route has one.
 - `ReturnTTerms`
@@ -777,13 +783,18 @@ AntennaRouteEnvironmentReport[A, 3, 1]
 
 Not yet implemented:
 
-- an explicit bare/prototype option to expose pre-counterterm or other internal
-  forms for derivation work
-- any stable public promise that those internal states are selectable through the
-  top-level API
+- object-facing and integration-facing prototype output selection
+- any stable public promise that every route's prototype branch already carries
+  a physics-clean derivation payload beyond provenance inspection
 
-Until those parts are implemented, the README does not treat bare or prototype
-states as part of the stable public API.
+The current stable claim is narrower:
+
+- `BuildAntenna[..., BuildOutputBranch -> "Prototype"]` is now a supported
+  prototype-facing inspection path for direct expression output
+- that prototype branch is documented as internal/provisional in meaning, not
+  as a second stable public physics contract
+- `BuildAntennaObject[...]`, `ReturnAntennaObject -> True`, and
+  `IntegrableForm -> True` continue to expose only the public branch
 
 ### Stored Results And Transparent Reuse
 
@@ -1236,6 +1247,11 @@ Options:
   Choose the two-loop momentum pair.
 - `Contribution`
   Select one route contribution where exposed.
+- `BuildOutputBranch`
+  Choose `"Public"` or `"Prototype"` for direct `BuildAntenna[...]`
+  expression output. The default is `"Public"`. The prototype branch is
+  intentionally unavailable with `BuildAntennaObject[...]`,
+  `ReturnAntennaObject -> True`, and `IntegrableForm -> True`.
 - `AllowPrototypeTargets`
   Permit prototype or provisional targets where that branch allows them.
 - `UseSourceModelRoute`
@@ -1551,6 +1567,12 @@ Build-side record fields:
 
 - `BuildData`
   The route-owned internal build association.
+- `BuildOutputBoundarySummary`
+  A compact summary of the public/prototype build boundary, showing the
+  contract roles, normalization state, and which components coincide or differ.
+- `BuildOutputBoundary`
+  The explicit public/prototype build boundary record, including the
+  route-facing renormalization/output split when that route defines one.
 - `FullBuildResult`
   The full public build result before component selection.
 - `SelectedBuildResult`
@@ -1617,6 +1639,8 @@ Typical build-side stages include:
 
 - `Amplitude`
 - `Interference`
+- `BuildOutputBoundarySummary`
+- `BuildOutputBoundary`
 - `Result`
 - `Diagnostics`
 
@@ -1842,6 +1866,20 @@ Task 6 implementation note:
   `dev/verify_task6_convention_bridge.wl`; it checks the explicit A21 public
   target match and the presence of inspectable A31 convention-bridge backend
   diagnostics on the restored route-native object flow
+
+Task 7 implementation note:
+
+- `BuildAntenna[...]` now accepts `BuildOutputBranch -> "Public"|"Prototype"`
+  as an explicit top-level selector
+- the default public branch remains the stable package-facing result
+- the prototype branch exposes the route-owned prototype/pre-counterterm view
+  only for direct expression output, so derivation work can inspect it without
+  silently changing object or integration semantics
+- stored-result keys and diagnostics now record the requested
+  `BuildOutputBranch`, so public and prototype replays do not collide
+- `BuildAntennaObject[...]`, `ReturnAntennaObject -> True`, and
+  `IntegrableForm -> True` currently reject the prototype branch on purpose,
+  because those flows still define the integration-facing public contract
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different
