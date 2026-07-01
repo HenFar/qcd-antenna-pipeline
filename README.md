@@ -408,6 +408,8 @@ BuildAndIntegrateAllAntennae[model, ...]
 AntennaPipelineConventionReport[]
 AntennaRouteProfileReport[type, numFinalParticles, loopOrder]
 AntennaRouteEnvironmentReport[type, numFinalParticles, loopOrder]
+AntennaPhysicsValidationReport[type, numFinalParticles, loopOrder]
+RunSupportedMasslessPhysicsValidation[]
 ```
 
 The usual user-facing story is:
@@ -1100,6 +1102,19 @@ bash dev/run_release_verification.sh
 That script checks only the supported release matrix. It is the intended
 “does this package installation work?” command for external users.
 
+The first physics-aware validation harness is now separate:
+
+```sh
+cd /path/to/antenna_pipeline
+bash dev/run_physics_validation.sh
+```
+
+That script is developer-facing rather than the external-user acceptance test.
+Its current scope is the first `Task 10` slice:
+integrated pole-structure validation for the supported massless integrated
+routes, with honest `Pass`, `Fail`, `KnownIssue`, and `NotAvailableYet`
+statuses.
+
 Operational notes:
 
 - it requires `wolframscript` on `PATH`
@@ -1136,6 +1151,9 @@ Tracked future work:
   the tested environments
 - keep those timings separate from the correctness-facing acceptance workflow so
   performance notes do not get confused with release validation
+- widen the physics-validation harness beyond the current integrated
+  pole-structure layer to Catani-operator, Ward-identity, and factorization
+  checks once those applicability boundaries are encoded honestly
 
 ## Glossary
 
@@ -1610,6 +1628,44 @@ Normal return shape:
   `IntegrateAntenna`, and `BuildAndIntegrateAntenna` environment summaries,
   together with route contract-status notes
 
+### `AntennaPhysicsValidationReport[...]`
+
+Purpose:
+
+- run the current physics-aware validation layer for one public route
+
+Current scope:
+
+- the first implemented slice is integrated pole-structure validation
+- exact encoded pole targets are currently available for:
+  `A21`, `A30`, `A31`, and `A22`
+- `A31` is still reported honestly as a known-issue route when its current
+  residuals do not vanish
+- `A40`, `B40`, and `C40` are currently reported as `NotAvailableYet` for
+  exact pole-target validation rather than being silently treated as checked
+
+Representative usage:
+
+```wl
+AntennaPhysicsValidationReport[A, 3, 0]
+AntennaPhysicsValidationReport[A, 3, 1, UseStoredResults -> True]
+```
+
+### `RunSupportedMasslessPhysicsValidation[]`
+
+Purpose:
+
+- run the current physics-aware validation layer across the supported
+  integrated massless release routes and return one association of route
+  reports
+
+Representative usage:
+
+```wl
+report = RunSupportedMasslessPhysicsValidation[]
+PhysicsValidationStatusCounts[report]
+```
+
 ### `AntennaPipelineDefaults[]`
 
 Purpose:
@@ -2071,6 +2127,21 @@ Task 8 implementation note:
   `AntennaRouteEnvironmentReport[...]` now both expose the active global
   defaults state, so runtime inspection and actual call behavior stay aligned
 
+Task 10 implementation note:
+
+- the first physics-aware validation slice now exists as a separate public
+  layer through `AntennaPhysicsValidationReport[...]` and
+  `RunSupportedMasslessPhysicsValidation[]`
+- the current implemented family is integrated pole-structure validation for
+  the supported massless integrated routes
+- exact encoded targets are currently wired for `A21`, `A30`, `A31`, and `A22`
+- `A31` is reported honestly as a `KnownIssue` route when the current residuals
+  do not vanish, instead of being forced into a fake pass/fail story
+- `A40`, `B40`, and `C40` currently report `NotAvailableYet` for exact
+  pole-target validation rather than pretending those checks already exist
+- the developer harness for this slice now lives at
+  `dev/run_physics_validation.sh`
+
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different
 routes do not quietly drift toward different normalizations or “almost the same”
@@ -2223,3 +2294,13 @@ If you are modifying the code into new branches, that is the main principle to
 preserve. Try to add new physics by teaching the registry and route layer about
 the branch, not by letting branch-specific assumptions leak outward into every
 public function.
+
+### Dev Notes
+
+The physics, the package architecture, and the profile/route design in
+`AntCalc` are my own work, developed over the course of my thesis. AI coding
+tools (primarily Codex/Claude Code) were used for implementation
+acceleration on that design, through bug-hunting, stress-testing and drafting this
+README, from my own working notes and task tracking. Concept learning and
+proofreading during development also made use of general-purpose AI
+assistants.

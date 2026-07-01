@@ -115,3 +115,6 @@ Get[FileNameJoin[{packageRoot, "src", "core", "public_defaults.wl"}]];
 
 Get[FileNameJoin[{packageRoot, "src", "interface", "runtime_reports.wl"
    }]];
+
+Get[FileNameJoin[{packageRoot, "src", "core", "physics_validation.wl"
+   }]];
