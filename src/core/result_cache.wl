@@ -54,6 +54,9 @@ NormalizeStoredResultKeyValue::usage =
 StoredResultKeyAssociation::usage =
   "StoredResultKeyAssociation[routeKind, request] builds the normalized association used as the canonical stored-result key.";
 
+StoredResultRouteSemanticVersion::usage =
+  "StoredResultRouteSemanticVersion[routeKind] returns the cache semantic version used to invalidate stored results when a public route's meaning changes.";
+
 StoredResultKeyHash::usage =
   "StoredResultKeyHash[key] returns the deterministic SHA-based hash used in stored-result filenames.";
 
@@ -139,7 +142,7 @@ If[!ValueQ[$AntennaPipelineBypassStoredResults],
   $AntennaPipelineBypassStoredResults = False;
 ];
 
-$AntennaPipelineStoredResultsSchemaVersion = 1;
+$AntennaPipelineStoredResultsSchemaVersion = 2;
 
 $StoredResultRouteKinds = {
   "BuildAntenna",
@@ -250,9 +253,20 @@ NormalizeStoredResultKeyValue[value_] :=
       value
   ];
 
+StoredResultRouteSemanticVersion["BuildAntenna"] := 3;
+StoredResultRouteSemanticVersion["BuildAntennaObject"] := 2;
+StoredResultRouteSemanticVersion["IntegrateAntenna"] := 3;
+StoredResultRouteSemanticVersion["BuildAndIntegrateAntenna"] := 4;
+StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
+StoredResultRouteSemanticVersion["TObject"] := 4;
+StoredResultRouteSemanticVersion[_] := 1;
+
 StoredResultKeyAssociation[routeKind_String, request_Association] :=
   KeySort@Join[
-    <|"RouteKind" -> routeKind|>,
+    <|
+      "RouteKind" -> routeKind,
+      "RouteSemanticVersion" -> StoredResultRouteSemanticVersion[routeKind]
+    |>,
     NormalizeStoredResultKeyValue[request]
   ];
 
@@ -330,6 +344,8 @@ StoredResultPayload[result_, diagnostics_, routeKind_, key_Association,
   <|
     "SchemaVersion" -> $AntennaPipelineStoredResultsSchemaVersion,
     "RouteKind" -> routeKind,
+    "RouteSemanticVersion" -> Lookup[key, "RouteSemanticVersion",
+      StoredResultRouteSemanticVersion[routeKind]],
     "RequestKey" -> key,
     "CreatedAt" -> DateString[{"ISODate", "T", "Time"}],
     "Label" -> label,
@@ -395,11 +411,14 @@ StoredResultEntryInfoFromData[data_Association, path_String, root_String] :=
       "SchemaVersion" -> Lookup[data, "SchemaVersion",
         Missing["UnknownSchemaVersion"]],
       "RouteKind" -> routeKind,
+      "RouteSemanticVersion" -> Lookup[data, "RouteSemanticVersion",
+        Lookup[requestKey, "RouteSemanticVersion",
+          Missing["UnknownRouteSemanticVersion"]]],
       "Label" -> Lookup[data, "Label", FileBaseName[path]],
       "RequestKey" -> requestKey,
       "RequestSummary" ->
         If[AssociationQ[requestKey],
-          KeyDrop[requestKey, {"RouteKind"}],
+          KeyDrop[requestKey, {"RouteKind", "RouteSemanticVersion"}],
           Missing["UnknownRequestSummary"]
         ],
       "CreatedAt" -> Lookup[data, "CreatedAt", Missing["UnknownCreatedAt"]],
@@ -425,6 +444,7 @@ StoredResultUnreadableInfo[path_String, root_String] :=
     "SchemaVersion" -> Missing["UnreadableSchemaVersion"],
     "RouteKind" ->
       StoredResultsRouteKindFromSubdirectory[DirectoryName[path] // FileNameTake],
+    "RouteSemanticVersion" -> Missing["UnreadableRouteSemanticVersion"],
     "Label" -> FileBaseName[path],
     "RequestKey" -> Missing["UnreadableRequestKey"],
     "RequestSummary" -> Missing["UnreadableRequestSummary"],
@@ -555,6 +575,9 @@ StoredResultCacheMetadata[data_Association] :=
     "SchemaVersion" -> Lookup[data, "SchemaVersion",
       Missing["UnknownSchemaVersion"]],
     "RouteKind" -> Lookup[data, "RouteKind", Missing["UnknownRouteKind"]],
+    "RouteSemanticVersion" -> Lookup[data, "RouteSemanticVersion",
+      Lookup[Lookup[data, "RequestKey", <||>], "RouteSemanticVersion",
+        Missing["UnknownRouteSemanticVersion"]]],
     "Label" -> Lookup[data, "Label", Missing["UnknownLabel"]]
   |>;
 
@@ -615,8 +638,8 @@ PrintStoredResultHit[label_String] :=
 FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
    returnDiagnostics_, returnRecord_, requestedSteps_List, printSteps_,
    routeKind_String, recordMetadata_Association:<||>] :=
-  Module[{annotatedDiagnostics, selectedSteps, stages, cacheMetadata,
-     mergedMetadata, record},
+  Module[{annotatedDiagnostics, selectedSteps, displaySteps, stages,
+     cacheMetadata, mergedMetadata, record},
     annotatedDiagnostics =
       If[AssociationQ[diagnostics],
         AnnotateStoredResultDiagnostics[diagnostics, loadedData,
@@ -625,6 +648,13 @@ FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
         <|"StoredResultCache" -> StoredResultCacheMetadata[loadedData]|>
       ];
     selectedSteps = Lookup[annotatedDiagnostics, "IntermediateSteps", <||>];
+    displaySteps =
+      If[TrueQ[printSteps] && AssociationQ[selectedSteps] &&
+          Length[selectedSteps] == 0 && Length[requestedSteps] == 0,
+        Lookup[diagnostics, "IntermediateSteps", <||>]
+        ,
+        selectedSteps
+      ];
     If[TrueQ[returnRecord],
       stages =
         If[AssociationQ[selectedSteps],
@@ -645,15 +675,15 @@ FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
           IntegrationRunRecord[routeKind, result, annotatedDiagnostics,
             stages, mergedMetadata]
         ];
-      If[TrueQ[printSteps] && AssociationQ[record["IntermediateSteps"]] &&
-          Length[record["IntermediateSteps"]] > 0,
-        PrintIntermediateStepsAssociation[record["IntermediateSteps"]]
+      If[TrueQ[printSteps] && AssociationQ[displaySteps] &&
+          Length[displaySteps] > 0,
+        PrintIntermediateStepsAssociation[displaySteps]
       ];
       Return[record]
     ];
-    If[TrueQ[printSteps] && AssociationQ[selectedSteps] && Length[
-        selectedSteps] > 0,
-      PrintIntermediateStepsAssociation[selectedSteps]
+    If[TrueQ[printSteps] && AssociationQ[displaySteps] && Length[
+        displaySteps] > 0,
+      PrintIntermediateStepsAssociation[displaySteps]
     ];
     If[TrueQ[returnDiagnostics],
       {result, annotatedDiagnostics}

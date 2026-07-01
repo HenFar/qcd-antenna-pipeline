@@ -37,6 +37,42 @@ The guiding rule is:
 - known contract mismatches are called out explicitly rather than silently
   normalized as if they were correct public behavior
 
+## Transparency Index
+
+This section is the shortest “what is really here?” map for both users and
+developers.
+
+- supported public physics routes:
+  the massless release matrix in `## Supported Release Matrix`
+- callable but non-release branches:
+  `## Experimental Branches`
+- intended public physics contract versus current implementation reality:
+  `## Current Contract Notes`
+- public functions, options, objects, and reports:
+  `## Public API`, `### Public Options Reference`, and `## Record And Object Appendix`
+- stored-result and cache behavior:
+  `### Stored Results And Transparent Reuse`
+- route metadata, conventions, and environment inspection:
+  `AntennaPipelineConventionReport[]`,
+  `AntennaPipelineDimRegDeclaration[]`,
+  `AntennaRouteProfileReport[...]`,
+  `AntennaRouteEnvironmentReport[...]`,
+  and `AntennaPipelineDefaults[]`
+- contributor-facing implementation structure:
+  `## Internal Architecture For Modifying Routes`
+
+Strict transparency rule:
+
+- if a function, option, object field, route family, or workflow switch is not
+  described in the public API, option reference, experimental-branch notes, or
+  implementation notes below, it should be treated as internal rather than as a
+  hidden supported feature
+- internal developer globals and internal helper symbols may exist in the code,
+  but they are not part of the public contract unless they are documented here
+- this README is intended to be complete enough that a physicist can determine
+  what the package promises, what it merely exposes for inspection, and what it
+  does not yet claim
+
 ## Active Implementation Plan
 
 This repository is currently being advanced through a strict task-by-task
@@ -57,7 +93,7 @@ The active task list is:
 - Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
 - Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (done)
 - Task 7: add an explicit bare/prototype public option (done for direct `BuildAntenna[...]` expression output)
-- Task 8: add a supported global default environment mechanism
+- Task 8: add a supported global default environment mechanism (done)
 - Task 9: re-audit stored-result semantics after semantics repair
 - Task 10: build a physics-aware validation layer
 - Task 11: complete the massive `A30` second-master derivation
@@ -74,12 +110,55 @@ Current execution status:
   Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
   Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
   Task 7: add an explicit bare/prototype public option (direct `BuildAntenna[...]` expression output only)
+  Task 8: add a supported global default environment mechanism
 - not yet done
-  Tasks 8-13
+  Tasks 9-13
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
 polish that would otherwise document the wrong boundary.
+
+## Completed Work Index
+
+This is the short ledger of what the completed tasks have already changed in the
+public package surface.
+
+- Task 1:
+  one canonical convention metadata model now feeds the code-level convention
+  reports, so intended contract, current implementation reality, and prototype
+  status are described from one source of truth
+- Task 2:
+  route-level environment reporting now exposes effective defaults and route
+  metadata for build, integration, and one-shot calls
+- Task 3:
+  the dimensional-regularization declaration is now explicit in code and
+  inspectable through `AntennaPipelineDimRegDeclaration[]`
+- Task 4:
+  build routes now carry an explicit public/prototype boundary internally rather
+  than conflating the route-native payload with the intended public output
+- Task 5a:
+  the default `BuildAntenna[A, 3, 1, ...]` public branch now applies the
+  repaired build-side presentation boundary, while the route-native branch is
+  preserved for integration-facing work
+- Task 5b:
+  deferred; nonzero integrated `A31` residuals and deeper structural
+  renormalization cleanup are still pending
+- Task 6:
+  the integration convention bridge is now explicit and inspectable in backend
+  diagnostics rather than depending on implicit backend normalization accidents
+- Task 7:
+  `BuildAntenna[..., BuildOutputBranch -> "Public"|"Prototype"]` is now a
+  documented public selector for direct expression output, with its support
+  boundary stated honestly
+- Task 8:
+  supported package-wide defaults now exist through
+  `AntennaPipelineDefaults[]`, `SetAntennaPipelineDefaults[...]`, and
+  `ResetAntennaPipelineDefaults[]`, with explicit precedence and inspectable
+  effective per-head resolutions
+- Task 9:
+  stored-result identity now includes a route-semantic version barrier and
+  driver-level nested-default fingerprints, so repaired public semantics do not
+  silently collide with older cache entries
 
 ## Release Promise
 
@@ -482,6 +561,11 @@ Inspection and return-shape options:
   Request selected named intermediate stages.
 - `PrintIntermediateSteps`
   Print the requested stages to the kernel output.
+
+Inspection default values:
+
+- `IntermediateSteps -> {}`
+- `PrintIntermediateSteps -> False`
 - `ReturnBuildData`
   Return the internal build-side association used by the route layer.
 - `ReturnAntennaObject`
@@ -508,6 +592,13 @@ Stored-result options:
   Force recomputation and refresh the stored cache entry.
 - `ResultsCacheRoot`
   Override the default repo-local stored-results directory.
+
+Stored-result default values:
+
+- `UseStoredResults -> False`
+- `StoreResults -> False`
+- `RefreshStoredResults -> False`
+- `ResultsCacheRoot -> Automatic`
 
 Build and integration routing options:
 
@@ -554,6 +645,15 @@ Workflow and diagnostics options:
   Request extended timing diagnostics from heavy integration routes.
 - `printDiagram`, `Verbose`, `prefactor`
   Build-side workflow controls used mainly for route inspection and derivation.
+
+Public-versus-internal note:
+
+- the options listed in this reference are the supported user-visible switches
+- options documented here may still be marked experimental or provisional in
+  meaning, but they are not hidden features
+- symbols or globals that are not documented here should be treated as internal
+  implementation controls for developers rather than as part of the external
+  package contract
 
 Driver-specific options:
 
@@ -658,8 +758,9 @@ Task 2 status:
 - done: the report includes effective backend, `PaVeEvaluation`, scale
   normalization, cache-policy defaults, prototype-routing defaults, and
   mass-handling notes
-- not yet done: configurable global default overrides; the current report
-  reflects built-in route/profile/default resolution only
+- done: configurable package-wide default overrides are now supported through a
+  dedicated defaults layer, and the route-environment report now includes that
+  global-default state explicitly
 
 Task 3 status:
 
@@ -832,6 +933,21 @@ Behavioral notes:
   public shape expected by the caller
 - diagnostics are annotated so callers can distinguish cached reuse from a fresh
   run
+- cache identity is not just the visible call arguments; it also includes the
+  route kind, a route-semantic version, and any convention-critical nested
+  defaults that can change the public meaning of the result
+- after a semantics repair, older stored entries are intentionally treated as
+  stale rather than silently replayed under the new contract
+- `BuildAntenna[..., BuildOutputBranch -> "Public"]` and
+  `BuildAntenna[..., BuildOutputBranch -> "Prototype"]` are stored under
+  different cache identities and therefore do not collide
+- driver-level stored results for `BuildRRatio[...]` and `TObject[...]` also
+  encode the effective nested `BuildAndIntegrateAntenna[...]` convention
+  defaults they depend on, so package-wide environment changes do not reuse a
+  semantically stale top-level cache hit
+- `PrintIntermediateSteps -> True` prints fresh intermediate stages on a fresh
+  run; on a stored-result replay it prints the stored intermediate-stage payload
+  when that payload is present rather than silently suppressing the stage view
 - the one-shot `BuildAndIntegrateAntenna[...]` route forwards its stored-result
   controls consistently into the delegated build stage as well as its own
   top-level cache layer
@@ -1494,6 +1610,43 @@ Normal return shape:
   `IntegrateAntenna`, and `BuildAndIntegrateAntenna` environment summaries,
   together with route contract-status notes
 
+### `AntennaPipelineDefaults[]`
+
+Purpose:
+
+- inspect the currently active supported package-wide default environment
+
+Normal return shape:
+
+- an association containing:
+  the current user-installed defaults,
+  the supported option keys,
+  the managed public heads,
+  the explicit precedence model,
+  and per-head built-in versus effective default-resolution summaries
+
+### `SetAntennaPipelineDefaults[...]`
+
+Purpose:
+
+- install supported package-wide default option overrides across the public API
+
+Representative usage:
+
+```wl
+SetAntennaPipelineDefaults[<|
+  "UseStoredResults" -> True,
+  "KinematicScale" -> q2,
+  "NormalizeKinematicScale" -> True
+|>]
+```
+
+### `ResetAntennaPipelineDefaults[]`
+
+Purpose:
+
+- restore the built-in public option defaults after package-wide overrides
+
 ### Option Meaning Notes
 
 - `Component` only matters on routes with public component splits such as
@@ -1504,6 +1657,16 @@ Normal return shape:
   `RefreshStoredResults` are first-class public controls on the main build,
   integration, and driver routes, but not yet exposed through the bulk helper
   wrappers.
+- the public defaults for the cache and inspection controls are:
+  `UseStoredResults -> False`,
+  `StoreResults -> False`,
+  `RefreshStoredResults -> False`,
+  `ResultsCacheRoot -> Automatic`,
+  `IntermediateSteps -> {}`,
+  `PrintIntermediateSteps -> False`
+- `PrintIntermediateSteps -> True` prints requested intermediate stages on fresh
+  runs, and on stored-result replays it prints the stored intermediate-stage
+  payload when available.
 - `AllowPrototypeTargets` and `UseSourceModelRoute` are branch-level
   or derivation-level controls and should not be read as part of the stable
   release contract.
@@ -1891,6 +2054,22 @@ Task 7 implementation note:
 - `BuildAntennaObject[...]`, `ReturnAntennaObject -> True`, and
   `IntegrableForm -> True` currently reject the prototype branch on purpose,
   because those flows still define the integration-facing public contract
+
+Task 8 implementation note:
+
+- the package now exposes a supported package-wide defaults layer through
+  `AntennaPipelineDefaults[]`, `SetAntennaPipelineDefaults[...]`, and
+  `ResetAntennaPipelineDefaults[]`
+- this layer works by managing the public `Options[...]` surfaces of the main
+  supported entry points rather than by smuggling hidden per-call overrides
+- the resulting precedence is explicit and deterministic:
+  built-in defaults < package-wide user defaults < per-call options
+- `AntennaPipelineDefaults[]` now also reports the built-in supported defaults
+  and the currently effective supported defaults for each managed public head,
+  so users can inspect which package-wide overrides are actively in force
+- `AntennaPipelineConventionReport[]` and
+  `AntennaRouteEnvironmentReport[...]` now both expose the active global
+  defaults state, so runtime inspection and actual call behavior stay aligned
 
 These lazily memoize reusable tree-level ingredients. The point is not only
 speed. It also makes the source of shared Born objects explicit, so different

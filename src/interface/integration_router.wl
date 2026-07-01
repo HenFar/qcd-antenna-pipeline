@@ -999,7 +999,7 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
             GenerateMissingBases -> OptionValue["GenerateMissingBases"],
             ReturnTTerms -> OptionValue["ReturnTTerms"],
             IntermediateSteps -> IntegrationRecordStepLabels[],
-            PrintIntermediateSteps -> False,
+            PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
             DetailedTimingDiagnostics -> OptionValue[
               "DetailedTimingDiagnostics"],
             UseStoredResults -> False,

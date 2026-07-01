@@ -218,7 +218,9 @@ TObjectStoredResultKey[order_Integer, finalState_, options_Association] :=
       "Order" -> order,
       "FinalState" -> NormalizeTObjectFinalState[finalState],
       "quarkMass" -> Lookup[options, "quarkMass", 0],
-      "ExpansionOrder" -> Lookup[options, "ExpansionOrder", Automatic]
+      "ExpansionOrder" -> Lookup[options, "ExpansionOrder", Automatic],
+      "NestedBuildAndIntegrateDefaults" ->
+        BuildRRatioNestedBuildAndIntegrateDefaults[]
     |>
   ];
 
@@ -459,12 +461,38 @@ BuildRRatioIngredientCacheOptions[options_Association] :=
     |>
   ];
 
+BuildRRatioNestedBuildAndIntegrateDefaults[] :=
+  Module[{routeDefaults},
+    routeDefaults =
+      NormalizeStoredResultOptionAssociation[
+        Association[Options[BuildAndIntegrateAntenna]]
+      ];
+    <|
+      "ApplyFeynCalcMS" -> Lookup[routeDefaults, "ApplyFeynCalcMS", True],
+      "PaVeEvaluation" -> Lookup[routeDefaults, "PaVeEvaluation",
+        "PaXEvaluate"],
+      "KinematicScale" -> Lookup[routeDefaults, "KinematicScale", q2],
+      "NormalizeKinematicScale" -> Lookup[routeDefaults,
+        "NormalizeKinematicScale", True],
+      "ApplyDimReg" -> Lookup[routeDefaults, "ApplyDimReg", True],
+      "ReductionBackend" -> Lookup[routeDefaults, "ReductionBackend",
+        Automatic],
+      "LoopMomentum" -> Lookup[routeDefaults, "LoopMomentum", l],
+      "BasisFamily" -> Lookup[routeDefaults, "BasisFamily", Automatic],
+      "BasisRoot" -> Lookup[routeDefaults, "BasisRoot", Automatic],
+      "GenerateMissingBases" -> Lookup[routeDefaults,
+        "GenerateMissingBases", False]
+    |>
+  ];
+
 BuildRRatioStoredResultKey[model_Symbol, options_Association] :=
   StoredResultKeyAssociation[
     "BuildRRatio",
     <|
       "Model" -> SymbolName[Unevaluated[model]],
       "quarkMass" -> Lookup[options, "quarkMass", 0],
+      "NestedBuildAndIntegrateDefaults" ->
+        BuildRRatioNestedBuildAndIntegrateDefaults[],
       "ResultForm" -> NormalizeBuildRRatioResultForm[
         Lookup[options, "ResultForm", "FiniteMSBar"]]
     |>

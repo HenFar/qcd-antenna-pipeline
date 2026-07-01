@@ -2339,15 +2339,19 @@ Options[NormalizeIBPIntegratedResult] = {
 
 NormalizeIBPIntegratedResult[withMasters_, profile_Association,
    OptionsPattern[]] :=
-  Module[{eps, scaleSymbol, normalizedScaleQ, expansionOrder, baseNormalized,
-     conventionFactor, output},
-    eps = FeynCalc`Epsilon;
+  Module[{epsSeries, scaleSymbol, normalizedScaleQ, expansionOrder,
+     baseNormalized, conventionFactor, output},
+    epsSeries = Unique["eps"];
     scaleSymbol = OptionValue[KinematicScale];
     normalizedScaleQ = TrueQ[OptionValue[NormalizeKinematicScale]];
     expansionOrder = Lookup[profile, "ExpansionOrder", 0];
     baseNormalized =
       withMasters * IBPNormalization[profile] //
-      ReplaceAll[#, d -> 4 - 2 eps]& //
+      ReplaceAll[#, {
+        d -> 4 - 2 epsSeries,
+        eps -> epsSeries,
+        FeynCalc`Epsilon -> epsSeries
+      }]& //
       Together //
       Simplify;
     conventionFactor =
@@ -2360,7 +2364,8 @@ NormalizeIBPIntegratedResult[withMasters_, profile_Association,
         Identity
       ] //
       Together //
-      Simplify;
+      Simplify //
+      ReplaceAll[#, epsSeries -> FeynCalc`Epsilon]&;
     <|
       "ConventionBridgeFactor" -> conventionFactor,
       "NormalizedResult" -> output
@@ -2384,10 +2389,12 @@ Options[IBPToSeriesWithDiagnostics] = Options[IBPToSeries];
 
 IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association,
    opts:OptionsPattern[]] :=
-  Module[{rawLiteRed, rawMapped, withMasters, normalizationAssociation,
-     conventionFactor, normalized, series, rawLiteRedSeconds,
+  Module[{epsSeries, rawLiteRed, rawMapped, withMasters,
+     normalizationAssociation, conventionFactor, normalized, series,
+     rawLiteRedSeconds,
      rawMappedSeconds, masterSubstitutionSeconds, normalizationSeconds,
      seriesSeconds},
+    epsSeries = Unique["eps"];
     If[reduced === $Failed,
       Return[<|"Integrated" -> $Failed, "Stages" -> <|"RawLiteRedCombination"
             -> $Failed, "MasterMappedExpression" -> $Failed,
@@ -2426,10 +2433,16 @@ IBPToSeriesWithDiagnostics[rawReduced_, reduced_, profile_Association,
     normalized = normalizationAssociation["NormalizedResult"];
     {seriesSeconds, series} =
       AbsoluteTiming[
-        Series[normalized, {eps, 0, profile["ExpansionOrder"]}] //
+        Series[
+          normalized /. {
+            eps -> epsSeries,
+            FeynCalc`Epsilon -> epsSeries
+          },
+          {epsSeries, 0, profile["ExpansionOrder"]}
+        ] //
         Normal //
         FullSimplify //
-        ReplaceAll[#, eps -> FeynCalc`Epsilon]& //
+        ReplaceAll[#, epsSeries -> FeynCalc`Epsilon]& //
         Collect[#, FeynCalc`Epsilon]&
       ];
     <|"Integrated" -> series, "Stages" -> <|"RawLiteRedCombination" ->

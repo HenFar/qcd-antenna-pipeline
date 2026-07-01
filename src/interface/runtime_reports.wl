@@ -265,6 +265,7 @@ AntennaPipelineConventionReport[] :=
   Module[{model},
     model = AntennaPipelineConventionModel[];
     <|
+    "GlobalDefaults" -> AntennaPipelineDefaults[],
     "PublicDefaultOptions" -> <|
       "BuildAntenna" ->
         SelectPublicOptionDefaults[
@@ -445,6 +446,7 @@ AntennaRouteEnvironmentReport[key_List] :=
   <|
     "Key" -> key,
     "Name" -> Lookup[AntennaProfile[key], "Name", Missing["NotAvailable"]],
+    "GlobalDefaults" -> AntennaPipelineDefaults[],
     "BuildAntenna" -> BuildRouteEnvironmentResolution[key],
     "IntegrateAntenna" -> IntegrationRouteEnvironmentResolution[key],
     "BuildAndIntegrateAntenna" ->
