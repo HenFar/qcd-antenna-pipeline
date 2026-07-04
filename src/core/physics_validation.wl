@@ -274,6 +274,7 @@ Options[AntennaPhysicsValidationReport] = {
   quarkMass -> 0,
   "ExpansionOrder" -> 0,
   Component -> All,
+  "EvaluateUnavailableRoutes" -> False,
   "UseStoredResults" -> True,
   "StoreResults" -> False,
   "RefreshStoredResults" -> False,
@@ -293,11 +294,37 @@ Options[AntennaPhysicsValidationReport] = {
 AntennaPhysicsValidationReport[type_, numFinalParticles_Integer,
    loopOrder_Integer, OptionsPattern[]] :=
   Module[{key, component, expansionOrder, result, diagnostics,
-     integratedValidation, supportQ},
+     integratedValidation, supportQ, availability},
     key = {type, numFinalParticles, loopOrder};
     component = OptionValue[Component];
     expansionOrder = OptionValue["ExpansionOrder"];
     supportQ = SupportedMasslessReleaseRouteQ[key];
+    availability = PhysicsValidationTargetAvailabilityProfile[key];
+    If[availability["ExpectedStatus"] === "NotAvailableYet" &&
+        !TrueQ[OptionValue["EvaluateUnavailableRoutes"]],
+      Return[
+        <|
+          "Key" -> key,
+          "Component" -> CanonicalAntennaComponentName[component],
+          "SupportedMasslessReleaseRoute" -> supportQ,
+          "ValidationInput" -> <|
+            "quarkMass" -> OptionValue[quarkMass],
+            "ExpansionOrder" -> expansionOrder,
+            "Component" -> CanonicalAntennaComponentName[component]
+          |>,
+          "ValidationFamily" -> availability["ValidationFamily"],
+          "Availability" -> availability["Availability"],
+          "ValidationStatus" -> "NotAvailableYet",
+          "ExpectedStatus" -> availability["ExpectedStatus"],
+          "Note" -> availability["Note"],
+          "RouteDiagnosticsSummary" -> <||>,
+          "ObservedPoleCoefficients" -> Missing["SkippedUnavailableRoute"],
+          "TargetPoleCoefficients" -> Missing["NotAvailable"],
+          "ResidualPoleCoefficients" -> Missing["NotAvailable"],
+          "ResidualIsZero" -> Missing["NotAvailable"]
+        |>
+      ]
+    ];
     result =
       BuildAndIntegrateAntenna[type, numFinalParticles, loopOrder,
         quarkMass -> OptionValue[quarkMass],
@@ -331,6 +358,33 @@ AntennaPhysicsValidationReport[type_, numFinalParticles_Integer,
       ]
     ];
     {result, diagnostics} = result;
+    If[result === $Failed,
+      Return[
+        <|
+          "Key" -> key,
+          "Component" -> CanonicalAntennaComponentName[component],
+          "SupportedMasslessReleaseRoute" -> supportQ,
+          "ValidationInput" -> <|
+            "quarkMass" -> OptionValue[quarkMass],
+            "ExpansionOrder" -> expansionOrder,
+            "Component" -> CanonicalAntennaComponentName[component]
+          |>,
+          "ValidationFamily" -> availability["ValidationFamily"],
+          "Availability" -> availability["Availability"],
+          "ValidationStatus" -> "RouteEvaluationFailed",
+          "ExpectedStatus" -> availability["ExpectedStatus"],
+          "Note" -> availability["Note"],
+          "RouteDiagnosticsSummary" -> IntegratedPoleValidationDiagnosticSummary[
+            key, diagnostics],
+          "FailureReason" -> Lookup[diagnostics, "Reason",
+            Missing["UnknownReason"]],
+          "ObservedPoleCoefficients" -> Missing["RouteEvaluationFailed"],
+          "TargetPoleCoefficients" -> Missing["NotAvailable"],
+          "ResidualPoleCoefficients" -> Missing["NotAvailable"],
+          "ResidualIsZero" -> Missing["NotAvailable"]
+        |>
+      ]
+    ];
     integratedValidation =
       BuildIntegratedPoleValidationReport[key, result, diagnostics, component,
         expansionOrder];

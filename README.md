@@ -209,6 +209,21 @@ The current massive `A30` status is:
 - the fully internal closed master-substitution derivation is still not
   complete
 
+Why the integrated massive branch remains experimental:
+
+- the package runtime basis is not identical to the canonical literature basis
+  used for the published integrated massive `A30` result
+- the first runtime master is naturally identified with the bridged paper
+  `I1^(m,0,m)` object, but the second runtime master is a dotted `LiteRed`
+  basis master whereas the paper `I2^(m,0,m)` object is a numerator master
+- the package therefore already has a real target-level bridge:
+  it can reduce the massive integrand to the runtime `MX30` basis and match the
+  final integrated literature target through a provisional second-master bridge
+- what is still missing is the fully derived, defensible paper-to-runtime basis
+  relation for that second master; until that is completed, the integrated
+  massive branch is kept as an experimental runtime/provenance path rather than
+  promoted to a release-guaranteed closed derivation
+
 So the honest endpoint today is:
 
 - correct unintegrated massive antenna
@@ -815,6 +830,21 @@ The intended public contract is:
 - raw pre-counterterm or bare algebra is an internal/provenance object unless a
   future explicit option exposes it intentionally
 
+Why `A31` is still architecturally unfinished:
+
+- the package already knows the public-facing lower-`A30` UV-counterterm
+  pattern that should be applied to the `A31` components
+- however, the current pipeline still realizes that boundary most cleanly in
+  route-specific extraction/integration logic rather than from one fully
+  separated bare-to-renormalized build module
+- that is why the current public `BuildAntenna[A, 3, 1, ...]` repair is a
+  branch-level package-facing correction, while the prototype branch preserves
+  the pre-counterterm route-native extracted components for provenance and
+  debugging
+- the remaining debt is therefore not uncertainty about which public
+  counterterms are intended, but the lack of a deeper refactor that would make
+  that renormalized public boundary structural throughout the pipeline
+
 The package currently uses `q2` as the canonical kinematic normalization scale
 for public integrated routes. The integration layer exposes this explicitly
 through:
@@ -1112,7 +1142,7 @@ bash dev/run_physics_validation.sh
 That script is developer-facing rather than the external-user acceptance test.
 Its current scope is the first `Task 10` slice:
 integrated pole-structure validation for the supported massless integrated
-routes, with honest `Pass`, `Fail`, `KnownIssue`, and `NotAvailableYet`
+routes, with honest `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, and `NotAvailableYet`
 statuses.
 
 Operational notes:
@@ -1643,6 +1673,10 @@ Current scope:
   residuals do not vanish
 - `A40`, `B40`, and `C40` are currently reported as `NotAvailableYet` for
   exact pole-target validation rather than being silently treated as checked
+- routes without an exact target are skipped by default in the aggregate
+  validation harness unless explicitly requested
+- if a public route itself returns `$Failed`, the validation layer reports
+  `RouteEvaluationFailed` rather than mislabeling that as a physics mismatch
 
 Representative usage:
 
@@ -2139,6 +2173,8 @@ Task 10 implementation note:
   do not vanish, instead of being forced into a fake pass/fail story
 - `A40`, `B40`, and `C40` currently report `NotAvailableYet` for exact
   pole-target validation rather than pretending those checks already exist
+- the validator now distinguishes a genuine comparison failure from a route
+  evaluation failure, and it skips exact-target-unavailable routes by default
 - the developer harness for this slice now lives at
   `dev/run_physics_validation.sh`
 
