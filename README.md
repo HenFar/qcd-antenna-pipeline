@@ -82,7 +82,8 @@ current execution order is:
 1. convention and public-contract foundation
 2. build-side semantics repair
 3. defaults, cache, and validation
-4. massive `A30`, examples, and extensions
+4. massive `A30`, validation expansion, and user-facing examples
+5. longer-term exploratory extensions
 
 The active task list is:
 
@@ -90,15 +91,15 @@ The active task list is:
 - Task 2: add effective route/environment resolution reporting (done)
 - Task 3: declare dimensional-regularization scheme status in code (done)
 - Task 4: introduce an explicit public vs bare/prototype output boundary (done)
-- Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
+- Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done; current public fix accepted, deeper residual cleanup moved to longer-term work)
 - Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (done)
 - Task 7: add an explicit bare/prototype public option (done for direct `BuildAntenna[...]` expression output)
 - Task 8: add a supported global default environment mechanism (done)
 - Task 9: re-audit stored-result semantics after semantics repair
-- Task 10: build a physics-aware validation layer
+- Task 10: build a physics-aware validation layer, beginning with integrated pole checks and then expanding to Catani-operator, Ward-identity, and factorization-limit validation
 - Task 11: complete the massive `A30` second-master derivation
 - Task 12: finish quickstart/examples/benchmarks
-- Task 13: prototype the longer-term extension ideas
+- Task 13: prototype the longer-term extension ideas, including deferred `5b` residual cleanup and exploratory Slavnov-Taylor / BRST-aware validation
 
 Current execution status:
 
@@ -107,7 +108,7 @@ Current execution status:
   Task 2: add effective route/environment resolution reporting
   Task 3: declare dimensional-regularization scheme status in code
   Task 4: introduce an explicit public vs bare/prototype output boundary
-  Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done, `5b` deferred)
+  Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done; `5b` moved to longer-term exploratory work)
   Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
   Task 7: add an explicit bare/prototype public option (direct `BuildAntenna[...]` expression output only)
   Task 8: add a supported global default environment mechanism
@@ -141,8 +142,10 @@ public package surface.
   repaired build-side presentation boundary, while the route-native branch is
   preserved for integration-facing work
 - Task 5b:
-  deferred; nonzero integrated `A31` residuals and deeper structural
-  renormalization cleanup are still pending
+  moved to longer-term work; the current public-facing `A31` fix is treated as
+  the accepted sensible boundary for the present release, while nonzero
+  integrated residual cleanup and deeper structural renormalization work remain
+  future physics-side tasks
 - Task 6:
   the integration convention bridge is now explicit and inspectable in backend
   diagnostics rather than depending on implicit backend normalization accidents
