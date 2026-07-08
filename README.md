@@ -15,10 +15,35 @@ Load one package, call a small set of public functions, and reproduce the
 massless A-type antenna story needed for the NNLO SMQCD R-ratio workflow.
 ```
 
+This repo should be read as active research software under ongoing
+development, not as a finished or release-ready general-purpose package.
+Its current value is that it already exposes a real executable package core,
+an honest supported-versus-experimental split, and a documented implementation
+roadmap inside a live thesis project.
+
 This repo is no longer presented as an open-ended “finish every branch”
-research notebook. It is a package, `AntCalc`, with a completed massless target
-and two callable experimental branches that are intentionally outside the
-release guarantee.
+research notebook. It is a package, `AntCalc`, with one defended massless
+target, two callable experimental branches that are intentionally outside the
+current release guarantee, and several clearly marked unfinished sections that
+remain part of the active development process.
+
+## Project Status
+
+Status summary:
+
+- this is an in-progress research package tied to an active thesis codebase
+- it is suitable for inspection, testing, and academic evaluation
+- it is not yet a polished general release or a frozen final public version
+- supported routes are already usable, but the repository as a whole should be
+  understood as under active development
+
+Practical reading rule:
+
+- the supported release matrix defines what is currently defended
+- experimental branches and `dev/` workflows show ongoing work, not hidden
+  promises of completeness
+- unfinished checklist items are intentional status markers, not accidental
+  omissions
 
 ## How To Read This README
 
@@ -36,6 +61,8 @@ The guiding rule is:
   guarantee
 - known contract mismatches are called out explicitly rather than silently
   normalized as if they were correct public behavior
+- the repository should be read as an honest development snapshot of a serious
+  research-software project, not as a completed archival release
 
 ## Transparency Index
 
