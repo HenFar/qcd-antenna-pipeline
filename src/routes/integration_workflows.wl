@@ -694,7 +694,9 @@ BuildAndIntegrateRouteResult[type_, numFinalParticles_Integer, loopOrder_Integer
       profile = Join[profile, <|"BasisFamily" -> "A22TwoLoopTree", "ImplementationStatus" -> "ExperimentalTwoLoopTree"|>]
     ];
     expansionOrder = If[Lookup[options, "ExpansionOrder", Automatic] === Automatic, Lookup[profile, "ExpansionOrder", 0], Lookup[options, "ExpansionOrder", 0]];
-    If[Lookup[profile, "ImplementationStatus", "Implemented"] === "ScaffoldOnly" && Lookup[profile, "BasisFamily", Missing["NoFamily"]] =!= "MX30",
+    If[Lookup[profile, "ImplementationStatus", "Implemented"] === "ScaffoldOnly" &&
+        Lookup[profile, "BasisFamily", Missing["NoFamily"]] =!= "MX30" &&
+        !MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}],
       diagnostics = <|"Failed" -> True, "Reason" -> "IntegratedAntennaNotImplemented", "Profile" -> profile, "Contribution" -> Lookup[options, "Contribution", All]|>;
       Return[
         FormatFreshIntegrationReturn[
