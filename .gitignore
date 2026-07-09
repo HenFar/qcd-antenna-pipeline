@@ -10,3 +10,5 @@ eps
 *.tmp
 *.swp
 dev/tmp_src_new_parity_cache/
+
+stored_results/rratio/*.wl
