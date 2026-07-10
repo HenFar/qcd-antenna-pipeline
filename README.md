@@ -122,11 +122,20 @@ The active task list is:
 - Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (done)
 - Task 7: add an explicit bare/prototype public option (done for direct `BuildAntenna[...]` expression output)
 - Task 8: add a supported global default environment mechanism (done)
-- Task 9: re-audit stored-result semantics after semantics repair
-- Task 10: build a physics-aware validation layer, beginning with integrated pole checks and then expanding to Catani-operator, Ward-identity, and factorization-limit validation
-- Task 11: complete the massive `A30` second-master derivation
-- Task 12: finish quickstart/examples/benchmarks
-- Task 13: prototype the longer-term extension ideas, including deferred `5b` residual cleanup and exploratory Slavnov-Taylor / BRST-aware validation
+- Task 9: re-audit stored-result semantics after semantics repair (done)
+- Task 10: complete the urgent physics-validation and NNLO
+  observable-repair track:
+  `10a` contain and document the current raw `BuildRRatio[...]` failure (done),
+  `10b` audit `AssembleSMQCDRRatio[...]` against the thesis/paper formula and
+  route-level conventions,
+  `10c` resolve the unexpected `A22` exact-target mismatch,
+  `10d` encode exact `A40` / `B40` / `C40` pole targets,
+  `10e` extend the validator to Catani-operator structure,
+  `10f` add Ward-identity checks, and
+  `10g` add factorization-limit validation
+- Task 11: complete the massive `A30` second-master derivation, together with explicit master-integral provenance, basis-bridge checks, and artifact-verification tests
+- Task 12: finish quickstart/examples/benchmarks, add one canonical thesis-facing end-to-end example, and expose a dependency/environment report plus backend-failure diagnostics for user installs
+- Task 13: prototype the longer-term extension ideas, including deferred `5b` residual cleanup, exploratory Slavnov-Taylor / BRST-aware validation, package-boundary cleanup, and broader repo-hygiene / pacletization work
 
 Current execution status:
 
@@ -139,8 +148,24 @@ Current execution status:
   Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
   Task 7: add an explicit bare/prototype public option (direct `BuildAntenna[...]` expression output only)
   Task 8: add a supported global default environment mechanism
+  Task 9: re-audit stored-result semantics after semantics repair
 - not yet done
-  Tasks 9-13
+  Tasks 10-13
+
+Task 10 urgency note:
+
+- Task 10 is not a quick single-step finish anymore
+- the full scope is medium-to-large because it now includes a real
+  observable-level NNLO semantics audit, not only validator plumbing
+- the urgent near-term slices are `10b` and `10c`
+- `10b` is now the immediate priority because it determines whether
+  the current raw `BuildRRatio[...]` failure is mainly an assembly-formula bug,
+  a convention mismatch, or a bad ingredient handoff
+- `10c` is the next critical slice because `A22` is currently failing while
+  still marked `PassExpected`, which is not acceptable in the supervisor-facing
+  validation story
+- `10d` through `10g` remain part of Task 10, but they should come only after
+  the observable-level assembly semantics are trustworthy again
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -188,7 +213,9 @@ public package surface.
 - Task 9:
   stored-result identity now includes a route-semantic version barrier and
   driver-level nested-default fingerprints, so repaired public semantics do not
-  silently collide with older cache entries
+  silently collide with older cache entries; the one-shot `A22` route and the
+  top-level `BuildRRatio[SMQCD, quarkMass -> 0]` driver have now also been
+  revalidated through fresh and cached public-route checks
 
 ## Release Promise
 
@@ -454,6 +481,7 @@ AntennaPipelineConventionReport[]
 AntennaRouteProfileReport[type, numFinalParticles, loopOrder]
 AntennaRouteEnvironmentReport[type, numFinalParticles, loopOrder]
 AntennaPhysicsValidationReport[type, numFinalParticles, loopOrder]
+BuildRRatioPhysicsValidationReport[]
 RunSupportedMasslessPhysicsValidation[]
 ```
 
@@ -1575,6 +1603,14 @@ Options:
   Recompute and refresh a matching stored result.
 - `ResultForm`
   Select `"FiniteMSBar"` or `"RawDimRegSeries"`.
+  `FiniteMSBar` is the supported public release form.
+  `RawDimRegSeries` is currently a diagnostic/provisional route under active
+  validation rather than a validated release-level physics result.
+- current contract note:
+  the massless `BuildRRatio[SMQCD, quarkMass -> 0]` route is supported as a
+  finite public driver result, but the raw Laurent-series exposure is still
+  being used to debug NNLO observable assembly and should not yet be cited as a
+  fully validated public physics output
 
 ### `TObject[...]`
 
@@ -1715,12 +1751,43 @@ AntennaPhysicsValidationReport[A, 3, 0]
 AntennaPhysicsValidationReport[A, 3, 1, UseStoredResults -> True]
 ```
 
+### `BuildRRatioPhysicsValidationReport[]`
+
+Purpose:
+
+- validate the massless `BuildRRatio[SMQCD, quarkMass -> 0]` route at the raw
+  Laurent-series level
+
+Current scope:
+
+- evaluate `BuildRRatio[...]` with `ResultForm -> "RawDimRegSeries"`
+- extract the explicit epsilon-pole coefficients through epsilon^0
+- check that the observable-level poles cancel through epsilon^-1
+- compare the epsilon^0 coefficient against the known public finite SMQCD
+  expression
+- report a structured `Pass` / `Fail` / `RouteEvaluationFailed` status rather
+  than reducing this to a notebook-only spot check
+- current implementation status:
+  this validator currently exposes a real failing route, not a passing
+  reference check; the present raw series is not yet pole-free, does not yet
+  match the known finite target at epsilon^0, and may surface `$Failed`
+  contamination in the finite coefficient while the NNLO assembly semantics are
+  still under repair
+
+Representative usage:
+
+```wl
+BuildRRatioPhysicsValidationReport[]
+BuildRRatioPhysicsValidationReport[UseStoredResults -> True]
+```
+
 ### `RunSupportedMasslessPhysicsValidation[]`
 
 Purpose:
 
 - run the current physics-aware validation layer across the supported
-  integrated massless release routes and return one association of route
+  integrated massless release routes together with the current observable-level
+  `BuildRRatio[...]` validation slice, and return one association of route
   reports
 
 Representative usage:
@@ -2203,6 +2270,29 @@ Task 10 implementation note:
   do not vanish, instead of being forced into a fake pass/fail story
 - `A40`, `B40`, and `C40` currently report `NotAvailableYet` for exact
   pole-target validation rather than pretending those checks already exist
+- the validation layer now also includes
+  `BuildRRatioPhysicsValidationReport[]`, which checks the raw SMQCD
+  Laurent-series output for explicit pole cancellation and epsilon^0 agreement
+  with the known public finite expression
+- current Task 10 status:
+  this observable-level raw-series check is now implemented and already
+  returns a meaningful failure rather than a placeholder pass; the present
+  `RawDimRegSeries` route is not yet pole-free, and substituting the currently
+  encoded `A31` / `A22` target series still leaves uncancelled NNLO poles,
+  so the remaining issue is now localized to the NNLO `BuildRRatio[...]`
+  assembly semantics and/or its route-level convention interpretation rather
+  than only to validator plumbing
+- current Task 10 repair order:
+  first reproduce and contain the raw observable failure deterministically,
+  then audit `AssembleSMQCDRRatio[...]`, then resolve the unexpected `A22`
+  mismatch, and only after that broaden the exact-target and
+  identity/factorization checks
+- `10a` status:
+  done as a containment/documentation step; the raw
+  `BuildRRatio[..., ResultForm -> "RawDimRegSeries"]` route is now explicitly
+  documented as diagnostic/provisional, with the current uncancelled poles,
+  finite mismatch, and `$Failed` contamination risk flagged honestly in this
+  README
 - the validator now distinguishes a genuine comparison failure from a route
   evaluation failure, and it skips exact-target-unavailable routes by default
 - the developer harness for this slice now lives at

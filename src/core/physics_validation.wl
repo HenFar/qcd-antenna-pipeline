@@ -23,11 +23,26 @@ AntennaPhysicsValidationReport::usage =
 RunSupportedMasslessPhysicsValidation::usage =
   "RunSupportedMasslessPhysicsValidation[] runs AntennaPhysicsValidationReport[...] across the supported integrated massless release routes and returns an association of route reports.";
 
+BuildRRatioPhysicsValidationReport::usage =
+  "BuildRRatioPhysicsValidationReport[] validates the massless SMQCD BuildRRatio route at the raw Laurent-series level, including explicit pole cancellation and finite-term agreement with the known public finite expression.";
+
 IntegratedPoleCoefficientAssociation::usage =
   "IntegratedPoleCoefficientAssociation[expr] returns the Laurent coefficients from epsilon^-4 through epsilon^0 used by the current integrated pole-structure checks.";
 
 PhysicsValidationStatusCounts::usage =
   "PhysicsValidationStatusCounts[report] summarizes how many route reports landed in each validation status.";
+
+RRatioPoleCoefficientAssociation::usage =
+  "RRatioPoleCoefficientAssociation[expr] returns the Laurent coefficients from epsilon^-4 through epsilon^0 used by the current raw BuildRRatio validation checks.";
+
+RRatioFiniteCoefficient::usage =
+  "RRatioFiniteCoefficient[expr] extracts the epsilon^0 coefficient used by the current BuildRRatio finite-term agreement checks.";
+
+BuildRRatioNNLOContributionExpressions::usage =
+  "BuildRRatioNNLOContributionExpressions[ingredients] returns the separate NNLO A22-sector, A31-sector, and A40/B40/C40-sector contributions used by the current raw BuildRRatio validation diagnostics.";
+
+BuildRRatioNNLOContributionPoleBreakdown::usage =
+  "BuildRRatioNNLOContributionPoleBreakdown[ingredients] returns the Laurent-pole decomposition of the separate NNLO BuildRRatio contribution families.";
 
 IntegratedPoleCoefficientAssociation[expr_] :=
   Module[{eps, truncated},
@@ -48,6 +63,70 @@ IntegratedPoleCoefficientAssociation[expr_] :=
 
 IntegratedPoleCoefficientAssociation[expr_List] :=
   IntegratedPoleCoefficientAssociation /@ expr;
+
+RRatioPoleCoefficientAssociation[expr_] :=
+  IntegratedPoleCoefficientAssociation[expr];
+
+RRatioFiniteCoefficient[expr_] :=
+  Module[{eps, truncated},
+    eps = FeynCalc`Epsilon;
+    truncated =
+      Quiet[
+        Check[
+          Normal[Series[expr, {eps, 0, 0}]],
+          expr
+        ],
+        {SeriesData::sdatv, Series::esss}
+      ];
+    SafeIntegratedResidualSimplify[Coefficient[truncated, eps, 0]]
+  ];
+
+BuildRRatioNNLOContributionExpressions[ingredients_Association] :=
+  Module[{alphaS, n, nf, cNNLO},
+    alphaS = SMP["alpha_s"];
+    n = SUNN;
+    nf = Nf;
+    cNNLO = (alphaS / (2 Pi))^2;
+    <|
+      "A22Sector" ->
+        cNNLO*
+          FullSimplify[
+            (n - 1 / n) (
+              n ingredients["intA22"] +
+              1 / n ingredients["intTildeA22"] +
+              nf ingredients["intHatA22"] +
+              (n - 1 / n) ingredients["intBreveA22"]
+            )
+          ],
+      "A31Sector" ->
+        cNNLO*
+          FullSimplify[
+            (n - 1 / n) (
+              n (ingredients["intA31"] +
+                ingredients["intA21"] ingredients["intA30"]) -
+              1 / n (ingredients["intTildeA31"] +
+                ingredients["intA21"] ingredients["intA30"]) +
+              nf ingredients["intHatA31"]
+            )
+          ],
+      "A40B40C40Sector" ->
+        cNNLO*
+          FullSimplify[
+            (n - 1 / n) (
+              nf ingredients["intB40"] -
+              1 / n ingredients["intC40"] +
+              n ingredients["intA40"] -
+              1 / n ingredients["intTildeA40"]
+            )
+          ]
+    |>
+  ];
+
+BuildRRatioNNLOContributionPoleBreakdown[ingredients_Association] :=
+  Association @ KeyValueMap[
+    #1 -> RRatioPoleCoefficientAssociation[#2]&,
+    BuildRRatioNNLOContributionExpressions[ingredients]
+  ];
 
 ValidationComponentLabels[{a_Symbol /; SymbolName[a] === "A", 3, 1}] :=
   {"Leading", "Subleading", "Nf"};
@@ -408,6 +487,117 @@ AntennaPhysicsValidationReport[type_, numFinalParticles_Integer,
 Options[RunSupportedMasslessPhysicsValidation] =
   Options[AntennaPhysicsValidationReport];
 
+Options[BuildRRatioPhysicsValidationReport] = {
+  quarkMass -> 0,
+  "UseStoredResults" -> True,
+  "StoreResults" -> False,
+  "RefreshStoredResults" -> False,
+  "ResultsCacheRoot" -> Automatic
+};
+
+BuildRRatioPhysicsValidationReport[OptionsPattern[]] :=
+  Module[{result, diagnostics, rawExpression, finiteTarget, observedPoles,
+     poleResiduals, poleCancellationQ, finiteResidual, finiteAgreementQ,
+     validationStatus, ingredients, nnloContributionPoleBreakdown},
+    result =
+      BuildRRatio[SMQCD,
+        quarkMass -> OptionValue[quarkMass],
+        ResultForm -> "RawDimRegSeries",
+        "UseStoredResults" -> OptionValue["UseStoredResults"],
+        "StoreResults" -> OptionValue["StoreResults"],
+        "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
+        "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
+        ReturnDiagnostics -> True
+      ];
+    If[!MatchQ[result, {_, _Association}],
+      Return[
+        <|
+          "Key" -> "BuildRRatioSMQCD",
+          "ValidationFamily" -> "ObservableLaurentSeries",
+          "Availability" -> "RawSeriesEvaluationFailed",
+          "ValidationStatus" -> "RouteEvaluationFailed",
+          "Result" -> result
+        |>
+      ]
+    ];
+    {rawExpression, diagnostics} = result;
+    If[rawExpression === $Failed,
+      Return[
+        <|
+          "Key" -> "BuildRRatioSMQCD",
+          "ValidationFamily" -> "ObservableLaurentSeries",
+          "Availability" -> "RawSeriesEvaluationFailed",
+          "ValidationStatus" -> "RouteEvaluationFailed",
+          "FailureReason" -> Lookup[diagnostics, "Reason",
+            Missing["UnknownReason"]],
+          "RouteDiagnosticsSummary" -> KeyTake[diagnostics,
+            {"Model", "ResultForm", "AssemblySource"}]
+        |>
+      ]
+    ];
+    ingredients = Lookup[diagnostics, "Ingredients", Missing["NotAvailable"]];
+    finiteTarget = BuildRRatioSMQCDFiniteExpression[];
+    observedPoles = RRatioPoleCoefficientAssociation[rawExpression];
+    nnloContributionPoleBreakdown =
+      If[AssociationQ[ingredients],
+        BuildRRatioNNLOContributionPoleBreakdown[ingredients]
+        ,
+        Missing["NotAvailable"]
+      ];
+    poleResiduals =
+      Association @ KeyValueMap[
+        #1 -> SafeIntegratedResidualSimplify[
+          If[#1 < 0, #2, 0]
+        ]&,
+        observedPoles
+      ];
+    poleCancellationQ =
+      And @@ Table[
+        TrueQ[Lookup[poleResiduals, power, Missing["MissingPower"]] === 0],
+        {power, -4, -1}
+      ];
+    finiteResidual =
+      SafeIntegratedResidualSimplify[
+        RRatioFiniteCoefficient[rawExpression] - finiteTarget
+      ];
+    finiteAgreementQ = TrueQ[finiteResidual === 0];
+    validationStatus =
+      Which[
+        !TrueQ[poleCancellationQ],
+          "Fail"
+        ,
+        !TrueQ[finiteAgreementQ],
+          "Fail"
+        ,
+        True,
+          "Pass"
+      ];
+    <|
+      "Key" -> "BuildRRatioSMQCD",
+      "ValidationFamily" -> "ObservableLaurentSeries",
+      "Availability" -> "ExactFiniteTargetAvailable",
+      "ValidationStatus" -> validationStatus,
+      "ExpectedStatus" -> "PassExpected",
+      "Note" -> "The raw BuildRRatio Laurent series should be pole-free through epsilon^-1 and its epsilon^0 coefficient should match the known public finite SMQCD expression.",
+      "ValidationInput" -> <|
+        "quarkMass" -> OptionValue[quarkMass],
+        "ResultForm" -> "RawDimRegSeries"
+      |>,
+      "RouteDiagnosticsSummary" -> KeyTake[diagnostics,
+        {"Model", "ResultForm", "AssemblySource"}],
+      "ObservedPoleCoefficients" -> observedPoles,
+      "NNLOContributionPoleBreakdown" -> nnloContributionPoleBreakdown,
+      "PoleCancellationResiduals" -> poleResiduals,
+      "PoleCancellationQ" -> poleCancellationQ,
+      "ObservedFiniteCoefficient" -> RRatioFiniteCoefficient[rawExpression],
+      "TargetFiniteCoefficient" -> finiteTarget,
+      "FiniteResidual" -> finiteResidual,
+      "FiniteAgreementQ" -> finiteAgreementQ,
+      "StoredResultCache" -> Lookup[diagnostics, "StoredResultCache",
+        Missing["NotAvailable"]]
+    |>
+  ];
+
 RunSupportedMasslessPhysicsValidation[OptionsPattern[]] :=
   Association[
     "A21" -> AntennaPhysicsValidationReport[A, 2, 1,
@@ -535,7 +725,13 @@ RunSupportedMasslessPhysicsValidation[OptionsPattern[]] :=
       "BasisFamily" -> OptionValue["BasisFamily"],
       "BasisRoot" -> OptionValue["BasisRoot"],
       "GenerateMissingBases" -> OptionValue["GenerateMissingBases"],
-      "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"]]
+      "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"]],
+    "BuildRRatioSMQCD" -> BuildRRatioPhysicsValidationReport[
+      quarkMass -> OptionValue[quarkMass],
+      "UseStoredResults" -> OptionValue["UseStoredResults"],
+      "StoreResults" -> OptionValue["StoreResults"],
+      "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
+      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"]]
   ];
 
 PhysicsValidationStatusCounts[report_Association] :=
