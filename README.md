@@ -128,7 +128,9 @@ The active task list is:
   `10a` contain and document the current raw `BuildRRatio[...]` failure (done),
   `10b` audit `AssembleSMQCDRRatio[...]` against the thesis/paper formula and
   route-level conventions,
-  `10c` resolve the unexpected `A22` exact-target mismatch,
+  `10c` resolve the unexpected `A22` exact-target mismatch by making the
+  public integrated `A22` route reproduce the exact paper
+  `T_{qq}^{(6)}` component set from `hep-ph/0403057` (done),
   `10d` encode exact `A40` / `B40` / `C40` pole targets,
   `10e` extend the validator to Catani-operator structure,
   `10f` add Ward-identity checks, and
@@ -161,9 +163,10 @@ Task 10 urgency note:
 - `10b` is now the immediate priority because it determines whether
   the current raw `BuildRRatio[...]` failure is mainly an assembly-formula bug,
   a convention mismatch, or a bad ingredient handoff
-- `10c` is the next critical slice because `A22` is currently failing while
-  still marked `PassExpected`, which is not acceptable in the supervisor-facing
-  validation story
+- `10c` is now complete:
+  the public integrated `A22` route reproduces the exact paper
+  `T_{qq}^{(6)}` component targets and the previously broken combined
+  diagnostics route now completes successfully
 - `10d` through `10g` remain part of Task 10, but they should come only after
   the observable-level assembly semantics are trustworthy again
 
@@ -342,6 +345,10 @@ The intended public contract of the package is:
   return objects in that same public convention
 - bare or pre-counterterm intermediate expressions are provenance-level objects,
   not the default public endpoint
+- integrated `A22` should be read more narrowly than a generic “final antenna”:
+  its supported public endpoint is the paper-facing two-parton
+  `T_{qq}^{(6)}` object, component by component, in the convention tracked back
+  to `hep-ph/0403057`
 
 Not yet implemented or not yet repaired:
 
@@ -353,6 +360,11 @@ Not yet implemented or not yet repaired:
 - object-facing and integration-facing prototype output is not yet a supported
   public route; `BuildAntennaObject[...]`, `ReturnAntennaObject -> True`, and
   `IntegrableForm -> True` remain pinned to the public branch intentionally
+- the `A22` repair is still an active code track: the intended contract is the
+  exact paper `T_{qq}^{(6)}` object, and that exact-target validation is now
+  passing component by component on the public integrated route
+- any future residual mismatch against that target should be treated as a live
+  bug rather than as accepted package semantics
 
 ## Route Status Notes
 
@@ -795,6 +807,11 @@ The most important route-shape cases are:
   `intBreveA22`
 - `A22` also has a contribution split at the route level, most notably
   `TwoLoopTree` and `OneLoopSelf`
+- the intended meaning of those four integrated public outputs is not merely
+  “the package’s own final A22 antenna pieces”, but the exact paper-facing
+  `T_{qq}^{(6)}` component set: `Leading`, `Subleading`, and `Nf` from the
+  `T_{qq}^{(6,[2x0])}` branch together with `Breve` from
+  `T_{qq}^{(6,[1x1])}`
 
 Examples:
 
@@ -812,6 +829,9 @@ split into its public components; it does not promise a generic
 `PaVe`-reduced form. The reduced `A22` route lives on the integration side,
 where the two-loop branch is handled through the package’s dedicated
 master-integral machinery rather than through a generic one-loop `PaVe` basis.
+On the integrated side, the package contract is specifically the paper-facing
+`T_{qq}^{(6)}` object rather than a looser package-internal approximation that
+is only later identified with that literature quantity.
 
 ### Normalization And Renormalization State
 
@@ -2284,9 +2304,16 @@ Task 10 implementation note:
   than only to validator plumbing
 - current Task 10 repair order:
   first reproduce and contain the raw observable failure deterministically,
-  then audit `AssembleSMQCDRRatio[...]`, then resolve the unexpected `A22`
-  mismatch, and only after that broaden the exact-target and
+  then audit `AssembleSMQCDRRatio[...]`; the unexpected `A22`
+  mismatch has now been repaired, and only after the observable-level assembly
+  semantics are fixed should the package broaden the exact-target and
   identity/factorization checks
+- `10c` status:
+  done; `AntennaPhysicsValidationReport[A, 2, 2, UseStoredResults -> False]`
+  now returns `ValidationStatus -> Pass`, the observed and target pole
+  coefficients agree exactly for `Leading`, `Subleading`, `Nf`, and `Breve`,
+  and `BuildAndIntegrateAntenna[A, 2, 2, ReturnDiagnostics -> True]` no longer
+  fails on the combined route
 - `10a` status:
   done as a containment/documentation step; the raw
   `BuildRRatio[..., ResultForm -> "RawDimRegSeries"]` route is now explicitly

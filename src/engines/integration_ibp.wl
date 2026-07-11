@@ -2319,12 +2319,12 @@ IBPConventionBridgeFactor[profile_Association, applyFeynCalcMS_,
         ]
       ,
       "A22OneLoopSelf" | "A22TwoLoopTree" | "A22",
-        If[TrueQ[applyFeynCalcMS],
-          Normal[Series[Exp[2 eps EulerGamma] / Gamma[1 - eps]^2,
-            {eps, 0, bridgeOrder}]]
-          ,
-          1
-        ]
+        (* The A22 master substitutions are already encoded in the explicit
+           two-parton paper convention used by hep-ph/0403057.  Applying the
+           generic Exp[2 eps EulerGamma]/Gamma[1-eps]^2 bridge again would
+           double-count that conversion and shift the paper T_{qq}^{(6)}
+           coefficients away from their exact targets. *)
+        1
       ,
       _,
         1

@@ -28,6 +28,31 @@ IntegrateRouteObject::usage =
 BuildAndIntegrateRouteResult::usage =
   "BuildAndIntegrateRouteResult[type, n, l, options] evaluates the src build-and-integrate route before public formatting.";
 
+A22BuildIntegrationObject::usage =
+  "A22BuildIntegrationObject[key, options, component, contribution] rebuilds a supported A22 source object for component-wise integration.";
+
+A22BuildIntegrationObject[
+  {type_, numFinalParticles_Integer, loopOrder_Integer},
+  options_Association,
+  component_,
+  contribution_
+] :=
+  BuildAntennaObject[
+    type,
+    numFinalParticles,
+    loopOrder,
+    Component -> component,
+    Contribution -> contribution,
+    quarkMass -> Lookup[options, "quarkMass", 0],
+    ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
+    LoopMomentum -> Lookup[options, "LoopMomentum", l],
+    UseStoredResults -> Lookup[options, "UseStoredResults", False],
+    StoreResults -> Lookup[options, "StoreResults", False],
+    ResultsCacheRoot -> Lookup[options, "ResultsCacheRoot", Automatic],
+    RefreshStoredResults -> Lookup[options, "RefreshStoredResults", False],
+    PrintIntermediateSteps -> False
+  ];
+
 (* IntegrateBackendDirectRoute[antenna, integrationMethod, options]
    ================================================================
    Run one backend directly on a raw antenna expression, without any
@@ -363,7 +388,7 @@ IntegrateRouteObject[obj_, options_Association] :=
         "Leading" | "Subleading" | "Nf",
           Return[
             IntegrateRouteObject[
-              AntennaObjectWithSelection[obj, componentInput, TwoLoopTree],
+              A22BuildIntegrationObject[key, options, componentInput, TwoLoopTree],
               Join[options, <|"Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]
             ]
           ]
@@ -371,7 +396,7 @@ IntegrateRouteObject[obj_, options_Association] :=
         "Breve",
           Return[
             IntegrateRouteObject[
-              AntennaObjectWithSelection[obj, Breve, OneLoopSelf],
+              A22BuildIntegrationObject[key, options, Breve, OneLoopSelf],
               Join[options, <|"Component" -> All, "Contribution" -> OneLoopSelf, "RouteKind" -> routeKind|>]
             ]
           ]
@@ -381,10 +406,10 @@ IntegrateRouteObject[obj_, options_Association] :=
             heavyIntegrationProgressPrint[routeKind, key, componentInput,
               contributionInput, 2, 6, "integrating component branches"]
           ];
-          leadingCall = IntegrateRouteObject[AntennaObjectWithSelection[obj, Leading, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
-          subleadingCall = IntegrateRouteObject[AntennaObjectWithSelection[obj, Subleading, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
-          nfCall = IntegrateRouteObject[AntennaObjectWithSelection[obj, Nf, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
-          breveCall = IntegrateRouteObject[AntennaObjectWithSelection[obj, Breve, OneLoopSelf], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> OneLoopSelf, "RouteKind" -> routeKind|>]];
+          leadingCall = IntegrateRouteObject[A22BuildIntegrationObject[key, options, Leading, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
+          subleadingCall = IntegrateRouteObject[A22BuildIntegrationObject[key, options, Subleading, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
+          nfCall = IntegrateRouteObject[A22BuildIntegrationObject[key, options, Nf, TwoLoopTree], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> TwoLoopTree, "RouteKind" -> routeKind|>]];
+          breveCall = IntegrateRouteObject[A22BuildIntegrationObject[key, options, Breve, OneLoopSelf], Join[options, <|"ReturnDiagnostics" -> True, "Component" -> All, "Contribution" -> OneLoopSelf, "RouteKind" -> routeKind|>]];
           {leadingResult, leadingDiag} = leadingCall;
           {subleadingResult, subleadingDiag} = subleadingCall;
           {nfResult, nfDiag} = nfCall;
