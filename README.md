@@ -45,6 +45,24 @@ Practical reading rule:
 - unfinished checklist items are intentional status markers, not accidental
   omissions
 
+## Recent Development Notes
+
+- `2026-07-11`: the public integrated `A22` route now matches the exact
+  `hep-ph/0403057` paper `T_{qq}^{(6)}` target component by component
+- `2026-07-11`: `AntennaPhysicsValidationReport[A, 2, 2]` now passes exactly
+- `2026-07-11`: `BuildAndIntegrateAntenna[A, 2, 2, ReturnDiagnostics -> True]`
+  now completes successfully on the combined route
+- `2026-07-10`: the raw `BuildRRatio[...]` validation route was added and the
+  current NNLO observable-level failure was isolated and documented
+- `2026-07-08`: the `A40` / `B40` / `C40` normalization route was aligned with
+  the standard `A30` convention path
+- `2026-07-01`: supported package-wide defaults and stored-result semantics
+  were consolidated and revalidated
+- `2026-06-30`: `BuildAntenna[...]` gained an explicit public/prototype branch
+  selector for direct expression output
+- `2026-06-29`: the public `A31` build-side route was repaired so UV
+  counterterms are applied at the package-facing boundary
+
 ## How To Read This README
 
 This README is meant to serve three readers at once:
