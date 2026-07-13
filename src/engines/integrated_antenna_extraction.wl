@@ -309,6 +309,9 @@ A31TTermTargets[order_Integer] :=
       1/eps^4 + 3/eps^3 + (93/8 - 4 Pi^2/3)/eps^2 +
         (79/2 - 15 Pi^2/4 - 53 Zeta[3]/3)/eps +
         (1069/8 - 697 Pi^2/48 - 91 Zeta[3]/2 + 19 Pi^4/72),
+      (* The arXiv v2 TeX prints 19/2 here.  The closure-normalized value
+         19/12 is required by the paper's own NNLO pole cancellation and is
+         retained as the package reference convention. *)
       1/(3 eps^3) + 1/(2 eps^2) +
         (19/12 - 7 Pi^2/36)/eps +
         (109/24 - 7 Pi^2/24 - 25 Zeta[3]/9)

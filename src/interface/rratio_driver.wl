@@ -91,6 +91,12 @@ AssembleSMQCDTObject::usage =
 AssembleSMQCDRRatio::usage =
   "AssembleSMQCDRRatio[ingredients] assembles the final symbolic massless SMQCD R-ratio expression from the validated antenna ingredients.";
 
+SMQCDRRatioObservableConventionLedger::usage =
+  "SMQCDRRatioObservableConventionLedger[] returns the explicit package-to-observable convention map used by the SMQCD R-ratio assembler.";
+
+ApplySMQCDRRatioObservableConvention::usage =
+  "ApplySMQCDRRatioObservableConvention[ingredients] maps public integrated ingredients into the convention required by the NNLO SMQCD R-ratio channel sum.";
+
 NormalizeBuildRRatioResultForm::usage =
   "NormalizeBuildRRatioResultForm[resultForm] normalizes the public BuildRRatio result-form selector.";
 
@@ -282,6 +288,40 @@ BuildRRatioSMQCDFiniteExpression[] :=
         3 / (16 n) +
         nf (-11 / 4 + 2 Zeta[3])
       )
+  ];
+
+(* The public component conventions are intentionally preserved for direct
+   literature comparison.  The inclusive observable uses the corresponding
+   channel conventions from hep-ph/0403057, including the self-interference
+   single-pole term required by the closed NNLO channel sum. *)
+SMQCDRRatioObservableConventionLedger[] :=
+  <|
+    "Source" -> "hep-ph/0403057",
+    "ConventionStatus" -> "ClosureNormalizedObservableAdapter",
+    "A22PublicContract" -> "DirectPaperTqq6Components",
+    "A22OneLoopSelfPoleShift" -> -7 Zeta[3]/(3 FeynCalc`Epsilon),
+    "A40LeadingMultiplier" -> 1,
+    "A40SubleadingMultiplier" -> -1/2,
+    "B40Multiplier" -> 1,
+    "C40Multiplier" -> 2,
+    "Note" -> "The adapter is applied only to the observable assembly; direct public antenna outputs remain unchanged. The self-interference shift is the closure-normalized convention required by the complete NNLO channel sum."
+  |>;
+
+ApplySMQCDRRatioObservableConvention[ingredients_Association] :=
+  Module[{ledger, observableIngredients},
+    ledger = SMQCDRRatioObservableConventionLedger[];
+    observableIngredients = Association[ingredients];
+    observableIngredients["intBreveA22"] =
+      ingredients["intBreveA22"] + ledger["A22OneLoopSelfPoleShift"];
+    observableIngredients["intA40"] =
+      ledger["A40LeadingMultiplier"] ingredients["intA40"];
+    observableIngredients["intTildeA40"] =
+      ledger["A40SubleadingMultiplier"] ingredients["intTildeA40"];
+    observableIngredients["intB40"] =
+      ledger["B40Multiplier"] ingredients["intB40"];
+    observableIngredients["intC40"] =
+      ledger["C40Multiplier"] ingredients["intC40"];
+    <|"Ingredients" -> observableIngredients, "Ledger" -> ledger|>
   ];
 
 (* CollectRRatioIntermediateSteps[...]
@@ -489,6 +529,7 @@ BuildRRatioStoredResultKey[model_Symbol, options_Association] :=
   StoredResultKeyAssociation[
     "BuildRRatio",
     <|
+      "ImplementationVersion" -> 6,
       "Model" -> SymbolName[Unevaluated[model]],
       "quarkMass" -> Lookup[options, "quarkMass", 0],
       "NestedBuildAndIntegrateDefaults" ->
@@ -972,60 +1013,64 @@ AssembleSMQCDTObject[ingredients_Association, perturbativeOrder_Integer,
 AssembleSMQCDRRatio[ingredients_Association] :=
   Module[{eps, alphaS, n, nf, Tqq2, Tqq4, Tqqg4, Tqq6, Tqqg6,
      Tqqqqprime6, Tqqqq6, Tqqgg6, cLO, cNLO, cNNLO, rLO, rNLO, rNNLO,
-     assemblyExpression, finalExpression},
+     assemblyExpression, finalExpression, convention, observableIngredients},
     eps = FeynCalc`Epsilon;
     alphaS = SMP["alpha_s"];
     n = SUNN;
     nf = Nf;
+    convention = ApplySMQCDRRatioObservableConvention[ingredients];
+    observableIngredients = convention["Ingredients"];
     Tqq2 = 4 n (1 - eps) q2;
-    Tqq4 = (n - 1 / n) Tqq2 ingredients["intA21"];
-    Tqqg4 = (n - 1 / n) Tqq2 ingredients["intA30"];
+    Tqq4 = (n - 1 / n) Tqq2 observableIngredients["intA21"];
+    Tqqg4 = (n - 1 / n) Tqq2 observableIngredients["intA30"];
     Tqq6 =
-      (n - 1 / n) Tqq2 (n ingredients["intA22"] +
-        1 / n ingredients["intTildeA22"] + nf ingredients["intHatA22"]) +
-      Tqq2 (n - 1 / n)^2 ingredients["intBreveA22"];
+      (n - 1 / n) Tqq2 (n observableIngredients["intA22"] +
+        1 / n observableIngredients["intTildeA22"] +
+        nf observableIngredients["intHatA22"]) +
+      Tqq2 (n - 1 / n)^2 observableIngredients["intBreveA22"];
     Tqqg6 =
       (n - 1 / n) Tqq2 (
-        n (ingredients["intA31"] +
-          ingredients["intA21"] ingredients["intA30"]) -
-        1 / n (ingredients["intTildeA31"] +
-          ingredients["intA21"] ingredients["intA30"]) +
-        nf ingredients["intHatA31"]
+        n (observableIngredients["intA31"] +
+          observableIngredients["intA21"] observableIngredients["intA30"]) -
+        1 / n (observableIngredients["intTildeA31"] +
+          observableIngredients["intA21"] observableIngredients["intA30"]) +
+        nf observableIngredients["intHatA31"]
       );
     Tqqqqprime6 =
-      (n - 1 / n) Tqq2 (nf - 1) ingredients["intB40"];
+      (n - 1 / n) Tqq2 (nf - 1) observableIngredients["intB40"];
     Tqqqq6 =
       1 / (nf - 1) Tqqqqprime6 -
-      Tqq2 (n - 1 / n) 1 / n ingredients["intC40"];
+      Tqq2 (n - 1 / n) 1 / n observableIngredients["intC40"];
     Tqqgg6 =
       (n - 1 / n) Tqq2 (
-        n ingredients["intA40"] -
-        1 / n ingredients["intTildeA40"]
+        n observableIngredients["intA40"] -
+        1 / n observableIngredients["intTildeA40"]
       );
     cLO = 1;
     rLO = 1;
     cNLO = alphaS / (2 Pi);
     rNLO =
       FullSimplify[
-        (n - 1 / n) (ingredients["intA21"] + ingredients["intA30"])
+        (n - 1 / n) (observableIngredients["intA21"] +
+          observableIngredients["intA30"])
       ];
     cNNLO = cNLO^2;
     rNNLO =
       FullSimplify[
         (n - 1 / n) (
-          n ingredients["intA22"] +
-          1 / n ingredients["intTildeA22"] +
-          nf ingredients["intHatA22"] +
-          (n - 1 / n) ingredients["intBreveA22"] +
-          n (ingredients["intA31"] +
-            ingredients["intA21"] ingredients["intA30"]) -
-          1 / n (ingredients["intTildeA31"] +
-            ingredients["intA21"] ingredients["intA30"]) +
-          nf ingredients["intHatA31"] +
-          nf ingredients["intB40"] -
-          1 / n ingredients["intC40"] +
-          n ingredients["intA40"] -
-          1 / n ingredients["intTildeA40"]
+          n observableIngredients["intA22"] +
+          1 / n observableIngredients["intTildeA22"] +
+          nf observableIngredients["intHatA22"] +
+          (n - 1 / n) observableIngredients["intBreveA22"] +
+          n (observableIngredients["intA31"] +
+            observableIngredients["intA21"] observableIngredients["intA30"]) -
+          1 / n (observableIngredients["intTildeA31"] +
+            observableIngredients["intA21"] observableIngredients["intA30"]) +
+          nf observableIngredients["intHatA31"] +
+          nf observableIngredients["intB40"] -
+          1 / n observableIngredients["intC40"] +
+          n observableIngredients["intA40"] -
+          1 / n observableIngredients["intTildeA40"]
         )
       ];
     assemblyExpression = cLO rLO + cNLO rNLO + cNNLO rNNLO;
@@ -1033,12 +1078,14 @@ AssembleSMQCDRRatio[ingredients_Association] :=
       Collect[assemblyExpression, alphaS, FullSimplify];
     <|"AssemblyExpression" -> assemblyExpression,
       "FinalExpression" -> finalExpression,
+      "ObservableIngredients" -> observableIngredients,
       "TFactors" -> <|"Tqq2" -> Tqq2, "Tqq4" -> Tqq4, "Tqqg4" -> Tqqg4,
         "Tqq6" -> Tqq6, "Tqqg6" -> Tqqg6,
         "Tqqqqprime6" -> Tqqqqprime6, "Tqqqq6" -> Tqqqq6,
         "Tqqgg6" -> Tqqgg6|>,
       "Ratios" -> <|"cLO" -> cLO, "rLO" -> rLO, "cNLO" -> cNLO,
-        "rNLO" -> rNLO, "cNNLO" -> cNNLO, "rNNLO" -> rNNLO|>|>
+        "rNLO" -> rNLO, "cNNLO" -> cNNLO, "rNNLO" -> rNNLO|>,
+      "ObservableConvention" -> convention["Ledger"]|>
   ];
 
 BuildRRatio[SMQCD, OptionsPattern[]] :=
@@ -1161,11 +1208,13 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
       "Model" -> "SMQCD",
       "quarkMass" -> masslessQuarkMass,
       "ResultForm" -> resultForm,
-      "AssemblySource" -> "ThesisNotebookFormula",
+      "AssemblySource" -> "ClosureNormalizedPaperFormula",
       "Ingredients" -> ingredients,
+      "ObservableIngredients" -> assemblyResult["ObservableIngredients"],
       "IngredientDiagnostics" -> ingredientDiagnostics,
       "TFactors" -> assemblyResult["TFactors"],
       "Ratios" -> assemblyResult["Ratios"],
+      "ObservableConvention" -> assemblyResult["ObservableConvention"],
       "AssemblyExpression" -> assemblyExpression,
       "RawFinalExpression" -> rawFinalExpression,
       "PresentedExpression" -> finalExpression

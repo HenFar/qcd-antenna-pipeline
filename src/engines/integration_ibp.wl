@@ -2305,15 +2305,16 @@ IBPConventionBridgeSeriesOrder[profile_Association, order_Integer] :=
 
 IBPConventionBridgeFactor[profile_Association, applyFeynCalcMS_,
    order_Integer] :=
-  Module[{family, eps, bridgeOrder},
+  Module[{family, bridgeOrder},
     family = Lookup[profile, "BasisFamily", "Unknown"];
-    eps = FeynCalc`Epsilon;
     bridgeOrder = IBPConventionBridgeSeriesOrder[profile, order];
     Switch[family,
       "A31",
         If[TrueQ[applyFeynCalcMS],
-          Normal[Series[Exp[2 eps EulerGamma] / Gamma[1 - eps]^2,
-            {eps, 0, bridgeOrder}]]
+          (* The A31 runtime masters are already in the S_Gamma convention
+             compensated by IBPNormalization.  A further FeynCalc-MS factor
+             shifts the verified paper poles beginning at epsilon^2. *)
+          1
           ,
           1
         ]

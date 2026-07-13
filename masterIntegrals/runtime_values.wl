@@ -31,8 +31,8 @@ MasterIntegralRuntimeValuesAssociation[] :=
       "A6" -> A6BackendPackageExact[]
     |>,
     "A31" -> <|
-      "qMI" -> I V5aBackendScalarPart[],
-      "qkMI" -> I V5bBackendScalarPart[],
+      "qMI" -> -I V5aBackendScalarPart[],
+      "qkMI" -> -I V5bBackendScalarPart[],
       "qsMI" -> I V8BackendScalarExact[]
     |>
   |>;

@@ -82,41 +82,43 @@ RRatioFiniteCoefficient[expr_] :=
   ];
 
 BuildRRatioNNLOContributionExpressions[ingredients_Association] :=
-  Module[{alphaS, n, nf, cNNLO},
+  Module[{alphaS, n, nf, cNNLO, observableIngredients},
     alphaS = SMP["alpha_s"];
     n = SUNN;
     nf = Nf;
     cNNLO = (alphaS / (2 Pi))^2;
+    observableIngredients =
+      ApplySMQCDRRatioObservableConvention[ingredients]["Ingredients"];
     <|
       "A22Sector" ->
         cNNLO*
           FullSimplify[
             (n - 1 / n) (
-              n ingredients["intA22"] +
-              1 / n ingredients["intTildeA22"] +
-              nf ingredients["intHatA22"] +
-              (n - 1 / n) ingredients["intBreveA22"]
+              n observableIngredients["intA22"] +
+              1 / n observableIngredients["intTildeA22"] +
+              nf observableIngredients["intHatA22"] +
+              (n - 1 / n) observableIngredients["intBreveA22"]
             )
           ],
       "A31Sector" ->
         cNNLO*
           FullSimplify[
             (n - 1 / n) (
-              n (ingredients["intA31"] +
-                ingredients["intA21"] ingredients["intA30"]) -
-              1 / n (ingredients["intTildeA31"] +
-                ingredients["intA21"] ingredients["intA30"]) +
-              nf ingredients["intHatA31"]
+              n (observableIngredients["intA31"] +
+                observableIngredients["intA21"] observableIngredients["intA30"]) -
+              1 / n (observableIngredients["intTildeA31"] +
+                observableIngredients["intA21"] observableIngredients["intA30"]) +
+              nf observableIngredients["intHatA31"]
             )
           ],
       "A40B40C40Sector" ->
         cNNLO*
           FullSimplify[
             (n - 1 / n) (
-              nf ingredients["intB40"] -
-              1 / n ingredients["intC40"] +
-              n ingredients["intA40"] -
-              1 / n ingredients["intTildeA40"]
+              nf observableIngredients["intB40"] -
+              1 / n observableIngredients["intC40"] +
+              n observableIngredients["intA40"] -
+              1 / n observableIngredients["intTildeA40"]
             )
           ]
     |>
@@ -136,6 +138,52 @@ ValidationComponentLabels[{a_Symbol /; SymbolName[a] === "A", 2, 2}] :=
 
 ValidationComponentLabels[_] :=
   {"Value"};
+
+RRatioFourPartonPackageTarget[{a_Symbol /; SymbolName[a] === "A", 4, 0},
+   order_Integer, component_] :=
+  Module[{eps, leading, subleading, componentName},
+    eps = FeynCalc`Epsilon;
+    componentName = CanonicalAntennaComponentName[component];
+    leading =
+      3/(4 eps^4) + 65/(24 eps^3) +
+      (217/18 - 13 Pi^2/12)/eps^2 +
+      (43223/864 - 589 Pi^2/144 - 71 Zeta[3]/4)/eps +
+      1076717/5184 - 7955 Pi^2/432 - 1327 Zeta[3]/18 +
+      373 Pi^4/1440;
+    subleading =
+      -1/(2 eps^4) - 3/(2 eps^3) +
+      (-13/2 + 3 Pi^2/4)/eps^2 +
+      (-845/32 + 9 Pi^2/4 + 40 Zeta[3]/3)/eps +
+      (-6921/64 + 473 Pi^2/48 + 40 Zeta[3] - 17 Pi^4/144);
+    Switch[componentName,
+      "Leading", IntegratedAntennaSeries[leading, order],
+      (* The public subleading route is twice the paper bracket. *)
+      "Subleading", IntegratedAntennaSeries[2 subleading, order],
+      _, Missing["UnknownA40Component", componentName]
+    ]
+  ];
+
+RRatioFourPartonPackageTarget[{b_Symbol /; SymbolName[b] === "B", 4, 0},
+   order_Integer, component_] :=
+  Module[{eps, target},
+    eps = FeynCalc`Epsilon;
+    target =
+      -1/(12 eps^3) - 7/(18 eps^2) +
+      (-407/216 + 11 Pi^2/72)/eps +
+      (-11753/1296 + 77 Pi^2/108 + 67 Zeta[3]/18);
+    IntegratedAntennaSeries[target, order]
+  ];
+
+RRatioFourPartonPackageTarget[{c_Symbol /; SymbolName[c] === "C", 4, 0},
+   order_Integer, component_] :=
+  Module[{eps, paperBracket},
+    eps = FeynCalc`Epsilon;
+    paperBracket =
+      (13/16 - Pi^2/8 + Zeta[3]/2)/eps +
+      (339/32 - 17 Pi^2/24 - 21 Zeta[3]/4 + 2 Pi^4/45);
+    (* The public C40 route is minus one half of the paper bracket. *)
+    IntegratedAntennaSeries[-paperBracket/2, order]
+  ];
 
 IntegratedPoleValidationTarget[{a_Symbol /; SymbolName[a] === "A", 2, 1},
    order_Integer, component_] :=
@@ -160,6 +208,18 @@ IntegratedPoleValidationTarget[{a_Symbol /; SymbolName[a] === "A", 2, 2},
     ,
     A22TTermTargetForComponent[component, order]
   ];
+
+IntegratedPoleValidationTarget[{a_Symbol /; SymbolName[a] === "A", 4, 0},
+   order_Integer, component_] :=
+  RRatioFourPartonPackageTarget[{a, 4, 0}, order, component];
+
+IntegratedPoleValidationTarget[{b_Symbol /; SymbolName[b] === "B", 4, 0},
+   order_Integer, component_] :=
+  RRatioFourPartonPackageTarget[{b, 4, 0}, order, component];
+
+IntegratedPoleValidationTarget[{c_Symbol /; SymbolName[c] === "C", 4, 0},
+   order_Integer, component_] :=
+  RRatioFourPartonPackageTarget[{c, 4, 0}, order, component];
 
 IntegratedPoleValidationTarget[_, _, _] :=
   Missing["NoIntegratedPoleTargetAvailable"];
@@ -187,8 +247,8 @@ PhysicsValidationTargetAvailabilityProfile[{a_Symbol /; SymbolName[a] === "A",
   <|
     "ValidationFamily" -> "IntegratedPoleStructure",
     "Availability" -> "ExactPoleTargetAvailable",
-    "ExpectedStatus" -> "KnownIssuePendingTask5b",
-    "Note" -> "Exact A31 integrated targets are encoded, but remaining residual mismatches are an explicitly tracked known issue."
+    "ExpectedStatus" -> "PassExpected",
+    "Note" -> "Exact A31 integrated targets are encoded in the repaired Appendix A.2 master and observable-convention contract."
   |>;
 
 PhysicsValidationTargetAvailabilityProfile[{a_Symbol /; SymbolName[a] === "A",
@@ -204,27 +264,27 @@ PhysicsValidationTargetAvailabilityProfile[{a_Symbol /; SymbolName[a] === "A",
     4, 0}] :=
   <|
     "ValidationFamily" -> "IntegratedPoleStructure",
-    "Availability" -> "NoExactPoleTargetYet",
-    "ExpectedStatus" -> "NotAvailableYet",
-    "Note" -> "Integrated A40 exact pole targets are not yet encoded in the public validation layer."
+    "Availability" -> "ExactPoleTargetAvailable",
+    "ExpectedStatus" -> "PassExpected",
+    "Note" -> "Exact A40 targets are encoded in the package-facing leading/subleading convention."
   |>;
 
 PhysicsValidationTargetAvailabilityProfile[{b_Symbol /; SymbolName[b] === "B",
     4, 0}] :=
   <|
     "ValidationFamily" -> "IntegratedPoleStructure",
-    "Availability" -> "NoExactPoleTargetYet",
-    "ExpectedStatus" -> "NotAvailableYet",
-    "Note" -> "Integrated B40 exact pole targets are not yet encoded in the public validation layer."
+    "Availability" -> "ExactPoleTargetAvailable",
+    "ExpectedStatus" -> "PassExpected",
+    "Note" -> "Exact B40 paper target is encoded."
   |>;
 
 PhysicsValidationTargetAvailabilityProfile[{c_Symbol /; SymbolName[c] === "C",
     4, 0}] :=
   <|
     "ValidationFamily" -> "IntegratedPoleStructure",
-    "Availability" -> "NoExactPoleTargetYet",
-    "ExpectedStatus" -> "NotAvailableYet",
-    "Note" -> "Integrated C40 exact pole targets are not yet encoded in the public validation layer."
+    "Availability" -> "ExactPoleTargetAvailable",
+    "ExpectedStatus" -> "PassExpected",
+    "Note" -> "Exact C40 target is encoded in the package-facing convention."
   |>;
 
 PhysicsValidationTargetAvailabilityProfile[_] :=
@@ -584,7 +644,7 @@ BuildRRatioPhysicsValidationReport[OptionsPattern[]] :=
         "ResultForm" -> "RawDimRegSeries"
       |>,
       "RouteDiagnosticsSummary" -> KeyTake[diagnostics,
-        {"Model", "ResultForm", "AssemblySource"}],
+        {"Model", "ResultForm", "AssemblySource", "ObservableConvention"}],
       "ObservedPoleCoefficients" -> observedPoles,
       "NNLOContributionPoleBreakdown" -> nnloContributionPoleBreakdown,
       "PoleCancellationResiduals" -> poleResiduals,

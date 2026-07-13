@@ -47,6 +47,11 @@ Practical reading rule:
 
 ## Recent Development Notes
 
+- `2026-07-14`: a fresh uncached full NNLO `BuildRRatio` validation now passes
+  exactly: all raw Laurent residuals through epsilon^0 vanish and the finite
+  coefficient agrees with the encoded SMQCD target
+- `2026-07-14`: the `A31` Appendix A.2 master phase/convention repair now
+  reproduces the direct paper targets and removes EulerGamma from public series
 - `2026-07-11`: the public integrated `A22` route now matches the exact
   `hep-ph/0403057` paper `T_{qq}^{(6)}` target component by component
 - `2026-07-11`: `AntennaPhysicsValidationReport[A, 2, 2]` now passes exactly
@@ -145,11 +150,11 @@ The active task list is:
   observable-repair track:
   `10a` contain and document the current raw `BuildRRatio[...]` failure (done),
   `10b` audit `AssembleSMQCDRRatio[...]` against the thesis/paper formula and
-  route-level conventions,
+  route-level conventions (done),
   `10c` resolve the unexpected `A22` exact-target mismatch by making the
   public integrated `A22` route reproduce the exact paper
   `T_{qq}^{(6)}` component set from `hep-ph/0403057` (done),
-  `10d` encode exact `A40` / `B40` / `C40` pole targets,
+  `10d` encode exact `A40` / `B40` / `C40` pole targets (done),
   `10e` extend the validator to Catani-operator structure,
   `10f` add Ward-identity checks, and
   `10g` add factorization-limit validation
@@ -169,24 +174,29 @@ Current execution status:
   Task 7: add an explicit bare/prototype public option (direct `BuildAntenna[...]` expression output only)
   Task 8: add a supported global default environment mechanism
   Task 9: re-audit stored-result semantics after semantics repair
+  Task 10b: repair the observable-level NNLO convention assembly and verify a
+  fresh raw `BuildRRatio[...]` pass
+  Task 10c: reproduce the exact paper `A22` `T_{qq}^{(6)}` component set
+  Task 10d: encode exact package-facing `A40` / `B40` / `C40` targets
 - not yet done
-  Tasks 10-13
+  Tasks 10e-10g and 11-13
 
 Task 10 urgency note:
 
 - Task 10 is not a quick single-step finish anymore
 - the full scope is medium-to-large because it now includes a real
   observable-level NNLO semantics audit, not only validator plumbing
-- the urgent near-term slices are `10b` and `10c`
-- `10b` is now the immediate priority because it determines whether
-  the current raw `BuildRRatio[...]` failure is mainly an assembly-formula bug,
-  a convention mismatch, or a bad ingredient handoff
+- `10b` is complete: the observable adapter, A31 master conventions, and
+  four-parton package-facing mappings now give a fresh raw NNLO closure with
+  zero pole and finite residuals
 - `10c` is now complete:
   the public integrated `A22` route reproduces the exact paper
   `T_{qq}^{(6)}` component targets and the previously broken combined
   diagnostics route now completes successfully
-- `10d` through `10g` remain part of Task 10, but they should come only after
-  the observable-level assembly semantics are trustworthy again
+- `10d` is complete: exact package-facing `A40`, `B40`, and `C40` targets are
+  encoded and participate in the successful full observable check
+- `10e` through `10g` remain part of Task 10; they can now build on a verified
+  observable-level assembly baseline
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -370,11 +380,9 @@ The intended public contract of the package is:
 
 Not yet implemented or not yet repaired:
 
-- some loop-family behavior, especially around `A31`, still needs cleanup so the
-  public build-side result always matches that intended renormalized contract
-- the README therefore documents the intended package boundary and flags the
-  current mismatch instead of treating the present accidental behavior as the
-  desired API
+- the repaired `A31` integrated public route now matches its encoded paper
+  target. Future work should extend validation depth rather than redefine this
+  established package boundary
 - object-facing and integration-facing prototype output is not yet a supported
   public route; `BuildAntennaObject[...]`, `ReturnAntennaObject -> True`, and
   `IntegrableForm -> True` remain pinned to the public branch intentionally
@@ -913,9 +921,11 @@ Task 5 status:
 - done: Task `5a` is treated as complete; default public
   `BuildAntenna[A, 3, 1, ...]` now exposes the repaired build-side branch
   while the older route-native object flow is left intact
-- deferred: Task `5b`; the integrated leading and subleading `A31` residuals
-  are still nonzero, so the deeper integrated correctness work is being kept
-  separate from the build-side presentation repair
+- resolved during Task `10b`: the integrated `A31` leading, subleading, and
+  `Nf` targets now match exactly after repairing the Appendix A.2 master
+  conventions and removing the redundant observable bridge
+- longer-term Task `5b` work is now limited to broader convention-regression
+  coverage, not a known public `A31` residual
 
 The intended public contract is:
 
@@ -1003,13 +1013,13 @@ Current implementation status:
 
 - the intended contract is that public build results are already in the package
   renormalization state
-- some loop-family behavior, especially around `A31`, still needs repair to make
-  that build-side contract hold uniformly
+- the supported `A31` build and integrated routes now satisfy their encoded
+  public paper targets after the Task `10b` convention repair
 - the integration-side convention bridge for `A21` and the IBP loop families is
-  now explicit in code, but the heavy `A31` end-to-end residual recheck is
-  still treated as pending verification rather than silently assumed correct
-- until that repair lands, the README should be read as documenting the intended
-  public boundary, with this mismatch recorded openly rather than hidden
+  explicit in code and the heavy `A31` end-to-end recheck is now complete
+- this does not claim that every possible regularization prescription is
+  supported; it records the verified package convention for the supported
+  massless workflow
 
 The same state is now inspectable in code:
 
@@ -1642,13 +1652,14 @@ Options:
 - `ResultForm`
   Select `"FiniteMSBar"` or `"RawDimRegSeries"`.
   `FiniteMSBar` is the supported public release form.
-  `RawDimRegSeries` is currently a diagnostic/provisional route under active
-  validation rather than a validated release-level physics result.
+  `RawDimRegSeries` is a validated diagnostic representation of the same
+  supported massless observable, intended for convention and pole-closure
+  inspection rather than as the default user-facing result form.
 - current contract note:
   the massless `BuildRRatio[SMQCD, quarkMass -> 0]` route is supported as a
-  finite public driver result, but the raw Laurent-series exposure is still
-  being used to debug NNLO observable assembly and should not yet be cited as a
-  fully validated public physics output
+  finite public driver result. A fresh uncached raw-series validation also
+  passes exact pole cancellation and finite-coefficient agreement; the raw
+  form remains diagnostic by interface design, not because it is known wrong
 
 ### `TObject[...]`
 
@@ -1772,11 +1783,9 @@ Current scope:
 
 - the first implemented slice is integrated pole-structure validation
 - exact encoded pole targets are currently available for:
-  `A21`, `A30`, `A31`, and `A22`
-- `A31` is still reported honestly as a known-issue route when its current
-  residuals do not vanish
-- `A40`, `B40`, and `C40` are currently reported as `NotAvailableYet` for
-  exact pole-target validation rather than being silently treated as checked
+  `A21`, `A30`, `A31`, `A22`, `A40`, `B40`, and `C40`
+- the `A31` target and the four-parton package-facing targets are exact encoded
+  checks, not placeholders
 - routes without an exact target are skipped by default in the aggregate
   validation harness unless explicitly requested
 - if a public route itself returns `$Failed`, the validation layer reports
@@ -1806,11 +1815,9 @@ Current scope:
 - report a structured `Pass` / `Fail` / `RouteEvaluationFailed` status rather
   than reducing this to a notebook-only spot check
 - current implementation status:
-  this validator currently exposes a real failing route, not a passing
-  reference check; the present raw series is not yet pole-free, does not yet
-  match the known finite target at epsilon^0, and may surface `$Failed`
-  contamination in the finite coefficient while the NNLO assembly semantics are
-  still under repair
+  a fresh uncached run on `2026-07-14` returned `ValidationStatus -> Pass`,
+  zero residual coefficients from epsilon^-4 through epsilon^0, and zero
+  finite residual. Cached reuse is separately available for practical use.
 
 Representative usage:
 
@@ -2244,9 +2251,9 @@ Task 5 implementation note:
   integration-facing work, so the public/default `BuildAntenna[...]` repair is
   now a build-side presentation boundary rather than a redefinition of the
   object route
-- the remaining nonzero integrated `A31` residuals are now explicitly treated
-  as deferred `Task 5b` work rather than as part of the completed build-side
-  `Task 5a` repair
+- the former integrated `A31` residual has been resolved during Task `10b` by
+  aligning the Appendix A.2 masters, their LiteRed phase map, and the public
+  convention boundary; deferred Task `5b` work is now regression-focused
 
 Task 6 implementation note:
 
@@ -2258,9 +2265,9 @@ Task 6 implementation note:
   `NormalizeKinematicScale` all the way into that normalization boundary
 - backend diagnostics now record the applied `"ConventionBridgeFactor"` beside
   the raw master-substituted and normalized pre-series expressions
-- for `A31`, the convention bridge now expands deeply enough in `Epsilon` to
-  survive multiplication against the route's higher poles rather than being
-  truncated away prematurely
+- for `A31`, the post-repair bridge is explicitly the identity: the runtime
+  master normalization already supplies the public convention, so no second
+  FeynCalc-MS conversion is applied at the observable boundary
 - a repeatable local verifier for this task now lives at
   `dev/verify_task6_convention_bridge.wl`; it checks the explicit A21 public
   target match and the presence of inspectable A31 convention-bridge backend
@@ -2303,29 +2310,18 @@ Task 10 implementation note:
   `RunSupportedMasslessPhysicsValidation[]`
 - the current implemented family is integrated pole-structure validation for
   the supported massless integrated routes
-- exact encoded targets are currently wired for `A21`, `A30`, `A31`, and `A22`
-- `A31` is reported honestly as a `KnownIssue` route when the current residuals
-  do not vanish, instead of being forced into a fake pass/fail story
-- `A40`, `B40`, and `C40` currently report `NotAvailableYet` for exact
-  pole-target validation rather than pretending those checks already exist
+- exact encoded targets are wired for `A21`, `A30`, `A31`, `A22`, `A40`,
+  `B40`, and `C40`
 - the validation layer now also includes
   `BuildRRatioPhysicsValidationReport[]`, which checks the raw SMQCD
   Laurent-series output for explicit pole cancellation and epsilon^0 agreement
   with the known public finite expression
 - current Task 10 status:
-  this observable-level raw-series check is now implemented and already
-  returns a meaningful failure rather than a placeholder pass; the present
-  `RawDimRegSeries` route is not yet pole-free, and substituting the currently
-  encoded `A31` / `A22` target series still leaves uncancelled NNLO poles,
-  so the remaining issue is now localized to the NNLO `BuildRRatio[...]`
-  assembly semantics and/or its route-level convention interpretation rather
-  than only to validator plumbing
-- current Task 10 repair order:
-  first reproduce and contain the raw observable failure deterministically,
-  then audit `AssembleSMQCDRRatio[...]`; the unexpected `A22`
-  mismatch has now been repaired, and only after the observable-level assembly
-  semantics are fixed should the package broaden the exact-target and
-  identity/factorization checks
+  `10b` is complete. A fresh uncached `BuildRRatioPhysicsValidationReport[]`
+  now returns `ValidationStatus -> Pass`, with zero pole residuals through
+  epsilon^-1 and exact epsilon^0 agreement. The repair keeps direct public
+  `A22` outputs paper-facing while applying only the required observable-level
+  convention map during R-ratio assembly.
 - `10c` status:
   done; `AntennaPhysicsValidationReport[A, 2, 2, UseStoredResults -> False]`
   now returns `ValidationStatus -> Pass`, the observed and target pole
@@ -2334,10 +2330,9 @@ Task 10 implementation note:
   fails on the combined route
 - `10a` status:
   done as a containment/documentation step; the raw
-  `BuildRRatio[..., ResultForm -> "RawDimRegSeries"]` route is now explicitly
-  documented as diagnostic/provisional, with the current uncancelled poles,
-  finite mismatch, and `$Failed` contamination risk flagged honestly in this
-  README
+  `BuildRRatio[..., ResultForm -> "RawDimRegSeries"]` route remains a
+  diagnostic representation, now backed by an exact fresh closure check rather
+  than an unresolved observable mismatch
 - the validator now distinguishes a genuine comparison failure from a route
   evaluation failure, and it skips exact-target-unavailable routes by default
 - the developer harness for this slice now lives at

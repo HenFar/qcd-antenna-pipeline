@@ -38,16 +38,17 @@ V5bBranchRemark =
   "The appendix writes V5b with Re[(-1)^(-eps)]. For the real master this is Cos[Pi eps].";
 
 V5bPaperClosedForm[] :=
-  V5bSGamma2[] q2^(1 - 2 eps) Gamma[1 - eps]^5 Gamma[1 - 2 eps]
+  -V5bSGamma2[] q2^(1 - 2 eps) Gamma[1 - eps]^5 Gamma[1 - 2 eps]
     Gamma[1 + eps] Cos[Pi eps] /
     (Gamma[2 - 2 eps] Gamma[3 - 4 eps] eps);
 
-(* In the A31 backend the reduced master qkMI is mapped to I v5b. *)
+(* LiteRed's cut class carries the opposite loop phase to the real Appendix
+   A.2 convention Re[-I V5b], so qkMI maps to -I V5b. *)
 V5bBackendClassRelation =
-  HoldForm[qkMI == I V5b];
+  HoldForm[qkMI == -I V5b];
 
 V5bBackendScalarPart[] :=
-  V5bSGamma2[] q2^(1 - 2 eps) Gamma[1 - eps]^5 Gamma[1 - 2 eps]
+  -V5bSGamma2[] q2^(1 - 2 eps) Gamma[1 - eps]^5 Gamma[1 - 2 eps]
     Gamma[1 + eps] Cos[Pi eps] /
     (Gamma[2 - 2 eps] Gamma[3 - 4 eps] eps);
 
