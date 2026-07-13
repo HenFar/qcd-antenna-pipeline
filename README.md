@@ -141,26 +141,28 @@ The active task list is:
 - Task 2: add effective route/environment resolution reporting (done)
 - Task 3: declare dimensional-regularization scheme status in code (done)
 - Task 4: introduce an explicit public vs bare/prototype output boundary (done)
-- Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done; current public fix accepted, deeper residual cleanup moved to longer-term work)
+- Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` complete; longer-term convention-regression coverage remains in Task 13)
 - Task 6: clean up `PaXEvaluate` / `PaVe` convention handling (done)
 - Task 7: add an explicit bare/prototype public option (done for direct `BuildAntenna[...]` expression output)
 - Task 8: add a supported global default environment mechanism (done)
 - Task 9: re-audit stored-result semantics after semantics repair (done)
-- Task 10: complete the urgent physics-validation and NNLO
-  observable-repair track:
-  `10a` contain and document the current raw `BuildRRatio[...]` failure (done),
-  `10b` audit `AssembleSMQCDRRatio[...]` against the thesis/paper formula and
-  route-level conventions (done),
-  `10c` resolve the unexpected `A22` exact-target mismatch by making the
-  public integrated `A22` route reproduce the exact paper
-  `T_{qq}^{(6)}` component set from `hep-ph/0403057` (done),
-  `10d` encode exact `A40` / `B40` / `C40` pole targets (done),
-  `10e` extend the validator to Catani-operator structure,
-  `10f` add Ward-identity checks, and
-  `10g` add factorization-limit validation
+- Task 10: physics validation and NNLO observable-repair track
+- Task 10a: contain and document the raw `BuildRRatio[...]` failure (done)
+- Task 10b: audit and repair `AssembleSMQCDRRatio[...]` against the
+  thesis/paper formula and route-level conventions (done)
+- Task 10c: make the public integrated `A22` route reproduce the exact
+  `hep-ph/0403057` paper `T_{qq}^{(6)}` component set (done)
+- Task 10d: encode exact package-facing `A40` / `B40` / `C40` pole targets
+  (done)
+- Task 10e: extend the validator to Catani-operator structure (not yet done)
+- Task 10f: add Ward-identity checks (not yet done)
+- Task 10g: add factorization-limit validation (not yet done)
 - Task 11: complete the massive `A30` second-master derivation, together with explicit master-integral provenance, basis-bridge checks, and artifact-verification tests
 - Task 12: finish quickstart/examples/benchmarks, add one canonical thesis-facing end-to-end example, and expose a dependency/environment report plus backend-failure diagnostics for user installs
-- Task 13: prototype the longer-term extension ideas, including deferred `5b` residual cleanup, exploratory Slavnov-Taylor / BRST-aware validation, package-boundary cleanup, and broader repo-hygiene / pacletization work
+- Task 13: prototype longer-term extensions, including deferred `5b`
+  convention-regression coverage, exploratory Slavnov-Taylor / BRST-aware
+  validation, package-boundary cleanup, and broader repo-hygiene /
+  pacletization work
 
 Current execution status:
 
@@ -169,11 +171,12 @@ Current execution status:
   Task 2: add effective route/environment resolution reporting
   Task 3: declare dimensional-regularization scheme status in code
   Task 4: introduce an explicit public vs bare/prototype output boundary
-  Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` done; `5b` moved to longer-term exploratory work)
+  Task 5: repair `A31` build-side normalization and renormalization semantics (`5a` complete; broader regression coverage moved to longer-term work)
   Task 6: clean up `PaXEvaluate` / `PaVe` convention handling
   Task 7: add an explicit bare/prototype public option (direct `BuildAntenna[...]` expression output only)
   Task 8: add a supported global default environment mechanism
   Task 9: re-audit stored-result semantics after semantics repair
+  Task 10a: contain and document the raw `BuildRRatio[...]` failure
   Task 10b: repair the observable-level NNLO convention assembly and verify a
   fresh raw `BuildRRatio[...]` pass
   Task 10c: reproduce the exact paper `A22` `T_{qq}^{(6)}` component set
