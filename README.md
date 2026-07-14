@@ -530,6 +530,7 @@ AntennaRouteProfileReport[type, numFinalParticles, loopOrder]
 AntennaRouteEnvironmentReport[type, numFinalParticles, loopOrder]
 AntennaPhysicsValidationReport[type, numFinalParticles, loopOrder]
 BuildRRatioPhysicsValidationReport[]
+VerifyWardIdentity[]
 VerifyWardIdentity[type, numFinalParticles, loopOrder, ...]
 RunSupportedMasslessPhysicsValidation[]
 ```
@@ -1857,18 +1858,22 @@ Options and return shape:
 
 - `GluonLeg -> All` selects every applicable gluon leg; pass one leg number or
   a list to inspect selected replacements
-- return an association with one exact residual report per selected gluon and
-  an overall `Pass`, `Fail`, `NotApplicable`, `NotAvailableYet`, or
-  `RouteEvaluationFailed` status
+- `VerifyWardIdentity[]` prints the verified `A30`/`A40` suite; a route call
+  prints only the selected route's row or rows, with its exact residual
+- `ReturnDiagnostics -> True` returns the full association with one residual
+  report per selected gluon and an overall `Pass`, `Fail`, `NotApplicable`,
+  `NotAvailableYet`, or `RouteEvaluationFailed` status
 - this is a diagnostic validation API: it does not alter build, integration, or
   stored-result behavior
 
 Representative usage:
 
 ```wl
+VerifyWardIdentity[]
 VerifyWardIdentity[A, 3, 0]
 VerifyWardIdentity[A, 4, 0]
 VerifyWardIdentity[A, 4, 0, GluonLeg -> 3]
+VerifyWardIdentity[A, 4, 0, ReturnDiagnostics -> True]
 ```
 
 ### `RunSupportedMasslessPhysicsValidation[]`

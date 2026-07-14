@@ -786,8 +786,10 @@ RunSupportedMasslessPhysicsValidation[OptionsPattern[]] :=
       "BasisRoot" -> OptionValue["BasisRoot"],
       "GenerateMissingBases" -> OptionValue["GenerateMissingBases"],
       "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"]],
-    "WardIdentityA30" -> VerifyWardIdentity[A, 3, 0],
-    "WardIdentityA40" -> VerifyWardIdentity[A, 4, 0],
+    "WardIdentityA30" -> VerifyWardIdentity[A, 3, 0,
+      ReturnDiagnostics -> True],
+    "WardIdentityA40" -> VerifyWardIdentity[A, 4, 0,
+      ReturnDiagnostics -> True],
     "BuildRRatioSMQCD" -> BuildRRatioPhysicsValidationReport[
       quarkMass -> OptionValue[quarkMass],
       "UseStoredResults" -> OptionValue["UseStoredResults"],

@@ -6,12 +6,12 @@
    property inferred from an extracted or integrated antenna. *)
 
 VerifyWardIdentity::usage =
-  "VerifyWardIdentity[type, numFinalParticles, loopOrder] checks the amplitude-level Ward identity by replacing each selected external-gluon polarization vector with its momentum.";
+  "VerifyWardIdentity[] prints the verified massless tree-level Ward-validation suite. VerifyWardIdentity[type, numFinalParticles, loopOrder] prints the amplitude-level result for one route; use ReturnDiagnostics -> True to obtain its structured association.";
 
 GluonLeg::usage =
   "GluonLeg is an option for VerifyWardIdentity that selects All, one external-gluon leg number, or a list of external-gluon leg numbers.";
 
-Options[VerifyWardIdentity] = {GluonLeg -> All};
+Options[VerifyWardIdentity] = {GluonLeg -> All, ReturnDiagnostics -> False};
 
 WardIdentityMomentumForLeg[leg_Integer] :=
   Symbol["k" <> ToString[leg]];
@@ -141,8 +141,73 @@ WardIdentityLegReport[amplitude_, numFinalParticles_Integer, leg_Integer,
     |>
   ];
 
-VerifyWardIdentity[type_Symbol, numFinalParticles_Integer, loopOrder_Integer,
-   OptionsPattern[]] :=
+WardIdentityStatusLabel[status_] :=
+  Switch[status,
+    "Pass", "PASS",
+    "Fail", "FAIL",
+    "RouteEvaluationFailed", "ERROR",
+    "NotApplicable", "N/A",
+    "NotAvailableYet", "PENDING",
+    _, ToUpperCase[ToString[status]]
+  ];
+
+WardIdentityResidualSummary[residual_] :=
+  Which[
+    residual === 0, "0",
+    residual === $Aborted, "timed out",
+    residual === $Failed, "evaluation failed",
+    True, "non-zero (" <> ToString[LeafCount[residual]] <> " leaves)"
+  ];
+
+WardIdentityPrintReport[routeName_String, report_Association] :=
+  Module[{legReports, status},
+    legReports = Lookup[report, "LegReports", <||>];
+    status = Lookup[report, "ValidationStatus", "RouteEvaluationFailed"];
+    If[AssociationQ[legReports] && Length[legReports] > 0,
+      KeyValueMap[
+        Function[{leg, legReport},
+          Print[
+            "  " <> routeName <> "   k" <> ToString[leg] <> "   " <>
+              WardIdentityStatusLabel[
+                Lookup[legReport, "ValidationStatus", status]] <>
+              "   residual: " <>
+              WardIdentityResidualSummary[
+                Lookup[legReport, "Residual", $Failed]]
+          ]
+        ],
+        legReports
+      ],
+      Print["  " <> routeName <> "        " <> WardIdentityStatusLabel[status]]
+    ]
+  ];
+
+WardIdentityPrintSuite[reports_Association] :=
+  Module[{allLegReports, passCount, totalCount, overallPassQ},
+    Print["=== WARD-IDENTITY VALIDATION ==="];
+    Print["  Route  Leg  Status  Residual"];
+    KeyValueMap[WardIdentityPrintReport, reports];
+    allLegReports = Flatten[
+      Values /@ Lookup[Values[reports], "LegReports", <||>]
+    ];
+    passCount = Count[
+      Lookup[allLegReports, "ValidationStatus", "Unknown"],
+      "Pass"
+    ];
+    totalCount = Length[allLegReports];
+    overallPassQ = AllTrue[
+      Values[reports],
+      Lookup[#, "ValidationStatus", "Failed"] === "Pass" &
+    ];
+    Print["----------------------------------------"];
+    Print[
+      "Overall: " <> If[overallPassQ, "PASS", "FAIL"] <> " (" <>
+        ToString[passCount] <> "/" <> ToString[totalCount] <>
+        " gluon checks passed)"
+    ];
+  ];
+
+WardIdentityRouteReport[type_Symbol, numFinalParticles_Integer,
+   loopOrder_Integer, OptionsPattern[{GluonLeg -> All}]] :=
   Module[{key, profile, availableLegs, selectedLegs, amplitude, legReports,
      statuses, overallStatus},
     key = {type, numFinalParticles, loopOrder};
@@ -224,4 +289,39 @@ VerifyWardIdentity[type_Symbol, numFinalParticles_Integer, loopOrder_Integer,
       "AmplitudeLeafCount" -> LeafCount[amplitude],
       "Note" -> "Each selected external-gluon polarization is replaced by its own momentum on the unsquared massless tree amplitude."
     |>
+  ];
+
+WardIdentitySuiteReport[] :=
+  <|
+    "A30" -> WardIdentityRouteReport[A, 3, 0],
+    "A40" -> WardIdentityRouteReport[A, 4, 0]
+  |>;
+
+VerifyWardIdentity[type_Symbol, numFinalParticles_Integer, loopOrder_Integer,
+   OptionsPattern[]] :=
+  Module[{report, routeName},
+    report = WardIdentityRouteReport[
+      type,
+      numFinalParticles,
+      loopOrder,
+      GluonLeg -> OptionValue[GluonLeg]
+    ];
+    If[TrueQ[OptionValue[ReturnDiagnostics]],
+      report,
+      routeName = ToString[type] <> ToString[numFinalParticles] <>
+        ToString[loopOrder];
+      Print["=== WARD-IDENTITY VALIDATION ==="];
+      Print["  Route  Leg  Status  Residual"];
+      WardIdentityPrintReport[routeName, report];
+      Null
+    ]
+  ];
+
+VerifyWardIdentity[OptionsPattern[]] :=
+  Module[{reports = WardIdentitySuiteReport[]},
+    If[TrueQ[OptionValue[ReturnDiagnostics]],
+      reports,
+      WardIdentityPrintSuite[reports];
+      Null
+    ]
   ];
