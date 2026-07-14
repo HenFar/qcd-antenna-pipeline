@@ -50,6 +50,9 @@ Get[FileNameJoin[{packageRoot, "src", "engines", "interference_loop.wl"
 
 Get[FileNameJoin[{packageRoot, "src", "core", "profiles.wl"}]];
 
+Get[FileNameJoin[{packageRoot, "src", "core", "ward_identity_validation.wl"
+   }]];
+
 Get[FileNameJoin[{packageRoot, "src", "engines", "extraction_tree.wl"
    }]];
 

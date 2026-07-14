@@ -54,6 +54,9 @@ BornInterference::usage =
 AntennaIntegrationProfile::usage =
   "AntennaIntegrationProfile[key] returns the integration-backend metadata used by IntegrateAntenna for a given route.";
 
+AntennaWardIdentityProfile::usage =
+  "AntennaWardIdentityProfile[key] returns the applicability and external-gluon-leg metadata for amplitude-level Ward-identity validation.";
+
 AntennaPipelineConventionModel::usage =
   "AntennaPipelineConventionModel[] returns the canonical package-level convention metadata used by route profiles and runtime reports.";
 
@@ -258,6 +261,25 @@ AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 2, 1}] :=
 
 AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
+
+(* Ward-identity metadata is separate from production profiles so that the
+   initial tree-level scope remains explicit and inspectable. *)
+AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 3, 0}] :=
+  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3},
+    "Scope" -> "MasslessTreeAmplitude"|>;
+
+AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 4, 0}] :=
+  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3, 4},
+    "Scope" -> "MasslessTreeAmplitude"|>;
+
+AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
+  <|"Availability" -> "NotAvailableYet", "ExternalGluonLegs" -> {3},
+    "Scope" -> "LoopAmplitudeOutOfScope",
+    "Note" -> "The initial Ward layer validates full tree amplitudes only."|>;
+
+AntennaWardIdentityProfile[_] :=
+  <|"Availability" -> "NotApplicable", "ExternalGluonLegs" -> {},
+    "Scope" -> "NoExternalGluonInInitialWardScope"|>;
 
 (* AntennaProfile[key]
    ===================

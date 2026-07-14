@@ -47,6 +47,8 @@ Practical reading rule:
 
 ## Recent Development Notes
 
+- `2026-07-14`: amplitude-level Ward checks now pass exactly for the massless
+  `A30` gluon and both independent `A40` gluon replacements
 - `2026-07-14`: a fresh uncached full NNLO `BuildRRatio` validation now passes
   exactly: all raw Laurent residuals through epsilon^0 vanish and the finite
   coefficient agrees with the encoded SMQCD target
@@ -155,7 +157,7 @@ The active task list is:
 - Task 10d: encode exact package-facing `A40` / `B40` / `C40` pole targets
   (done)
 - Task 10e: extend the validator to Catani-operator structure (not yet done)
-- Task 10f: add Ward-identity checks (not yet done)
+- Task 10f: add massless tree-level Ward-identity checks (done)
 - Task 10g: add factorization-limit validation (not yet done)
 - Task 11: complete the massive `A30` second-master derivation, together with explicit master-integral provenance, basis-bridge checks, and artifact-verification tests
 - Task 12: finish quickstart/examples/benchmarks, add one canonical thesis-facing end-to-end example, and expose a dependency/environment report plus backend-failure diagnostics for user installs
@@ -181,8 +183,9 @@ Current execution status:
   fresh raw `BuildRRatio[...]` pass
   Task 10c: reproduce the exact paper `A22` `T_{qq}^{(6)}` component set
   Task 10d: encode exact package-facing `A40` / `B40` / `C40` targets
+  Task 10f: validate the A30 and A40 massless tree-level Ward identities
 - not yet done
-  Tasks 10e-10g and 11-13
+  Tasks 10e, 10g, and 11-13
 
 Task 10 urgency note:
 
@@ -198,8 +201,12 @@ Task 10 urgency note:
   diagnostics route now completes successfully
 - `10d` is complete: exact package-facing `A40`, `B40`, and `C40` targets are
   encoded and participate in the successful full observable check
-- `10e` through `10g` remain part of Task 10; they can now build on a verified
-  observable-level assembly baseline
+- `10f` is complete: the public amplitude-level checker proves the Ward
+  replacement for `A30`/`k3` and independently for `A40`/`k3` and `A40`/`k4`,
+  with exact zero residuals after physical-polarization transversality is
+  imposed on the un-replaced gluon
+- `10e` and `10g` remain part of Task 10; they can now build on a verified
+  observable-level and tree-level gauge-invariance baseline
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -523,6 +530,7 @@ AntennaRouteProfileReport[type, numFinalParticles, loopOrder]
 AntennaRouteEnvironmentReport[type, numFinalParticles, loopOrder]
 AntennaPhysicsValidationReport[type, numFinalParticles, loopOrder]
 BuildRRatioPhysicsValidationReport[]
+VerifyWardIdentity[type, numFinalParticles, loopOrder, ...]
 RunSupportedMasslessPhysicsValidation[]
 ```
 
@@ -1250,9 +1258,9 @@ bash dev/run_physics_validation.sh
 
 That script is developer-facing rather than the external-user acceptance test.
 Its current scope is the first `Task 10` slice:
-integrated pole-structure validation for the supported massless integrated
-routes, with honest `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, and `NotAvailableYet`
-statuses.
+integrated pole-structure validation plus massless tree-level Ward checks,
+with honest `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, and
+`NotAvailableYet` statuses.
 
 Operational notes:
 
@@ -1827,6 +1835,40 @@ Representative usage:
 ```wl
 BuildRRatioPhysicsValidationReport[]
 BuildRRatioPhysicsValidationReport[UseStoredResults -> True]
+```
+
+### `VerifyWardIdentity[...]`
+
+Purpose:
+
+- validate a full unsquared massless tree amplitude by replacing one external
+  gluon polarization vector with its own momentum
+
+Verified scope:
+
+- `VerifyWardIdentity[A, 3, 0]` checks the `A30` gluon on leg `3`
+- `VerifyWardIdentity[A, 4, 0]` checks each `A40` gluon on legs `3` and `4`
+- all three initial checks return an exact zero residual
+- `A20`, `A22`, `B40`, and `C40` report `NotApplicable`; `A31` reports
+  `NotAvailableYet` because loop-amplitude Ward validation is not part of the
+  initial layer
+
+Options and return shape:
+
+- `GluonLeg -> All` selects every applicable gluon leg; pass one leg number or
+  a list to inspect selected replacements
+- return an association with one exact residual report per selected gluon and
+  an overall `Pass`, `Fail`, `NotApplicable`, `NotAvailableYet`, or
+  `RouteEvaluationFailed` status
+- this is a diagnostic validation API: it does not alter build, integration, or
+  stored-result behavior
+
+Representative usage:
+
+```wl
+VerifyWardIdentity[A, 3, 0]
+VerifyWardIdentity[A, 4, 0]
+VerifyWardIdentity[A, 4, 0, GluonLeg -> 3]
 ```
 
 ### `RunSupportedMasslessPhysicsValidation[]`
