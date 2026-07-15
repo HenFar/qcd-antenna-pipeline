@@ -6,7 +6,7 @@
    property inferred from an extracted or integrated antenna. *)
 
 VerifyWardIdentity::usage =
-  "VerifyWardIdentity[] prints the verified massless tree-level Ward-validation suite. VerifyWardIdentity[type, numFinalParticles, loopOrder] prints the amplitude-level result for one route; use ReturnDiagnostics -> True to obtain its structured association.";
+  "VerifyWardIdentity[] prints the applicable supported massless A-family Ward-validation suite. VerifyWardIdentity[type, numFinalParticles, loopOrder] prints the amplitude-level result for one route; use ReturnDiagnostics -> True to obtain its structured association.";
 
 GluonLeg::usage =
   "GluonLeg is an option for VerifyWardIdentity that selects All, one external-gluon leg number, or a list of external-gluon leg numbers.";
@@ -71,8 +71,17 @@ WardIdentityApplyExternalTransversality[expression_, gluonLegs_List] :=
     gluonLegs
   ];
 
+WardIdentityApplyValidationReduction[expression_, None, _] :=
+  expression;
+
+WardIdentityApplyValidationReduction[expression_, "PaVeTensor", loopMomentum_] :=
+  expression // TID[#, loopMomentum, ToPaVe -> True]& // Contract //
+    DiracSimplify // SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
+    Simplify;
+
 WardIdentitySimplifyResidual[expression_, numFinalParticles_Integer,
-   physicalGluonLegs_List] :=
+   physicalGluonLegs_List, timeLimitSeconds_Integer : 120,
+   validationReduction_ : None, loopMomentum_ : l] :=
   Quiet[
     Check[
       TimeConstrained[
@@ -84,8 +93,10 @@ WardIdentitySimplifyResidual[expression_, numFinalParticles_Integer,
           Contract // DiracSimplify[#, DiracOrder -> True]& //
           SUNSimplify[#, Explicit -> True, SUNNToCACF -> False]& //
           WardIdentityApplyExternalTransversality[#, physicalGluonLegs]& //
-          Simplify,
-        120,
+          Simplify //
+          WardIdentityApplyValidationReduction[#, validationReduction,
+            loopMomentum]&,
+        timeLimitSeconds,
         $Aborted
       ],
       $Failed
@@ -93,7 +104,8 @@ WardIdentitySimplifyResidual[expression_, numFinalParticles_Integer,
   ];
 
 WardIdentityLegReport[amplitude_, numFinalParticles_Integer, leg_Integer,
-   physicalGluonLegs_List] :=
+   physicalGluonLegs_List, timeLimitSeconds_Integer : 120,
+   validationReduction_ : None, loopMomentum_ : l] :=
   Module[{momentum, polarizationCount, replacedAmplitude, residual},
     momentum = WardIdentityMomentumForLeg[leg];
     polarizationCount = WardIdentityPolarizationCount[amplitude, momentum];
@@ -120,7 +132,10 @@ WardIdentityLegReport[amplitude_, numFinalParticles_Integer, leg_Integer,
     residual = WardIdentitySimplifyResidual[
       replacedAmplitude,
       numFinalParticles,
-      DeleteCases[physicalGluonLegs, leg]
+      DeleteCases[physicalGluonLegs, leg],
+      timeLimitSeconds,
+      validationReduction,
+      loopMomentum
     ];
     <|
       "Leg" -> leg,
@@ -139,6 +154,18 @@ WardIdentityLegReport[amplitude_, numFinalParticles_Integer, leg_Integer,
         True, "Fail"
       ]
     |>
+  ];
+
+WardIdentitySourceAmplitude[key_, profile_Association] :=
+  Switch[Lookup[profile, "AmplitudeSource", "TreeAmplitude"],
+    "TreeAmplitude",
+      Quiet[Check[AntennaAmplitude[key], $Failed]]
+    ,
+    "RawOneLoopAmplitude",
+      Quiet[Check[AntennaLoopAmplitude[key], $Failed]]
+    ,
+    _,
+      $Failed
   ];
 
 WardIdentityStatusLabel[status_] :=
@@ -209,10 +236,16 @@ WardIdentityPrintSuite[reports_Association] :=
 WardIdentityRouteReport[type_Symbol, numFinalParticles_Integer,
    loopOrder_Integer, OptionsPattern[{GluonLeg -> All}]] :=
   Module[{key, profile, availableLegs, selectedLegs, amplitude, legReports,
-     statuses, overallStatus},
+     statuses, overallStatus, source, stage, timeLimitSeconds,
+     validationReduction, loopMomentum, report},
     key = {type, numFinalParticles, loopOrder};
     profile = AntennaWardIdentityProfile[key];
     availableLegs = Lookup[profile, "ExternalGluonLegs", {}];
+    source = Lookup[profile, "AmplitudeSource", "TreeAmplitude"];
+    stage = Lookup[profile, "AmplitudeStage", "RawTree"];
+    timeLimitSeconds = Lookup[profile, "SimplificationTimeLimitSeconds", 120];
+    validationReduction = Lookup[profile, "ValidationReduction", None];
+    loopMomentum = Lookup[profile, "LoopMomentum", l];
     Which[
       profile["Availability"] === "NotApplicable",
         Return[
@@ -250,7 +283,7 @@ WardIdentityRouteReport[type_Symbol, numFinalParticles_Integer,
         |>
       ]
     ];
-    amplitude = Quiet[Check[AntennaAmplitude[key], $Failed]];
+    amplitude = WardIdentitySourceAmplitude[key, profile];
     If[amplitude === $Failed,
       Return[
         <|
@@ -259,7 +292,9 @@ WardIdentityRouteReport[type_Symbol, numFinalParticles_Integer,
           "Availability" -> "Applicable",
           "ValidationStatus" -> "RouteEvaluationFailed",
           "FailureReason" -> "AmplitudeGenerationFailed",
-          "CheckedGluonLegs" -> selectedLegs
+          "CheckedGluonLegs" -> selectedLegs,
+          "AmplitudeSource" -> source,
+          "AmplitudeStage" -> stage
         |>
       ]
     ];
@@ -268,7 +303,10 @@ WardIdentityRouteReport[type_Symbol, numFinalParticles_Integer,
         amplitude,
         numFinalParticles,
         leg,
-        availableLegs
+        availableLegs,
+        timeLimitSeconds,
+        validationReduction,
+        loopMomentum
       ],
       {leg, selectedLegs}
     ];
@@ -278,23 +316,32 @@ WardIdentityRouteReport[type_Symbol, numFinalParticles_Integer,
       MemberQ[statuses, "RouteEvaluationFailed"], "RouteEvaluationFailed",
       True, "Fail"
     ];
-    <|
+    report = <|
       "Key" -> key,
       "ValidationFamily" -> "WardIdentity",
       "Availability" -> "Applicable",
       "ValidationStatus" -> overallStatus,
       "ExpectedStatus" -> "PassExpected",
+      "AmplitudeSource" -> source,
+      "AmplitudeStage" -> stage,
+      "ValidationReduction" -> validationReduction,
+      "SimplificationTimeLimitSeconds" -> timeLimitSeconds,
       "CheckedGluonLegs" -> selectedLegs,
       "LegReports" -> legReports,
       "AmplitudeLeafCount" -> LeafCount[amplitude],
-      "Note" -> "Each selected external-gluon polarization is replaced by its own momentum on the unsquared massless tree amplitude."
-    |>
+      "Note" -> "Each selected external-gluon polarization is replaced by its own momentum on the unsquared amplitude before interference, reduction, or integration."
+    |>;
+    If[validationReduction =!= None,
+      report["LoopMomentum"] = loopMomentum
+    ];
+    report
   ];
 
 WardIdentitySuiteReport[] :=
   <|
     "A30" -> WardIdentityRouteReport[A, 3, 0],
-    "A40" -> WardIdentityRouteReport[A, 4, 0]
+    "A40" -> WardIdentityRouteReport[A, 4, 0],
+    "A31" -> WardIdentityRouteReport[A, 3, 1]
   |>;
 
 VerifyWardIdentity[type_Symbol, numFinalParticles_Integer, loopOrder_Integer,

@@ -790,6 +790,8 @@ RunSupportedMasslessPhysicsValidation[OptionsPattern[]] :=
       ReturnDiagnostics -> True],
     "WardIdentityA40" -> VerifyWardIdentity[A, 4, 0,
       ReturnDiagnostics -> True],
+    "WardIdentityA31" -> VerifyWardIdentity[A, 3, 1,
+      ReturnDiagnostics -> True],
     "BuildRRatioSMQCD" -> BuildRRatioPhysicsValidationReport[
       quarkMass -> OptionValue[quarkMass],
       "UseStoredResults" -> OptionValue["UseStoredResults"],

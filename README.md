@@ -47,6 +47,9 @@ Practical reading rule:
 
 ## Recent Development Notes
 
+- `2026-07-15`: the raw one-loop `A31` Ward identity now passes exactly after
+  PaVe tensor reduction, completing all applicable supported massless A-family
+  external-gluon checks
 - `2026-07-14`: amplitude-level Ward checks now pass exactly for the massless
   `A30` gluon and both independent `A40` gluon replacements
 - `2026-07-14`: a fresh uncached full NNLO `BuildRRatio` validation now passes
@@ -158,9 +161,14 @@ The active task list is:
   (done)
 - Task 10e: extend the validator to Catani-operator structure (not yet done)
 - Task 10f: add massless tree-level Ward-identity checks (done)
+- Task 10h: extend the Ward validator to the massless one-loop `A31` amplitude
+  (done)
 - Task 10g: add factorization-limit validation (not yet done)
 - Task 11: complete the massive `A30` second-master derivation, together with explicit master-integral provenance, basis-bridge checks, and artifact-verification tests
-- Task 12: finish quickstart/examples/benchmarks, add one canonical thesis-facing end-to-end example, and expose a dependency/environment report plus backend-failure diagnostics for user installs
+- Task 12: create a user-facing `examples/` directory with runnable workflow
+  files, add one canonical interactive quickstart notebook and thesis-facing
+  end-to-end example, finish benchmarks, and expose a dependency/environment
+  report plus backend-failure diagnostics for user installs
 - Task 13: prototype longer-term extensions, including deferred `5b`
   convention-regression coverage, exploratory Slavnov-Taylor / BRST-aware
   validation, package-boundary cleanup, and broader repo-hygiene /
@@ -184,6 +192,7 @@ Current execution status:
   Task 10c: reproduce the exact paper `A22` `T_{qq}^{(6)}` component set
   Task 10d: encode exact package-facing `A40` / `B40` / `C40` targets
   Task 10f: validate the A30 and A40 massless tree-level Ward identities
+  Task 10h: validate the raw one-loop A31 Ward identity
 - not yet done
   Tasks 10e, 10g, and 11-13
 
@@ -205,8 +214,23 @@ Task 10 urgency note:
   replacement for `A30`/`k3` and independently for `A40`/`k3` and `A40`/`k4`,
   with exact zero residuals after physical-polarization transversality is
   imposed on the un-replaced gluon
+- `10h` is complete: the raw massless one-loop `A31` amplitude is exposed
+  separately from the tree-only `AntennaAmplitude[...]` accessor and its
+  external `k3` replacement passes exactly. The validation layer maps the
+  contracted raw amplitude to a common PaVe tensor basis; this diagnostic
+  reduction does not alter the public route.
 - `10e` and `10g` remain part of Task 10; they can now build on a verified
   observable-level and tree-level gauge-invariance baseline
+
+Task 12 example-delivery note:
+
+- create a tracked `examples/` directory separate from `dev/`; its files are
+  user documentation, not research diagnostics
+- include a minimal load-and-environment check, an `A30` build/integration
+  workflow, cache and diagnostics inspection, validation usage, and one
+  clearly marked longer-running `BuildRRatio[...]` example
+- provide the same first workflow as a runnable Wolfram notebook so a new user
+  can evaluate it cell by cell without translating the README into code
 
 The checklist is intentionally dependency-driven. In particular, semantics
 repair happens before cache re-audits, broader validation, or user-facing
@@ -1842,24 +1866,29 @@ BuildRRatioPhysicsValidationReport[UseStoredResults -> True]
 
 Purpose:
 
-- validate a full unsquared massless tree amplitude by replacing one external
-  gluon polarization vector with its own momentum
+- validate a full unsquared supported massless A-family amplitude by replacing
+  one external gluon polarization vector with its own momentum
 
 Verified scope:
 
 - `VerifyWardIdentity[A, 3, 0]` checks the `A30` gluon on leg `3`
 - `VerifyWardIdentity[A, 4, 0]` checks each `A40` gluon on legs `3` and `4`
-- all three initial checks return an exact zero residual
-- `A20`, `A22`, `B40`, and `C40` report `NotApplicable`; `A31` reports
-  `NotAvailableYet` because loop-amplitude Ward validation is not part of the
-  initial layer
+- `VerifyWardIdentity[A, 3, 1]` checks raw one-loop `A31` on leg `3`, before
+  interference, counterterm presentation, or integration; the diagnostic
+  simplifier uses standard PaVe tensor reduction to establish the loop identity
+- all four current gluon checks return an exact zero residual
+- `A20`, `A22`, `B40`, and `C40` report `NotApplicable`; massive `A30` and
+  experimental `D30` remain outside this validation scope
 
 Options and return shape:
 
 - `GluonLeg -> All` selects every applicable gluon leg; pass one leg number or
   a list to inspect selected replacements
-- `VerifyWardIdentity[]` prints the verified `A30`/`A40` suite; a route call
+- `VerifyWardIdentity[]` prints the `A30`/`A40`/`A31` suite; a route call
   prints only the selected route's row or rows, with its exact residual
+- the suite now generates and simplifies a one-loop amplitude for `A31`; it
+  can take substantially longer than the tree-only suite and writes no
+  stored-result artifacts
 - `ReturnDiagnostics -> True` returns the full association with one residual
   report per selected gluon and an overall `Pass`, `Fail`, `NotApplicable`,
   `NotAvailableYet`, or `RouteEvaluationFailed` status
@@ -1872,6 +1901,7 @@ Representative usage:
 VerifyWardIdentity[]
 VerifyWardIdentity[A, 3, 0]
 VerifyWardIdentity[A, 4, 0]
+VerifyWardIdentity[A, 3, 1]
 VerifyWardIdentity[A, 4, 0, GluonLeg -> 3]
 VerifyWardIdentity[A, 4, 0, ReturnDiagnostics -> True]
 ```

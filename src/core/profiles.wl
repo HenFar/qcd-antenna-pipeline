@@ -45,6 +45,9 @@ AntennaProfile::usage =
 AntennaAmplitude::usage =
   "AntennaAmplitude[key] returns the tree-level amplitude object associated with a profile.";
 
+AntennaLoopAmplitude::usage =
+  "AntennaLoopAmplitude[key] returns a memoized raw loop amplitude used by amplitude-level validation without entering interference or integration workflows.";
+
 AntennaSelfInterference::usage =
   "AntennaSelfInterference[key] returns the encoded self-interference or companion object associated with a profile.";
 
@@ -262,20 +265,27 @@ AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 2, 1}] :=
 AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
-(* Ward-identity metadata is separate from production profiles so that the
-   initial tree-level scope remains explicit and inspectable. *)
+(* Ward-identity metadata is separate from production profiles so the
+   validation source and its physics boundary remain explicit and inspectable. *)
 AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 3, 0}] :=
   <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3},
-    "Scope" -> "MasslessTreeAmplitude"|>;
+    "Scope" -> "MasslessTreeAmplitude", "AmplitudeSource" -> "TreeAmplitude",
+    "AmplitudeStage" -> "RawTree", "ValidationReduction" -> None,
+    "SimplificationTimeLimitSeconds" -> 120|>;
 
 AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 4, 0}] :=
   <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3, 4},
-    "Scope" -> "MasslessTreeAmplitude"|>;
+    "Scope" -> "MasslessTreeAmplitude", "AmplitudeSource" -> "TreeAmplitude",
+    "AmplitudeStage" -> "RawTree", "ValidationReduction" -> None,
+    "SimplificationTimeLimitSeconds" -> 120|>;
 
 AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
-  <|"Availability" -> "NotAvailableYet", "ExternalGluonLegs" -> {3},
-    "Scope" -> "LoopAmplitudeOutOfScope",
-    "Note" -> "The initial Ward layer validates full tree amplitudes only."|>;
+  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3},
+    "Scope" -> "MasslessOneLoopAmplitude",
+    "AmplitudeSource" -> "RawOneLoopAmplitude", "AmplitudeStage" -> "RawOneLoop",
+    "LoopMomentum" -> l, "ValidationReduction" -> "PaVeTensor",
+    "SimplificationTimeLimitSeconds" -> 900,
+    "Note" -> "This checks the raw A31 virtual amplitude before interference, counterterm presentation, or integration; validation simplification applies PaVe tensor reduction."|>;
 
 AntennaWardIdentityProfile[_] :=
   <|"Availability" -> "NotApplicable", "ExternalGluonLegs" -> {},
@@ -530,6 +540,13 @@ AntennaAmplitude[{type_Symbol /; SymbolName[type] === "B", 4, 0}] :=
 
 AntennaAmplitude[{type_Symbol /; SymbolName[type] === "C", 4, 0}] :=
   AntennaAmplitude[{type, 4, 0}] = MAmpLoopLess[4, AntennaType -> C];
+
+(* Keep loop sources separate from AntennaAmplitude, whose public contract is
+   explicitly tree-level. This memoization is kernel-local and never writes a
+   stored-result artifact. *)
+AntennaLoopAmplitude[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
+  AntennaLoopAmplitude[{type, 3, 1}] =
+    MAmpOneLoop[3, AntennaType -> type, LoopMomentum -> l];
 
 (* AntennaSelfInterference[key]
    ============================
