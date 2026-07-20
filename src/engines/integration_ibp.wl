@@ -31,6 +31,8 @@
 (*************************************************)
 
 EnsureLiteRedLoaded::usage = "EnsureLiteRedLoaded[] lazily loads LiteRed and initializes the minimal symbols needed by the IBP backend.";
+LoadLiteRedRuntime::usage = "LoadLiteRedRuntime[] silently loads LiteRed2 without applying IBP-route kinematics.";
+WithAntCalcIBPWorkspace::usage = "WithAntCalcIBPWorkspace[expr] evaluates one LiteRed reduction in a unique temporary working directory, restoring the caller's working directory and removing LiteRed fallback files afterwards.";
 LiteRedContextPath::usage = "LiteRedContextPath[] returns the context path used when looking up LiteRed symbols by name.";
 LiteRedSymbol::usage = "LiteRedSymbol[name] resolves a LiteRed symbol name string inside the LiteRed context path.";
 LiteRedScalarProduct::usage = "LiteRedScalarProduct[a, b] builds the LiteRed scalar-product form used in generated basis definitions.";
@@ -170,17 +172,32 @@ reduceAntenna::usage = "reduceAntenna[antenna, numFinalParticles, numLoops] is t
 
 (* LiteRed general setup
    ---------------------
-   LiteRed is loaded lazily because most package use-cases do not need the IBP
-   backend, and its startup cost would otherwise be paid on every kernel load. *)
+   LiteRed2 is loaded lazily because loading it before FeynArts model setup
+   changes the backend symbol environment. Its installed version is reported
+   by the AntCalc startup banner without evaluating the package. *)
+
+LoadLiteRedRuntime[] :=
+  If[Length[DownValues[LiteRed`Toj]] == 0,
+    Quiet[
+      Block[{$Output = {}},
+        Get["LiteRed2`"]
+      ]
+    ]
+  ];
 
 EnsureLiteRedLoaded[] :=
-  Module[{},
-    If[Length[DownValues[LiteRed`Toj]] == 0,
-      Quiet[
-        Block[{$Output = {}},
-          Get["LiteRed2`"]
-        ]
-      ]
+  Module[{liteRedVersion},
+    LoadLiteRedRuntime[];
+    (* LiteRed's native startup text can be interactive/noisy.  Keep that
+       suppressed, but state the exact version once the IBP backend is
+       genuinely available.  This also reports a LiteRed session that was
+       already loaded before AntCalc. *)
+    If[!TrueQ[$AntennaPipelineSuppressDependencyBanners] &&
+        !TrueQ[$AntennaPipelineLiteRedBannerPrinted],
+      liteRedVersion = Quiet@Check[ToString[LiteRed`$LiteRedVersion],
+        "unknown version"];
+      Print["LiteRed2 ", liteRedVersion, " loaded"];
+      $AntennaPipelineLiteRedBannerPrinted = True
     ];
     If[!MemberQ[$ContextPath, "LiteRed`"],
       AppendTo[$ContextPath, "LiteRed`"]
@@ -188,6 +205,40 @@ EnsureLiteRedLoaded[] :=
     Quiet[LiteRed`Declare[q2, Number]];
     Quiet[LiteRed`sp[q, q] = q2];
   ];
+
+(* LiteRed can materialize an IBPReduction* cache directory whenever IBPReduce
+   needs an on-demand sector rule. Its default location is Directory[], which
+   made those backend artefacts appear at the repository root when AntCalc was
+   run from a checkout. Localize only that filesystem side effect; the loaded
+   bases and all reduction inputs remain unchanged. *)
+SetAttributes[WithAntCalcIBPWorkspace, HoldFirst];
+
+WithAntCalcIBPWorkspace[expr_] :=
+  Module[{originalDirectory, workspace},
+    originalDirectory = Directory[];
+    workspace = FileNameJoin[{$TemporaryDirectory,
+       "AntCalc-IBP-" <> StringReplace[
+         ToString[CreateUUID[], InputForm],
+         {"UUID[\"" -> "", "\"]" -> "", "-" -> ""}
+       ]}];
+    If[Quiet@Check[CreateDirectory[workspace], $Failed] === $Failed,
+      Message[WithAntCalcIBPWorkspace::workspace, workspace];
+      Return[$Failed]
+    ];
+    Internal`WithLocalSettings[
+      Quiet@Check[SetDirectory[workspace], $Failed],
+      If[Directory[] === workspace,
+        expr,
+        Message[WithAntCalcIBPWorkspace::workspace, workspace];
+        $Failed
+      ],
+      Quiet@Check[SetDirectory[originalDirectory], Null];
+      Quiet@Check[DeleteDirectory[workspace, DeleteContents -> True], Null]
+    ]
+  ];
+
+WithAntCalcIBPWorkspace::workspace =
+  "Could not create or enter the temporary LiteRed workspace `1`; the reduction was not run.";
 
 LiteRedContextPath[] :=
   {"LiteRed`", "Vectors`", "Numbers`", "LinearFunctions`", "Types`",
@@ -2173,7 +2224,9 @@ ReduceAntennaIBP[antenna_, bases_List, profile_Association,
                   Check[
                     Quiet[
                       Block[{$Output = {}},
-                        LiteRed`IBPReduce[match["JTerm"]]
+                        WithAntCalcIBPWorkspace[
+                          LiteRed`IBPReduce[match["JTerm"]]
+                        ]
                       ]
                     ]
                     ,

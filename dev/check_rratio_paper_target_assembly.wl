@@ -34,8 +34,8 @@ paperFourPartonIngredients[order_Integer] :=
       (339/32 - 17 Pi^2/24 - 21 Zeta[3]/4 + 2 Pi^4/45);
     <|
       "intA40" -> IntegratedAntennaSeries[leading, order],
-      (* The public A40 subleading component is twice this paper bracket. *)
-      "intTildeA40" -> IntegratedAntennaSeries[2 paperSubleading, order],
+      (* The public tilde A40 convention leaves the colour sign external. *)
+      "intTildeA40" -> IntegratedAntennaSeries[-2 paperSubleading, order],
       "intB40" -> IntegratedAntennaSeries[b, order],
       (* The public C40 component is minus one half of this paper bracket. *)
       "intC40" -> IntegratedAntennaSeries[-paperC/2, order]
@@ -52,7 +52,7 @@ reportClosure[label_String, expression_] :=
     ];
     finiteResidual = SafeIntegratedResidualSimplify[
       RRatioFiniteCoefficient[expression] -
-        BuildRRatioSMQCDFiniteExpression[]
+        BuildRRatioSMQCDReferenceFiniteExpression[NNLO]
     ];
     Print[label, " pole coefficients:"];
     Print[poles];

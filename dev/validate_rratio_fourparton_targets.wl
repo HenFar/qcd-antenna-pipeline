@@ -29,8 +29,8 @@ paperFourPartonTargets[order_Integer] :=
       (339/32 - 17 Pi^2/24 - 21 Zeta[3]/4 + 2 Pi^4/45);
     <|
       "A40Leading" -> IntegratedAntennaSeries[leading, order],
-      (* The driver applies -tildeA40/N to reproduce the paper's + bracket/N. *)
-      "A40Subleading" -> IntegratedAntennaSeries[-paperSubleading, order],
+      (* Public tilde A40 has no colour sign absorbed. *)
+      "A40Subleading" -> IntegratedAntennaSeries[paperSubleading, order],
       "B40" -> IntegratedAntennaSeries[b, order],
       (* The driver applies -C40/N to reproduce the paper's + bracket/N. *)
       "C40" -> IntegratedAntennaSeries[-paperC, order]

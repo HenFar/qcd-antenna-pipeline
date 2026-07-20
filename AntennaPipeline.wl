@@ -26,6 +26,8 @@ packageRoot = DirectoryName[$InputFileName];
 
 $AntennaPipelineRoot = packageRoot;
 
+Get[FileNameJoin[{packageRoot, "src", "core", "version.wl"}]];
+
 Get[FileNameJoin[{packageRoot, "src", "core", "setup.wl"}]];
 
 Get[FileNameJoin[{packageRoot, "src", "core", "d30_effective_model.wl"
@@ -88,6 +90,11 @@ Get[FileNameJoin[{packageRoot, "src", "core", "production_assignments.wl"
 Get[FileNameJoin[{packageRoot, "src", "engines", "integration_ibp.wl"
    }]];
 
+(* LiteRed remains lazy: loading it globally before FeynArts model setup
+   changes the backend symbol environment. The startup banner reads its
+   installed metadata without evaluating LiteRed itself. *)
+$AntennaPipelineLiteRedBannerPrinted = True;
+
 Get[FileNameJoin[{packageRoot, "src", "engines", "integration_pave.wl"
    }]];
 
@@ -121,3 +128,9 @@ Get[FileNameJoin[{packageRoot, "src", "interface", "runtime_reports.wl"
 
 Get[FileNameJoin[{packageRoot, "src", "core", "physics_validation.wl"
    }]];
+
+(* The only visible package-startup presentation. *)
+If[!TrueQ[$AntCalcStartupBannerPrinted],
+  AntCalcStartupBanner[];
+  $AntCalcStartupBannerPrinted = True
+];

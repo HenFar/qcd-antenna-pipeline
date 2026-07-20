@@ -1,0 +1,168 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 15.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      5507,        158]
+NotebookOptionsPosition[      4228,        129]
+NotebookOutlinePosition[      4624,        145]
+CellTagsIndexPosition[      4581,        142]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Loading AntCalc", "Title",
+ CellChangeTimes->{{3.993472024885622*^9, 
+  3.993472027355548*^9}},ExpressionUUID->"a4857368-696c-4ee1-bde2-\
+6e237f36ea69"],
+
+Cell["\<\
+When the repository is first cloned, it must be installed to Mathematica as a \
+Paclet. This is done using the following commands. 
+*Do not forget to edit the code to your cloned repository folder*\
+\>", "Text",
+ CellChangeTimes->{{3.993472036149788*^9, 
+  3.993472119738003*^9}},ExpressionUUID->"9e51eba0-010d-4717-8e42-\
+d991238d64e7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"repoRoot", "=", "\"\</path/to/antenna_pipeline\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"archive", "=", 
+   RowBox[{"CreatePacletArchive", "[", 
+    RowBox[{"repoRoot", ",", "$TemporaryDirectory"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PacletInstall", "[", "archive", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.993472142401326*^9, 3.993472142401532*^9}},
+ CellLabel->"In[3]:=",ExpressionUUID->"ca898665-c7b4-414d-ba69-4caf5125430c"],
+
+Cell["If you are reinstalling a changed development build, use:", "Text",
+ CellChangeTimes->{{3.9934721614108667`*^9, 
+  3.9934721832882833`*^9}},ExpressionUUID->"1a1c4a85-ec67-4c34-b5c4-\
+a43293d2b5fc"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"PacletInstall", "[", 
+   RowBox[{"archive", ",", 
+    RowBox[{"ForceVersionInstall", "->", "True"}]}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"PacletDataRebuild", "[", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.993472187529093*^9, 3.993472199709676*^9}},
+ CellLabel->"In[3]:=",ExpressionUUID->"1cf35bbd-7d81-4dd8-b941-abc0c8de07bf"],
+
+Cell["\<\
+After this step you must restart the kernel.
+
+To launch AntCalc we run the following line, which along with the package, it \
+also loads FeynCalc and LiteRed2. These two other packages are necessary and \
+mandatory for the correct functioning of AntCalc.\
+\>", "Text",
+ CellChangeTimes->{{3.993472203889986*^9, 
+  3.99347229322644*^9}},ExpressionUUID->"d6b234d9-2f7a-4e2c-bd2f-\
+790395248849"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"<<", "AntCalc`"}]], "Input",
+ CellChangeTimes->{{3.993472295702351*^9, 3.9934722998099747`*^9}},
+ CellLabel->"In[5]:=",ExpressionUUID->"d8bf556d-49fa-40d2-ab55-35eb3721adb2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{
+    StyleBox["\<\"AntCalc \"\>", "Text",
+     StripOnInput->False,
+     FontWeight->Bold], "\[InvisibleSpace]", 
+    StyleBox[
+     TemplateBox[{"\"0.1.0\"", 
+       StyleBox["\" \[Alpha] \"", "Text", StripOnInput -> False], "\"3\""},
+      "RowDefault"], "Text",
+     StripOnInput->False]}],
+   SequenceForm[
+    Style["AntCalc ", "Text", Bold], 
+    Style[
+     Row[{"0.1.0", 
+       Style[" \[Alpha] ", "Text"], "3"}], "Text"]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.99354733006559*^9},
+ CellLabel->
+  "During evaluation of \
+In[5]:=",ExpressionUUID->"e78f0e2a-39bb-4e4e-a8d1-cdf3c98c5784"],
+
+Cell[BoxData[
+ FormBox[
+  StyleBox["\<\"FeynCalc 10.2.1  \[CenterDot]  FeynArts 3.12 (27\
+\[NonBreakingSpace]Mar\[NonBreakingSpace]2025)  \[CenterDot]  FeynHelpers \
+2.0.0  \[CenterDot]  FeynCalcLegacy 1.0.0\"\>", "Text",
+   StripOnInput->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.9935473300663433`*^9},
+ CellLabel->
+  "During evaluation of \
+In[5]:=",ExpressionUUID->"f82f4f2d-b4e9-420c-a25a-29c8e4dc2127"],
+
+Cell[BoxData[
+ FormBox[
+  StyleBox["\<\"LiteRed2 2.025\[Beta]\"\>", "Text",
+   StripOnInput->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993547330066854*^9},
+ CellLabel->
+  "During evaluation of \
+In[5]:=",ExpressionUUID->"3baa87ed-02bd-4f11-8d94-fe1deaa426c9"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{808, 749},
+WindowMargins->{{Automatic, -948}, {Automatic, -702}},
+FrontEndVersion->"15.0 for Mac OS X ARM (64-bit) (May 19, 2026)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"551cab67-7dc4-483c-952c-8e3eb8b7eff0"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[576, 22, 158, 3, 120, "Title",ExpressionUUID->"a4857368-696c-4ee1-bde2-6e237f36ea69"],
+Cell[737, 27, 347, 7, 96, "Text",ExpressionUUID->"9e51eba0-010d-4717-8e42-d991238d64e7"],
+Cell[1087, 36, 480, 10, 87, "Input",ExpressionUUID->"ca898665-c7b4-414d-ba69-4caf5125430c"],
+Cell[1570, 48, 203, 3, 42, "Text",ExpressionUUID->"1a1c4a85-ec67-4c34-b5c4-a43293d2b5fc"],
+Cell[1776, 53, 374, 8, 62, "Input",ExpressionUUID->"1cf35bbd-7d81-4dd8-b941-abc0c8de07bf"],
+Cell[2153, 63, 403, 9, 151, "Text",ExpressionUUID->"d6b234d9-2f7a-4e2c-bd2f-790395248849"],
+Cell[CellGroupData[{
+Cell[2581, 76, 198, 3, 36, "Input",ExpressionUUID->"d8bf556d-49fa-40d2-ab55-35eb3721adb2"],
+Cell[CellGroupData[{
+Cell[2804, 83, 682, 21, 26, "Print",ExpressionUUID->"e78f0e2a-39bb-4e4e-a8d1-cdf3c98c5784"],
+Cell[3489, 106, 422, 9, 60, "Print",ExpressionUUID->"f82f4f2d-b4e9-420c-a25a-29c8e4dc2127"],
+Cell[3914, 117, 274, 7, 33, "Print",ExpressionUUID->"3baa87ed-02bd-4f11-8d94-fe1deaa426c9"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

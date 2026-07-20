@@ -32,15 +32,15 @@ Module[{presentationData, integrableData, presentationBoundary,
    integrableBoundary, presentationPublic, presentationPrototype,
    integrableRouteNative, integrablePublic, integrablePrototype},
   presentationData = BuildAntenna[
-    A, 3, 1, ReturnBuildData -> True, IntegrableForm -> False,
+    A, 3, 1, ReturnRecord -> True, IntegrableForm -> False,
     UseStoredResults -> False, StoreResults -> False,
     RefreshStoredResults -> False
-  ];
+  ]["BuildData"];
   integrableData = BuildAntenna[
-    A, 3, 1, ReturnBuildData -> True, IntegrableForm -> True,
+    A, 3, 1, ReturnRecord -> True, IntegrableForm -> True,
     UseStoredResults -> False, StoreResults -> False,
     RefreshStoredResults -> False
-  ];
+  ]["BuildData"];
   presentationBoundary = Lookup[presentationData, "BuildOutputBoundary", <||>];
   integrableBoundary = Lookup[integrableData, "BuildOutputBoundary", <||>];
   presentationPublic = Lookup[Lookup[presentationBoundary, "Public", <||>],

@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: >-
+  AntCalc is active thesis research software and does not yet have a preferred
+  scholarly citation. Please cite the relevant software and physics sources
+  listed in docs/manual/citation-and-provenance.md.
+type: software
+title: AntCalc
+version: 0.1.0-alpha.3
+date-released: 2026-07-19
+authors:
+  - family-names: Farinha
+    given-names: Henrique
+    affiliation: >-
+      Faculty of Sciences, University of Lisbon (FCUL); Laboratory of
+      Instrumentation and Experimental Particle Physics (LIP), Phenomenology Group
+    orcid: https://orcid.org/0009-0004-2709-899X
+

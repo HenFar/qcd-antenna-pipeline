@@ -29,11 +29,34 @@ InterfereMAmp1Count::usage =
 InterfereMAmp2Count::usage =
   "InterfereMAmp2Count[amp] returns the number of terms in the second interfering amplitude.";
 
+A40LocalTraceDiracReduce::usage =
+  "A40LocalTraceDiracReduce[expr] contracts an A40 colour/spin pair and reduces each Dirac trace independently, avoiding a non-terminating global DiracSimplify pass without changing the individual FeynCalc trace reductions.";
+
 SymmetrizedInterference::usage =
   "SymmetrizedInterference[left, right] adds the left-right and right-left interference pieces in the package convention.";
 
 Options[InterfereMAmplitudes] = {ApplyCasimirSubstitution -> True, ApplyDimReg
    -> True, AntennaType -> A, quarkMass -> 0};
+
+(* A40LocalTraceDiracReduce[expr]
+   =============================
+   The full-colour A40 pair can contain O(10^2) independent Dirac traces.
+   FeynCalc's global DiracSimplify on that complete expression can fail to
+   terminate, although each trace reduces promptly.  Contract first, then use
+   FeynCalc's unchanged trace reduction on every exact trace representative and
+   substitute those values back in one structural pass.  This is intentionally
+   A40-specific: other routes retain their established reduction order. *)
+A40LocalTraceDiracReduce[expr_] :=
+  Module[{contracted, traces, reducedTraces},
+    contracted = FeynCalc`Contract[expr];
+    traces = DeleteDuplicates @ Cases[contracted, _FeynCalc`DiracTrace,
+      Infinity];
+    If[Length[traces] === 0,
+      Return[FeynCalc`DiracSimplify[contracted]]
+    ];
+    reducedTraces = FeynCalc`DiracSimplify /@ traces;
+    contracted /. Thread[traces -> reducedTraces]
+  ];
 
 (* InterfereMAmplitudes[MAmp1, MAmp2, numFinalParticles, ...]
    ==========================================================
@@ -271,7 +294,7 @@ InterfereMAmp2Count[MAmp1_, MAmp2_, numFinalParticles_, ApplyCasimirSubstitution
               SCouples[[i]] //
               SafeDoPolarizationSums[#, k3, k4]& //
               SafeDoPolarizationSums[#, k4, k3]& //
-              DiracSimplify //
+              A40LocalTraceDiracReduce //
               Simplify //
               Calc
             ,

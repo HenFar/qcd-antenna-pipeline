@@ -157,8 +157,8 @@ RRatioFourPartonPackageTarget[{a_Symbol /; SymbolName[a] === "A", 4, 0},
       (-6921/64 + 473 Pi^2/48 + 40 Zeta[3] - 17 Pi^4/144);
     Switch[componentName,
       "Leading", IntegratedAntennaSeries[leading, order],
-      (* The public subleading route is twice the paper bracket. *)
-      "Subleading", IntegratedAntennaSeries[2 subleading, order],
+      (* The public subleading route is tilde A4^0 itself; its colour sign is external. *)
+      "Subleading", IntegratedAntennaSeries[-2 subleading, order],
       _, Missing["UnknownA40Component", componentName]
     ]
   ];
@@ -591,12 +591,12 @@ BuildRRatioPhysicsValidationReport[OptionsPattern[]] :=
           "FailureReason" -> Lookup[diagnostics, "Reason",
             Missing["UnknownReason"]],
           "RouteDiagnosticsSummary" -> KeyTake[diagnostics,
-            {"Model", "ResultForm", "AssemblySource"}]
+            {"Model", "ResultForm", "ResultOrigin"}]
         |>
       ]
     ];
     ingredients = Lookup[diagnostics, "Ingredients", Missing["NotAvailable"]];
-    finiteTarget = BuildRRatioSMQCDFiniteExpression[];
+    finiteTarget = BuildRRatioSMQCDReferenceFiniteExpression[NNLO];
     observedPoles = RRatioPoleCoefficientAssociation[rawExpression];
     nnloContributionPoleBreakdown =
       If[AssociationQ[ingredients],
@@ -644,7 +644,7 @@ BuildRRatioPhysicsValidationReport[OptionsPattern[]] :=
         "ResultForm" -> "RawDimRegSeries"
       |>,
       "RouteDiagnosticsSummary" -> KeyTake[diagnostics,
-        {"Model", "ResultForm", "AssemblySource", "ObservableConvention"}],
+        {"Model", "ResultForm", "ResultOrigin", "ObservableConvention"}],
       "ObservedPoleCoefficients" -> observedPoles,
       "NNLOContributionPoleBreakdown" -> nnloContributionPoleBreakdown,
       "PoleCancellationResiduals" -> poleResiduals,

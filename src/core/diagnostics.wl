@@ -307,9 +307,9 @@ PaperDiagnosticsFor[{D, 3, 0}, result_] :=
 PaperDiagnosticsFor[{A, 4, 0}, result_List] :=
   <|"PaperCheckAvailable" -> True, "A40ExactMatchQ" -> TestEqualAntennaeQ[
     A40Paper, result[[1]], 4], "tA40ExactMatchQ" -> TestEqualAntennaeQ[tA40Paper,
-     -result[[2]], 4], "A40NumericResidual" -> ExactNumericResidual[A40Paper,
+     result[[2]], 4], "A40NumericResidual" -> ExactNumericResidual[A40Paper,
      result[[1]], 4], "tA40NumericResidual" -> ExactNumericResidual[tA40Paper,
-     -result[[2]], 4]|>;
+     result[[2]], 4]|>;
 
 PaperDiagnosticsFor[{B, 4, 0}, result_] :=
   <|"PaperCheckAvailable" -> True, "ExactMatchQ" -> TestEqualAntennaeQ[
@@ -407,7 +407,7 @@ RunAntennaDiagnostics[OptionsPattern[]] :=
       {c40, c40Diag} = BuildAntenna[C, 4, 0, ReturnDiagnostics -> True
         ];
       If[c40Diagnostic,
-        c40Data = BuildAntenna[C, 4, 0, ReturnBuildData -> True];
+        c40Data = BuildAntenna[C, 4, 0, ReturnRecord -> True]["BuildData"];
         PrintAntennaDiagnostics["C40 direct-primary square as B-like",
            c40Data["ReferenceSquareDiagnostics"], B40Paper,
            c40Data["ReferenceSquareComponents"]["Antenna"]];

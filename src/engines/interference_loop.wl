@@ -69,7 +69,8 @@ ReduceLoopIntegrals[expr_, loopMomentum_, OptionsPattern[]] :=
   ];
 
 Options[InterfereTreeOneLoopAmplitudes] = {ApplyCasimirSubstitution ->
-   True, ApplyDimReg -> False, LoopMomentum -> l, ReductionBackend -> "PaVe"
+   True, ApplyDimReg -> False, LoopMomentum -> l, ReductionBackend -> "PaVe",
+   ReturnStages -> False
   };
 
 (* SafeOneLoopTreeConjugate[treeAmp, numFinalParticles]
@@ -103,12 +104,13 @@ InterfereOneLoopMAmplitudes[treeAmp_, loopAmp_, numFinalParticles_, OptionsPatte
   InterfereTreeOneLoopAmplitudes]] :=
   Module[{applyCasimirSubstitutionOpt, applyDimRegOpt, loopMomentumOpt,
      reductionBackendOpt, conjugateTree, bare, simp, numPart, diracSimp, 
-    calcExpr, reduced, output},
+    calcExpr, reduced, output, returnStages},
     applyCasimirSubstitutionOpt = OptionValue["ApplyCasimirSubstitution"
       ];
     applyDimRegOpt = OptionValue["ApplyDimReg"];
     loopMomentumOpt = OptionValue["LoopMomentum"];
     reductionBackendOpt = OptionValue["ReductionBackend"];
+    returnStages = TrueQ[OptionValue[ReturnStages]];
     KinematicRules[numFinalParticles];
     conjugateTree = SafeOneLoopTreeConjugate[treeAmp, numFinalParticles
       ];
@@ -157,7 +159,16 @@ InterfereOneLoopMAmplitudes[treeAmp_, loopAmp_, numFinalParticles_, OptionsPatte
     If[applyDimRegOpt === True,
       output = output /. D -> 4 - 2 Epsilon // Simplify
     ];
-    output
+    If[returnStages,
+      <|
+        "InterferenceBeforeReduction" -> calcExpr,
+        "ReducedInterference" -> reduced,
+        "Interference" -> output,
+        "ReductionBackend" -> reductionBackendOpt
+      |>
+      ,
+      output
+    ]
   ];
 
 (* Keep InterfereTreeOneLoopAmplitudes as the public historical name while
@@ -167,7 +178,7 @@ InterfereTreeOneLoopAmplitudes[treeAmp_, loopAmp_, numFinalParticles_,
   InterfereOneLoopMAmplitudes[treeAmp, loopAmp, numFinalParticles, ApplyCasimirSubstitution
      -> OptionValue["ApplyCasimirSubstitution"], ApplyDimReg -> OptionValue[
     "ApplyDimReg"], LoopMomentum -> OptionValue["LoopMomentum"], ReductionBackend
-     -> OptionValue["ReductionBackend"]];
+     -> OptionValue["ReductionBackend"], ReturnStages -> OptionValue[ReturnStages]];
 
 LoopExpansionNormalization[1] :=
   8 Pi^2;

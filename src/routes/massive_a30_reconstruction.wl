@@ -159,8 +159,8 @@ MassiveA30GeneratedAmplitude[numFinalParticles_Integer, qm_,
         ExcludeParticles -> {}
       ];
     If[TrueQ[printDiagramQ],
-      Paint[diagsTree, ColumnsXRows -> {2, 1}, Numbering -> Simple,
-        SheetHeader -> None, ImageSize -> {512, 256}]
+      Print[Paint[diagsTree, ColumnsXRows -> {2, 1}, Numbering -> Simple,
+        SheetHeader -> None, ImageSize -> {512, 256}]]
     ];
     ampTree =
       With[{evalDiags = diagsTree, evalOutMoms = outMoms},
@@ -370,6 +370,7 @@ MassiveA30BuildData[OptionsPattern[]] :=
     profile = AntennaProfile[{A, 3, 0}];
     record =
       MassiveA30ReconstructionRecord[quarkMass -> qm,
+        printDiagram -> OptionValue[printDiagram],
         ApplyStripCouplings -> OptionValue[ApplyStripCouplings],
         ApplyCasimirSubstitution -> OptionValue[ApplyCasimirSubstitution],
         ApplyDimReg -> OptionValue[ApplyDimReg]];
@@ -421,6 +422,7 @@ MassiveA30ReconstructionRecord[OptionsPattern[]] :=
     qm = OptionValue[quarkMass];
     amplitude =
       MassiveA30TreeAmplitude[quarkMass -> qm,
+        printDiagram -> OptionValue[printDiagram],
         ApplyStripCouplings -> OptionValue[ApplyStripCouplings]];
     bornAmplitude =
       MassiveA30BornAmplitude[quarkMass -> qm,

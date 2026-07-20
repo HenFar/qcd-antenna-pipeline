@@ -126,6 +126,9 @@ AnnotateStoredResultDiagnostics::usage =
 PrintStoredResultHit::usage =
   "PrintStoredResultHit[label] prints the short message shown when a stored result is reused.";
 
+PrintStoredResultMiss::usage =
+  "PrintStoredResultMiss[label, willStore] explains that no exact current stored result was available and whether the fresh result will be stored.";
+
 FormatStoredResultReturn::usage =
   "FormatStoredResultReturn[result, diagnostics, loadedData, returnDiagnostics, returnRecord, requestedSteps, printSteps, routeKind, metadata] formats a cache hit in the same public shape as a fresh computation.";
 
@@ -253,10 +256,12 @@ NormalizeStoredResultKeyValue[value_] :=
       value
   ];
 
-StoredResultRouteSemanticVersion["BuildAntenna"] := 3;
-StoredResultRouteSemanticVersion["BuildAntennaObject"] := 2;
-StoredResultRouteSemanticVersion["IntegrateAntenna"] := 3;
-StoredResultRouteSemanticVersion["BuildAndIntegrateAntenna"] := 4;
+(* Build-stage replay now uses the compact physics-facing stage association,
+   so entries written with the former raw-stage payload are not replayed. *)
+StoredResultRouteSemanticVersion["BuildAntenna"] := 5;
+StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
+StoredResultRouteSemanticVersion["IntegrateAntenna"] := 4;
+StoredResultRouteSemanticVersion["BuildAndIntegrateAntenna"] := 5;
 StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
 StoredResultRouteSemanticVersion["TObject"] := 4;
 StoredResultRouteSemanticVersion[_] := 1;
@@ -634,6 +639,11 @@ AnnotateStoredResultDiagnostics[diagnostics_Association, loadedData_Association,
 
 PrintStoredResultHit[label_String] :=
   Print["Using stored result for ", label, "."];
+
+PrintStoredResultMiss[label_String, willStore_:False] :=
+  Print["No matching current stored result for ", label, ". Computing",
+    If[TrueQ[willStore], " and storing the fresh result.",
+      "; set StoreResults -> True to reuse this computation later."]];
 
 FormatStoredResultReturn[result_, diagnostics_, loadedData_Association,
    returnDiagnostics_, returnRecord_, requestedSteps_List, printSteps_,

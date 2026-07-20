@@ -24,6 +24,12 @@ ComputeMAmplitude::usage =
 MAmpLoopLess::usage =
   "MAmpLoopLess[numFinalParticles, ...] builds the tree-level M amplitude used as the starting point for tree antenna construction.";
 
+AntennaTreeDiagramSet::usage =
+  "AntennaTreeDiagramSet[numFinalParticles, antennaType] returns the FeynArts tree diagram set for the requested antenna source.";
+
+PrintAntennaTreeDiagrams::usage =
+  "PrintAntennaTreeDiagrams[numFinalParticles, antennaType] renders the tree diagram set used by a BuildAntenna route without rebuilding its memoized amplitude.";
+
 (*************************************************)
 
 (*
@@ -71,6 +77,43 @@ ComputeMAmplitude[numFinalParticles_, numLoops_] :=
 
 Options[MAmpLoopLess] = {printDiagram -> False, prefactor -> 1, ApplyStripCouplings
    -> AllCouplings, AntennaType -> A, quarkMass -> 0};
+
+(* Keep diagram rendering separate from amplitude construction.  Most public
+   tree routes use AntennaAmplitude[key], which is deliberately memoized and
+   therefore cannot replay a generation-time option on a cache hit. *)
+AntennaTreeDiagramSet[numFinalParticles_Integer, antennaType_] :=
+  Module[{finalState, excludedParticles},
+    finalState =
+      Switch[antennaType,
+        A,
+          Join[{F[3, {1}], -F[3, {1}]}, Table[V[5], {numFinalParticles - 2}]]
+        ,
+        B,
+          {F[3, {1}], -F[3, {1}], F[3, {2}], -F[3, {2}]}
+        ,
+        C,
+          {F[3, {1}], -F[3, {1}], F[3, {1}], -F[3, {1}]}
+      ];
+    excludedParticles =
+      Switch[antennaType,
+        A, {},
+        B | C, {V[1], V[2], S[_]}
+      ];
+    InsertFields[CreateTopologies[0, 1 -> numFinalParticles],
+      {V[1]} -> finalState, InsertionLevel -> {Classes}, Model -> "SMQCD",
+      ExcludeParticles -> excludedParticles]
+  ];
+
+PrintAntennaTreeDiagrams[numFinalParticles_Integer, antennaType_:A] :=
+  Module[{diagrams},
+    diagrams = AntennaTreeDiagramSet[numFinalParticles, antennaType];
+    Print[Style["[AntCalc] Tree diagrams: ", Bold],
+      "", antennaType, numFinalParticles, " (", numFinalParticles,
+      " final-state partons)"];
+    Print[Paint[diagrams, ColumnsXRows -> {2, 1}, Numbering -> Simple,
+      SheetHeader -> None, ImageSize -> {512, 256}]];
+    diagrams
+  ];
 
 (* MAmpLoopLess[numFinalParticles, OptionsPattern[]]
    ================================================
@@ -198,13 +241,11 @@ MAmpLoopLess[numFinalParticles_ /; numFinalParticles >= 2, OptionsPattern[
     (* Build the actual tree topologies and insert the family-specific external
        fields.  The model stays fixed to SMQCD because these antennae are meant
        to capture QCD radiation patterns in that convention. *)
-    diagsTree = InsertFields[CreateTopologies[0, 1 -> numFinalParticles
-      ], {V[1]} -> finalState, InsertionLevel -> {Classes}, Model -> "SMQCD",
-       ExcludeParticles -> excludedParticles];
+    diagsTree = AntennaTreeDiagramSet[numFinalParticles, optAntennaType];
     (* paint said diagrams *)
     If[optPrintDiag == True,
-      Paint[diagsTree, ColumnsXRows -> {2, 1}, Numbering -> Simple, SheetHeader
-         -> None, ImageSize -> {512, 256}];
+      Print[Paint[diagsTree, ColumnsXRows -> {2, 1}, Numbering -> Simple,
+        SheetHeader -> None, ImageSize -> {512, 256}]];
     ];
     (* Convert the FeynArts amplitude to FeynCalc form with a package-wide set
        of options: outgoing momenta, explicit symbolic parameters, and stripped

@@ -55,7 +55,8 @@ BuildRouteBuildData[key_, options_Association] :=
           ApplyCasimirSubstitution -> Lookup[options, "ApplyCasimirSubstitution", True],
           ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
           LoopMomenta -> Lookup[options, "LoopMomenta", {l1, l2}],
-          Contribution -> Lookup[options, "Contribution", All]
+          Contribution -> AntennaInternalContribution[key,
+            Lookup[options, "Component", All]]
         ]
       ,
       _,
@@ -104,11 +105,20 @@ BuildTreeRouteData[key_, options_Association] :=
       Return[
         MassiveA30BuildData[
           quarkMass -> quarkMassOpt,
+          printDiagram -> Lookup[options, "printDiagram", False],
           ApplyStripCouplings -> Lookup[options, "ApplyStripCouplings", AllCouplings],
           ApplyCasimirSubstitution -> Lookup[options, "ApplyCasimirSubstitution", True],
           ApplyDimReg -> Lookup[options, "ApplyDimReg", True]
         ]
       ]
+    ];
+    (* AntennaAmplitude[key] is memoized, so draw requested diagrams explicitly
+       at the route boundary instead of relying on a generation-time option
+       that a warm cache will never see.  The returned amplitude remains the
+       exact cached source used by ordinary builds. *)
+    If[TrueQ[Lookup[options, "printDiagram", False]],
+      PrintAntennaTreeDiagrams[profile["NumFinalParticles"],
+        profile["AntennaType"]]
     ];
     amp = AntennaAmplitude[key];
     context = <|"BornInterference" -> BornInterference[]|>;

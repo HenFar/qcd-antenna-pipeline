@@ -61,7 +61,7 @@ poleSummary[expr_] :=
     "Poles" -> RRatioPoleCoefficientAssociation[expr],
     "FiniteResidual" ->
       SafeIntegratedResidualSimplify[
-        RRatioFiniteCoefficient[expr] - BuildRRatioSMQCDFiniteExpression[]
+        RRatioFiniteCoefficient[expr] - BuildRRatioSMQCDReferenceFiniteExpression[NNLO]
       ]
   |>;
 

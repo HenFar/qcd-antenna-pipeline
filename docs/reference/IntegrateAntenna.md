@@ -1,0 +1,90 @@
+# `IntegrateAntenna`
+
+[Reference index](README.md) · [`BuildAntenna`](BuildAntenna.md) · [Documentation home](../README.md)
+
+```wl
+IntegrateAntenna[antennaObject, opts]
+```
+
+Integrates an `AntennaObject` through its route-selected PaVe or IBP backend.
+Obtain an object with either:
+
+```wl
+BuildAntennaObject[A, 3, 0]
+BuildAntenna[A, 3, 0, IntegrableForm -> True]
+```
+
+An ordered list of integrable objects is also accepted. It is exactly the
+lifted component-wise operation: `IntegrateAntenna[objects, opts]` has the
+same result and return shapes as `IntegrateAntenna[#, opts]& /@ objects`.
+
+The ordinary result is an integrated scalar or ordered public component list.
+
+## Shared integration contract
+
+`IntegrateAntenna` and `BuildAndIntegrateAntenna` expose the same integration
+option set. The latter builds an integrable object and delegates integration;
+it is not a different backend or convention path.
+
+The one-shot wrapper forwards the physics and backend controls to
+`IntegrateAntenna`. `ReturnDiagnostics` and `ReturnRecord` are applied at its
+outer return boundary, while cache controls are handled by the one-shot cache;
+these differences preserve the same public result semantics rather than define
+a second calculation route.
+
+## Main options
+
+| Option | Default | Meaning |
+|---|---:|---|
+| `ExpansionOrder` | `Automatic` | requested epsilon-series depth |
+| `Component` | `All` | select one public integrated component |
+| `ReturnTTerms` | `False` | expose the route T-term object when meaningful |
+| `ReturnMasterCombination` | `False` | expose an unreplaced runtime-master combination when available |
+| `ReturnDiagnostics` | `False` | return `{result, diagnostics}` |
+| `ReturnRecord` | `False` | return an `AntennaRunRecord` |
+| `IntermediateSteps` | `{}` | request selected integration-stage data |
+| `UseStoredResults`, `StoreResults` | `False` | cache controls |
+
+`ReturnMasterCombination -> True` retains the IBP diagnostic payload needed to
+return the master combination on direct and one-shot calls alike. It does not
+invent a literature-basis relation. The printed basis legend is descriptive;
+the returned expression retains its runtime LiteRed syntax. Its coefficient
+functions use the public dimensional convention `d = 4 - 2 Epsilon` and the
+single public spelling `Epsilon`; raw LiteRed `d`/`eps` notation remains only
+in backend diagnostics.
+
+## Backend and convention controls
+
+| Option | Meaning |
+|---|---|
+| `ApplyFeynCalcMS` | apply the FeynCalc/Package-X convention bridge where relevant |
+| `KinematicScale`, `NormalizeKinematicScale` | control integration-scale presentation |
+| `quarkMass` | select a massive branch where experimentally supported |
+| `LoopMomentum` | PaVe loop-momentum selector |
+| `ApplyDimReg` | activate package dimensional continuation |
+| `BasisFamily`, `BasisRoot`, `GenerateMissingBases` | expert IBP basis routing controls |
+| `DetailedTimingDiagnostics` | request extended heavy-route timing diagnostics |
+| `ResultsCacheRoot`, `RefreshStoredResults` | advanced cache controls |
+
+## Integration stage names
+
+The current collector recognises:
+
+```text
+InputAntenna
+RawIntegrated
+TTerms
+FinalIntegrated
+SelectedIntegrated
+BackendDiagnostics
+IntegrationDiagnostics
+```
+
+See [records and diagnostics](records-and-diagnostics.md) for return shapes
+and [conventions](../manual/conventions-and-normalisation.md) for the meaning
+of PaVe and IBP bridge factors.
+
+The A21 PaVe/Package-X scalar evaluation is a route-owned implementation
+choice (`"PaXEvaluate"` in the supported profile), not a public integration
+option. Direct raw-expression PaVe/IBP integration is not part of the public
+API; build an `AntennaObject` first.

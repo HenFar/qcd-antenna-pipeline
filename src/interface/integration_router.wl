@@ -79,6 +79,27 @@ FormatFreshIntegrationReturn::usage =
 ResolveIntegrationPublicResult::usage =
   "ResolveIntegrationPublicResult[result, diagnostics, returnMasterCombination, routeLabel] rewrites the public return value into the requested integration result kind without changing the stored backend stages.";
 
+MasterCombinationView::usage =
+  "MasterCombinationView[diagnostics] returns the stable provenance object for an unreplaced runtime master combination. It records the displayed expression, basis metadata, and any explicitly provisional bridge status without substituting master values.";
+
+AttachMasterCombinationView::usage =
+  "AttachMasterCombinationView[diagnostics] adds the stable MasterCombinationView field to integration diagnostics.";
+
+MasterCombinationBasisSummary::usage =
+  "MasterCombinationBasisSummary[expr, diagnostics] inspects every LiteRed basis occurring in a master combination and returns its runtime propagator, cut, used-master, and exact display-alias metadata.";
+
+PrintMasterCombinationBasisSummary::usage =
+  "PrintMasterCombinationBasisSummary[expr, diagnostics] prints the data-driven LiteRed basis legend for a returned master combination without changing the expression.";
+
+MasterBasisPropagatorAlias::usage =
+  "MasterBasisPropagatorAlias[denominator, profile] derives a display-only external-momentum or invariant alias when it follows exactly from the route momentum rules.";
+
+MasterCombinationNormalForm::usage =
+  "MasterCombinationNormalForm[expr] collects an unreplaced LiteRed expression into an explicit linear combination of its master integrals without applying master-value substitutions.";
+
+PublicMasterCombinationDisplayForm::usage =
+  "PublicMasterCombinationDisplayForm[expr] applies AntCalc's public d = 4 - 2 Epsilon dictionary and eps = Epsilon spelling to an unreplaced runtime-master combination without changing the raw LiteRed backend payload.";
+
 A22CombineIntegratedResults::usage =
   "A22CombineIntegratedResults[treeResult, breveResult] stitches the public four-component A22 integrated result from its tree/two-loop and one-loop/self branches.";
 
@@ -98,13 +119,12 @@ MassiveA30DefaultMasterEndpointResult::usage =
   "MassiveA30DefaultMasterEndpointResult[obj, options, routeKind, integratedFallback, diagnostics, routeLabel] returns the public massive A30 master-combination endpoint together with updated diagnostics.";
 
 Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
-   PaVeEvaluation -> "PaXEvaluate",
    ExpansionOrder -> Automatic, KinematicScale -> q2, NormalizeKinematicScale ->
     True, ReturnDiagnostics -> False, ReturnRecord -> False,
    ReturnMasterCombination -> False,
    LoopMomentum -> l, ApplyDimReg -> True, BasisFamily -> Automatic, BasisRoot -> Automatic,
    GenerateMissingBases -> False,
-   ReturnTTerms -> False, Component -> All, Contribution -> All,
+   ReturnTTerms -> False, Component -> All,
    IntermediateSteps -> {}, PrintIntermediateSteps -> False,
    DetailedTimingDiagnostics -> False,
    UseStoredResults -> False, StoreResults -> False,
@@ -162,7 +182,7 @@ CollectIntegrationIntermediateSteps[antenna_, rawIntegrated_, tTerms_,
 
 (*************************************************)
 
-IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
+LegacyIntegrateAntennaBackendDirect[antenna_, integrationMethod:(PaVe | IBP),
    OptionsPattern[]] :=
   IntegrateBackendDirectRoute[
     antenna,
@@ -188,13 +208,12 @@ IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
     |>
   ];
 
-IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
+LegacyIntegrateAntennaObjectEntry[obj_AntennaObject, OptionsPattern[]] :=
   IntegrateRouteObject[
     obj,
     <|
       "ApplyFeynCalcMS" -> OptionValue["ApplyFeynCalcMS"],
       "quarkMass" -> OptionValue["quarkMass"],
-      "PaVeEvaluation" -> OptionValue["PaVeEvaluation"],
       "ExpansionOrder" -> OptionValue["ExpansionOrder"],
       "KinematicScale" -> OptionValue["KinematicScale"],
       "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
@@ -215,7 +234,6 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
       "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
       "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
       "Component" -> OptionValue["Component"],
-      "Contribution" -> OptionValue["Contribution"],
       "RouteKind" -> "IntegrateAntenna"
     |>
   ];
@@ -229,7 +247,6 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     <|
       "ApplyFeynCalcMS" -> OptionValue["ApplyFeynCalcMS"],
       "quarkMass" -> OptionValue["quarkMass"],
-      "PaVeEvaluation" -> OptionValue["PaVeEvaluation"],
       "ExpansionOrder" -> OptionValue["ExpansionOrder"],
       "KinematicScale" -> OptionValue["KinematicScale"],
       "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
@@ -249,8 +266,7 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       "StoreResults" -> OptionValue["StoreResults"],
       "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
       "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
-      "Component" -> OptionValue["Component"],
-      "Contribution" -> OptionValue["Contribution"]
+      "Component" -> OptionValue["Component"]
     |>
   ];
 
@@ -271,9 +287,7 @@ HeavyIntegrationRouteLabel[key_, component_, contribution_] :=
   StringJoin[
     ToString[key, InputForm],
     " with Component -> ",
-    CanonicalAntennaComponentName[component],
-    ", Contribution -> ",
-    CanonicalAntennaComponentName[contribution]
+    CanonicalAntennaComponentName[component]
   ];
 
 MaybeWarnHeavyIntegrationRoute[key_, component_, contribution_] :=
@@ -326,7 +340,8 @@ IntegrateAntennaStoredResultKey[obj_AntennaObject, options_Association] :=
       <|
         "AntennaKey" -> Lookup[data, "Key", Missing["UnknownKey"]],
         "ObjectComponent" -> Lookup[data, "SelectedComponent", All],
-        "ObjectContribution" -> Lookup[data, "Contribution", All],
+        "ContributionsUsed" -> Lookup[data, "ContributionsUsed",
+          Missing["NotApplicable"]],
         "ApplyFeynCalcMS" -> Lookup[options, "ApplyFeynCalcMS", True],
         "quarkMass" -> Lookup[options, "quarkMass", 0],
         "PaVeEvaluation" -> Lookup[options, "PaVeEvaluation",
@@ -342,8 +357,9 @@ IntegrateAntennaStoredResultKey[obj_AntennaObject, options_Association] :=
         "GenerateMissingBases" -> Lookup[options, "GenerateMissingBases",
           False],
         "ReturnTTerms" -> Lookup[options, "ReturnTTerms", False],
+        "ReturnMasterCombination" -> Lookup[options,
+          "ReturnMasterCombination", False],
         "Component" -> Lookup[options, "Component", All],
-        "Contribution" -> Lookup[options, "Contribution", All],
         "DetailedTimingDiagnostics" -> Lookup[options,
           "DetailedTimingDiagnostics", False]
       |>
@@ -359,8 +375,7 @@ IntegrateAntennaStoredResultLabel[obj_AntennaObject, options_Association] :=
       StoredResultTypeLabel[First[key]], "-",
       ToString[key[[2]]], "-",
       ToString[key[[3]]], "-",
-      CanonicalAntennaComponentName[Lookup[options, "Component", All]], "-",
-      CanonicalAntennaComponentName[Lookup[options, "Contribution", All]]
+      CanonicalAntennaComponentName[Lookup[options, "Component", All]]
     ]
   ];
 
@@ -387,8 +402,9 @@ BuildAndIntegrateStoredResultKey[type_, numFinalParticles_, loopOrder_,
       "GenerateMissingBases" -> Lookup[options, "GenerateMissingBases",
         False],
       "ReturnTTerms" -> Lookup[options, "ReturnTTerms", False],
+      "ReturnMasterCombination" -> Lookup[options,
+        "ReturnMasterCombination", False],
       "Component" -> Lookup[options, "Component", All],
-      "Contribution" -> Lookup[options, "Contribution", All],
       "DetailedTimingDiagnostics" -> Lookup[options,
         "DetailedTimingDiagnostics", False]
     |>
@@ -401,8 +417,7 @@ BuildAndIntegrateStoredResultLabel[type_, numFinalParticles_, loopOrder_,
     StoredResultTypeLabel[type], "-",
     ToString[numFinalParticles], "-",
     ToString[loopOrder], "-",
-    CanonicalAntennaComponentName[Lookup[options, "Component", All]], "-",
-    CanonicalAntennaComponentName[Lookup[options, "Contribution", All]]
+    CanonicalAntennaComponentName[Lookup[options, "Component", All]]
   ];
 
 (* FormatFreshIntegrationReturn[result, diagnostics, ...]
@@ -413,8 +428,9 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
    returnRecord_, requestedSteps_List, printSteps_,
    routeKind_String:"IntegrateAntenna", recordStages_:Automatic,
    recordMetadata_Association:<||>] :=
-  Module[{selectedSteps, stages, record},
-    selectedSteps = Lookup[diagnostics, "IntermediateSteps", <||>];
+  Module[{selectedSteps, stages, record, diagnosticsWithMasterView},
+    diagnosticsWithMasterView = AttachMasterCombinationView[diagnostics];
+    selectedSteps = Lookup[diagnosticsWithMasterView, "IntermediateSteps", <||>];
     If[TrueQ[returnRecord],
       stages =
         If[AssociationQ[recordStages],
@@ -422,7 +438,7 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
           ,
           If[AssociationQ[selectedSteps], selectedSteps, <||>]
         ];
-      record = IntegrationRunRecord[routeKind, result, diagnostics, stages,
+      record = IntegrationRunRecord[routeKind, result, diagnosticsWithMasterView, stages,
         recordMetadata];
       If[TrueQ[printSteps] && AssociationQ[record["IntermediateSteps"]] &&
           Length[record["IntermediateSteps"]] > 0,
@@ -435,7 +451,7 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
       PrintIntermediateStepsAssociation[selectedSteps]
     ];
     If[TrueQ[returnDiagnostics],
-      {result, diagnostics}
+      {result, diagnosticsWithMasterView}
       ,
       If[Length[requestedSteps] > 0,
         {result, selectedSteps}
@@ -445,31 +461,311 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
     ]
   ];
 
+MasterCombinationNormalForm[expr_] :=
+  Module[{masters},
+    masters = DeleteDuplicates @ Cases[expr,
+      HoldPattern[LiteRed`j[___]], Infinity];
+    If[Length[masters] === 0, Return[expr]];
+    Collect[expr, masters, Simplify]
+  ];
+
+(* This is deliberately a return-boundary skin. The raw LiteRed reduction
+   remains in BackendDiagnostics["RawLiteRedCombination"] with its native d
+   and eps symbols for provenance and backend debugging. *)
+PublicMasterCombinationDisplayForm[expr_] :=
+  MasterCombinationNormalForm[
+    expr /. {
+      d -> 4 - 2 Epsilon,
+      eps -> Epsilon,
+      FeynCalc`Epsilon -> Epsilon
+    }
+  ];
+
+MasterCombinationView[diagnostics_Association] :=
+  Module[{backendDiagnostics, profile, key, combination, rawCombination, masters,
+     basisFamily, genericDefinitions, massiveA30Q},
+    backendDiagnostics = Lookup[diagnostics, "BackendDiagnostics", <||>];
+    If[!AssociationQ[backendDiagnostics], backendDiagnostics = <||>];
+    profile = Lookup[diagnostics, "Profile",
+      Lookup[backendDiagnostics, "Profile", <||>]];
+    If[!AssociationQ[profile], profile = <||>];
+    key = Lookup[profile, "Key", Missing["NotAvailable"]];
+    basisFamily = Lookup[profile, "BasisFamily",
+      Lookup[backendDiagnostics, "BasisFamily", Missing["NotAvailable"]]];
+    massiveA30Q =
+      (MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
+        Lookup[profile, "MassSymbol", Lookup[diagnostics, "quarkMass", 0]] =!= 0) ||
+      MemberQ[{"MX30", "MX30Basis123"}, basisFamily];
+    rawCombination = Lookup[backendDiagnostics, "RawLiteRedCombination",
+      Lookup[backendDiagnostics, "RawMasterCombination",
+        Lookup[backendDiagnostics, "MasterMappedExpression",
+        Missing["NotAvailable"]]]];
+    rawCombination = MasterCombinationNormalForm[rawCombination];
+    combination = PublicMasterCombinationDisplayForm[rawCombination];
+    If[MatchQ[combination, Missing[__]],
+      Return[<|
+        "SchemaVersion" -> 1,
+        "Availability" -> "NotAvailable",
+        "Expression" -> combination,
+        "RawExpression" -> rawCombination,
+        "BasisFamily" -> basisFamily,
+        "AntennaKey" -> key,
+        "MasterDefinitions" -> <||>,
+        "SubstitutionStatus" -> "NoRuntimeMasterCombinationExposed"
+      |>]
+    ];
+    If[massiveA30Q,
+      Return[<|
+        "SchemaVersion" -> 1,
+        "Availability" -> "Available",
+        "Expression" -> combination,
+        "RawExpression" -> rawCombination,
+        "DimensionConvention" -> "d = 4 - 2 Epsilon; eps = Epsilon",
+        "Stage" -> "PublicMasterCombinationDisplay",
+        "RawStage" -> "RawMasterCombination",
+        "BasisFamily" -> "MX30Basis123",
+        "AntennaKey" -> key,
+        "MasterDefinitions" -> <|
+          "J11100" -> <|
+            "Symbol" -> HoldForm[LiteRed`j[MX30Basis123, 1, 1, 1, 0, 0]],
+            "Family" -> "MX30Basis123", "Indices" -> {1, 1, 1, 0, 0},
+            "Role" -> "Undotted runtime master",
+            "PaperRelation" -> "Provisionally identified with the bridged paper I1^(m,0,m) master."|>,
+          "J21100" -> <|
+            "Symbol" -> HoldForm[LiteRed`j[MX30Basis123, 2, 1, 1, 0, 0]],
+            "Family" -> "MX30Basis123", "Indices" -> {2, 1, 1, 0, 0},
+            "Role" -> "Dotted runtime master",
+            "PaperRelation" -> "Not the paper numerator master I2^(m,0,m); the currently encoded relation is provisional."|>
+        |>,
+        "PaperMasterDefinitions" -> <|
+          "I1" -> "Paper phase-space master I1^(m,0,m).",
+          "I2" -> "Paper numerator master I2^(m,0,m)."
+        |>,
+        "SubstitutionStatus" -> "UnreplacedRuntimeBasis",
+        "BridgeStatus" -> "ProvisionalSecondMasterBridge",
+        "BridgeNote" -> "This view exposes the runtime dotted-master combination; it does not assert a derived paper-to-runtime relation."
+      |>]
+    ];
+    masters = DeleteDuplicates @ Cases[combination,
+      HoldPattern[LiteRed`j[family_, indices___]], Infinity];
+    genericDefinitions = Association @ MapIndexed[
+      ("Master" <> ToString[First[#2]] -> <|
+        "Symbol" -> #1,
+        "Definition" -> "LiteRed runtime-basis representative; family and propagator powers are encoded by the displayed j[...] expression."|>)&,
+      masters
+    ];
+    <|
+      "SchemaVersion" -> 1,
+      "Availability" -> "Available",
+      "Expression" -> combination,
+      "RawExpression" -> rawCombination,
+      "DimensionConvention" -> "d = 4 - 2 Epsilon; eps = Epsilon",
+      "Stage" -> "PublicMasterCombinationDisplay",
+      "RawStage" -> "RawMasterCombination",
+      "BasisFamily" -> basisFamily,
+      "AntennaKey" -> key,
+      "MasterDefinitions" -> genericDefinitions,
+      "SubstitutionStatus" -> "UnreplacedRuntimeBasis",
+      "BridgeStatus" -> "NoPaperBasisBridgeAsserted"
+    |>
+  ];
+
+AttachMasterCombinationView[diagnostics_Association] :=
+  If[KeyExistsQ[diagnostics, "MasterCombinationView"] &&
+      AssociationQ[diagnostics["MasterCombinationView"]] &&
+      KeyExistsQ[diagnostics["MasterCombinationView"], "RawExpression"], diagnostics,
+    Join[diagnostics, <|"MasterCombinationView" ->
+      MasterCombinationView[diagnostics]|>]];
+
+AttachMasterCombinationView[diagnostics_] := diagnostics;
+
+MasterBasisMomentumDefinitions[profile_Association] :=
+  Module[{rules, external},
+    rules = Lookup[profile, "MomentumRules", {}];
+    external = Cases[rules,
+      HoldPattern[_[index_Integer] -> momentum_] :> {index, momentum}];
+    SortBy[external, First]
+  ];
+
+MasterBasisSquaredMomentumLabel[momentum_, external_List] :=
+  Module[{single, pairs},
+    single = SelectFirst[external,
+      TrueQ[Simplify[Expand[momentum - #[[2]]]] === 0] ||
+        TrueQ[Simplify[Expand[momentum + #[[2]]]] === 0]&,
+      Missing["NotFound"]];
+    If[!MissingQ[single], Return["p" <> ToString[single[[1]]] <> "^2"]];
+    pairs = Subsets[external, {2}];
+    SelectFirst[pairs,
+      TrueQ[Simplify[Expand[momentum - (#[[1, 2]] + #[[2, 2]])]] === 0] ||
+        TrueQ[Simplify[Expand[momentum + #[[1, 2]] + #[[2, 2]]]] === 0]&,
+      Missing["NotFound"]] /. {
+        pair_List :> "s" <> ToString[pair[[1, 1]]] <> ToString[pair[[2, 1]]],
+        _Missing :> Missing["NotFound"]
+      }
+  ];
+
+MasterBasisPropagatorAlias[denominator_, profile_Association:<||>] :=
+  Module[{external, squaredTerms, squared, coefficient, remainder, label,
+     remainderLabel},
+    external = MasterBasisMomentumDefinitions[profile];
+    If[Length[external] === 0, Return[Missing["NoMomentumRules"]]];
+    (* Generated LiteRed bases can restore the scalar-product head in a
+       context that is not stable across LiteRed versions.  Recognise its
+       displayed sp[_,_] structure rather than a hard-coded symbol context. *)
+    squaredTerms = Cases[denominator,
+      scalar_ /; StringStartsQ[ToString[scalar, InputForm], "sp["] :>
+        With[{arguments = List @@ scalar},
+          If[Length[arguments] === 2 &&
+              TrueQ[Simplify[Expand[arguments[[1]] - arguments[[2]]]] === 0],
+            arguments[[1]], Nothing]],
+      {0, Infinity}];
+    If[Length[squaredTerms] =!= 1, Return[Missing["NoUniqueSquaredMomentum"]]];
+    squared = SelectFirst[Cases[denominator,
+        scalar_ /; StringStartsQ[ToString[scalar, InputForm], "sp["] :> scalar,
+        {0, Infinity}],
+      TrueQ[Simplify[Expand[(List @@ #)[[1]] - squaredTerms[[1]]]] === 0]&];
+    coefficient = Quiet[Check[Coefficient[denominator, squared], $Failed]];
+    If[coefficient === $Failed || !MemberQ[{1, -1}, coefficient],
+      Return[Missing["UnsupportedPropagatorForm"]]
+    ];
+    label = MasterBasisSquaredMomentumLabel[squaredTerms[[1]], external];
+    If[MissingQ[label], Return[label]];
+    remainder = Simplify[denominator - coefficient squared];
+    remainderLabel = ToString[remainder, TraditionalForm];
+    Which[
+      TrueQ[remainder === 0] && coefficient === 1, label,
+      coefficient === -1 && TrueQ[remainder =!= 0], remainderLabel <> " - " <> label,
+      coefficient === 1 && TrueQ[remainder =!= 0], remainderLabel <> " + " <> label,
+      True, Missing["UnsupportedPropagatorForm"]
+    ]
+  ];
+
+MasterCombinationBasisSummary[expr_, diagnostics_Association:<||>] :=
+  Module[{occurrences, bases, basisSummary, denominators, cutVector,
+     cutPositions, masters, activePositions, dottedPositions, profile,
+     backendProfile},
+    backendProfile = Lookup[Lookup[diagnostics, "BackendDiagnostics", <||>],
+      "Profile", <||>];
+    profile = Lookup[diagnostics, "Profile", <||>];
+    If[!AssociationQ[profile] || !KeyExistsQ[profile, "MomentumRules"],
+      profile = backendProfile
+    ];
+    If[!AssociationQ[profile], profile = <||>];
+    occurrences = DeleteDuplicates @ Cases[expr,
+      HoldPattern[LiteRed`j[basis_, indices__]] :> {basis, {indices}},
+      Infinity];
+    bases = DeleteDuplicates[occurrences[[All, 1]] /. {} -> {}];
+    Association @ Table[
+      denominators = Quiet[Check[LiteRed`Ds[basis], Missing["NotAvailable"]]];
+      cutVector = Quiet[Check[LiteRed`CutDs[basis], Missing["NotAvailable"]]];
+      cutPositions =
+        If[ListQ[cutVector], Flatten@Position[cutVector, 1],
+          Missing["NotAvailable"]];
+      masters = Select[occurrences, First[#] === basis&][[All, 2]];
+      masters = DeleteDuplicates[masters];
+      basisSummary = Association @ MapIndexed[
+        (
+          activePositions = Flatten@Position[#1, _?(# > 0&)];
+          dottedPositions = Flatten@Position[#1, _?(# > 1&)];
+          "j[" <> ToString[basis, InputForm] <> "," <>
+            StringRiffle[ToString /@ #1, ","] <> "]" -> <|
+              "Indices" -> #1,
+              "ActivePropagators" -> activePositions,
+              "DottedPropagators" -> dottedPositions
+            |>
+        )&,
+        masters
+      ];
+      ToString[basis, InputForm] -> <|
+        "BasisSymbol" -> basis,
+        "Propagators" -> denominators,
+        "PropagatorDisplayAliases" ->
+          If[ListQ[denominators],
+            MasterBasisPropagatorAlias[#, profile]& /@ denominators,
+            Missing["NotAvailable"]],
+        "CutVector" -> cutVector,
+        "CutPropagatorPositions" -> cutPositions,
+        "MastersOccurring" -> basisSummary
+      |>,
+      {basis, bases}
+    ]
+  ];
+
+PrintMasterCombinationBasisSummary[expr_, diagnostics_Association:<||>] :=
+  Module[{summary, entries, data, cutLabel, masterEntries, masterData,
+     aliases},
+    summary = MasterCombinationBasisSummary[expr, diagnostics];
+    If[Length[summary] === 0, Return[Null]];
+    Print["[AntCalc] Master bases used: ", StringRiffle[Keys[summary], ", "]];
+    KeyValueMap[
+      (
+        data = #2;
+        Print["  ", #1];
+        If[ListQ[data["Propagators"]],
+          aliases = data["PropagatorDisplayAliases"];
+          MapIndexed[
+            Print["    D", First[#2], " = ", #1,
+              If[ListQ[aliases] && !MissingQ[aliases[[First[#2]]]],
+                " = " <> aliases[[First[#2]]], ""]]&,
+            data["Propagators"]],
+          Print["    Propagators: unavailable from loaded LiteRed basis metadata."]
+        ];
+        cutLabel = If[ListQ[data["CutPropagatorPositions"]],
+          If[Length[data["CutPropagatorPositions"]] === 0, "none",
+            StringRiffle[("D" <> ToString[#])& /@
+              data["CutPropagatorPositions"], ", "]],
+          "unavailable"];
+        Print["    Cut propagators: ", cutLabel];
+        Print["    Masters occurring:"];
+        KeyValueMap[
+          (
+            masterData = #2;
+            Print["      ", #1, "  active: ",
+              If[Length[masterData["ActivePropagators"]] === 0, "none",
+                StringRiffle[("D" <> ToString[#])& /@
+                  masterData["ActivePropagators"], ", "]],
+              If[Length[masterData["DottedPropagators"]] === 0, "",
+                "; dotted: " <> StringRiffle[("D" <> ToString[#])& /@
+                  masterData["DottedPropagators"], ", "]]
+            ]
+          )&,
+          data["MastersOccurring"]
+        ]
+      )&,
+      summary
+    ];
+    Null
+  ];
+
 (* ResolveIntegrationPublicResult[result, diagnostics, returnMasterCombination, routeLabel]
    =======================================================================================
    Rewrite the public return value when the caller asks for the master-
    combination representation instead of the final integrated series. *)
 ResolveIntegrationPublicResult[result_, diagnostics_,
    returnMasterCombination_, routeLabel_:Automatic] :=
-  Module[{backendDiagnostics, masterCombination, label, reason},
+  Module[{backendDiagnostics, masterCombination, label, reason,
+     diagnosticsWithMasterView},
+    diagnosticsWithMasterView = AttachMasterCombinationView[diagnostics];
     If[!TrueQ[returnMasterCombination],
-      Return[{result, diagnostics}]
+      Return[{result, diagnosticsWithMasterView}]
     ];
-    If[AssociationQ[diagnostics] &&
-        Lookup[diagnostics, "RequestedResultKind", Missing["Absent"]] ===
+    If[AssociationQ[diagnosticsWithMasterView] &&
+        Lookup[diagnosticsWithMasterView, "RequestedResultKind", Missing["Absent"]] ===
           "MasterCombination",
-      Return[{result, diagnostics}]
+      Return[{result, diagnosticsWithMasterView}]
     ];
     backendDiagnostics =
-      Lookup[diagnostics, "BackendDiagnostics", Missing["NotAvailable"]];
+      Lookup[diagnosticsWithMasterView, "BackendDiagnostics", Missing["NotAvailable"]];
     masterCombination =
       If[AssociationQ[backendDiagnostics],
-        Lookup[backendDiagnostics, "RawMasterCombination",
-          Lookup[backendDiagnostics, "MasterMappedExpression",
-            Missing["NotAvailable"]]]
+        Lookup[backendDiagnostics, "RawLiteRedCombination",
+          Lookup[backendDiagnostics, "RawMasterCombination",
+            Lookup[backendDiagnostics, "MasterMappedExpression",
+            Missing["NotAvailable"]]]]
         ,
         Missing["NotAvailable"]
       ];
+    masterCombination = PublicMasterCombinationDisplayForm[masterCombination];
     label =
       If[routeLabel === Automatic,
         "this route"
@@ -478,12 +774,12 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
       ];
     Which[
       MatchQ[masterCombination, Missing[__]],
-        Message[IntegrateAntenna::nomaster, label];
         {
-          $Failed,
-          Join[diagnostics, <|
+          Missing["MasterCombinationNotAvailable", label],
+          Join[diagnosticsWithMasterView, <|
             "RequestedResultKind" -> "MasterCombination",
-            "MasterCombinationRequestFailed" -> True,
+            "MasterCombinationAvailable" -> False,
+            "MasterCombinationRequestFailed" -> False,
             "MasterCombinationRequestReason" -> "NotAvailable"
           |>]
         }
@@ -505,7 +801,7 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
           ];
         {
           $Failed,
-          Join[diagnostics, <|
+          Join[diagnosticsWithMasterView, <|
             "RequestedResultKind" -> "MasterCombination",
             "MasterCombinationRequestFailed" -> True,
             "MasterCombinationRequestReason" -> reason
@@ -515,7 +811,7 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
       True,
         {
           masterCombination,
-          Join[diagnostics, <|"RequestedResultKind" -> "MasterCombination"|>]
+          Join[diagnosticsWithMasterView, <|"RequestedResultKind" -> "MasterCombination"|>]
         }
     ]
   ];
@@ -811,8 +1107,9 @@ A22CombineIntegratedComponentDiagnostics[treeComponentDiags_Association,
         ,
         A22IntegratedResiduals[finalIntegrated, expansionOrder]
       ];
-    <|"CombinedA22ContributionQ" -> True,
-      "Contribution" -> "All",
+    <|"A22ContributionStitchingQ" -> True,
+      "ContributionsUsed" -> AntennaContributionsUsed[{A, 2, 2},
+        selectedComponent],
       "SelectedComponent" -> selectedComponent,
       "BuildComponent" -> All,
       "RawIntegrated" -> rawIntegrated,
@@ -823,11 +1120,11 @@ A22CombineIntegratedComponentDiagnostics[treeComponentDiags_Association,
       "IntegratedAntennaResidualsAreZero" ->
         IntegratedResidualListZeroQ[antennaResiduals],
       "FinalAntennaExtractionImplemented" -> True,
-      "ComponentDiagnostics" -> <|"TwoLoopTree" -> treeComponentDiags,
+      "ContributionDiagnostics" -> <|"TwoLoopTree" -> treeComponentDiags,
         "OneLoopSelf" -> breveDiag|>|>
   ];
 
-IntegrateAntenna[antenna_, integrationMethod:(PaVe | IBP),
+LegacyIntegrateAntennaBackendDirectRoute[antenna_, integrationMethod:(PaVe | IBP),
    OptionsPattern[]] :=
   IntegrateBackendDirectRoute[
     antenna,
@@ -858,8 +1155,9 @@ Options[BuildAndIntegrateAntenna] =
 
 (* IntegrateAntenna[obj_AntennaObject, ...]
    ========================================
-   Main public integration entry point for built antenna objects. *)
-IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
+   Legacy implementation retained temporarily for reference while the public
+   entry point delegates to IntegrateRouteObject below. *)
+LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] :=
   Module[{data, key, profile, contributionInput, contribution,
      componentInput, componentName, storedComponent, backend, antenna,
      diagnostics, output, ibpResult,
@@ -900,7 +1198,6 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
           "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
           "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
           "Component" -> OptionValue["Component"],
-          "Contribution" -> OptionValue["Contribution"],
           "RouteKind" -> "IntegrateAntenna"
         |>
       ]
@@ -934,6 +1231,7 @@ IntegrateAntenna[obj_AntennaObject, OptionsPattern[]] :=
       "BasisRoot" -> OptionValue["BasisRoot"],
       "GenerateMissingBases" -> OptionValue["GenerateMissingBases"],
       "ReturnTTerms" -> OptionValue["ReturnTTerms"],
+      "ReturnMasterCombination" -> OptionValue["ReturnMasterCombination"],
       "Component" -> OptionValue["Component"],
       "Contribution" -> OptionValue["Contribution"],
       "DetailedTimingDiagnostics" -> OptionValue[
@@ -1534,7 +1832,6 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     <|
       "ApplyFeynCalcMS" -> OptionValue["ApplyFeynCalcMS"],
       "quarkMass" -> OptionValue["quarkMass"],
-      "PaVeEvaluation" -> OptionValue["PaVeEvaluation"],
       "ExpansionOrder" -> OptionValue["ExpansionOrder"],
       "KinematicScale" -> OptionValue["KinematicScale"],
       "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
@@ -1554,8 +1851,7 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       "StoreResults" -> OptionValue["StoreResults"],
       "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
       "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
-      "Component" -> OptionValue["Component"],
-      "Contribution" -> OptionValue["Contribution"]
+      "Component" -> OptionValue["Component"]
     |>
   ];
 
@@ -1586,8 +1882,7 @@ LegacyIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
     StoreResults -> OptionValue["StoreResults"],
     ResultsCacheRoot -> OptionValue["ResultsCacheRoot"],
     RefreshStoredResults -> OptionValue["RefreshStoredResults"],
-    Component -> OptionValue["Component"],
-    Contribution -> OptionValue["Contribution"]];
+    Component -> OptionValue["Component"]];
 
 (* IntegratedAntennaDiagnostics[key, unintegrated, integrated, profile, context]
    =============================================================================
@@ -1759,4 +2054,47 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
           <|"PaperCheckAvailable" -> False, "Profile" -> profile|>
       ];
     diagnostics
+  ];
+
+(*************************************************)
+(* Canonical object integration boundary
+
+   This definition deliberately appears after the legacy implementation above.
+   The route-owned IntegrateRouteObject workflow is the authoritative public
+   implementation for AntennaObject input.  In particular it retains the
+   backend diagnostics from which ReturnMasterCombination is resolved.
+
+   BuildAndIntegrateAntenna delegates to that same workflow after its
+   BuildAntenna[..., IntegrableForm -> True] stage. *)
+IntegrateAntenna[input:(_AntennaObject | {___AntennaObject}), OptionsPattern[]] :=
+  With[
+    {options = <|
+      "ApplyFeynCalcMS" -> OptionValue["ApplyFeynCalcMS"],
+      "quarkMass" -> OptionValue["quarkMass"],
+      "ExpansionOrder" -> OptionValue["ExpansionOrder"],
+      "KinematicScale" -> OptionValue["KinematicScale"],
+      "NormalizeKinematicScale" -> OptionValue["NormalizeKinematicScale"],
+      "ReturnDiagnostics" -> OptionValue["ReturnDiagnostics"],
+      "ReturnRecord" -> OptionValue["ReturnRecord"],
+      "ReturnMasterCombination" -> OptionValue["ReturnMasterCombination"],
+      "LoopMomentum" -> OptionValue["LoopMomentum"],
+      "ApplyDimReg" -> OptionValue["ApplyDimReg"],
+      "BasisFamily" -> OptionValue["BasisFamily"],
+      "BasisRoot" -> OptionValue["BasisRoot"],
+      "GenerateMissingBases" -> OptionValue["GenerateMissingBases"],
+      "ReturnTTerms" -> OptionValue["ReturnTTerms"],
+      "IntermediateSteps" -> OptionValue["IntermediateSteps"],
+      "PrintIntermediateSteps" -> OptionValue["PrintIntermediateSteps"],
+      "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"],
+      "UseStoredResults" -> OptionValue["UseStoredResults"],
+      "StoreResults" -> OptionValue["StoreResults"],
+      "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
+      "RefreshStoredResults" -> OptionValue["RefreshStoredResults"],
+      "Component" -> OptionValue["Component"],
+      "RouteKind" -> "IntegrateAntenna"
+    |>},
+    If[ListQ[input],
+      IntegrateRouteObject[#, options]& /@ input,
+      IntegrateRouteObject[input, options]
+    ]
   ];

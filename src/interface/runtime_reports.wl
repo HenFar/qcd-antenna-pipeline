@@ -345,7 +345,14 @@ AntennaPipelineConventionReport[] :=
         ]
     |>,
     "BackendEnvironment" -> <|
-      "ValidatedFeynCalcVersion" -> "9.3.1",
+      "ValidatedFeynCalcVersion" -> "10.2.1",
+      "ValidatedToolchain" -> <|
+        "FeynCalc" -> "10.2.1",
+        "FeynArts" -> "3.12 (27 Mar 2025)",
+        "FeynHelpers" -> "2.0.0",
+        "FeynCalcLegacy" -> "1.0.0",
+        "LiteRed2" -> "2.025 beta"
+        |>,
       "StartupAddOns" -> $LoadAddOns,
       "RenameFeynCalcObjects" -> $RenameFeynCalcObjects
     |>,
@@ -407,6 +414,7 @@ AntennaRouteProfileReport[key_List] :=
       "BuildProfile" -> buildProfile,
       "BuildReductionProfile" -> reductionProfile,
       "IntegrationProfile" -> integrationProfile,
+      "Verification" -> AntennaRouteVerificationMetadata[key],
       "ResolvedRouteDefaults" -> <|
         "BuildAntenna" -> <|
           "quarkMass" -> Lookup[buildDefaults, "quarkMass", 0],

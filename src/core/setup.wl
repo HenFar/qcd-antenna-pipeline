@@ -21,23 +21,24 @@
 
 $RenameFeynCalcObjects = {"MetricTensor" -> "FCMetricTensor", "Factor1"
     -> "FCFactor1", "Factor2" -> "FCFactor2"};
+Global`$RenameFeynCalcObjects = $RenameFeynCalcObjects;
 
-If[$Notebooks === False,
-   $FeynCalcStartupMessages = False
-];
+(* AntCalc owns the startup presentation in both notebooks and scripts. *)
+$FeynCalcStartupMessages = False;
+Global`$FeynCalcStartupMessages = False;
 
 $LoadAddOns = {"FeynArts", "FeynHelpers", "FeynCalcLegacy"};
+Global`$LoadAddOns = $LoadAddOns;
 
 <<FeynCalc`
 
-$FAVerbose = 0;
+FeynArts`$FAVerbose = 0;
 
-(* Require the FeynCalc version against which the symbolic manipulations were
-   validated.  Much of the pipeline depends on exact head names and algebraic
-   behavior, so a silent version mismatch can lead to physically correct-looking
-   but structurally incompatible expressions later in the build routes. *)
-
-FCCheckVersion[9, 3, 1];
+(* The tested toolchain is recorded in AntennaPipelineConventionReport[].
+   Do not retain a copied version gate from an upstream tutorial here: it would
+   turn historical tutorial provenance into a false AntCalc compatibility claim.
+   Route regressions, rather than an old minimum-version assertion, establish
+   the supported environment. *)
 
 (* prefactors *)
 

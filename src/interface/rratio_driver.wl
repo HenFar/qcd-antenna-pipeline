@@ -100,14 +100,17 @@ ApplySMQCDRRatioObservableConvention::usage =
 NormalizeBuildRRatioResultForm::usage =
   "NormalizeBuildRRatioResultForm[resultForm] normalizes the public BuildRRatio result-form selector.";
 
-BuildRRatioSMQCDFiniteExpression::usage =
-  "BuildRRatioSMQCDFiniteExpression[] returns the compact finite massless SMQCD R-ratio expression exposed by default through BuildRRatio[SMQCD].";
+BuildRRatioSMQCDReferenceFiniteExpression::usage =
+  "BuildRRatioSMQCDReferenceFiniteExpression[maxOrder] returns the encoded massless-SMQCD finite reference target through the requested perturbative order. It is a comparison target, not an antenna-derived result.";
+
+NormalizeBuildRRatioMaxOrder::usage =
+  "NormalizeBuildRRatioMaxOrder[maxOrder] normalizes the public BuildRRatio perturbative-order selector.";
 
 Options[BuildRRatio] = {quarkMass -> 0, ReturnDiagnostics -> False,
    IntermediateSteps -> {}, PrintIntermediateSteps -> False,
    UseStoredResults -> False, StoreResults -> False,
    ResultsCacheRoot -> Automatic, RefreshStoredResults -> False,
-   ResultForm -> "FiniteMSBar"};
+   ResultForm -> "ComputedFiniteCoefficient", maxOrder -> NNLO};
 
 Options[TObject] = {quarkMass -> 0, ExpansionOrder -> Automatic,
    ReturnDiagnostics -> False, UseStoredResults -> False,
@@ -122,6 +125,12 @@ BuildRRatio::masslessOnly =
 
 BuildRRatio::ingredientFailure =
   "BuildRRatio[`1`] could not build the required ingredient `2` through the public antenna routes.";
+
+BuildRRatio::unsupportedResultForm =
+  "Unsupported ResultForm `1`. Supported forms are \"RawDimRegSeries\", \"ComputedFiniteCoefficient\", and \"ReferenceFiniteMSBar\".";
+
+BuildRRatio::unsupportedMaxOrder =
+  "Unsupported maxOrder `1`. Supported perturbative orders are LO, NLO, and NNLO (or the corresponding uppercase strings).";
 
 TObject::masslessOnly =
   "TObject currently supports only quarkMass -> 0.";
@@ -142,11 +151,25 @@ NormalizeBuildRRatioResultForm[resultForm_] :=
       "\"RawDimRegSeries\"" | "RawDimRegSeries",
         "RawDimRegSeries"
       ,
-      "\"FiniteMSBar\"" | "FiniteMSBar" | "\"Finite\"" | "Finite",
-        "FiniteMSBar"
+      "\"ComputedFiniteCoefficient\"" | "ComputedFiniteCoefficient",
+        "ComputedFiniteCoefficient"
+      ,
+      "\"ReferenceFiniteMSBar\"" | "ReferenceFiniteMSBar",
+        "ReferenceFiniteMSBar"
       ,
       _,
-        "FiniteMSBar"
+        $Failed
+    ]
+  ];
+
+NormalizeBuildRRatioMaxOrder[maxOrder_] :=
+  Module[{normalized},
+    normalized = ToString[Unevaluated[maxOrder], InputForm];
+    Switch[normalized,
+      "LO" | "\"LO\"", LO,
+      "NLO" | "\"NLO\"", NLO,
+      "NNLO" | "\"NNLO\"", NNLO,
+      _, $Failed
     ]
   ];
 
@@ -276,18 +299,24 @@ FinalizeTObjectExpression[expr_, order_] :=
 NormalizePublicTObjectExpression[expr_] :=
   expr /. SUNN -> System`N;
 
-BuildRRatioSMQCDFiniteExpression[] :=
+BuildRRatioSMQCDReferenceFiniteExpression[maxOrder_:NNLO] :=
   Module[{alphaS, n, nf},
     alphaS = SMP["alpha_s"];
     n = SUNN;
     nf = Nf;
-    1 +
-      alphaS / (2 Pi) ((n^2 - 1) / (2 n)) (3 / 2) +
-      (alphaS / (2 Pi))^2 ((n^2 - 1) / (2 n)) (
-        n (243 / 16 - 11 Zeta[3]) +
-        3 / (16 n) +
-        nf (-11 / 4 + 2 Zeta[3])
-      )
+    Switch[maxOrder,
+      LO, 1,
+      NLO, 1 + alphaS / (2 Pi) ((n^2 - 1) / (2 n)) (3 / 2),
+      NNLO,
+        1 +
+          alphaS / (2 Pi) ((n^2 - 1) / (2 n)) (3 / 2) +
+          (alphaS / (2 Pi))^2 ((n^2 - 1) / (2 n)) (
+            n (243 / 16 - 11 Zeta[3]) +
+            3 / (16 n) +
+            nf (-11 / 4 + 2 Zeta[3])
+          ),
+      _, $Failed
+    ]
   ];
 
 (* The public component conventions are intentionally preserved for direct
@@ -301,10 +330,10 @@ SMQCDRRatioObservableConventionLedger[] :=
     "A22PublicContract" -> "DirectPaperTqq6Components",
     "A22OneLoopSelfPoleShift" -> -7 Zeta[3]/(3 FeynCalc`Epsilon),
     "A40LeadingMultiplier" -> 1,
-    "A40SubleadingMultiplier" -> -1/2,
+    "A40SubleadingMultiplier" -> 1/2,
     "B40Multiplier" -> 1,
     "C40Multiplier" -> 2,
-    "Note" -> "The adapter is applied only to the observable assembly; direct public antenna outputs remain unchanged. The self-interference shift is the closure-normalized convention required by the complete NNLO channel sum."
+    "Note" -> "The adapter is applied only to the observable assembly. The public A40 subleading entry is tilde A4^0 itself; its minus sign is supplied by the colour coefficient in the qqbargg assembly. The self-interference shift is the closure-normalized convention required by the complete NNLO channel sum."
   |>;
 
 ApplySMQCDRRatioObservableConvention[ingredients_Association] :=
@@ -509,8 +538,6 @@ BuildRRatioNestedBuildAndIntegrateDefaults[] :=
       ];
     <|
       "ApplyFeynCalcMS" -> Lookup[routeDefaults, "ApplyFeynCalcMS", True],
-      "PaVeEvaluation" -> Lookup[routeDefaults, "PaVeEvaluation",
-        "PaXEvaluate"],
       "KinematicScale" -> Lookup[routeDefaults, "KinematicScale", q2],
       "NormalizeKinematicScale" -> Lookup[routeDefaults,
         "NormalizeKinematicScale", True],
@@ -529,13 +556,15 @@ BuildRRatioStoredResultKey[model_Symbol, options_Association] :=
   StoredResultKeyAssociation[
     "BuildRRatio",
     <|
-      "ImplementationVersion" -> 6,
+      "ImplementationVersion" -> 7,
       "Model" -> SymbolName[Unevaluated[model]],
       "quarkMass" -> Lookup[options, "quarkMass", 0],
       "NestedBuildAndIntegrateDefaults" ->
         BuildRRatioNestedBuildAndIntegrateDefaults[],
       "ResultForm" -> NormalizeBuildRRatioResultForm[
-        Lookup[options, "ResultForm", "FiniteMSBar"]]
+        Lookup[options, "ResultForm", "ComputedFiniteCoefficient"]],
+      "maxOrder" -> NormalizeBuildRRatioMaxOrder[
+        Lookup[options, "maxOrder", NNLO]]
     |>
   ];
 
@@ -546,7 +575,9 @@ BuildRRatioStoredResultLabel[model_Symbol, options_Association] :=
     StringReplace[ToString[Lookup[options, "quarkMass", 0], InputForm],
       {" " -> "", "." -> "-", "/" -> "-"}], "-",
     ToLowerCase[NormalizeBuildRRatioResultForm[
-      Lookup[options, "ResultForm", "FiniteMSBar"]]]
+      Lookup[options, "ResultForm", "ComputedFiniteCoefficient"]], "-",
+    ToLowerCase[ToString[NormalizeBuildRRatioMaxOrder[
+      Lookup[options, "maxOrder", NNLO]], InputForm]]]
   ];
 
 (* BuildRRatioSMQCDIngredients[masslessQuarkMass, options]
@@ -556,8 +587,31 @@ BuildRRatioStoredResultLabel[model_Symbol, options_Association] :=
 BuildRRatioSMQCDIngredients[masslessQuarkMass_, options_Association:<||>] :=
   Module[{cacheOptions, ingredientOrders, a21Result, a30Result, a31Result,
      a22Result, a40LeadResult, a40SubResult, b40Result, c40Result,
-     ingredients, ingredientDiagnostics},
+     ingredients, ingredientDiagnostics, requestedMaxOrder, virtualResult,
+     realResult},
     cacheOptions = BuildRRatioIngredientCacheOptions[options];
+    requestedMaxOrder = Lookup[options, "maxOrder", NNLO];
+    (* LO needs no integrated antenna.  At NLO, deliberately request only the
+       two antennae that enter rNLO.  NNLO retains the established named
+       ingredient path below, where the higher epsilon depth of A30 is needed
+       by the one-loop/tree product. *)
+    If[requestedMaxOrder === LO,
+      Return[<|"Failed" -> False, "Ingredients" -> <||>,
+        "IngredientDiagnostics" -> <||>|>]
+    ];
+    If[requestedMaxOrder === NLO,
+      virtualResult = BuildSMQCDTObjectIngredients[masslessQuarkMass, 4,
+        "qqbar", options];
+      If[TrueQ[Lookup[virtualResult, "Failed", False]], Return[virtualResult]];
+      realResult = BuildSMQCDTObjectIngredients[masslessQuarkMass, 4,
+        "qqbarg", options];
+      If[TrueQ[Lookup[realResult, "Failed", False]], Return[realResult]];
+      Return[<|"Failed" -> False,
+        "Ingredients" -> Join[virtualResult["Ingredients"],
+          realResult["Ingredients"]],
+        "IngredientDiagnostics" -> Join[virtualResult["IngredientDiagnostics"],
+          realResult["IngredientDiagnostics"]]|>]
+    ];
     ingredientOrders =
       If[KeyExistsQ[options, "ExpansionOrder"],
         TObjectIngredientOrders[Lookup[options, "ExpansionOrder", Automatic]]
@@ -1010,7 +1064,7 @@ AssembleSMQCDTObject[ingredients_Association, perturbativeOrder_Integer,
     ]
   ];
 
-AssembleSMQCDRRatio[ingredients_Association] :=
+AssembleSMQCDRRatio[ingredients_Association, requestedMaxOrder_:NNLO] :=
   Module[{eps, alphaS, n, nf, Tqq2, Tqq4, Tqqg4, Tqq6, Tqqg6,
      Tqqqqprime6, Tqqqq6, Tqqgg6, cLO, cNLO, cNNLO, rLO, rNLO, rNNLO,
      assemblyExpression, finalExpression, convention, observableIngredients},
@@ -1018,44 +1072,57 @@ AssembleSMQCDRRatio[ingredients_Association] :=
     alphaS = SMP["alpha_s"];
     n = SUNN;
     nf = Nf;
-    convention = ApplySMQCDRRatioObservableConvention[ingredients];
+    convention =
+      If[requestedMaxOrder === NNLO,
+        ApplySMQCDRRatioObservableConvention[ingredients],
+        <|"Ingredients" -> ingredients,
+          "Ledger" -> <|"ConventionStatus" ->
+            "NotNeededBelowNNLO"|>|>
+      ];
     observableIngredients = convention["Ingredients"];
     Tqq2 = 4 n (1 - eps) q2;
-    Tqq4 = (n - 1 / n) Tqq2 observableIngredients["intA21"];
-    Tqqg4 = (n - 1 / n) Tqq2 observableIngredients["intA30"];
-    Tqq6 =
+    Tqq4 = If[requestedMaxOrder =!= LO,
+      (n - 1 / n) Tqq2 observableIngredients["intA21"],
+      Missing["NotIncluded"]];
+    Tqqg4 = If[requestedMaxOrder =!= LO,
+      (n - 1 / n) Tqq2 observableIngredients["intA30"],
+      Missing["NotIncluded"]];
+    Tqq6 = If[requestedMaxOrder === NNLO,
       (n - 1 / n) Tqq2 (n observableIngredients["intA22"] +
         1 / n observableIngredients["intTildeA22"] +
         nf observableIngredients["intHatA22"]) +
-      Tqq2 (n - 1 / n)^2 observableIngredients["intBreveA22"];
-    Tqqg6 =
+      Tqq2 (n - 1 / n)^2 observableIngredients["intBreveA22"],
+      Missing["NotIncluded"]];
+    Tqqg6 = If[requestedMaxOrder === NNLO,
       (n - 1 / n) Tqq2 (
         n (observableIngredients["intA31"] +
           observableIngredients["intA21"] observableIngredients["intA30"]) -
         1 / n (observableIngredients["intTildeA31"] +
           observableIngredients["intA21"] observableIngredients["intA30"]) +
         nf observableIngredients["intHatA31"]
-      );
-    Tqqqqprime6 =
-      (n - 1 / n) Tqq2 (nf - 1) observableIngredients["intB40"];
-    Tqqqq6 =
+      ), Missing["NotIncluded"]];
+    Tqqqqprime6 = If[requestedMaxOrder === NNLO,
+      (n - 1 / n) Tqq2 (nf - 1) observableIngredients["intB40"],
+      Missing["NotIncluded"]];
+    Tqqqq6 = If[requestedMaxOrder === NNLO,
       1 / (nf - 1) Tqqqqprime6 -
-      Tqq2 (n - 1 / n) 1 / n observableIngredients["intC40"];
-    Tqqgg6 =
+      Tqq2 (n - 1 / n) 1 / n observableIngredients["intC40"],
+      Missing["NotIncluded"]];
+    Tqqgg6 = If[requestedMaxOrder === NNLO,
       (n - 1 / n) Tqq2 (
         n observableIngredients["intA40"] -
         1 / n observableIngredients["intTildeA40"]
-      );
+      ), Missing["NotIncluded"]];
     cLO = 1;
     rLO = 1;
     cNLO = alphaS / (2 Pi);
-    rNLO =
+    rNLO = If[requestedMaxOrder =!= LO,
       FullSimplify[
         (n - 1 / n) (observableIngredients["intA21"] +
           observableIngredients["intA30"])
-      ];
+      ], Missing["NotIncluded"]];
     cNNLO = cNLO^2;
-    rNNLO =
+    rNNLO = If[requestedMaxOrder === NNLO,
       FullSimplify[
         (n - 1 / n) (
           n observableIngredients["intA22"] +
@@ -1072,8 +1139,12 @@ AssembleSMQCDRRatio[ingredients_Association] :=
           n observableIngredients["intA40"] -
           1 / n observableIngredients["intTildeA40"]
         )
-      ];
-    assemblyExpression = cLO rLO + cNLO rNLO + cNNLO rNNLO;
+      ], Missing["NotIncluded"]];
+    assemblyExpression = Switch[requestedMaxOrder,
+      LO, cLO rLO,
+      NLO, cLO rLO + cNLO rNLO,
+      NNLO, cLO rLO + cNLO rNLO + cNNLO rNNLO
+    ];
     finalExpression =
       Collect[assemblyExpression, alphaS, FullSimplify];
     <|"AssemblyExpression" -> assemblyExpression,
@@ -1094,7 +1165,9 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
      assemblyExpression, finalExpression, diagnostics, collectedSteps,
      useStored, storeStored, refreshStored, cacheKey, cacheLabel, cacheRoot,
      loaded, computed, computedResult, computedDiagnostics, optionsAssoc,
-     rawFinalExpression, resultForm},
+     rawFinalExpression, resultForm, requestedMaxOrder, referenceTarget,
+     referenceResidual, referenceAgreementQ, includedIngredients,
+     skippedIngredients, computedFiniteCoefficient},
     masslessQuarkMass = OptionValue[quarkMass];
     intermediateSteps = NormalizeIntermediateSteps[OptionValue[
       IntermediateSteps]];
@@ -1103,15 +1176,28 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
     refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
     resultForm =
       NormalizeBuildRRatioResultForm[OptionValue[ResultForm]];
+    requestedMaxOrder = NormalizeBuildRRatioMaxOrder[OptionValue[maxOrder]];
+    If[resultForm === $Failed,
+      Message[BuildRRatio::unsupportedResultForm, OptionValue[ResultForm]];
+      Return[$Failed]
+    ];
+    If[requestedMaxOrder === $Failed,
+      Message[BuildRRatio::unsupportedMaxOrder, OptionValue[maxOrder]];
+      Return[$Failed]
+    ];
     optionsAssoc = <|
       "quarkMass" -> masslessQuarkMass,
       "UseStoredResults" -> useStored,
       "StoreResults" -> storeStored,
       "RefreshStoredResults" -> refreshStored,
       "ResultsCacheRoot" -> OptionValue["ResultsCacheRoot"],
-      "ResultForm" -> resultForm
+      "ResultForm" -> resultForm,
+      "maxOrder" -> requestedMaxOrder
     |>;
     ingredientCalls = BuildRRatioIngredientCallAssociation[masslessQuarkMass];
+    includedIngredients = Switch[requestedMaxOrder,
+      LO, {}, NLO, {"intA21", "intA30"}, NNLO, Keys[ingredientCalls]];
+    skippedIngredients = Complement[Keys[ingredientCalls], includedIngredients];
     If[masslessQuarkMass =!= 0,
       Message[BuildRRatio::masslessOnly, "SMQCD"];
       diagnostics = <|"Failed" -> True, "Reason" -> "NonzeroQuarkMassUnsupported",
@@ -1126,6 +1212,31 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
         RRatioFailureResult[$Failed, diagnostics, collectedSteps,
           OptionValue[ReturnDiagnostics]]
       ]
+    ];
+    (* This is intentionally a direct, named reference lookup.  It must not
+       be confused with an antenna-derived result or silently replace one. *)
+    If[resultForm === "ReferenceFiniteMSBar",
+      referenceTarget = BuildRRatioSMQCDReferenceFiniteExpression[
+        requestedMaxOrder];
+      diagnostics = <|
+        "Model" -> "SMQCD", "quarkMass" -> masslessQuarkMass,
+        "ResultForm" -> resultForm, "RequestedMaxOrder" -> requestedMaxOrder,
+        "ResultOrigin" -> "EncodedReferenceTarget",
+        "ReferenceTarget" -> referenceTarget,
+        "ReferenceAgreementQ" -> Missing["NotComputedForReferenceTarget"],
+        "ReferenceResidual" -> Missing["NotComputedForReferenceTarget"],
+        "IncludedIngredients" -> {},
+        "SkippedIngredients" -> Keys[ingredientCalls],
+        "PresentedExpression" -> referenceTarget|>;
+      collectedSteps = CollectRRatioIntermediateSteps[ingredientCalls, <||>,
+        Missing["NotComputedForReferenceTarget"], referenceTarget,
+        diagnostics, intermediateSteps];
+      diagnostics = If[Length[collectedSteps] > 0,
+        Join[diagnostics, <|"IntermediateSteps" -> collectedSteps|>],
+        diagnostics];
+      Return[FormatFreshRRatioReturn[referenceTarget, diagnostics,
+        OptionValue[ReturnDiagnostics], intermediateSteps, OptionValue[
+          PrintIntermediateSteps]]]
     ];
     If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
         StoredResultsEnabledQ[useStored, storeStored, refreshStored],
@@ -1151,6 +1262,7 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
             quarkMass -> masslessQuarkMass,
             ReturnDiagnostics -> True,
             ResultForm -> OptionValue[ResultForm],
+            maxOrder -> requestedMaxOrder,
             IntermediateSteps -> OptionValue["IntermediateSteps"],
             PrintIntermediateSteps -> False,
             UseStoredResults -> True,
@@ -1193,22 +1305,37 @@ BuildRRatio[SMQCD, OptionsPattern[]] :=
     ];
     ingredients = ingredientResult["Ingredients"];
     ingredientDiagnostics = ingredientResult["IngredientDiagnostics"];
-    assemblyResult = AssembleSMQCDRRatio[ingredients];
+    assemblyResult = AssembleSMQCDRRatio[ingredients, requestedMaxOrder];
     assemblyExpression = assemblyResult["AssemblyExpression"];
     rawFinalExpression = assemblyResult["FinalExpression"];
+    computedFiniteCoefficient = RRatioFiniteCoefficient[rawFinalExpression];
     finalExpression =
       Switch[resultForm,
         "RawDimRegSeries",
           rawFinalExpression
         ,
-        _,
-          BuildRRatioSMQCDFiniteExpression[]
+        "ComputedFiniteCoefficient",
+          computedFiniteCoefficient
       ];
+    referenceTarget = BuildRRatioSMQCDReferenceFiniteExpression[
+      requestedMaxOrder];
+    referenceResidual = FullSimplify[
+      computedFiniteCoefficient - referenceTarget];
+    referenceAgreementQ = TrueQ[referenceResidual === 0];
     diagnostics = <|
       "Model" -> "SMQCD",
       "quarkMass" -> masslessQuarkMass,
       "ResultForm" -> resultForm,
-      "AssemblySource" -> "ClosureNormalizedPaperFormula",
+      "RequestedMaxOrder" -> requestedMaxOrder,
+      "ResultOrigin" -> If[resultForm === "RawDimRegSeries",
+        "ComputedFromIntegratedIngredientsRawSeries",
+        "ComputedFromIntegratedIngredients"],
+      "ReferenceTarget" -> referenceTarget,
+      "ReferenceAgreementQ" -> referenceAgreementQ,
+      "ReferenceResidual" -> referenceResidual,
+      "ComputedFiniteCoefficient" -> computedFiniteCoefficient,
+      "IncludedIngredients" -> includedIngredients,
+      "SkippedIngredients" -> skippedIngredients,
       "Ingredients" -> ingredients,
       "ObservableIngredients" -> assemblyResult["ObservableIngredients"],
       "IngredientDiagnostics" -> ingredientDiagnostics,

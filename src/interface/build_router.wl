@@ -108,6 +108,9 @@ A31PublicBuildComponents::usage =
 AntennaComponentOrder::usage =
   "AntennaComponentOrder[key] returns the canonical component ordering used when a route has multiple public components.";
 
+A40PublicComponentConvention::usage =
+  "A40PublicComponentConvention[] returns the public A40 ordering and the explicit separation between the tilde A4^0 antenna sign and its full-colour coefficient.";
+
 CanonicalAntennaComponentName::usage =
   "CanonicalAntennaComponentName[component] normalizes component labels to the standard public names used across diagnostics and caching.";
 
@@ -145,9 +148,7 @@ buildRouteProgressLabel[key_, component_, contribution_] :=
   StringJoin[
     ToString[key, InputForm],
     " with Component -> ",
-    CanonicalAntennaComponentName[component],
-    ", Contribution -> ",
-    CanonicalAntennaComponentName[contribution]
+    CanonicalAntennaComponentName[component]
   ];
 
 buildRouteProgressPrint[key_, component_, contribution_, current_Integer,
@@ -180,10 +181,10 @@ AntennaFullExpression::usage =
   "AntennaFullExpression[obj] returns the full unselected expression payload stored in an AntennaObject.";
 
 MakeAntennaObject::usage =
-  "MakeAntennaObject[key, data, component, contribution] constructs the AntennaObject wrapper used by the integration routes.";
+  "MakeAntennaObject[key, data, component] constructs the AntennaObject wrapper used by the integration routes.";
 
 AntennaObjectWithSelection::usage =
-  "AntennaObjectWithSelection[obj, component, contribution] returns a copy of an AntennaObject with updated component or contribution selection.";
+  "AntennaObjectWithSelection[obj, component] returns a copy of an AntennaObject with an updated public component selection.";
 
 BuildRecordStepLabels::usage =
   "BuildRecordStepLabels[] returns the canonical build-side stages included automatically in ReturnRecord mode.";
@@ -225,7 +226,17 @@ BuildAntenna::branch =
   "Unknown BuildOutputBranch `1`. Supported values are Public and Prototype.";
 
 BuildAntenna::branchobject =
-  "BuildOutputBranch -> Prototype is currently only supported for direct BuildAntenna expression output. It is not supported with ReturnAntennaObject -> True, IntegrableForm -> True, or BuildAntennaObject.";
+  "BuildOutputBranch -> Prototype is currently only supported for direct BuildAntenna expression output. It is not supported with IntegrableForm -> True or BuildAntennaObject.";
+
+BuildAntenna::retbuilddata =
+  "ReturnBuildData is a deprecated compatibility option. Use BuildAntenna[..., ReturnRecord -> True][\"BuildData\"] for inspectable build data.";
+
+BuildAntenna::retobject =
+  "ReturnAntennaObject is a deprecated compatibility option. Use BuildAntenna[..., IntegrableForm -> True] for the composable integration input, or BuildAntennaObject[...] when one full object is required.";
+
+If[!ValueQ[$AntennaPipelineSuppressBuildReturnOptionDeprecation],
+  $AntennaPipelineSuppressBuildReturnOptionDeprecation = False;
+];
 
 LoadMassiveA30Reconstruction[] :=
   Null;
@@ -476,10 +487,17 @@ ResolveIntegrableLoopBuildReductionBackend[key_, requestedBackend_] :=
 
 BuildLoopAntennaData[key_, OptionsPattern[]] :=
   Module[{profile, treeAmp, loopAmp, reductionBackend, interference,
+     interferenceStages,
      context, extraction, output},
     profile = AntennaProfile[key];
     reductionBackend =
       ResolveLoopBuildReductionBackend[profile, OptionValue["ReductionBackend"]];
+    (* The Born source is memoized in the profile.  Render it separately when
+       requested so printDiagram remains observable after a warm build cache. *)
+    If[TrueQ[OptionValue["printDiagram"]],
+      PrintAntennaTreeDiagrams[profile["NumFinalParticles"],
+        profile["AntennaType"]]
+    ];
     treeAmp = profile["TreeAmplitude"];
     loopAmp = MAmpOneLoop[profile["NumFinalParticles"], AntennaType ->
        profile["AntennaType"], LoopMomentum -> OptionValue["LoopMomentum"],
@@ -489,10 +507,12 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
     (* Interference is computed before dimensional-regularization cleanup
        because the extraction layer may need to inspect the unreduced structure
        when deciding how the public components should be separated. *)
-    interference = InterfereOneLoopMAmplitudes[treeAmp, loopAmp, profile[
+    interferenceStages = InterfereOneLoopMAmplitudes[treeAmp, loopAmp, profile[
       "NumFinalParticles"], LoopMomentum -> OptionValue["LoopMomentum"], ReductionBackend
        -> reductionBackend, ApplyCasimirSubstitution -> OptionValue[
-      "ApplyCasimirSubstitution"], ApplyDimReg -> False];
+      "ApplyCasimirSubstitution"], ApplyDimReg -> False, ReturnStages -> True];
+    interference = If[AssociationQ[interferenceStages],
+      Lookup[interferenceStages, "Interference", $Failed], interferenceStages];
     If[interference === $Failed,
       Return[
         <|"Profile" -> profile, "TreeAmplitude" -> treeAmp,
@@ -514,7 +534,11 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
       Return[
         <|"Profile" -> profile, "TreeAmplitude" -> treeAmp,
           "LoopAmplitude" -> loopAmp,
-          "Interferences" -> <|"Production" -> interference|>,
+          "Interferences" -> <|"Production" -> interference,
+            "BeforeReduction" -> Lookup[interferenceStages,
+              "InterferenceBeforeReduction", Missing["NotAvailable"]],
+            "Reduced" -> Lookup[interferenceStages, "ReducedInterference",
+              Missing["NotAvailable"]]|>,
           "Components" -> <|"Lead" -> $Failed, "SubLead" -> $Failed,
             "QuarkLoop" -> $Failed|>,
           "Diagnostics" -> <|"Failed" -> True,
@@ -524,7 +548,11 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
       ]
     ];
     output = <|"Profile" -> profile, "TreeAmplitude" -> treeAmp, "LoopAmplitude"
-       -> loopAmp, "Interferences" -> <|"Production" -> interference|>, "Components"
+       -> loopAmp, "Interferences" -> <|"Production" -> interference,
+         "BeforeReduction" -> Lookup[interferenceStages,
+           "InterferenceBeforeReduction", Missing["NotAvailable"]],
+         "Reduced" -> Lookup[interferenceStages, "ReducedInterference",
+           Missing["NotAvailable"]]|>, "Components"
        -> extraction["Components"], "Diagnostics" -> extraction["Diagnostics"
       ], "NormalizedInterference" -> extraction["NormalizedInterference"]|>
       ;
@@ -565,14 +593,17 @@ BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
         <|"Profile" -> profile, "Interferences" -> <||>,
           "Components" -> blankComponents, "Diagnostics" -> <|"Failed" ->
             True, "Reason" -> "UnsupportedTwoLoopContribution",
-            "Contribution" -> OptionValue["Contribution"]|>|>
+            "InternalSourceContribution" -> OptionValue["Contribution"]|>|>
       ]
+    ];
+    If[TrueQ[OptionValue["printDiagram"]],
+      PrintAntennaTreeDiagrams[2, profile["AntennaType"]]
     ];
     treeAmp = AntennaAmplitude[{A, 2, 0}];
     context = <|"BornInterference" -> profile["BornInterference"]|>;
     components = blankComponents;
     diagnostics = <|"ImplementationStatus" -> Lookup[profile,
-        "ImplementationStatus", "Unknown"], "Contribution" -> contribution|>;
+        "ImplementationStatus", "Unknown"], "InternalSourceContribution" -> contribution|>;
     interferences = <||>;
     twoLoopAmp = Missing["NotBuilt"];
     oneLoopLeft = Missing["NotBuilt"];
@@ -591,7 +622,7 @@ BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
           "Components" -> blankComponents,
           "Diagnostics" -> <|"Failed" -> True,
             "Reason" -> "TwoLoopAmplitudeGenerationFailed",
-            "Contribution" -> contribution|>|>]
+            "InternalSourceContribution" -> contribution|>|>]
       ];
       twoLoopTreeInterference =
         InterfereTreeTwoLoopMAmplitudes[treeAmp, twoLoopAmp, 2,
@@ -604,7 +635,7 @@ BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
           "Components" -> blankComponents,
           "Diagnostics" -> <|"Failed" -> True,
             "Reason" -> "TwoLoopTreeInterferenceFailed",
-            "Contribution" -> contribution|>|>]
+            "InternalSourceContribution" -> contribution|>|>]
       ];
       twoLoopExtraction =
         ExtractA22TwoLoopTreeComponents[twoLoopTreeInterference, profile,
@@ -617,7 +648,7 @@ BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
     If[MemberQ[{"All", "OneLoopSelf"}, contribution],
       oneLoopLeft = MAmpOneLoop[2, AntennaType -> profile["AntennaType"],
         LoopMomentum -> OptionValue["LoopMomenta"][[1]],
-        printDiagram -> False, prefactor -> OptionValue["prefactor"],
+        printDiagram -> OptionValue["printDiagram"], prefactor -> OptionValue["prefactor"],
         ApplyStripCouplings -> OptionValue["ApplyStripCouplings"]];
       oneLoopRight = MAmpOneLoop[2, AntennaType -> profile["AntennaType"],
         LoopMomentum -> OptionValue["LoopMomenta"][[2]],
@@ -630,7 +661,7 @@ BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
           "Components" -> blankComponents,
           "Diagnostics" -> <|"Failed" -> True,
             "Reason" -> "OneLoopAmplitudeGenerationFailed",
-            "Contribution" -> contribution|>|>]
+            "InternalSourceContribution" -> contribution|>|>]
       ];
       oneLoopSelfInterference =
         InterfereOneLoopSelfMAmplitudes[oneLoopLeft, oneLoopRight, 2,
@@ -644,7 +675,7 @@ BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
           "Components" -> blankComponents,
           "Diagnostics" -> <|"Failed" -> True,
             "Reason" -> "OneLoopSelfInterferenceFailed",
-            "Contribution" -> contribution|>|>]
+            "InternalSourceContribution" -> contribution|>|>]
       ];
       selfExtraction =
         ExtractA22OneLoopSelfComponent[oneLoopSelfInterference, profile,
@@ -696,9 +727,8 @@ ResolvedTreeSelfInterference[key_, amp_, profile_Association] :=
 (*
   Public antenna builder.
   BuildAntenna[type, n, loopOrder] is the user-facing wrapper.  By default it
-  returns the antenna expression (or the natural list of components).  The
-  association-valued internals remain available through ReturnBuildData, and
-  diagnostics through ReturnDiagnostics.
+  returns the antenna expression (or the natural list of components). Full
+  provenance, including build data, is available through ReturnRecord.
 *)
 
 (*************************************************)
@@ -711,17 +741,47 @@ Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
   ApplyCasimirSubstitution -> True, ApplyDimReg -> True,
   LoopMomentum -> l, ReductionBackend -> Automatic, Component -> All,
   IntermediateSteps -> {}, PrintIntermediateSteps -> False,
-  LoopMomenta -> {l1, l2}, Contribution -> All,
+  LoopMomenta -> {l1, l2},
   BuildOutputBranch -> "Public",
   AllowPrototypeTargets -> False, UseSourceModelRoute -> False,
   UseStoredResults -> False, StoreResults -> False,
   ResultsCacheRoot -> Automatic, RefreshStoredResults -> False};
 
 Options[BuildAntennaObject] =
-  DeleteCases[Options[BuildAntenna], ReturnRecord -> _];
+  DeleteCases[Options[BuildAntenna],
+    (ReturnRecord | ReturnBuildData | ReturnAntennaObject) -> _];
 
 AntennaComponentOrder[{a_Symbol /; SymbolName[a] === "A", 4, 0}] :=
   {Leading, Subleading};
+
+(* Contributions are route-owned source branches, not a user-selectable
+   alternative to public antenna components.  A22 is the only current route
+   with more than one source. *)
+AntennaContributionsUsed[key_, component_] :=
+  Module[{plan, name},
+    plan = Lookup[AntennaProfile[key], "ContributionPlan",
+      Missing["NotApplicable"]];
+    If[!AssociationQ[plan], Return[Missing["NotApplicable"]]];
+    name = CanonicalAntennaComponentName[component];
+    If[name === "All", plan, Lookup[plan, name, Missing["UnknownComponent"]]]
+  ];
+
+AntennaInternalContribution[key_, component_] :=
+  Module[{used = AntennaContributionsUsed[key, component], sources},
+    If[MissingQ[used], Return[All]];
+    sources = DeleteDuplicates @ Flatten @
+      If[AssociationQ[used], Values[used], used];
+    If[Length[sources] == 1, First[sources], All]
+  ];
+
+A40PublicComponentConvention[] :=
+  <|
+    "PublicOrder" -> {Leading, Subleading},
+    "Leading" -> "Ordered A4^0 for the (1,3,4,2) colour ordering.",
+    "Subleading" -> "tilde A4^0 as an antenna definition, with no colour-algebra sign absorbed.",
+    "RawFullColourRelation" ->
+      "FullColorComponents[SubLead] = - tilde A4^0; the minus belongs to the colour coefficient at assembly."
+  |>;
 
 AntennaComponentOrder[{a_Symbol /; SymbolName[a] === "A", 3, 1}] :=
   {Leading, Subleading, Nf};
@@ -778,6 +838,20 @@ NormalizeIntermediateSteps[steps_] :=
           {ToString[Unevaluated[steps], InputForm]}
       ];
     DeleteDuplicates[normalized]
+  ];
+
+(* BuildAntenna uses a deliberately small, physics-facing default view.  The
+   generic normalizer remains unchanged for integration and R-ratio routes,
+   whose stages have a different semantic vocabulary. *)
+BuildIntermediateStepLabels[] :=
+  {"Amplitude", "InterferenceBeforeReduction", "ReducedInterference",
+    "Interference", "Antenna"};
+
+NormalizeBuildIntermediateSteps[steps_] :=
+  If[steps === True || steps === All,
+    BuildIntermediateStepLabels[]
+    ,
+    NormalizeIntermediateSteps[steps]
   ];
 
 RequestedIntermediateStepQ[steps_List, label_String] :=
@@ -838,8 +912,41 @@ IntegrationRecordStepLabels[] :=
    ================================================================================================
    Collect only the build stages explicitly requested by the caller. *)
 CollectBuildIntermediateSteps[data_Association, fullResult_, selectedResult_,
-   antennaObject_, diagnostics_, steps_List] :=
+  antennaObject_, diagnostics_, steps_List] :=
   Module[{collected = <||>},
+    If[RequestedIntermediateStepQ[steps, "Amplitude"],
+      With[{value = BuildRecordAmplitudeValue[data]},
+        If[PresentRecordStepValueQ[value],
+          collected = Join[collected, <|"Amplitude" -> value|>]
+        ]
+      ]
+    ];
+    If[RequestedIntermediateStepQ[steps, "InterferenceBeforeReduction"],
+      With[{value = Lookup[Lookup[data, "Interferences", <||>],
+          "BeforeReduction", Missing["NotAvailable"]]},
+        If[PresentRecordStepValueQ[value],
+          collected = Join[collected, <|"InterferenceBeforeReduction" -> value|>]
+        ]
+      ]
+    ];
+    If[RequestedIntermediateStepQ[steps, "ReducedInterference"],
+      With[{value = Lookup[Lookup[data, "Interferences", <||>], "Reduced",
+          Missing["NotAvailable"]]},
+        If[PresentRecordStepValueQ[value],
+          collected = Join[collected, <|"ReducedInterference" -> value|>]
+        ]
+      ]
+    ];
+    If[RequestedIntermediateStepQ[steps, "Interference"],
+      With[{value = BuildRecordInterferenceValue[data]},
+        If[PresentRecordStepValueQ[value],
+          collected = Join[collected, <|"Interference" -> value|>]
+        ]
+      ]
+    ];
+    If[RequestedIntermediateStepQ[steps, "Antenna"],
+      collected = Join[collected, <|"Antenna" -> selectedResult|>]
+    ];
     If[RequestedIntermediateStepQ[steps, "BuildData"],
       collected = Join[collected, <|"BuildData" -> data|>]
     ];
@@ -967,8 +1074,7 @@ BuildRecordInterferenceValue[data_Association] :=
         First[Values[interferences]]
       ,
       KeyExistsQ[interferences, "Production"],
-        Join[<|"Production" -> interferences["Production"]|>,
-          KeyDrop[interferences, {"Production"}]]
+        interferences["Production"]
       ,
       True,
         interferences
@@ -982,20 +1088,13 @@ RecordStageAssociation[rules_List] :=
   ];
 
 BuildRecordIntermediateStepsView[data_Association, result_, resultLabel_String:"Result"] :=
-  RecordStageAssociation[
-    {
-      "Amplitude" -> BuildRecordAmplitudeValue[data],
-      "Interference" -> BuildRecordInterferenceValue[data],
-      "SourceTermGroups" -> Lookup[data, "SourceTermGroups",
-        Missing["NotAvailable"]],
-      "SourceCandidate" -> Lookup[data, "SourceCandidate",
-        Missing["NotAvailable"]],
-      "BuildOutputBoundarySummary" -> BuildOutputBoundarySummary[
-        Lookup[data, "BuildOutputBoundary", Missing["NotAvailable"]]],
-      "BuildOutputBoundary" -> Lookup[data, "BuildOutputBoundary",
-        Missing["NotAvailable"]],
-      resultLabel -> result
-    }
+  Module[{view},
+    view = CollectBuildIntermediateSteps[data, result, result,
+      Missing["NotApplicable"], <||>, BuildIntermediateStepLabels[]];
+    If[resultLabel === "Antenna",
+      view,
+      KeyMap[If[# === "Antenna", resultLabel, #] &, view]
+    ]
   ];
 
 BuildRecordIntermediateStepsView[obj_AntennaObject, resultLabel_String:"BuiltAntenna"] :=
@@ -1022,9 +1121,11 @@ IntegrationRecordIntermediateStepsView[routeKind_String,
       backendDiagnostics = <||>
     ];
     masterCombination =
-      Lookup[backendDiagnostics, "RawMasterCombination",
-        Lookup[backendDiagnostics, "MasterMappedExpression",
-          Missing["NotAvailable"]]];
+      Lookup[backendDiagnostics, "RawLiteRedCombination",
+        Lookup[backendDiagnostics, "RawMasterCombination",
+          Lookup[backendDiagnostics, "MasterMappedExpression",
+          Missing["NotAvailable"]]]];
+    masterCombination = MasterCombinationNormalForm[masterCombination];
     dimensionExpression =
       Lookup[backendDiagnostics, "MasterSubstitutedExpression",
         Missing["NotAvailable"]];
@@ -1062,9 +1163,11 @@ IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
       backendDiagnostics = <||>
     ];
     masterCombination =
-      Lookup[backendDiagnostics, "RawMasterCombination",
-        Lookup[backendDiagnostics, "MasterMappedExpression",
-          Missing["NotAvailable"]]];
+      Lookup[backendDiagnostics, "RawLiteRedCombination",
+        Lookup[backendDiagnostics, "RawMasterCombination",
+          Lookup[backendDiagnostics, "MasterMappedExpression",
+          Missing["NotAvailable"]]]];
+    masterCombination = MasterCombinationNormalForm[masterCombination];
     <|
       "InputAntenna" -> Lookup[stages, "InputAntenna",
         Missing["NotAvailable"]],
@@ -1089,6 +1192,8 @@ IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
       "RawMasterCombination" -> Lookup[backendDiagnostics,
         "RawMasterCombination", Missing["NotAvailable"]],
       "MasterCombination" -> masterCombination,
+      "MasterCombinationView" -> Lookup[diagnostics,
+        "MasterCombinationView", MasterCombinationView[diagnostics]],
       "MasterSubstitutedExpression" -> Lookup[backendDiagnostics,
         "MasterSubstitutedExpression", Missing["NotAvailable"]],
       "NormalizedBeforeSeries" -> Lookup[backendDiagnostics,
@@ -1145,7 +1250,7 @@ BuildRunRecord[routeKind_String, result_, diagnostics_Association,
         "Diagnostics" -> diagnostics,
         "IntermediateSteps" -> BuildRecordIntermediateStepsView[
           Lookup[stages, "BuildData", <||>],
-          Lookup[stages, "SelectedBuildResult", result]
+          Lookup[stages, "SelectedBuildResult", result], "Antenna"
         ],
         "BuildData" -> Lookup[stages, "BuildData", Missing["NotAvailable"]],
         "BuildOutputBoundarySummary" -> Lookup[stages,
@@ -1218,7 +1323,10 @@ ResolveA31LowerAntenna[key_, options_Association] :=
       BuildRouteBuildData[
         {keyType, 3, 0},
         <|
-          "printDiagram" -> Lookup[options, "printDiagram", False],
+          (* This is an internal lower-antenna reconstruction used to format
+             A31 components.  Its diagrams are already represented by the
+             outer route's Born source, so do not print a duplicate set. *)
+          "printDiagram" -> False,
           "prefactor" -> Lookup[options, "prefactor", 1],
           "quarkMass" -> Lookup[options, "quarkMass", 0],
           "ApplyStripCouplings" -> Lookup[options, "ApplyStripCouplings",
@@ -1230,7 +1338,6 @@ ResolveA31LowerAntenna[key_, options_Association] :=
           "ReductionBackend" -> Lookup[options, "ReductionBackend",
             Automatic],
           "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}],
-          "Contribution" -> Lookup[options, "Contribution", All],
           "AllowPrototypeTargets" -> False,
           "UseSourceModelRoute" -> False
         |>
@@ -1370,7 +1477,7 @@ BuildAntennaResultFromComponents[{A, 3, 0}, components_Association, ___] :=
 
 BuildAntennaResultFromComponents[{A, 4, 0}, components_Association,
    data_Association] :=
-  {components["Antenna"], data["FullColorComponents"]["SubLead"]};
+  {components["Antenna"], -data["FullColorComponents"]["SubLead"]};
 
 BuildAntennaResultFromComponents[{B, 4, 0}, components_Association, ___] :=
   components["Antenna"];
@@ -1404,7 +1511,7 @@ BuildAntennaResultFromComponents[
 BuildAntennaResultFromComponents[
    {type_Symbol /; SymbolName[type] === "A", 4, 0},
    components_Association, data_Association] :=
-  {components["Antenna"], data["FullColorComponents"]["SubLead"]};
+  {components["Antenna"], -data["FullColorComponents"]["SubLead"]};
 
 BuildAntennaResultFromComponents[
    {type_Symbol /; SymbolName[type] === "B", 4, 0},
@@ -1460,7 +1567,6 @@ BuildAntennaStoredResultKey[type_, numFinalParticles_, loopOrder_,
       "ReductionBackend" -> Lookup[options, "ReductionBackend", Automatic],
       "Component" -> Lookup[options, "Component", All],
       "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}],
-      "Contribution" -> Lookup[options, "Contribution", All],
       "BuildOutputBranch" -> Lookup[options, "BuildOutputBranch", "Public"]
     |>
   ];
@@ -1474,7 +1580,6 @@ BuildAntennaStoredResultLabel[type_, numFinalParticles_, loopOrder_,
     ToString[loopOrder], "-",
     ToString[Lookup[options, "BuildOutputBranch", "Public"]], "-",
     CanonicalAntennaComponentName[Lookup[options, "Component", All]], "-",
-    CanonicalAntennaComponentName[Lookup[options, "Contribution", All]], "-",
     StringReplace[ToString[Lookup[options, "quarkMass", 0], InputForm],
       {"/" -> "_", " " -> ""}]
   ];
@@ -1498,8 +1603,7 @@ BuildAntennaObjectStoredResultKey[type_, numFinalParticles_, loopOrder_,
       "LoopMomentum" -> Lookup[options, "LoopMomentum", l],
       "ReductionBackend" -> Lookup[options, "ReductionBackend", Automatic],
       "Component" -> Lookup[options, "Component", All],
-      "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}],
-      "Contribution" -> Lookup[options, "Contribution", All]
+      "LoopMomenta" -> Lookup[options, "LoopMomenta", {l1, l2}]
     |>
   ];
 
@@ -1511,7 +1615,6 @@ BuildAntennaObjectStoredResultLabel[type_, numFinalParticles_, loopOrder_,
     ToString[numFinalParticles], "-",
     ToString[loopOrder], "-",
     CanonicalAntennaComponentName[Lookup[options, "Component", All]], "-",
-    CanonicalAntennaComponentName[Lookup[options, "Contribution", All]], "-",
     StringReplace[ToString[Lookup[options, "quarkMass", 0], InputForm],
       {"/" -> "_", " " -> ""}]
   ];
@@ -1611,8 +1714,8 @@ AntennaComponent[obj_AntennaObject] :=
     Missing["UnknownComponent"]];
 
 AntennaContribution[obj_AntennaObject] :=
-  Lookup[AntennaObjectData[obj], "Contribution",
-    Missing["UnknownContribution"]];
+  Lookup[AntennaObjectData[obj], "ContributionsUsed",
+    Missing["NotApplicable"]];
 
 AntennaExpression[obj_AntennaObject] :=
   Lookup[AntennaObjectData[obj], "Antenna", Missing["UnknownAntenna"]];
@@ -1621,11 +1724,11 @@ AntennaFullExpression[obj_AntennaObject] :=
   Lookup[AntennaObjectData[obj], "FullAntenna",
     Missing["UnknownFullAntenna"]];
 
-(* MakeAntennaObject[key, data, component, contribution]
+(* MakeAntennaObject[key, data, component]
    =====================================================
    Construct the metadata-rich AntennaObject consumed later by
    IntegrateAntenna[...]. *)
-MakeAntennaObject[key_, data_Association, component_, contribution_] :=
+MakeAntennaObject[key_, data_Association, component_] :=
   Module[{fullResult, selectedResult, prototypeFullResult,
      prototypeSelectedResult},
     fullResult = BuildAntennaResult[key, data];
@@ -1647,25 +1750,18 @@ MakeAntennaObject[key_, data_Association, component_, contribution_] :=
         "PrototypeAntenna" -> prototypeSelectedResult,
         "SelectedComponent" -> component,
         "SelectedComponentName" -> CanonicalAntennaComponentName[component],
-        "Contribution" -> contribution,
-        "ContributionName" -> CanonicalAntennaComponentName[contribution]
+        "ContributionsUsed" -> AntennaContributionsUsed[key, component]
       |>
     ]
   ];
 
-AntennaObjectWithSelection[obj_AntennaObject, component_, contribution_:Automatic] :=
-  Module[{data, selectedContribution},
+AntennaObjectWithSelection[obj_AntennaObject, component_] :=
+  Module[{data},
     data = AntennaObjectData[obj];
-    selectedContribution =
-      If[contribution === Automatic,
-        Lookup[data, "Contribution", All],
-        contribution
-      ];
     MakeAntennaObject[
       Lookup[data, "Key", Missing["UnknownKey"]],
       Lookup[data, "BuildData", <||>],
-      component,
-      selectedContribution
+      component
     ]
   ];
 
@@ -1790,7 +1886,7 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       Message[BuildAntenna::branchobject];
       Return[$Failed]
     ];
-    requestedSteps = NormalizeIntermediateSteps[OptionValue[
+    requestedSteps = NormalizeBuildIntermediateSteps[OptionValue[
       "IntermediateSteps"]];
     useStored = TrueQ[OptionValue["UseStoredResults"]];
     storeStored = TrueQ[OptionValue["StoreResults"]];
@@ -1807,7 +1903,6 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       "ReductionBackend" -> OptionValue["ReductionBackend"],
       "Component" -> OptionValue["Component"],
       "LoopMomenta" -> OptionValue["LoopMomenta"],
-      "Contribution" -> OptionValue["Contribution"],
       "AllowPrototypeTargets" -> OptionValue["AllowPrototypeTargets"],
       "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
     |>;
@@ -1837,13 +1932,17 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
           ]
         ]
       ];
+      If[useStored,
+        PrintStoredResultMiss[cacheLabel, storeStored || refreshStored]
+      ];
       computed =
-        Block[{$AntennaPipelineBypassStoredResults = True},
+        Block[{$AntennaPipelineBypassStoredResults = True,
+          $AntennaPipelineSuppressBuildReturnOptionDeprecation = True},
           BuildAntenna[type, numFinalParticles, loopOrder,
             ReturnDiagnostics -> True,
             ReturnBuildData -> False,
-            ReturnAntennaObject -> False,
-            IntegrableForm -> True,
+            ReturnAntennaObject -> True,
+            IntegrableForm -> False,
             RunPaperCheck -> OptionValue["RunPaperCheck"],
             Verbose -> OptionValue["Verbose"],
             printDiagram -> OptionValue["printDiagram"],
@@ -1862,10 +1961,9 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
               OptionValue["ReductionBackend"]
             ],
             Component -> OptionValue["Component"],
-            IntermediateSteps -> OptionValue["IntermediateSteps"],
+            IntermediateSteps -> BuildIntermediateStepLabels[],
             PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
             LoopMomenta -> OptionValue["LoopMomenta"],
-            Contribution -> OptionValue["Contribution"],
             AllowPrototypeTargets -> OptionValue["AllowPrototypeTargets"],
             UseSourceModelRoute -> OptionValue["UseSourceModelRoute"],
             UseStoredResults -> False,
@@ -1888,11 +1986,12 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       ]
     ];
     output =
-      BuildAntenna[type, numFinalParticles, loopOrder,
+      Block[{$AntennaPipelineSuppressBuildReturnOptionDeprecation = True},
+        BuildAntenna[type, numFinalParticles, loopOrder,
       ReturnDiagnostics -> OptionValue["ReturnDiagnostics"],
       ReturnBuildData -> False,
-      ReturnAntennaObject -> False,
-      IntegrableForm -> True,
+      ReturnAntennaObject -> True,
+      IntegrableForm -> False,
       RunPaperCheck -> OptionValue["RunPaperCheck"],
       Verbose -> OptionValue["Verbose"],
       printDiagram -> OptionValue["printDiagram"],
@@ -1914,13 +2013,13 @@ BuildAntennaObject[type_, numFinalParticles_, loopOrder_,
       IntermediateSteps -> OptionValue["IntermediateSteps"],
       PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
       LoopMomenta -> OptionValue["LoopMomenta"],
-      Contribution -> OptionValue["Contribution"],
       AllowPrototypeTargets -> OptionValue["AllowPrototypeTargets"],
       UseSourceModelRoute -> OptionValue["UseSourceModelRoute"],
       UseStoredResults -> OptionValue["UseStoredResults"],
       StoreResults -> OptionValue["StoreResults"],
       ResultsCacheRoot -> OptionValue["ResultsCacheRoot"],
-      RefreshStoredResults -> OptionValue["RefreshStoredResults"]];
+      RefreshStoredResults -> OptionValue["RefreshStoredResults"]]
+      ];
     output
   ];
 
@@ -1939,12 +2038,20 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
     storeStored = TrueQ[OptionValue["StoreResults"]];
     refreshStored = TrueQ[OptionValue["RefreshStoredResults"]];
     key = {type, numFinalParticles, loopOrder};
+    If[TrueQ[OptionValue["ReturnBuildData"]] &&
+        !TrueQ[$AntennaPipelineSuppressBuildReturnOptionDeprecation],
+      Message[BuildAntenna::retbuilddata]
+    ];
+    If[TrueQ[OptionValue["ReturnAntennaObject"]] &&
+        !TrueQ[$AntennaPipelineSuppressBuildReturnOptionDeprecation],
+      Message[BuildAntenna::retobject]
+    ];
     outputBranch = CanonicalBuildOutputBranch[OptionValue["BuildOutputBranch"]];
     If[outputBranch === $Failed,
       Message[BuildAntenna::branch, OptionValue["BuildOutputBranch"]];
       Return[$Failed]
     ];
-    intermediateSteps = NormalizeIntermediateSteps[OptionValue[
+    intermediateSteps = NormalizeBuildIntermediateSteps[OptionValue[
       "IntermediateSteps"]];
     optionsAssoc = <|
       "ReturnBuildData" -> OptionValue["ReturnBuildData"],
@@ -1961,17 +2068,18 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       "ReductionBackend" -> OptionValue["ReductionBackend"],
       "Component" -> OptionValue["Component"],
       "LoopMomenta" -> OptionValue["LoopMomenta"],
-      "Contribution" -> OptionValue["Contribution"],
       "BuildOutputBranch" -> outputBranch,
       "AllowPrototypeTargets" -> OptionValue["AllowPrototypeTargets"],
       "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
     |>;
     recordMetadata =
       <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
-        "Contribution" -> OptionValue["Contribution"],
+        "ContributionsUsed" -> AntennaContributionsUsed[key, OptionValue["Component"]],
         "BuildOutputBranch" -> outputBranch,
         "quarkMass" -> OptionValue["quarkMass"]|>;
-    progressActive = longBuildRouteQ[key];
+    (* Public build progress is required for every route, not only the
+       historically long-running subset. *)
+    progressActive = True;
     If[!TrueQ[$AntennaPipelineBypassStoredResults] &&
         StoredResultsEnabledQ[useStored, storeStored, refreshStored],
       cacheKey = BuildAntennaStoredResultKey[type, numFinalParticles,
@@ -1991,17 +2099,22 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
               intermediateSteps, OptionValue["PrintIntermediateSteps"],
               "BuildAntenna",
               <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
-                "Contribution" -> OptionValue["Contribution"],
+                "ContributionsUsed" -> AntennaContributionsUsed[key, OptionValue["Component"]],
                 "BuildOutputBranch" -> outputBranch,
                 "quarkMass" -> OptionValue["quarkMass"]|>]
           ]
         ]
       ];
+      If[useStored,
+        PrintStoredResultMiss[cacheLabel, storeStored || refreshStored]
+      ];
       computed =
-        Block[{$AntennaPipelineBypassStoredResults = True},
+        Block[{$AntennaPipelineBypassStoredResults = True,
+          $AntennaPipelineSuppressBuildReturnOptionDeprecation = True},
           BuildAntenna[type, numFinalParticles, loopOrder,
             ReturnDiagnostics -> True,
-            ReturnBuildData -> OptionValue["ReturnBuildData"],
+            ReturnBuildData -> (TrueQ[OptionValue["ReturnBuildData"]] &&
+                !TrueQ[OptionValue["ReturnRecord"]]),
             ReturnAntennaObject -> OptionValue["ReturnAntennaObject"],
             IntegrableForm -> OptionValue["IntegrableForm"],
             RunPaperCheck -> OptionValue["RunPaperCheck"],
@@ -2018,12 +2131,11 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
             Component -> OptionValue["Component"],
             IntermediateSteps -> If[StoredResultsEnabledQ[useStored,
                 storeStored, refreshStored],
-              BuildRecordStepLabels[],
+              BuildIntermediateStepLabels[],
               OptionValue["IntermediateSteps"]
             ],
             PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
             LoopMomenta -> OptionValue["LoopMomenta"],
-            Contribution -> OptionValue["Contribution"],
             BuildOutputBranch -> outputBranch,
             AllowPrototypeTargets -> OptionValue["AllowPrototypeTargets"],
             UseSourceModelRoute -> OptionValue["UseSourceModelRoute"],
@@ -2068,11 +2180,11 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       ];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
-        OptionValue["Contribution"], 1, 5, "resolving route setup"]
+        All, 1, 5, "resolving route setup"]
     ];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
-        OptionValue["Contribution"], 2, 5, "building route data"]
+        All, 2, 5, "building route data"]
     ];
     data =
       BuildRouteBuildData[
@@ -2087,7 +2199,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           "LoopMomentum" -> OptionValue["LoopMomentum"],
           "ReductionBackend" -> reductionBackend,
           "LoopMomenta" -> OptionValue["LoopMomenta"],
-          "Contribution" -> OptionValue["Contribution"],
+          "Component" -> OptionValue["Component"],
           "AllowPrototypeTargets" -> OptionValue["AllowPrototypeTargets"],
           "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
         |>
@@ -2103,11 +2215,11 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
         "LoopMomentum" -> OptionValue["LoopMomentum"],
         "ReductionBackend" -> reductionBackend,
         "LoopMomenta" -> OptionValue["LoopMomenta"],
-        "Contribution" -> OptionValue["Contribution"]
+        "Component" -> OptionValue["Component"]
       |>];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
-        OptionValue["Contribution"], 3, 5, "extracting public result"]
+        All, 3, 5, "extracting public result"]
     ];
     If[OptionValue["ReturnBuildData"] === True &&
         !TrueQ[OptionValue["ReturnRecord"]],
@@ -2121,11 +2233,10 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       ];
     selectedResult = SelectAntennaComponent[result, key, OptionValue[
        "Component"]];
-    antennaObject = MakeAntennaObject[key, data, OptionValue["Component"],
-      OptionValue["Contribution"]];
+    antennaObject = MakeAntennaObject[key, data, OptionValue["Component"]];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
-        OptionValue["Contribution"], 4, 5, "building diagnostics"]
+        All, 4, 5, "building diagnostics"]
     ];
     If[integrableRequested,
       If[antennaObject === $Failed,
@@ -2137,7 +2248,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           $Failed, diagnostics];
         diagnosticsWithMetadata =
           Join[diagnostics, <|"SelectedComponent" -> OptionValue[
-                "Component"], "Contribution" -> OptionValue["Contribution"],
+                "Component"], "ContributionsUsed" -> AntennaContributionsUsed[key, OptionValue["Component"]],
               "Failed" -> True, "Reason" -> "InvalidComponentSelection"|>,
             If[Length[collectedSteps] > 0,
               <|"IntermediateSteps" -> collectedSteps|>,
@@ -2158,17 +2269,32 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
         antennaObject, diagnostics];
       diagnosticsWithMetadata =
         Join[diagnostics, <|"SelectedComponent" -> OptionValue[
-              "Component"], "Contribution" -> OptionValue["Contribution"]|>,
+              "Component"], "ContributionsUsed" -> AntennaContributionsUsed[key, OptionValue["Component"]]|>,
           If[Length[collectedSteps] > 0,
             <|"IntermediateSteps" -> collectedSteps|>,
             <||>
           ]];
       If[TrueQ[progressActive],
         buildRouteProgressPrint[key, OptionValue["Component"],
-          OptionValue["Contribution"], 5, 5, "formatting public return"]
+          All, 5, 5, "formatting public return"]
       ];
+      (* IntegrableForm is the composable public interface: for a
+         multi-component antenna it returns one integration object per public
+         component.  Each object retains the full build payload, so
+         IntegrateAntenna can perform the common extraction before selecting
+         its requested component. The deprecated ReturnAntennaObject alias
+         retains the singular full-object form used by BuildAntennaObject. *)
       Return[
-        FormatFreshBuildReturn[antennaObject, diagnosticsWithMetadata,
+        FormatFreshBuildReturn[
+          If[TrueQ[OptionValue["IntegrableForm"]] &&
+              !TrueQ[OptionValue["ReturnAntennaObject"]] &&
+              OptionValue["Component"] === All &&
+              Length[AntennaComponentOrder[key]] > 1,
+            AntennaObjectWithSelection[antennaObject, #] & /@
+              AntennaComponentOrder[key]
+            ,
+            antennaObject
+          ], diagnosticsWithMetadata,
           OptionValue["ReturnDiagnostics"], OptionValue["ReturnRecord"],
           intermediateSteps, OptionValue["PrintIntermediateSteps"],
           "BuildAntenna", recordStages,
@@ -2180,7 +2306,8 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
     collectedSteps = CollectBuildIntermediateSteps[data, result,
       selectedResult, antennaObject, diagnostics, intermediateSteps];
     publicResult =
-      If[TrueQ[OptionValue["ReturnBuildData"]],
+      If[TrueQ[OptionValue["ReturnBuildData"]] &&
+          !TrueQ[OptionValue["ReturnRecord"]],
         data
         ,
         selectedResult
@@ -2189,14 +2316,14 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       antennaObject, diagnostics];
     diagnosticsWithMetadata =
       Join[diagnostics, <|"SelectedComponent" -> OptionValue["Component"],
-          "Contribution" -> OptionValue["Contribution"]|>,
+          "ContributionsUsed" -> AntennaContributionsUsed[key, OptionValue["Component"]]|>,
         If[Length[collectedSteps] > 0,
           <|"IntermediateSteps" -> collectedSteps|>,
           <||>
         ]];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
-        OptionValue["Contribution"], 5, 5, "formatting public return"]
+        All, 5, 5, "formatting public return"]
     ];
     FormatFreshBuildReturn[publicResult, diagnosticsWithMetadata, OptionValue[
         "ReturnDiagnostics"], OptionValue["ReturnRecord"], intermediateSteps,

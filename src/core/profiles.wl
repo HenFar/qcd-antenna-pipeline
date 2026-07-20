@@ -36,143 +36,133 @@
 
 (*************************************************)
 
-AntennaReductionProfile::usage =
-  "AntennaReductionProfile[key] returns the build-side reduction settings associated with an antenna family.";
+AntennaReductionProfile::usage = "AntennaReductionProfile[key] returns the build-side reduction settings associated with an antenna family.";
 
-AntennaProfile::usage =
-  "AntennaProfile[key] returns the main metadata association for an antenna route, including amplitudes, extraction rules, and diagnostics data.";
+AntennaProfile::usage = "AntennaProfile[key] returns the main metadata association for an antenna route, including amplitudes, extraction rules, and diagnostics data.";
 
-AntennaAmplitude::usage =
-  "AntennaAmplitude[key] returns the tree-level amplitude object associated with a profile.";
+AntennaAmplitude::usage = "AntennaAmplitude[key] returns the tree-level amplitude object associated with a profile.";
 
-AntennaLoopAmplitude::usage =
-  "AntennaLoopAmplitude[key] returns a memoized raw loop amplitude used by amplitude-level validation without entering interference or integration workflows.";
+AntennaLoopAmplitude::usage = "AntennaLoopAmplitude[key] returns a memoized raw loop amplitude used by amplitude-level validation without entering interference or integration workflows.";
 
-AntennaSelfInterference::usage =
-  "AntennaSelfInterference[key] returns the encoded self-interference or companion object associated with a profile.";
+AntennaSelfInterference::usage = "AntennaSelfInterference[key] returns the encoded self-interference or companion object associated with a profile.";
 
-BornInterference::usage =
-  "BornInterference[] returns the standard born-level interference data shared by the loop extractors.";
+BornInterference::usage = "BornInterference[] returns the standard born-level interference data shared by the loop extractors.";
 
-AntennaIntegrationProfile::usage =
-  "AntennaIntegrationProfile[key] returns the integration-backend metadata used by IntegrateAntenna for a given route.";
+AntennaIntegrationProfile::usage = "AntennaIntegrationProfile[key] returns the integration-backend metadata used by IntegrateAntenna for a given route.";
 
-AntennaWardIdentityProfile::usage =
-  "AntennaWardIdentityProfile[key] returns the applicability and external-gluon-leg metadata for amplitude-level Ward-identity validation.";
+AntennaWardIdentityProfile::usage = "AntennaWardIdentityProfile[key] returns the applicability and external-gluon-leg metadata for amplitude-level Ward-identity validation.";
 
-AntennaPipelineConventionModel::usage =
-  "AntennaPipelineConventionModel[] returns the canonical package-level convention metadata used by route profiles and runtime reports.";
+AntennaRouteVerificationMetadata::usage = "AntennaRouteVerificationMetadata[key] returns the release-verification status and evidence scope recorded for one antenna route.";
 
-AntennaPipelineDimRegDeclaration::usage =
-  "AntennaPipelineDimRegDeclaration[] returns the explicit code-level dimensional-regularization declaration currently used by the package.";
+AntennaPipelineConventionModel::usage = "AntennaPipelineConventionModel[] returns the canonical package-level convention metadata used by route profiles and runtime reports.";
 
-BuildAntennaConventionProfile::usage =
-  "BuildAntennaConventionProfile[key] returns the build-side convention metadata for one antenna route.";
+AntennaPipelineDimRegDeclaration::usage = "AntennaPipelineDimRegDeclaration[] returns the explicit code-level dimensional-regularization declaration currently used by the package.";
 
-IntegrationAntennaConventionProfile::usage =
-  "IntegrationAntennaConventionProfile[key] returns the integration-side convention metadata for one antenna route.";
+BuildAntennaConventionProfile::usage = "BuildAntennaConventionProfile[key] returns the build-side convention metadata for one antenna route.";
+
+IntegrationAntennaConventionProfile::usage = "IntegrationAntennaConventionProfile[key] returns the integration-side convention metadata for one antenna route.";
 
 colourNorm = SUNN - 1 / SUNN;
 
+(* Release-verification metadata is deliberately separate from live route
+   execution. It records the evidence supporting the public status; it does not
+   convert a cached expression or an experimental branch into a supported route. *)
+AntennaRouteVerificationMetadata[{A, 2, 0}] :=
+  <|"Release" -> "0.1.0-alpha.3", "LastVerifiedDate" -> "2026-07-19",
+    "Status" -> "SupportedMassless", "EvidenceScope" -> {"PublicBuild", "ReleaseVerification"}|>;
+
+AntennaRouteVerificationMetadata[{A, 3, 0}] :=
+  <|"Release" -> "0.1.0-alpha.3", "LastVerifiedDate" -> "2026-07-19",
+    "Status" -> "SupportedMassless", "EvidenceScope" -> {"PublicBuild", "PublicIntegration", "FreshAndContaminatedStateRegression", "ReleaseVerification"},
+    "Qualification" -> "This status applies to quarkMass -> 0. The nonzero-quarkMass branch remains experimental."|>;
+
+AntennaRouteVerificationMetadata[{A, 2, 1}] :=
+  <|"Release" -> "0.1.0-alpha.3", "LastVerifiedDate" -> "2026-07-19",
+    "Status" -> "SupportedMassless", "EvidenceScope" -> {"PublicIntegration", "PaVeConventionRegression", "ReleaseVerification"}|>;
+
+AntennaRouteVerificationMetadata[{A, 4, 0} | {B, 4, 0} | {C, 4, 0}] :=
+  <|"Release" -> "0.1.0-alpha.3", "LastVerifiedDate" -> "2026-07-19",
+    "Status" -> "SupportedMassless", "EvidenceScope" -> {"PublicBuild", "PublicIntegration", "PaperTargetRegression", "ReleaseVerification"}|>;
+
+AntennaRouteVerificationMetadata[{A, 3, 1}] :=
+  <|"Release" -> "0.1.0-alpha.3", "LastVerifiedDate" -> "2026-07-19",
+    "Status" -> "SupportedMassless", "EvidenceScope" -> {"PublicBuild", "PublicIntegration", "IBPConventionRegression", "WardIdentityRegression", "ReleaseVerification"}|>;
+
+AntennaRouteVerificationMetadata[{A, 2, 2}] :=
+  <|"Release" -> "0.1.0-alpha.3", "LastVerifiedDate" -> "2026-07-19",
+    "Status" -> "SupportedMassless", "EvidenceScope" -> {"PublicIntegration", "PaperTargetRegression", "ReleaseVerification"}|>;
+
+AntennaRouteVerificationMetadata[{D, 3, 0}] :=
+  <|"Release" -> "0.1.0-alpha.3", "LastVerifiedDate" -> Missing["NotReleaseVerified"],
+    "Status" -> "Experimental", "EvidenceScope" -> {"DiagnosticOnly"},
+    "Qualification" -> "Source-model research route; not part of the release contract."|>;
+
+AntennaRouteVerificationMetadata[_] :=
+  <|"Release" -> Missing["NotReleaseTracked"], "LastVerifiedDate" -> Missing["NotReleaseVerified"],
+    "Status" -> "NotReleaseTracked", "EvidenceScope" -> {}|>;
+
 AntennaPipelineDimRegDeclaration[] :=
-  <|
-    "DeclaredStatus" -> "DeclaredWorkingAssumption",
-    "SchemeTag" -> "UndifferentiatedDMinus2EpsilonContinuation",
-    "DimensionRule" -> HoldForm[D -> 4 - 2 Epsilon],
-    "DimensionalVariable" -> Epsilon,
-    "ActivationControl" -> "ApplyDimReg",
-    "Scope" -> "Package-wide symbolic continuation used in build extraction, diagnostics, and integration-side epsilon-series handling.",
-    "ClosestPublicDescription" -> "The package explicitly uses a single global D -> 4 - 2 Epsilon continuation, but does not yet expose a defended public distinction between CDR, HV, GDR, or related external-state prescriptions.",
-    "SupportedUserToggle" -> False,
-    "StatusNote" -> "The code-level declaration is now explicit, but the package still does not claim user-selectable or separately validated CDR/HV/GDR variants as part of the stable public contract."
-  |>;
+  <|"DeclaredStatus" -> "DeclaredWorkingAssumption", "SchemeTag" -> "UndifferentiatedDMinus2EpsilonContinuation",
+     "DimensionRule" -> HoldForm[D -> 4 - 2 Epsilon], "DimensionalVariable"
+     -> Epsilon, "ActivationControl" -> "ApplyDimReg", "Scope" -> "Package-wide symbolic continuation used in build extraction, diagnostics, and integration-side epsilon-series handling.",
+     "ClosestPublicDescription" -> "The package explicitly uses a single global D -> 4 - 2 Epsilon continuation, but does not yet expose a defended public distinction between CDR, HV, GDR, or related external-state prescriptions.",
+     "SupportedUserToggle" -> False, "StatusNote" -> "The code-level declaration is now explicit, but the package still does not claim user-selectable or separately validated CDR/HV/GDR variants as part of the stable public contract."
+    |>;
 
 AntennaPipelineConventionModel[] :=
-  <|
-    "IntendedPublicContract" -> {
-      "BuildAntenna should expose package-facing public results at the package normalization and renormalization boundary.",
-      "IntegrateAntenna and BuildAndIntegrateAntenna should preserve that same public convention.",
-      "Bare or prototype algebra is not part of the stable public contract unless explicitly requested by a dedicated future option."
-    },
-    "CurrentImplementationReality" -> {
-      "The package uses q2 as the canonical public integrated kinematic scale and normalizes that scale to 1 by default on the integration surface.",
-      "The loop extraction layer applies LoopExpansionNormalization[1] = 8 Pi^2 and LoopExpansionNormalization[2] = (8 Pi^2)^2 when converting loop objects into the package expansion convention.",
-      "The A21 PaVe route carries an explicit Package-X-to-paper convention bridge through the PaperRealMasslessTwoParton profile metadata rather than treating raw PaXEvaluate output as final public form.",
-      "The IBP integration layer now also carries an explicit backend-to-public convention bridge for loop families such as A31 and A22 instead of assuming the raw master-substituted series is already in the final package convention.",
-      "Some loop-family build outputs, especially around A31, still do not realize the intended public renormalization boundary uniformly."
-    },
-    "DimensionalRegularizationScheme" -> Join[
-      AntennaPipelineDimRegDeclaration[],
-      <|
-        "InspectableState" -> "ApplyDimReg is exposed as a public option and epsilon-series processing is used throughout the package.",
-        "ExternalStatePrescriptionStatus" -> "NotSeparatelyDeclared",
-        "ImplementationReality" -> "The runtime uses one package-wide dimensional continuation rather than route-selectable CDR/HV/GDR-style branches."
-      |>
-    ],
-    "PrototypeSurface" -> <|
-      "AllowPrototypeTargetsDefault" -> False,
-      "UseSourceModelRouteDefault" -> False,
-      "StatusNote" -> "Prototype or paper-style targets are only selectively exposed and should be read as internal or exploratory unless documented otherwise for a specific route."
-    |>,
-    "RenormalizationBoundary" -> <|
-      "BuildSidePublicContract" -> "Public build outputs are intended to be package-facing normalized and renormalized results.",
-      "IntegrationSidePublicContract" -> "Integrated public outputs are intended to preserve the package-facing normalization and renormalization convention selected at build level.",
-      "CurrentLoopStatus" -> "Loop-family build outputs are not yet uniformly aligned with the intended public boundary.",
-      "A31Status" -> "A31 is the clearest current mismatch and remains an explicit repair target."
-    |>,
-    "ScaleNormalization" -> <|
-      "PublicKinematicScale" -> q2,
-      "NormalizeKinematicScaleDefault" -> True,
-      "StatusNote" -> "Scale normalization is part of the public integrated convention and should not depend on backend-specific accidents."
-    |>,
-    "LoopExpansionNormalization" -> <|
-      "OneLoop" -> LoopExpansionNormalization[1],
-      "TwoLoop" -> LoopExpansionNormalization[2],
-      "StatusNote" -> "Loop expansion normalization is an explicit package convention layer and is separate from later PaVe or IBP integration-side convention bridges."
-    |>,
-    "PaVeBridge" -> <|
-      "DefaultPaVeEvaluation" -> "PaXEvaluate",
-      "ApplyFeynCalcMSDefault" -> True,
-      "A21Convention" -> "PaperRealMasslessTwoParton",
-      "StatusNote" -> "Raw PaXEvaluate output is not automatically the final public package form; route-specific convention bridges remain explicit."
-    |>
-  |>;
+  <|"IntendedPublicContract" -> {"BuildAntenna should expose package-facing public results at the package normalization and renormalization boundary.",
+     "IntegrateAntenna and BuildAndIntegrateAntenna should preserve that same public convention.",
+     "Bare or prototype algebra is not part of the stable public contract unless explicitly requested by a dedicated future option."
+    }, "CurrentImplementationReality" -> {"The package uses q2 as the canonical public integrated kinematic scale and normalizes that scale to 1 by default on the integration surface.",
+     "The loop extraction layer applies LoopExpansionNormalization[1] = 8 Pi^2 and LoopExpansionNormalization[2] = (8 Pi^2)^2 when converting loop objects into the package expansion convention.",
+     "The A21 PaVe route carries an explicit Package-X-to-paper convention bridge through the PaperRealMasslessTwoParton profile metadata rather than treating raw PaXEvaluate output as final public form.",
+     "The IBP integration layer now also carries an explicit backend-to-public convention bridge for loop families such as A31 and A22 instead of assuming the raw master-substituted series is already in the final package convention.",
+     "Some loop-family build outputs, especially around A31, still do not realize the intended public renormalization boundary uniformly."
+    }, "DimensionalRegularizationScheme" -> Join[AntennaPipelineDimRegDeclaration[
+    ], <|"InspectableState" -> "ApplyDimReg is exposed as a public option and epsilon-series processing is used throughout the package.",
+     "ExternalStatePrescriptionStatus" -> "NotSeparatelyDeclared", "ImplementationReality"
+     -> "The runtime uses one package-wide dimensional continuation rather than route-selectable CDR/HV/GDR-style branches."
+    |>], "PrototypeSurface" -> <|"AllowPrototypeTargetsDefault" -> False,
+     "UseSourceModelRouteDefault" -> False, "StatusNote" -> "Prototype or paper-style targets are only selectively exposed and should be read as internal or exploratory unless documented otherwise for a specific route."
+    |>, "RenormalizationBoundary" -> <|"BuildSidePublicContract" -> "Public build outputs are intended to be package-facing normalized and renormalized results.",
+     "IntegrationSidePublicContract" -> "Integrated public outputs are intended to preserve the package-facing normalization and renormalization convention selected at build level.",
+     "CurrentLoopStatus" -> "Loop-family build outputs are not yet uniformly aligned with the intended public boundary.",
+     "A31Status" -> "A31 is the clearest current mismatch and remains an explicit repair target."
+    |>, "ScaleNormalization" -> <|"PublicKinematicScale" -> q2, "NormalizeKinematicScaleDefault"
+     -> True, "StatusNote" -> "Scale normalization is part of the public integrated convention and should not depend on backend-specific accidents."
+    |>, "LoopExpansionNormalization" -> <|"OneLoop" -> LoopExpansionNormalization[
+    1], "TwoLoop" -> LoopExpansionNormalization[2], "StatusNote" -> "Loop expansion normalization is an explicit package convention layer and is separate from later PaVe or IBP integration-side convention bridges."
+    |>, "PaVeBridge" -> <|"DefaultPaVeEvaluation" -> "PaXEvaluate", "ApplyFeynCalcMSDefault"
+     -> True, "A21Convention" -> "PaperRealMasslessTwoParton", "StatusNote"
+     -> "Raw PaXEvaluate output is not automatically the final public package form; route-specific convention bridges remain explicit."
+    |>|>;
 
 BuildAntennaConventionProfile[key_] :=
   Module[{model},
     model = AntennaPipelineConventionModel[];
     Switch[key,
       {A, 3, 1},
-        <|
-          "ConventionModel" -> "PackagePublicBuildBoundary",
-          "RenormalizationStatus" -> "PublicCountertermBridgeImplemented",
-          "PrototypeExposureStatus" -> "NoStablePublicPrototypeOption",
-          "CurrentImplementationNote" ->
-            "The public A31 build branch now applies the explicit lower-A30 UV counterterm pattern, while the prototype branch preserves the pre-counterterm extracted components for inspection."
-        |>
+        <|"ConventionModel" -> "PackagePublicBuildBoundary", "RenormalizationStatus"
+           -> "PublicCountertermBridgeImplemented", "PrototypeExposureStatus" ->
+           "NoStablePublicPrototypeOption", "CurrentImplementationNote" -> "The public A31 build branch now applies the explicit lower-A30 UV counterterm pattern, while the prototype branch preserves the pre-counterterm extracted components for inspection."
+          |>
       ,
       {A, 2, 2},
-        <|
-          "ConventionModel" -> "PackagePublicBuildBoundary",
-          "RenormalizationStatus" -> "ExperimentalSourceProduction",
-          "PrototypeExposureStatus" -> "NoStablePublicPrototypeOption",
-          "CurrentImplementationNote" -> "A22 build outputs are public unintegrated stitched source objects and are not a promise of a generic reduced loop form."
-        |>
+        <|"ConventionModel" -> "PackagePublicBuildBoundary", "RenormalizationStatus"
+           -> "ExperimentalSourceProduction", "PrototypeExposureStatus" -> "NoStablePublicPrototypeOption",
+           "CurrentImplementationNote" -> "A22 build outputs are public unintegrated stitched source objects and are not a promise of a generic reduced loop form."
+          |>
       ,
       {D, 3, 0},
-        <|
-          "ConventionModel" -> "ModelOwnedSourceBridge",
-          "RenormalizationStatus" -> "ModelOwnedInProgress",
-          "PrototypeExposureStatus" -> "PrototypeTargetRouteAvailable",
-          "CurrentImplementationNote" -> "AllowPrototypeTargets and UseSourceModelRoute control which D30 branch is exposed, so this route already distinguishes default and prototype-facing paths."
-        |>
+        <|"ConventionModel" -> "ModelOwnedSourceBridge", "RenormalizationStatus"
+           -> "ModelOwnedInProgress", "PrototypeExposureStatus" -> "PrototypeTargetRouteAvailable",
+           "CurrentImplementationNote" -> "AllowPrototypeTargets and UseSourceModelRoute control which D30 branch is exposed, so this route already distinguishes default and prototype-facing paths."
+          |>
       ,
       _,
-        <|
-          "ConventionModel" -> "PackagePublicBuildBoundary",
-          "RenormalizationStatus" -> "ImplementedOrExpected",
-          "PrototypeExposureStatus" -> "NoStablePublicPrototypeOption"
-        |>
+        <|"ConventionModel" -> "PackagePublicBuildBoundary", "RenormalizationStatus"
+           -> "ImplementedOrExpected", "PrototypeExposureStatus" -> "NoStablePublicPrototypeOption"
+          |>
     ]
   ];
 
@@ -181,46 +171,33 @@ IntegrationAntennaConventionProfile[key_] :=
     model = AntennaPipelineConventionModel[];
     Switch[key,
       {A, 2, 1},
-        <|
-          "ConventionModel" -> "PackagePublicIntegratedBoundary",
-          "BackendConventionBridge" -> model["PaVeBridge", "A21Convention"],
-          "ScaleNormalization" -> model["ScaleNormalization",
-            "PublicKinematicScale"],
-          "NormalizeKinematicScaleDefault" -> model["ScaleNormalization",
-            "NormalizeKinematicScaleDefault"],
-          "CurrentImplementationNote" -> "The A21 integration route applies an explicit Package-X-to-paper bridge before presenting the public result."
-        |>
+        <|"ConventionModel" -> "PackagePublicIntegratedBoundary", "BackendConventionBridge"
+           -> model["PaVeBridge", "A21Convention"], "ScaleNormalization" -> model[
+          "ScaleNormalization", "PublicKinematicScale"], "NormalizeKinematicScaleDefault"
+           -> model["ScaleNormalization", "NormalizeKinematicScaleDefault"], "CurrentImplementationNote"
+           -> "The A21 integration route applies an explicit Package-X-to-paper bridge before presenting the public result."
+          |>
       ,
       {A, 3, 1},
-        <|
-          "ConventionModel" -> "PackagePublicIntegratedBoundary",
-          "BackendConventionBridge" -> "IBPMasterSubstitutionPlusConventionFactor",
-          "ScaleNormalization" -> model["ScaleNormalization",
-            "PublicKinematicScale"],
-          "NormalizeKinematicScaleDefault" -> model["ScaleNormalization",
-            "NormalizeKinematicScaleDefault"],
-          "CurrentImplementationNote" -> "The integrated A31 route now applies an explicit IBP backend-to-public convention bridge after master substitution; remaining residual checks are treated as route-validation work rather than an undeclared backend normalization accident."
-        |>
+        <|"ConventionModel" -> "PackagePublicIntegratedBoundary", "BackendConventionBridge"
+           -> "IBPMasterSubstitutionPlusConventionFactor", "ScaleNormalization"
+           -> model["ScaleNormalization", "PublicKinematicScale"], "NormalizeKinematicScaleDefault"
+           -> model["ScaleNormalization", "NormalizeKinematicScaleDefault"], "CurrentImplementationNote"
+           -> "The integrated A31 route now applies an explicit IBP backend-to-public convention bridge after master substitution; remaining residual checks are treated as route-validation work rather than an undeclared backend normalization accident."
+          |>
       ,
       {A, 2, 2},
-        <|
-          "ConventionModel" -> "PackagePublicIntegratedBoundary",
-          "BackendConventionBridge" -> "IBPContributionStitchingPlusConventionFactor",
-          "ScaleNormalization" -> model["ScaleNormalization",
-            "PublicKinematicScale"],
-          "NormalizeKinematicScaleDefault" -> model["ScaleNormalization",
-            "NormalizeKinematicScaleDefault"],
-          "CurrentImplementationNote" -> "The A22 integration route now shares the explicit IBP convention-bridge layer used to move master-substituted results into the public package convention, while still carrying scaffold and contribution-specific implementation markers internally."
-        |>
+        <|"ConventionModel" -> "PackagePublicIntegratedBoundary", "BackendConventionBridge"
+           -> "IBPContributionStitchingPlusConventionFactor", "ScaleNormalization"
+           -> model["ScaleNormalization", "PublicKinematicScale"], "NormalizeKinematicScaleDefault"
+           -> model["ScaleNormalization", "NormalizeKinematicScaleDefault"], "CurrentImplementationNote"
+           -> "The A22 integration route now shares the explicit IBP convention-bridge layer used to move master-substituted results into the public package convention, while still carrying scaffold and contribution-specific implementation markers internally."
+          |>
       ,
       _,
-        <|
-          "ConventionModel" -> "PackagePublicIntegratedBoundary",
-          "ScaleNormalization" -> model["ScaleNormalization",
-            "PublicKinematicScale"],
-          "NormalizeKinematicScaleDefault" -> model["ScaleNormalization",
-            "NormalizeKinematicScaleDefault"]
-        |>
+        <|"ConventionModel" -> "PackagePublicIntegratedBoundary", "ScaleNormalization"
+           -> model["ScaleNormalization", "PublicKinematicScale"], "NormalizeKinematicScaleDefault"
+           -> model["ScaleNormalization", "NormalizeKinematicScaleDefault"]|>
     ]
   ];
 
@@ -253,43 +230,50 @@ IntegrationAntennaConventionProfile[key_] :=
      loop order because the physically natural backend can differ from one family
      to another.  A21 and A31, for example, are both one-loop objects but feed
      very different extraction logic downstream. *)
+
 AntennaReductionProfile[{A, 2, 1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
 AntennaReductionProfile[{A, 3, 1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
-AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 2, 1}] :=
+AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 2,
+  1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
-AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
+AntennaReductionProfile[{type_Symbol /; SymbolName[type] === "A", 3,
+  1}] :=
   <|"DefaultBackend" -> "PaVe"|>;
 
 (* Ward-identity metadata is separate from production profiles so the
    validation source and its physics boundary remain explicit and inspectable. *)
-AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 3, 0}] :=
-  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3},
-    "Scope" -> "MasslessTreeAmplitude", "AmplitudeSource" -> "TreeAmplitude",
-    "AmplitudeStage" -> "RawTree", "ValidationReduction" -> None,
-    "SimplificationTimeLimitSeconds" -> 120|>;
 
-AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 4, 0}] :=
-  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3, 4},
-    "Scope" -> "MasslessTreeAmplitude", "AmplitudeSource" -> "TreeAmplitude",
-    "AmplitudeStage" -> "RawTree", "ValidationReduction" -> None,
-    "SimplificationTimeLimitSeconds" -> 120|>;
+AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A",
+  3, 0}] :=
+  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3}, "Scope"
+     -> "MasslessTreeAmplitude", "AmplitudeSource" -> "TreeAmplitude", "AmplitudeStage"
+     -> "RawTree", "ValidationReduction" -> None, "SimplificationTimeLimitSeconds"
+     -> 120|>;
 
-AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
-  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3},
-    "Scope" -> "MasslessOneLoopAmplitude",
-    "AmplitudeSource" -> "RawOneLoopAmplitude", "AmplitudeStage" -> "RawOneLoop",
-    "LoopMomentum" -> l, "ValidationReduction" -> "PaVeTensor",
-    "SimplificationTimeLimitSeconds" -> 900,
-    "Note" -> "This checks the raw A31 virtual amplitude before interference, counterterm presentation, or integration; validation simplification applies PaVe tensor reduction."|>;
+AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A",
+  4, 0}] :=
+  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3, 4}, "Scope"
+     -> "MasslessTreeAmplitude", "AmplitudeSource" -> "TreeAmplitude", "AmplitudeStage"
+     -> "RawTree", "ValidationReduction" -> None, "SimplificationTimeLimitSeconds"
+     -> 120|>;
+
+AntennaWardIdentityProfile[{type_Symbol /; SymbolName[type] === "A",
+  3, 1}] :=
+  <|"Availability" -> "Applicable", "ExternalGluonLegs" -> {3}, "Scope"
+     -> "MasslessOneLoopAmplitude", "AmplitudeSource" -> "RawOneLoopAmplitude",
+     "AmplitudeStage" -> "RawOneLoop", "LoopMomentum" -> l, "ValidationReduction"
+     -> "PaVeTensor", "SimplificationTimeLimitSeconds" -> 900, "Note" ->
+    "This checks the raw A31 virtual amplitude before interference, counterterm presentation, or integration; validation simplification applies PaVe tensor reduction."
+    |>;
 
 AntennaWardIdentityProfile[_] :=
-  <|"Availability" -> "NotApplicable", "ExternalGluonLegs" -> {},
-    "Scope" -> "NoExternalGluonInInitialWardScope"|>;
+  <|"Availability" -> "NotApplicable", "ExternalGluonLegs" -> {}, "Scope"
+     -> "NoExternalGluonInInitialWardScope"|>;
 
 (* AntennaProfile[key]
    ===================
@@ -310,69 +294,65 @@ AntennaWardIdentityProfile[_] :=
      package and the workflow layer.  Fields such as `Extraction`,
      `ProductionSectors`, and `ColourNorm` encode not just what the object is,
      but why the code treats it differently from nearby families. *)
+
 AntennaProfile[{A, 2, 1}] :=
   <|"Key" -> {A, 2, 1}, "Name" -> "A21", "AntennaType" -> A, "NumFinalParticles"
-     -> 2, "LoopOrder" -> 1, "TreeAmplitude" -> AntennaAmplitude[{A, 2,
-      0}], "BornInterference" -> BornInterference[], "Extraction" -> "LoopScalar", 
-    "ColourNorm" -> colourNorm, "ExcludedParticles" -> {S[_], V[1],
-     V[2], V[3], U[1], U[2], U[3], 
-    U[4]}, "DropSumOver" -> True, "ReductionProfile" -> AntennaReductionProfile[
-    {A, 2, 1}], "ConventionProfile" -> BuildAntennaConventionProfile[{A, 2,
-      1}]|>;
+     -> 2, "LoopOrder" -> 1, "TreeAmplitude" -> AntennaAmplitude[{A, 2, 0
+    }], "BornInterference" -> BornInterference[], "Extraction" -> "LoopScalar",
+     "ColourNorm" -> colourNorm, "ExcludedParticles" -> {S[_], V[1], V[2],
+     V[3], U[1], U[2], U[3], U[4]}, "DropSumOver" -> True, "ReductionProfile"
+     -> AntennaReductionProfile[{A, 2, 1}], "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 2, 1}]|>;
 
 AntennaProfile[{A, 3, 1}] :=
   <|"Key" -> {A, 3, 1}, "Name" -> "A31", "AntennaType" -> A, "NumFinalParticles"
-     -> 3, "LoopOrder" -> 1, "TreeAmplitude" -> AntennaAmplitude[{A, 3,
-      0}], "BornInterference" -> BornInterference[], "Extraction" -> "LoopColorCoefficients",
+     -> 3, "LoopOrder" -> 1, "TreeAmplitude" -> AntennaAmplitude[{A, 3, 0
+    }], "BornInterference" -> BornInterference[], "Extraction" -> "LoopColorCoefficients",
      "ColourNorm" -> colourNorm, "ExcludedParticles" -> {S[_], V[1], V[2],
-     V[3], U[1], U[
-    2], U[3]}, "DropSumOver" -> False, "ReductionProfile" -> AntennaReductionProfile[
-    {A, 3, 1}], "ConventionProfile" -> BuildAntennaConventionProfile[{A, 3,
-      1}]|>;
+     V[3], U[1], U[2], U[3]}, "DropSumOver" -> False, "ReductionProfile"
+    -> AntennaReductionProfile[{A, 3, 1}], "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 3, 1}]|>;
 
 AntennaProfile[{A, 2, 2}] :=
-  <|"Key" -> {A, 2, 2}, "Name" -> "A22", "AntennaType" -> A,
-    "NumFinalParticles" -> 2, "LoopOrder" -> 2,
-    "BornInterference" -> BornInterference[],
-    "Components" -> {Leading, Subleading, Nf, Breve},
-    "Contributions" -> {TwoLoopTree, OneLoopSelf},
-    "Extraction" -> "TwoLoopTTermComponents",
-    "ExcludedParticles" -> {S[_], V[1], V[2], V[3], U[1], U[2],
-      U[3], U[4]}, "DropSumOver" -> False,
-    "ColourNorm" -> colourNorm,
-    "ImplementationStatus" -> "ExperimentalSourceProduction",
-    "ConventionProfile" -> BuildAntennaConventionProfile[{A, 2, 2}]|>;
+  <|"Key" -> {A, 2, 2}, "Name" -> "A22", "AntennaType" -> A, "NumFinalParticles"
+     -> 2, "LoopOrder" -> 2, "BornInterference" -> BornInterference[], "Components"
+     -> {Leading, Subleading, Nf, Breve}, "Contributions" -> {TwoLoopTree,
+     OneLoopSelf}, "ContributionPlan" -> <|"Leading" -> {TwoLoopTree},
+       "Subleading" -> {TwoLoopTree}, "Nf" -> {TwoLoopTree},
+       "Breve" -> {OneLoopSelf}|>, "Extraction" -> "TwoLoopTTermComponents", "ExcludedParticles"
+     -> {S[_], V[1], V[2], V[3], U[1], U[2], U[3], U[4]}, "DropSumOver" ->
+     False, "ColourNorm" -> colourNorm, "ImplementationStatus" -> "ExperimentalSourceProduction",
+     "ConventionProfile" -> BuildAntennaConventionProfile[{A, 2, 2}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 1}] :=
-  <|"Key" -> {type, 2, 1}, "Name" -> "A21", "AntennaType" -> type,
-    "NumFinalParticles" -> 2, "LoopOrder" -> 1, "TreeAmplitude" ->
-     AntennaAmplitude[{type, 2, 0}], "BornInterference" ->
-     BornInterference[], "Extraction" -> "LoopScalar", "ColourNorm" ->
-     colourNorm, "ExcludedParticles" -> {S[_], V[1], V[2], V[3], U[1],
-      U[2], U[3], U[4]}, "DropSumOver" -> True, "ReductionProfile" ->
-     AntennaReductionProfile[{type, 2, 1}], "ConventionProfile" ->
-     BuildAntennaConventionProfile[{A, 2, 1}]|>;
+  <|"Key" -> {type, 2, 1}, "Name" -> "A21", "AntennaType" -> type, "NumFinalParticles"
+     -> 2, "LoopOrder" -> 1, "TreeAmplitude" -> AntennaAmplitude[{type, 2,
+     0}], "BornInterference" -> BornInterference[], "Extraction" -> "LoopScalar",
+     "ColourNorm" -> colourNorm, "ExcludedParticles" -> {S[_], V[1], V[2],
+     V[3], U[1], U[2], U[3], U[4]}, "DropSumOver" -> True, "ReductionProfile"
+     -> AntennaReductionProfile[{type, 2, 1}], "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 2, 1}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
-  <|"Key" -> {type, 3, 1}, "Name" -> "A31", "AntennaType" -> type,
-    "NumFinalParticles" -> 3, "LoopOrder" -> 1, "TreeAmplitude" ->
-     AntennaAmplitude[{type, 3, 0}], "BornInterference" ->
-     BornInterference[], "Extraction" -> "LoopColorCoefficients",
-    "ColourNorm" -> colourNorm, "ExcludedParticles" -> {S[_], V[1], V[2],
-      V[3], U[1], U[2], U[3]}, "DropSumOver" -> False,
-    "ReductionProfile" -> AntennaReductionProfile[{type, 3, 1}],
-    "ConventionProfile" -> BuildAntennaConventionProfile[{A, 3, 1}]|>;
+  <|"Key" -> {type, 3, 1}, "Name" -> "A31", "AntennaType" -> type, "NumFinalParticles"
+     -> 3, "LoopOrder" -> 1, "TreeAmplitude" -> AntennaAmplitude[{type, 3,
+     0}], "BornInterference" -> BornInterference[], "Extraction" -> "LoopColorCoefficients",
+     "ColourNorm" -> colourNorm, "ExcludedParticles" -> {S[_], V[1], V[2],
+     V[3], U[1], U[2], U[3]}, "DropSumOver" -> False, "ReductionProfile"
+    -> AntennaReductionProfile[{type, 3, 1}], "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 3, 1}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 2}] :=
-  <|"Key" -> {type, 2, 2}, "Name" -> "A22", "AntennaType" -> type,
-    "NumFinalParticles" -> 2, "LoopOrder" -> 2, "BornInterference" ->
-     BornInterference[], "Components" -> {Leading, Subleading, Nf,
-      Breve}, "Contributions" -> {TwoLoopTree, OneLoopSelf},
-    "Extraction" -> "TwoLoopTTermComponents", "ExcludedParticles" -> {S[_],
-      V[1], V[2], V[3], U[1], U[2], U[3], U[4]}, "DropSumOver" -> False,
-    "ColourNorm" -> colourNorm, "ImplementationStatus" ->
-     "ExperimentalSourceProduction", "ConventionProfile" ->
-     BuildAntennaConventionProfile[{A, 2, 2}]|>;
+  <|"Key" -> {type, 2, 2}, "Name" -> "A22", "AntennaType" -> type, "NumFinalParticles"
+     -> 2, "LoopOrder" -> 2, "BornInterference" -> BornInterference[], "Components"
+     -> {Leading, Subleading, Nf, Breve}, "Contributions" -> {TwoLoopTree,
+     OneLoopSelf}, "ContributionPlan" -> <|"Leading" -> {TwoLoopTree},
+       "Subleading" -> {TwoLoopTree}, "Nf" -> {TwoLoopTree},
+       "Breve" -> {OneLoopSelf}|>, "Extraction" -> "TwoLoopTTermComponents", "ExcludedParticles"
+     -> {S[_], V[1], V[2], V[3], U[1], U[2], U[3], U[4]}, "DropSumOver" ->
+     False, "ColourNorm" -> colourNorm, "ImplementationStatus" -> "ExperimentalSourceProduction",
+     "ConventionProfile" -> BuildAntennaConventionProfile[{A, 2, 2}]|>;
+
 (*************************************************)
 
 (*
@@ -393,104 +373,98 @@ AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 2}] :=
      decomposition rather than one scalar,
    - sector-based production for B40/C40 where phase-space singular structure
      and quark-pair symmetry make a one-shot build less usable. *)
+
 AntennaProfile[{A, 2, 0}] :=
   <|"Key" -> {A, 2, 0}, "Name" -> "A20", "AntennaType" -> A, "NumFinalParticles"
      -> 2, "Production" -> "SelfInterference", "Extraction" -> "BornScalar",
-     "ColourNorm" -> colourNorm, "ConventionProfile" ->
-     BuildAntennaConventionProfile[{A, 2, 0}]|>;
+     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 2, 0}]|>;
 
 AntennaProfile[{A, 3, 0}] :=
   <|"Key" -> {A, 3, 0}, "Name" -> "A30", "AntennaType" -> A, "NumFinalParticles"
      -> 3, "Production" -> "SelfInterference", "Extraction" -> "TreeColorCoefficients",
-     "ColourNorm" -> colourNorm, "ConventionProfile" ->
-     BuildAntennaConventionProfile[{A, 3, 0}]|>;
+     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 3, 0}]|>;
 
 AntennaProfile[{A, 4, 0}] :=
   <|"Key" -> {A, 4, 0}, "Name" -> "A40", "AntennaType" -> A, "NumFinalParticles"
      -> 4, "Production" -> "ColorOrderedAntenna", "Extraction" -> "TreeColorCoefficients",
      "ColourNorm" -> colourNorm, "ColorOrderedSpec" -> <|"Name" -> "A40",
-     "Ordering" -> {1, 3, 4, 2}, "NumGluons" -> 2|>, "ConventionProfile" ->
-     BuildAntennaConventionProfile[{A, 4, 0}]|>;
+     "Ordering" -> {1, 3, 4, 2}, "NumGluons" -> 2|>, "ConventionProfile"
+    -> BuildAntennaConventionProfile[{A, 4, 0}]|>;
 
 AntennaProfile[{B, 4, 0}] :=
   <|"Key" -> {B, 4, 0}, "Name" -> "B40", "AntennaType" -> B, "NumFinalParticles"
      -> 4, "Production" -> "SectorSelfInterference", "Extraction" -> "ColourNormScalar",
      "ColourNorm" -> colourNorm, "ProductionSectors" -> {"PrimaryCurrent",
      "PrimaryCurrent"}, "SectorDefinitions" -> <|"PrimaryCurrent" -> {{s34
-    }, {s134, s234}}, "SecondaryCurrent" -> {{s12}, {s123, s124}}|>,
-    "ConventionProfile" -> BuildAntennaConventionProfile[{B, 4, 0}]|>;
+    }, {s134, s234}}, "SecondaryCurrent" -> {{s12}, {s123, s124}}|>, "ConventionProfile"
+     -> BuildAntennaConventionProfile[{B, 4, 0}]|>;
 
 AntennaProfile[{C, 4, 0}] :=
   <|"Key" -> {C, 4, 0}, "Name" -> "C40", "AntennaType" -> C, "NumFinalParticles"
-     -> 4, "Production" -> "SectorSymmetrizedInterference", "Extraction" 
+     -> 4, "Production" -> "SectorSymmetrizedInterference", "Extraction"
     -> "MinusTwoColourNormOverSUNN", "ColourNorm" -> colourNorm, "ProductionSectors"
-     -> {"DirectPrimary", "ExchangePrimary"}, "ReferenceSquareSector" -> 
+     -> {"DirectPrimary", "ExchangePrimary"}, "ReferenceSquareSector" ->
     "DirectPrimary", "ReferenceSquareProfile" -> {B, 4, 0}, "SectorDefinitions"
-     -> <|"DirectPrimary" -> {{s34}, {s134, s234}}, "DirectSecondary" -> 
+     -> <|"DirectPrimary" -> {{s34}, {s134, s234}}, "DirectSecondary" ->
     {{s12}, {s123, s124}}, "ExchangePrimary" -> {{s23}, {s123, s234}}, "ExchangeSecondary"
-     -> {{s14}, {s124, s134}}|>, "ConventionProfile" ->
-     BuildAntennaConventionProfile[{C, 4, 0}]|>;
+     -> {{s14}, {s124, s134}}|>, "ConventionProfile" -> BuildAntennaConventionProfile[
+    {C, 4, 0}]|>;
 
 AntennaProfile[{D, 3, 0}] :=
-  <|"Key" -> {D, 3, 0}, "Name" -> "D30", "AntennaType" -> D,
-    "NumFinalParticles" -> 3, "Production" -> "OrderedColorStrippedSource",
-    "Extraction" -> "ColourNormScalar", "ColourNorm" -> 1,
-    "SourceModel" -> D30EffectiveModelName[],
-    "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>,
-    "ImplementationStatus" -> "ModelOwnedOrderedSourceRouteInProgress",
-    "ConventionProfile" -> BuildAntennaConventionProfile[{D, 3, 0}]|>;
+  <|"Key" -> {D, 3, 0}, "Name" -> "D30", "AntennaType" -> D, "NumFinalParticles"
+     -> 3, "Production" -> "OrderedColorStrippedSource", "Extraction" ->
+    "ColourNormScalar", "ColourNorm" -> 1, "SourceModel" -> D30EffectiveModelName[
+    ], "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>, "ImplementationStatus"
+     -> "ModelOwnedOrderedSourceRouteInProgress", "ConventionProfile" ->
+    BuildAntennaConventionProfile[{D, 3, 0}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 0}] :=
-  <|"Key" -> {type, 2, 0}, "Name" -> "A20", "AntennaType" -> type,
-    "NumFinalParticles" -> 2, "Production" -> "SelfInterference",
-    "Extraction" -> "BornScalar", "ColourNorm" -> colourNorm,
-    "ConventionProfile" -> BuildAntennaConventionProfile[{A, 2, 0}]|>;
+  <|"Key" -> {type, 2, 0}, "Name" -> "A20", "AntennaType" -> type, "NumFinalParticles"
+     -> 2, "Production" -> "SelfInterference", "Extraction" -> "BornScalar",
+     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 2, 0}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 3, 0}] :=
-  <|"Key" -> {type, 3, 0}, "Name" -> "A30", "AntennaType" -> type,
-    "NumFinalParticles" -> 3, "Production" -> "SelfInterference",
-    "Extraction" -> "TreeColorCoefficients", "ColourNorm" -> colourNorm,
-    "ConventionProfile" -> BuildAntennaConventionProfile[{A, 3, 0}]|>;
+  <|"Key" -> {type, 3, 0}, "Name" -> "A30", "AntennaType" -> type, "NumFinalParticles"
+     -> 3, "Production" -> "SelfInterference", "Extraction" -> "TreeColorCoefficients",
+     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
+    {A, 3, 0}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 4, 0}] :=
-  <|"Key" -> {type, 4, 0}, "Name" -> "A40", "AntennaType" -> type,
-    "NumFinalParticles" -> 4, "Production" -> "ColorOrderedAntenna",
-    "Extraction" -> "TreeColorCoefficients", "ColourNorm" -> colourNorm,
-    "ColorOrderedSpec" -> <|"Name" -> "A40", "Ordering" -> {1, 3, 4, 2},
-      "NumGluons" -> 2|>, "ConventionProfile" ->
-     BuildAntennaConventionProfile[{A, 4, 0}]|>;
+  <|"Key" -> {type, 4, 0}, "Name" -> "A40", "AntennaType" -> type, "NumFinalParticles"
+     -> 4, "Production" -> "ColorOrderedAntenna", "Extraction" -> "TreeColorCoefficients",
+     "ColourNorm" -> colourNorm, "ColorOrderedSpec" -> <|"Name" -> "A40",
+     "Ordering" -> {1, 3, 4, 2}, "NumGluons" -> 2|>, "ConventionProfile"
+    -> BuildAntennaConventionProfile[{A, 4, 0}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "B", 4, 0}] :=
-  <|"Key" -> {type, 4, 0}, "Name" -> "B40", "AntennaType" -> type,
-    "NumFinalParticles" -> 4, "Production" -> "SectorSelfInterference",
-    "Extraction" -> "ColourNormScalar", "ColourNorm" -> colourNorm,
-    "ProductionSectors" -> {"PrimaryCurrent", "PrimaryCurrent"},
-    "SectorDefinitions" -> <|"PrimaryCurrent" -> {{s34}, {s134, s234}},
-      "SecondaryCurrent" -> {{s12}, {s123, s124}}|>,
-    "ConventionProfile" -> BuildAntennaConventionProfile[{B, 4, 0}]|>;
+  <|"Key" -> {type, 4, 0}, "Name" -> "B40", "AntennaType" -> type, "NumFinalParticles"
+     -> 4, "Production" -> "SectorSelfInterference", "Extraction" -> "ColourNormScalar",
+     "ColourNorm" -> colourNorm, "ProductionSectors" -> {"PrimaryCurrent",
+     "PrimaryCurrent"}, "SectorDefinitions" -> <|"PrimaryCurrent" -> {{s34
+    }, {s134, s234}}, "SecondaryCurrent" -> {{s12}, {s123, s124}}|>, "ConventionProfile"
+     -> BuildAntennaConventionProfile[{B, 4, 0}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "C", 4, 0}] :=
-  <|"Key" -> {type, 4, 0}, "Name" -> "C40", "AntennaType" -> type,
-    "NumFinalParticles" -> 4, "Production" ->
-     "SectorSymmetrizedInterference", "Extraction" ->
-     "MinusTwoColourNormOverSUNN", "ColourNorm" -> colourNorm,
-    "ProductionSectors" -> {"DirectPrimary", "ExchangePrimary"},
-    "ReferenceSquareSector" -> "DirectPrimary", "ReferenceSquareProfile" ->
-     {B, 4, 0}, "SectorDefinitions" -> <|
-      "DirectPrimary" -> {{s34}, {s134, s234}},
-      "DirectSecondary" -> {{s12}, {s123, s124}},
-      "ExchangePrimary" -> {{s23}, {s123, s234}},
-      "ExchangeSecondary" -> {{s14}, {s124, s134}}|>,
-    "ConventionProfile" -> BuildAntennaConventionProfile[{C, 4, 0}]|>;
+  <|"Key" -> {type, 4, 0}, "Name" -> "C40", "AntennaType" -> type, "NumFinalParticles"
+     -> 4, "Production" -> "SectorSymmetrizedInterference", "Extraction"
+    -> "MinusTwoColourNormOverSUNN", "ColourNorm" -> colourNorm, "ProductionSectors"
+     -> {"DirectPrimary", "ExchangePrimary"}, "ReferenceSquareSector" ->
+    "DirectPrimary", "ReferenceSquareProfile" -> {B, 4, 0}, "SectorDefinitions"
+     -> <|"DirectPrimary" -> {{s34}, {s134, s234}}, "DirectSecondary" ->
+    {{s12}, {s123, s124}}, "ExchangePrimary" -> {{s23}, {s123, s234}}, "ExchangeSecondary"
+     -> {{s14}, {s124, s134}}|>, "ConventionProfile" -> BuildAntennaConventionProfile[
+    {C, 4, 0}]|>;
 
 AntennaProfile[{type_Symbol /; SymbolName[type] === "D", 3, 0}] :=
-  <|"Key" -> {type, 3, 0}, "Name" -> "D30", "AntennaType" -> type,
-    "NumFinalParticles" -> 3, "Production" -> "OrderedColorStrippedSource",
-    "Extraction" -> "ColourNormScalar", "ColourNorm" -> 1,
-    "SourceModel" -> D30EffectiveModelName[],
-    "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>,
-    "ImplementationStatus" -> "ModelOwnedOrderedSourceRouteInProgress",
-    "ConventionProfile" -> BuildAntennaConventionProfile[{D, 3, 0}]|>;
+  <|"Key" -> {type, 3, 0}, "Name" -> "D30", "AntennaType" -> type, "NumFinalParticles"
+     -> 3, "Production" -> "OrderedColorStrippedSource", "Extraction" ->
+    "ColourNormScalar", "ColourNorm" -> 1, "SourceModel" -> D30EffectiveModelName[
+    ], "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>, "ImplementationStatus"
+     -> "ModelOwnedOrderedSourceRouteInProgress", "ConventionProfile" ->
+    BuildAntennaConventionProfile[{D, 3, 0}]|>;
 
 (* AntennaAmplitude[key]
    =====================
@@ -511,42 +485,49 @@ AntennaProfile[{type_Symbol /; SymbolName[type] === "D", 3, 0}] :=
      self-interference construction, Born normalization for loop antennae, and
      notebook compatibility helpers.  Building them once keeps the software
      responsive without hiding where the physics input came from. *)
-AntennaAmplitude[{A, 2, 0}] :=
-  AntennaAmplitude[{A, 2, 0}] = MAmpLoopLess[2];
 
-AntennaAmplitude[{A, 3, 0}] :=
-  AntennaAmplitude[{A, 3, 0}] = MAmpLoopLess[3];
+AntennaAmplitude[{A, 2, 0}] := AntennaAmplitude[{A, 2, 0}] =
+  MAmpLoopLess[2];
 
-AntennaAmplitude[{A, 4, 0}] :=
-  AntennaAmplitude[{A, 4, 0}] = MAmpLoopLess[4];
+AntennaAmplitude[{A, 3, 0}] := AntennaAmplitude[{A, 3, 0}] =
+  MAmpLoopLess[3];
 
-AntennaAmplitude[{B, 4, 0}] :=
-  AntennaAmplitude[{B, 4, 0}] = MAmpLoopLess[4, AntennaType -> B];
+AntennaAmplitude[{A, 4, 0}] := AntennaAmplitude[{A, 4, 0}] =
+  MAmpLoopLess[4];
 
-AntennaAmplitude[{C, 4, 0}] :=
-  AntennaAmplitude[{C, 4, 0}] = MAmpLoopLess[4, AntennaType -> C];
+AntennaAmplitude[{B, 4, 0}] := AntennaAmplitude[{B, 4, 0}] =
+  MAmpLoopLess[4, AntennaType -> B];
 
-AntennaAmplitude[{type_Symbol /; SymbolName[type] === "A", 2, 0}] :=
-  AntennaAmplitude[{type, 2, 0}] = MAmpLoopLess[2];
+AntennaAmplitude[{C, 4, 0}] := AntennaAmplitude[{C, 4, 0}] =
+  MAmpLoopLess[4, AntennaType -> C];
 
-AntennaAmplitude[{type_Symbol /; SymbolName[type] === "A", 3, 0}] :=
-  AntennaAmplitude[{type, 3, 0}] = MAmpLoopLess[3];
+AntennaAmplitude[{type_Symbol /; SymbolName[type] === "A", 2, 0}] := AntennaAmplitude[
+  {type, 2, 0}] =
+  MAmpLoopLess[2];
 
-AntennaAmplitude[{type_Symbol /; SymbolName[type] === "A", 4, 0}] :=
-  AntennaAmplitude[{type, 4, 0}] = MAmpLoopLess[4];
+AntennaAmplitude[{type_Symbol /; SymbolName[type] === "A", 3, 0}] := AntennaAmplitude[
+  {type, 3, 0}] =
+  MAmpLoopLess[3];
 
-AntennaAmplitude[{type_Symbol /; SymbolName[type] === "B", 4, 0}] :=
-  AntennaAmplitude[{type, 4, 0}] = MAmpLoopLess[4, AntennaType -> B];
+AntennaAmplitude[{type_Symbol /; SymbolName[type] === "A", 4, 0}] := AntennaAmplitude[
+  {type, 4, 0}] =
+  MAmpLoopLess[4];
 
-AntennaAmplitude[{type_Symbol /; SymbolName[type] === "C", 4, 0}] :=
-  AntennaAmplitude[{type, 4, 0}] = MAmpLoopLess[4, AntennaType -> C];
+AntennaAmplitude[{type_Symbol /; SymbolName[type] === "B", 4, 0}] := AntennaAmplitude[
+  {type, 4, 0}] =
+  MAmpLoopLess[4, AntennaType -> B];
+
+AntennaAmplitude[{type_Symbol /; SymbolName[type] === "C", 4, 0}] := AntennaAmplitude[
+  {type, 4, 0}] =
+  MAmpLoopLess[4, AntennaType -> C];
 
 (* Keep loop sources separate from AntennaAmplitude, whose public contract is
    explicitly tree-level. This memoization is kernel-local and never writes a
    stored-result artifact. *)
-AntennaLoopAmplitude[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
-  AntennaLoopAmplitude[{type, 3, 1}] =
-    MAmpOneLoop[3, AntennaType -> type, LoopMomentum -> l];
+
+AntennaLoopAmplitude[{type_Symbol /; SymbolName[type] === "A", 3, 1}] := AntennaLoopAmplitude[
+  {type, 3, 1}] =
+  MAmpOneLoop[3, AntennaType -> type, LoopMomentum -> l];
 
 (* AntennaSelfInterference[key]
    ============================
@@ -568,30 +549,31 @@ AntennaLoopAmplitude[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
      interference cached separately is useful because several downstream routes
      need the squared object directly, while others still need access to the
      unsquared amplitude for more specialized reconstructions. *)
-AntennaSelfInterference[{A, 2, 0}] :=
-  AntennaSelfInterference[{A, 2, 0}] =
-    InterfereMAmplitudes[AntennaAmplitude[{A, 2, 0}], AntennaAmplitude[{
-      A, 2, 0}], 2];
 
-AntennaSelfInterference[{A, 3, 0}] :=
-  AntennaSelfInterference[{A, 3, 0}] =
-    InterfereMAmplitudes[AntennaAmplitude[{A, 3, 0}], AntennaAmplitude[{
-      A, 3, 0}], 3];
+AntennaSelfInterference[{A, 2, 0}] := AntennaSelfInterference[{A, 2,
+  0}] =
+  InterfereMAmplitudes[AntennaAmplitude[{A, 2, 0}], AntennaAmplitude[
+    {A, 2, 0}], 2];
 
-AntennaSelfInterference[{A, 4, 0}] :=
-  AntennaSelfInterference[{A, 4, 0}] =
-    InterfereMAmplitudes[AntennaAmplitude[{A, 4, 0}], AntennaAmplitude[{
-      A, 4, 0}], 4];
+AntennaSelfInterference[{A, 3, 0}] := AntennaSelfInterference[{A, 3,
+  0}] =
+  InterfereMAmplitudes[AntennaAmplitude[{A, 3, 0}], AntennaAmplitude[
+    {A, 3, 0}], 3];
 
-AntennaSelfInterference[{B, 4, 0}] :=
-  AntennaSelfInterference[{B, 4, 0}] =
-    InterfereMAmplitudes[AntennaAmplitude[{B, 4, 0}], AntennaAmplitude[{
-      B, 4, 0}], 4, AntennaType -> B];
+AntennaSelfInterference[{A, 4, 0}] := AntennaSelfInterference[{A, 4,
+  0}] =
+  InterfereMAmplitudes[AntennaAmplitude[{A, 4, 0}], AntennaAmplitude[
+    {A, 4, 0}], 4];
 
-AntennaSelfInterference[{C, 4, 0}] :=
-  AntennaSelfInterference[{C, 4, 0}] =
-    InterfereMAmplitudes[AntennaAmplitude[{C, 4, 0}], AntennaAmplitude[{
-      C, 4, 0}], 4, AntennaType -> C];
+AntennaSelfInterference[{B, 4, 0}] := AntennaSelfInterference[{B, 4,
+  0}] =
+  InterfereMAmplitudes[AntennaAmplitude[{B, 4, 0}], AntennaAmplitude[
+    {B, 4, 0}], 4, AntennaType -> B];
+
+AntennaSelfInterference[{C, 4, 0}] := AntennaSelfInterference[{C, 4,
+  0}] =
+  InterfereMAmplitudes[AntennaAmplitude[{C, 4, 0}], AntennaAmplitude[
+    {C, 4, 0}], 4, AntennaType -> C];
 
 (* BornInterference[]
    ==================
@@ -607,6 +589,7 @@ AntennaSelfInterference[{C, 4, 0}] :=
      This helper intentionally fixes the Born object to one canonical source.
      That avoids a common category error where “the relevant tree” is inferred
      differently in different loop routes. *)
+
 BornInterference[] :=
   AntennaSelfInterference[{A, 2, 0}];
 
@@ -630,78 +613,86 @@ BornInterference[] :=
      while A31 and the tree-level higher-multiplicity antennae are routed into
      IBP families whose expansion orders are determined by their infrared pole
      structure. *)
+
 AntennaIntegrationProfile[{A, 2, 1}] :=
   <|"DefaultBackend" -> PaVe, "PaVeFamily" -> "MasslessTwoPartonVertex",
-    "PaXConvention" -> "PaperRealMasslessTwoParton", "KinematicScale" ->
-     q2, "ExpansionOrder" -> 2, "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{A, 2, 1}]|>;
+     "PaVeEvaluation" -> "PaXEvaluate", "PaXConvention" -> "PaperRealMasslessTwoParton", "KinematicScale" ->
+     q2, "ExpansionOrder" -> 2, "ConventionProfile" -> IntegrationAntennaConventionProfile[
+    {A, 2, 1}]|>;
 
 AntennaIntegrationProfile[{A, 3, 0}] :=
   <|"DefaultBackend" -> IBP, "BasisFamily" -> "X30", "ExpansionOrder"
-     -> 0, "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{A, 3, 0}]|>;
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A,
+     3, 0}]|>;
 
 AntennaIntegrationProfile[{A, 4, 0}] :=
   <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder"
-     -> 0, "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{A, 4, 0}]|>;
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A,
+     4, 0}]|>;
 
 AntennaIntegrationProfile[{B, 4, 0}] :=
   <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder"
-     -> 0, "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{B, 4, 0}]|>;
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{B,
+     4, 0}]|>;
 
 AntennaIntegrationProfile[{C, 4, 0}] :=
   <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder"
-     -> 0, "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{C, 4, 0}]|>;
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{C,
+     4, 0}]|>;
 
 AntennaIntegrationProfile[{A, 3, 1}] :=
   <|"DefaultBackend" -> IBP, "BasisFamily" -> "A31", "ExpansionOrder"
-     -> -2, "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{A, 3, 1}]|>;
+     -> -2, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A,
+     3, 1}]|>;
 
 AntennaIntegrationProfile[{A, 2, 2}] :=
   <|"DefaultBackend" -> IBP, "BasisFamily" -> "A22", "ExpansionOrder"
-     -> 0, "ImplementationStatus" -> "ScaffoldOnly",
-    "ConventionProfile" -> IntegrationAntennaConventionProfile[{A, 2, 2}]|>;
+     -> 0, "ImplementationStatus" -> "ScaffoldOnly", "ConventionProfile"
+    -> IntegrationAntennaConventionProfile[{A, 2, 2}]|>;
 
-AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 2, 1}] :=
+AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 2,
+   1}] :=
   <|"DefaultBackend" -> PaVe, "PaVeFamily" -> "MasslessTwoPartonVertex",
-    "PaXConvention" -> "PaperRealMasslessTwoParton", "KinematicScale" ->
-     q2, "ExpansionOrder" -> 2, "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{A, 2, 1}]|>;
+     "PaVeEvaluation" -> "PaXEvaluate", "PaXConvention" -> "PaperRealMasslessTwoParton", "KinematicScale" ->
+     q2, "ExpansionOrder" -> 2, "ConventionProfile" -> IntegrationAntennaConventionProfile[
+    {A, 2, 1}]|>;
 
-AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 3, 0}] :=
-  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X30", "ExpansionOrder" ->
-     0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A, 3,
-      0}]|>;
+AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 3,
+   0}] :=
+  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X30", "ExpansionOrder"
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A,
+     3, 0}]|>;
 
-AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 4, 0}] :=
-  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder" ->
-     0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A, 4,
-      0}]|>;
+AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 4,
+   0}] :=
+  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder"
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A,
+     4, 0}]|>;
 
-AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "B", 4, 0}] :=
-  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder" ->
-     0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{B, 4,
-      0}]|>;
+AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "B", 4,
+   0}] :=
+  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder"
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{B,
+     4, 0}]|>;
 
-AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "C", 4, 0}] :=
-  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder" ->
-     0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{C, 4,
-      0}]|>;
+AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "C", 4,
+   0}] :=
+  <|"DefaultBackend" -> IBP, "BasisFamily" -> "X40", "ExpansionOrder"
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{C,
+     4, 0}]|>;
 
-AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 3, 1}] :=
-  <|"DefaultBackend" -> IBP, "BasisFamily" -> "A31", "ExpansionOrder" ->
-     -2, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A, 3,
-      1}]|>;
+AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 3,
+   1}] :=
+  <|"DefaultBackend" -> IBP, "BasisFamily" -> "A31", "ExpansionOrder"
+     -> 0, "ConventionProfile" -> IntegrationAntennaConventionProfile[{A,
+     3, 1}]|>;
 
-AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 2, 2}] :=
-  <|"DefaultBackend" -> IBP, "BasisFamily" -> "A22", "ExpansionOrder" ->
-     0, "ImplementationStatus" -> "ScaffoldOnly", "ConventionProfile" ->
-     IntegrationAntennaConventionProfile[{A, 2, 2}]|>;
+AntennaIntegrationProfile[{type_Symbol /; SymbolName[type] === "A", 2,
+   2}] :=
+  <|"DefaultBackend" -> IBP, "BasisFamily" -> "A22", "ExpansionOrder"
+     -> 0, "ImplementationStatus" -> "ScaffoldOnly", "ConventionProfile"
+    -> IntegrationAntennaConventionProfile[{A, 2, 2}]|>;
 
 AntennaIntegrationProfile[_] :=
-  <|"DefaultBackend" -> IBP, "ConventionProfile" ->
-    IntegrationAntennaConventionProfile[Automatic]|>;
+  <|"DefaultBackend" -> IBP, "ConventionProfile" -> IntegrationAntennaConventionProfile[
+    Automatic]|>;

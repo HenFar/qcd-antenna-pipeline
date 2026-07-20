@@ -1,0 +1,2127 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 15.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     84406,       2119]
+NotebookOptionsPosition[     77599,       2009]
+NotebookOutlinePosition[     77996,       2025]
+CellTagsIndexPosition[     77953,       2022]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Building A30", "Title",
+ CellChangeTimes->{{3.993543660164263*^9, 3.993543668125346*^9}, {
+  3.993546038570504*^9, 
+  3.993546039481141*^9}},ExpressionUUID->"625b0c42-e0de-4836-aae1-\
+19452a845835"],
+
+Cell["\<\
+One of the two central functions in AntCalc is BuildAntenna. This function \
+builds, from the Feynman diagrams, the unintegrated antenna functions. 
+
+Start by launching AntCalc:\
+\>", "Text",
+ CellChangeTimes->{{3.993543673676487*^9, 
+  3.9935437733213654`*^9}},ExpressionUUID->"bf60d082-e4d4-4270-add9-\
+15a76e0328e5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"<<", "AntCalc`"}]], "Input",
+ CellChangeTimes->{{3.993543756586331*^9, 3.9935437606031427`*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"a52004cd-5eb4-4357-b8ca-adcb33b88fbc"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{
+    StyleBox["\<\"AntCalc \"\>", "Text",
+     StripOnInput->False,
+     FontWeight->Bold], "\[InvisibleSpace]", 
+    StyleBox[
+     TemplateBox[{"\"0.1.0\"", 
+       StyleBox["\" \[Alpha] \"", "Text", StripOnInput -> False], "\"3\""},
+      "RowDefault"], "Text",
+     StripOnInput->False]}],
+   SequenceForm[
+    Style["AntCalc ", "Text", Bold], 
+    Style[
+     Row[{"0.1.0", 
+       Style[" \[Alpha] ", "Text"], "3"}], "Text"]],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993543767124919*^9},
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"f81a6b41-a9c2-4554-86cf-d26b7702dfac"],
+
+Cell[BoxData[
+ FormBox[
+  StyleBox["\<\"FeynCalc 10.2.1  \[CenterDot]  FeynArts 3.12 (27\
+\[NonBreakingSpace]Mar\[NonBreakingSpace]2025)  \[CenterDot]  FeynHelpers \
+2.0.0  \[CenterDot]  FeynCalcLegacy 1.0.0\"\>", "Text",
+   StripOnInput->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993543767125712*^9},
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"d5e54a75-3cd0-4522-a5a4-6587cd533a89"],
+
+Cell[BoxData[
+ FormBox[
+  StyleBox["\<\"LiteRed2 2.025\[Beta]\"\>", "Text",
+   StripOnInput->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993543767126182*^9},
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"a7e4b1b0-a7bd-4efa-87fc-c1ae1028cb58"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+Building an antenna in AntCalc is remarkably simple. Simply run:\
+\>", "Text",
+ CellChangeTimes->{{3.993543778229184*^9, 
+  3.993543804254158*^9}},ExpressionUUID->"094cae32-051c-4b8c-b7ff-\
+334360de2e05"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"A30unintegrated", " ", "=", " ", 
+  RowBox[{"BuildAntenna", "[", 
+   RowBox[{"A", ",", "3", ",", "0"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.9935438055265093`*^9, 3.993543815428698*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"6a46aff9-b003-4e89-8129-1de53419e844"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:43:36\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "1", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"resolving route setup\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All, Contribution \
+-> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:43:36", "] ", "BuildAntenna [", 1, "/", 5, "]: ", 
+    "resolving route setup", " ", 
+    "{A, 3, 0} with Component -> All, Contribution -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993543816436686*^9},
+ CellLabel->
+  "During evaluation of \
+In[2]:=",ExpressionUUID->"ab84e7f1-7f03-4b4a-b825-44613b80d3ea"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:43:36\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "2", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building route data\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All, Contribution \
+-> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:43:36", "] ", "BuildAntenna [", 2, "/", 5, "]: ", 
+    "building route data", " ", 
+    "{A, 3, 0} with Component -> All, Contribution -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.9935438164373693`*^9},
+ CellLabel->
+  "During evaluation of \
+In[2]:=",ExpressionUUID->"16f5a8c3-7d8d-4318-8aec-e43ccb4aae00"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:43:36\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "3", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"extracting public result\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All, Contribution \
+-> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:43:36", "] ", "BuildAntenna [", 3, "/", 5, "]: ", 
+    "extracting public result", " ", 
+    "{A, 3, 0} with Component -> All, Contribution -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993543816753992*^9},
+ CellLabel->
+  "During evaluation of \
+In[2]:=",ExpressionUUID->"06b3b86d-eb6b-4952-8d74-1850d9b5ed7d"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:43:36\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "4", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building diagnostics\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All, Contribution \
+-> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:43:36", "] ", "BuildAntenna [", 4, "/", 5, "]: ", 
+    "building diagnostics", " ", 
+    "{A, 3, 0} with Component -> All, Contribution -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993543816754621*^9},
+ CellLabel->
+  "During evaluation of \
+In[2]:=",ExpressionUUID->"9d620c45-e3f3-4fbd-ac3a-d3a6914f76cd"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:43:36\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"formatting public return\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All, Contribution \
+-> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:43:36", "] ", "BuildAntenna [", 5, "/", 5, "]: ", 
+    "formatting public return", " ", 
+    "{A, 3, 0} with Component -> All, Contribution -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993543816765843*^9},
+ CellLabel->
+  "During evaluation of \
+In[2]:=",ExpressionUUID->"6f1a0383-bd12-4c3f-bd9c-42eeaae68a04"]
+}, Open  ]],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      TagBox["\[CurlyEpsilon]",
+       TraditionalForm]}], "q2"]}], "+", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["s12", "2"]}], 
+    RowBox[{"q2", " ", "s13", " ", "s23"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s23"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s23"}], 
+    RowBox[{"q2", " ", "s13"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s13"}], 
+    RowBox[{"q2", " ", "s23"}]], "+", 
+   FractionBox["s23", 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox["s13", 
+    RowBox[{"q2", " ", "s23"}]]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.993543816766417*^9},
+ CellLabel->"Out[2]=",ExpressionUUID->"a9e6d473-93c9-4a3f-9025-0558303c08d1"]
+}, Open  ]],
+
+Cell["\<\
+This function builds the antennae specifically with the two hard original \
+radiators as particles 1 and 2, that is, in this case A30(1q, 3g, 2bar q). In \
+our notation, q2 denotes the centre of mass energy, which for this case makes \
+q2 = s123 = s12 + s13 + s23. These antenna functions are most commonly shown \
+as epsilon expansions, and that effect can be achieved here with:\
+\>", "Text",
+ CellChangeTimes->{{3.993543835107518*^9, 3.99354393505438*^9}, {
+  3.993544021121086*^9, 
+  3.9935440549044847`*^9}},ExpressionUUID->"a2f01957-58e8-45ae-9f1c-\
+8175c128216e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"A30Epsilon", " ", "=", " ", 
+  RowBox[{"A30unintegrated", "//", 
+   RowBox[{
+    RowBox[{"Collect", "[", 
+     RowBox[{"#", ",", "Epsilon"}], "]"}], "&"}]}]}]], "Input",
+ CellChangeTimes->{{3.993543936778315*^9, 3.993543977687101*^9}},
+ CellLabel->"In[5]:=",ExpressionUUID->"b37ff6ac-2f23-492d-83e0-df77e247eb51"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["s12", "2"]}], 
+    RowBox[{"q2", " ", "s13", " ", "s23"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s23"}]], "+", 
+   RowBox[{
+    TagBox["\[CurlyEpsilon]",
+     TraditionalForm], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", 
+       FractionBox["s13", 
+        RowBox[{"q2", " ", "s23"}]]}], "-", 
+      FractionBox["s23", 
+       RowBox[{"q2", " ", "s13"}]], "-", 
+      FractionBox["2", "q2"]}], ")"}]}], "+", 
+   FractionBox["s23", 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox["s13", 
+    RowBox[{"q2", " ", "s23"}]]}], TraditionalForm]], "Output",
+ CellChangeTimes->{{3.9935439487532253`*^9, 3.993543978273193*^9}},
+ CellLabel->"Out[5]=",ExpressionUUID->"203f1d83-384e-4a54-bc94-fd50a88a4141"]
+}, Open  ]],
+
+Cell["\<\
+There are several options for this function, that may become useful as it is \
+used. 
+
+We are able to inspect the diagrams that led to this antenna by running:\
+\>", "Text",
+ CellChangeTimes->{{3.993544080387978*^9, 
+  3.9935441432080383`*^9}},ExpressionUUID->"8643da18-902e-4045-9c50-\
+37716956da2b"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"A30Diagrams", "=", 
+  RowBox[{"BuildAntenna", "[", 
+   RowBox[{"A", ",", "3", ",", "0", ",", 
+    RowBox[{"printDiagram", "->", "True"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.9935441458024263`*^9, 3.9935441588547297`*^9}},
+ CellLabel->"In[6]:=",ExpressionUUID->"728b8f67-f07b-4830-a053-2960301c0525"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:56:02\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "1", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"resolving route setup\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:56:02", "] ", "BuildAntenna [", 1, "/", 5, "]: ", 
+    "resolving route setup", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544562137182*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"e89ec746-48ea-4a0f-8d2c-d07823df82c7"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:56:02\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "2", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building route data\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:56:02", "] ", "BuildAntenna [", 2, "/", 5, "]: ", 
+    "building route data", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544562137806*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"659db648-da2f-483f-8cf4-f9d323291df3"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{
+    StyleBox["\<\"[AntCalc] Tree diagrams: \"\>",
+     StripOnInput->False,
+     FontWeight->Bold], "\[InvisibleSpace]", "\<\"\"\>", "\[InvisibleSpace]", 
+    "A", "\[InvisibleSpace]", "3", "\[InvisibleSpace]", "\<\" (\"\>", "\[InvisibleSpace]",
+     "3", "\[InvisibleSpace]", "\<\" final-state partons)\"\>"}],
+   SequenceForm[
+    Style["[AntCalc] Tree diagrams: ", Bold], "", $CellContext`A, 3, " (", 3, 
+    " final-state partons)"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544562159482*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"39d87cf3-d63f-406a-8aab-4db7a4b6964f"],
+
+Cell[BoxData[
+ FormBox[
+  GraphicsBox[{InsetBox[
+     GraphicsBox[
+      TagBox[
+       TooltipBox[
+        {Thickness[0.005], LineBox[CompressedData["
+1:eJwt1AtUk2UYB/AXBJ1sykjACaQDBpvhBY0ZlPl9gAZ5iamUQ8UGHgfKSTHM
+QIQmjgRCGHdCTFAkzds4Kl7RKeYZhmgmNrw1UQidF65zeGH93+o7Z2fnt/d7
+3uf5v9935hm7btEqW0JIND70m1isuDxZ8u8lYUlGsM3JRpg/21TnBTcb3e5m
+wQqfA9ZZcIv7lr0y+GSZz+oIeHNj73N3OLntoqsMVrUFuZqELElMKYll4Lu8
+cS8a4PJ4/zHj4U51clMRHNhgZl6IWbL284HsBFihvtB+Aq48qPw9FK4yzvJN
+h7XXWye70/tl17LD4dwdEyuNE9AnumjQA67KUMeo4X27bF5bfXH/WLlGCHNs
+Vdx+WOMq9Dg+niXd5i1hg3DNwz5OKMxJ1yhHoV5kx4Q1v8sSeX0TbxJsvJe5
+djFsPL9JGUH3/+a+4o4HSyRKT0sinLjS7pEStsy/mZkDXx8TO8vijnxvm3tK
+YWK506GBdWe5fYVw5EfaedNgedTOnDQ4IOZIs8EN/YslYjnM2030mfC+3qvr
+feGDf81uk8JZNqm/PcO8etWbyZ3jWCI49Tj3GFyeEvakCNZbnURbaL723ryZ
+cPzFmilR8AafHxfdF+B5PCyoY+HlCXExyXBXzvbsINjDr+aVA6yqL5WEwllz
+2uLKxiLf6Ev7l8KcrHstE2BFYHFgKq0/7dtR68oSoTaq4SdY96tL/lRY63Oi
+/hwcKTqVfNYFv58zeLbCx4Yl1EfAmgTOwnu0/lbZpifOLPGPriu8CfvXDDfl
+wvG7sgpOwwE7y9xnwLrJXysK6PxuAVMfjaHvU4p/NM3btqSiGBbkTT/jTfv3
+mdJmwxo2aqPJB+8nTz+q5x3kaPzw0GnqzLz+Mrg7zq6qFDY6vqz9AOZ7ROoz
+YH75k4prTjhvZ79oFczbf2GpAhaszBfnwZLz5vUmPs7nYNehffAl/pA0CU70
+4mmvwIrgro5+R5aEVx9ofwaTwK2OHFjiZH+di/nYUyFW0WjMtyLt3HiYv3jv
+2ohRLDHYWjd70edlCpZm8/A8dldanOn5T+SOuMFFTmHF92bsZynpThfDqoBs
+QxOc7B2zIdMBfuRZWQRz/ryQ3zkS84QyN6Ngrb9o5Bw4ecVcW29Y6FCzcQcH
++ZdbPx4QYV1cu71jBOpvPV/WChuS7M8KYd0qx+DLsGLjH1vnD0f97TWpelig
+fpC7xh7vfUrElNtwVVb16nQ75ErQR76EZed3jt0+DPX5goVu6CffLVtQaYs+
+j6XHZ8KGIOnhOhvkeCGTyGmeZ9/Z3CCokyo/jaPnp9dsI3BiUsg6Jcyar3LT
+hhgiTJ3uF0nnn7Ttfde3DAm/4rN5Gtzds+PI5dcM0cq9DtjAsvd2xWe+YohB
+PdTahHn4uldzwwZRv+FMoAYWxi29QSwMKf/75WfLqJdcqfnZzBC+vfqpP6wJ
+mmEXMMAQQfiyr1xoftLYXt3HEE7OcDcuzdubmtTTg/3njbvlRNeHxN7ibobI
+7SUiMazTF/SXPGWIxeWX9E/o/ssr37R0MaRLFTu4mq6nmJP4HZi/4qrzDzD5
+4mJI4gPMJxXU7qGettWP3GWIRhd29DB1dWdLSSv6hxtF+2EVcXiw4Br2qw8J
+KKTr8cV1EZfQ/9svtyVQh5/o6j/KkPg9xoFA0f//26qG/75F7D+HORif
+          "]], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["\[Gamma]",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {4.163757790381083, 11.908289943285126}, 
+          NCache[ImageScaled[{Rational[1, 2], 0}], ImageScaled[{0.5, 0}]]], 
+         LineBox[{{20.000000000005457`, 17.000000000003638`}, {
+          9.000000000009095, 12.000000000003638`}}], 
+         PolygonBox[{{15.046219886477562`, 14.74828176658071}, {
+          13.788258935801965`, 14.615864824404332`}, {14.11930129124291, 
+          13.887571642434247`}}], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["u",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {14.463405436333165, 15.306268040067035},
+           ImageScaled[{1, 0}]], 
+         LineBox[{{19.999999999992724`, 9.999999999996362}, {
+          13.499999999992724`, 6.499999999996362}}], 
+         PolygonBox[{{16.221717340046695`, 7.96554010617899}, {
+          17.0886427307393, 8.88664833378988}, {17.467922589167312`, 
+          8.18227145385214}}], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["u",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {16.619945274295723, 9.009930204879371}, 
+          ImageScaled[{1, 0}]], LineBox[CompressedData["
+1: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
+yrH/BzeNR8c=
+          "]], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["g",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {16.880054725704277, 5.509930204879372}, 
+          ImageScaled[{0, 0}]], LineBox[{{9., 12.}, {13.5, 6.5}}], 
+         PolygonBox[{{10.870057325845643`, 9.714374379521992}, {
+          11.320359754473028`, 8.532330504375103}, {11.939525593835686`, 
+          9.038920736580913}}], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["u",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {10.655166186234855, 8.873281425101244}, 
+          ImageScaled[{1, 1}]], 
+         {PointSize[0.04], PointBox[{9., 12.}], PointBox[{13.5, 6.5}]}, 
+         InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["1",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->23.458909090909092`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            23.458909090909092`]& ], {10., -0.5}, NCache[
+          ImageScaled[{Rational[1, 2], 0}], ImageScaled[{0.5, 0}]]]},
+        "\"ae/becfdf/ef.m\"",
+        TooltipStyle->"TextStyling"],
+       Annotation[#, "ae/becfdf/ef.m", "Tooltip"]& ],
+      AspectRatio->1,
+      PlotRange->{{-1, 21}, {-1, 21}}], {0, 0}, {0, 0}, {22, 22}], InsetBox[
+     GraphicsBox[
+      TagBox[
+       TooltipBox[
+        {Thickness[0.005], LineBox[CompressedData["
+1:eJwl1AlQU1cUBuALiEUSthoiIsUEgsSiNljQgMJ7CkpqRbAylKhgBiVGqQUq
+o2LARkRZRFmljsUSROuCMEApoAiN2iWCVDoFGx3aRlSEIhDZDC6k/2vfTObM
+l7u8c8+58/ixCZ/EmRNCovFjInllwsOniRUDHk12FCzh6uDECv2EGF5f7Xez
+Gpbt35YZD4//odSmw4aG1T6F8HBb1sZNsL1EL7jMrO+rmJ4Pn9aEfFcNlzz8
+/XU/otDX6dsKxM2nNUbm//AzHZzjiO/7L7Pfi2hQxU7tQlQ8blAvQyTcK4fW
+MvPIsuWT8/F+S6HAEw624FccgfUfz73vAHdSYZlzYPucmc4sODdpdLrOlSY8
+yZY9jjBvdwc3krFlxnMRLJDvaje9RxP1s5cbtsD9YasWV8PC5GZxPhzhq7sQ
+A+szprvvwFst5kbYwpoot0oznOuJj+ve6y7Iq80j1ZupSzq7RQYLlUu9IuDz
+Xy+/YZpHE9Xe1QlyeNyKNpXAUb7yj3bCZPtToSdsZQgXRsFXqz99UOtMk6YB
+3+9XwjTPO9kP7sxz2ugMq1d80K6ZSxNJvDbiJfK5G5B3bR18KSVsyUP4RjC3
+9YET3vdwt1LL1G3t2/IEWBtnt+pnxs8X+dnA+feHt3TD+ldVwXVzaGLcagqY
+gIuf7VFGw6qYdebueJ+CM7+JDR8IorqksOjze2tauDTJesIvLWL6Xp9Jf8bY
+J1t3BxbGH3zDhdW8M8cmYYH1trhmR8w7V2rkuGG/yCpJFNxvbkp1g9dXxKiG
+OLgfMWmtrrBue6BRCYsdLDtZ8Mq/WScs4fDyyt4h7LdoxKwtdzbycWPXtME1
+9KyTHDj/an/VJVgfGXih7F30d3ue50m4Z6djnAiu4XhFq5j6j1hJtQ4Yd4n4
+797yDiaxFLBx5wx1CewytnzUFs6/7V91HXZic9Kb7XEeWrpvEI5YcCkuHuad
+XNrsjvxSn7Z3zoNVD1JE0bDkp05tkR3qvfgLWQGc2Di6sM8WsSyr4DrstKnT
+2gsWR9cWdjHjxoVFMhucP95q45+wqPGEbSYb61t1/G5Yltz1SM3CffBobGiF
+hcfrfOusEWukLd/AmpHgWM0s1FVcLFbC2uRQ0W9W2Mf2x8ubYfXlRut/3kF/
+GkqEQbBR6B1gBxtzTmT7Ma7v2Bw0E/k/Lqil4SZ/595jlsjr1vklUljFTvLS
+zUBfTA6CwzA9PfP8hzDv2kBuPTNO7wsttkC9zJTtQ3B+83TCuDn2Ge1IWuCO
+vALK5Rtg+2KhZxQsyi5TnDXDuaRnc9LgGjuJz18Eed9gjRXCYt2KI3aw+u3d
+FyWwIWk4Ycc0RUho19EcWC88llr4hiIiOd+YCPOy+tfUvaKI4YeD8jDGIxaP
+fzVSRNZwh72IcZKoZ2ySIvaH8uU2cOKFL/O8JihinDwcMoV8Deqy1rQxjJur
+WONM/SeGUoZfUKSmzOy1ielPgTQvzUCRrOiiKResp8fPuYUOU4QOv5ctgdW+
+pwZuDWK+PnDBISa/i1dkIQMUScy42dsIk9r9itt9mN8ySY3AKu8EW/4TiqgV
+otmuAvRPHlu64RFFDqSciqVgOu8iP72Hwn26xQ1nxjN6wga7KaL5ymNXGKz6
+JWRK20ERhUelKRAm/ttM7q0UcQoerHVjzDyqlv+/3wL6X+htE+Q=
+          "]], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["\[Gamma]",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {4.163757790381084, 8.091710056714874}, 
+          NCache[ImageScaled[{Rational[1, 2], 1}], ImageScaled[{0.5, 1}]]], 
+         LineBox[{{20.000000000003638`, 17.}, {14.999999999998181`, 
+          14.499999999996362`}}], 
+         PolygonBox[{{18.03665631459995, 16.018328157299976`}, {
+          16.784458247200067`, 15.839442719099992`}, {17.142229123600035`, 
+          15.12390096630006}}], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["u",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {17.411618926975066, 16.53156214604987}, 
+          ImageScaled[{1, 0}]], 
+         LineBox[{{20.000000000004547`, 10.}, {9.000000000013188, 8.}}], 
+         PolygonBox[{{13.909678053940056`, 8.89266873708001}, {
+          15.01876777077995, 9.500879226959952}, {15.161876121339938`, 
+          8.713783298880028}}], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["u",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {13.544992164264901, 7.858382411310172}, 
+          NCache[ImageScaled[{Rational[1, 2], 1}], ImageScaled[{0.5, 1}]]], 
+         LineBox[CompressedData["
+1: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
+          "]], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["g",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {17.23329719907116, 5.22601020508129}, 
+          ImageScaled[{1, 1}]], 
+         LineBox[{{8.999999999998181, 8.}, {14.999999999998181`, 14.5}}], 
+         PolygonBox[{{12.406968061639839`, 11.690882066776492`}, {
+          11.886953316211157`, 10.537805892130281`}, {11.299110560509165`, 
+          11.080429974316734`}}], InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["u",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->29.323636363636364`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            29.323636363636364`]& ], {11.465854660827393, 11.696534159236254},
+           ImageScaled[{1, 0}]], 
+         {PointSize[0.04], PointBox[{9., 8.}], PointBox[{15., 14.5}]}, 
+         InsetBox[
+          TagBox[
+           StyleBox[
+            TagBox["2",
+             DisplayForm],
+            FontFamily->"Helvetica",
+            FontSize->23.458909090909092`],
+           
+           StyleForm[#, FontFamily -> "Helvetica", FontSize -> 
+            23.458909090909092`]& ], {10., -0.5}, NCache[
+          ImageScaled[{Rational[1, 2], 0}], ImageScaled[{0.5, 0}]]]},
+        "\"ae/bfcedf/ef.m\"",
+        TooltipStyle->"TextStyling"],
+       Annotation[#, "ae/bfcedf/ef.m", "Tooltip"]& ],
+      AspectRatio->1,
+      PlotRange->{{-1, 21}, {-1, 21}}], {22, 0}, {0, 0}, {22, 22}]},
+   AspectRatio->NCache[
+     Rational[1, 2], 0.5],
+   ImageSize->{512, 256},
+   PlotRange->{{0, 44}, {0, 22}}], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544569430623*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"6e9b7c2e-3267-4c58-af7f-0331539652a1"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"FeynArtsGraphics", "(", ")"}], "\[InvisibleApplication]", 
+   RowBox[{"(", 
+    TagBox[
+     RowBox[{"(", "\[NoBreak]", GridBox[{
+        {
+         FormBox[
+          InterpretationBox[
+           
+           RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"1\"\>", 
+            "\[InvisibleSpace]", "\<\"]\"\>"}],
+           SequenceForm["[", "1", "]"],
+           Editable->False],
+          TraditionalForm], 
+         FormBox[
+          InterpretationBox[
+           
+           RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2\"\>", 
+            "\[InvisibleSpace]", "\<\"]\"\>"}],
+           SequenceForm["[", "2", "]"],
+           Editable->False],
+          TraditionalForm]}
+       },
+       GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+       GridBoxSpacings->{"Columns" -> {
+           Offset[0.27999999999999997`], {
+            Offset[0.7]}, 
+           Offset[0.27999999999999997`]}, "Rows" -> {
+           Offset[0.2], {
+            Offset[0.4]}, 
+           Offset[0.2]}}], "\[NoBreak]", ")"}],
+     Function[BoxForm`e$, 
+      MatrixForm[BoxForm`e$]]], ")"}]}], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544569435741*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"9f8500d8-9105-4fd8-ba03-bdf9b2091dad"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:56:09\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "3", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"extracting public result\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:56:09", "] ", "BuildAntenna [", 3, "/", 5, "]: ", 
+    "extracting public result", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544569715725*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"a470e2bd-fee3-4000-bbeb-8e169809ef91"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:56:09\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "4", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building diagnostics\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:56:09", "] ", "BuildAntenna [", 4, "/", 5, "]: ", 
+    "building diagnostics", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544569716412*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"a630fcdf-a4e7-4d08-b409-7cdb3699c306"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 14:56:09\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"formatting public return\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 14:56:09", "] ", "BuildAntenna [", 5, "/", 5, "]: ", 
+    "formatting public return", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544159249144*^9, 3.993544569722628*^9},
+ CellLabel->
+  "During evaluation of \
+In[6]:=",ExpressionUUID->"682798f5-7419-46c4-a872-7ec0c7a0762d"]
+}, Open  ]],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      TagBox["\[CurlyEpsilon]",
+       TraditionalForm]}], "q2"]}], "+", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["s12", "2"]}], 
+    RowBox[{"q2", " ", "s13", " ", "s23"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s23"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s23"}], 
+    RowBox[{"q2", " ", "s13"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s13"}], 
+    RowBox[{"q2", " ", "s23"}]], "+", 
+   FractionBox["s23", 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox["s13", 
+    RowBox[{"q2", " ", "s23"}]]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.9935441594399157`*^9, 3.993544569728167*^9},
+ CellLabel->"Out[6]=",ExpressionUUID->"56fa66f3-f791-4cd1-9a57-61e25ea86e61"]
+}, Open  ]],
+
+Cell["\<\
+we can also check the intermediate steps that AntCalc walked through to get \
+to this final expression by running,\
+\>", "Text",
+ CellChangeTimes->{{3.993544429196906*^9, 3.9935444742302732`*^9}, {
+  3.9935445989394903`*^9, 
+  3.993544600333115*^9}},ExpressionUUID->"af7206ae-0691-4c6a-b2f7-\
+723850c69f68"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"A30ant", ",", "A30InterSteps"}], "}"}], "=", 
+  RowBox[{"BuildAntenna", "[", 
+   RowBox[{"A", ",", "3", ",", "0", ",", 
+    RowBox[{"IntermediateSteps", "->", "True"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.993544601983857*^9, 3.993544624259637*^9}, {
+  3.993545240100243*^9, 3.993545252772814*^9}},
+ CellLabel->"In[7]:=",ExpressionUUID->"bca8c44a-c34d-49a0-b23c-ce11d16e7916"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:07:33\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "1", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"resolving route setup\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:07:33", "] ", "BuildAntenna [", 1, "/", 5, "]: ", 
+    "resolving route setup", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544624599777*^9, 3.993545178769603*^9, 
+  3.993545253051577*^9},
+ CellLabel->
+  "During evaluation of \
+In[7]:=",ExpressionUUID->"bae97ac8-45a5-42ba-86a2-4e7c83251f69"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:07:33\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "2", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building route data\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:07:33", "] ", "BuildAntenna [", 2, "/", 5, "]: ", 
+    "building route data", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544624599777*^9, 3.993545178769603*^9, 
+  3.993545253052169*^9},
+ CellLabel->
+  "During evaluation of \
+In[7]:=",ExpressionUUID->"7192682c-bd3e-4578-bd59-476ca5b123d1"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:07:33\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "3", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"extracting public result\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:07:33", "] ", "BuildAntenna [", 3, "/", 5, "]: ", 
+    "extracting public result", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544624599777*^9, 3.993545178769603*^9, 
+  3.99354525323123*^9},
+ CellLabel->
+  "During evaluation of \
+In[7]:=",ExpressionUUID->"67c7824f-2964-4fa9-ab0e-fdb9db590f56"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:07:33\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "4", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building diagnostics\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:07:33", "] ", "BuildAntenna [", 4, "/", 5, "]: ", 
+    "building diagnostics", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544624599777*^9, 3.993545178769603*^9, 
+  3.993545253231736*^9},
+ CellLabel->
+  "During evaluation of \
+In[7]:=",ExpressionUUID->"efaa143b-2a79-42be-b41a-76003c277bca"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:07:33\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"formatting public return\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:07:33", "] ", "BuildAntenna [", 5, "/", 5, "]: ", 
+    "formatting public return", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993544624599777*^9, 3.993545178769603*^9, 
+  3.993545253232112*^9},
+ CellLabel->
+  "During evaluation of \
+In[7]:=",ExpressionUUID->"49ef6da4-0f51-424f-9776-ca2c693c907b"]
+}, Open  ]],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"-", 
+      FractionBox[
+       RowBox[{"2", " ", 
+        TagBox["\[CurlyEpsilon]",
+         TraditionalForm]}], "q2"]}], "+", 
+     FractionBox[
+      RowBox[{"2", " ", 
+       SuperscriptBox["s12", "2"]}], 
+      RowBox[{"q2", " ", "s13", " ", "s23"}]], "+", 
+     FractionBox[
+      RowBox[{"2", " ", "s12"}], 
+      RowBox[{"q2", " ", "s13"}]], "+", 
+     FractionBox[
+      RowBox[{"2", " ", "s12"}], 
+      RowBox[{"q2", " ", "s23"}]], "-", 
+     FractionBox[
+      RowBox[{
+       TagBox["\[CurlyEpsilon]",
+        TraditionalForm], " ", "s23"}], 
+      RowBox[{"q2", " ", "s13"}]], "-", 
+     FractionBox[
+      RowBox[{
+       TagBox["\[CurlyEpsilon]",
+        TraditionalForm], " ", "s13"}], 
+      RowBox[{"q2", " ", "s23"}]], "+", 
+     FractionBox["s23", 
+      RowBox[{"q2", " ", "s13"}]], "+", 
+     FractionBox["s13", 
+      RowBox[{"q2", " ", "s23"}]]}], ",", 
+    RowBox[{"\[LeftAssociation]", 
+     RowBox[{
+      RowBox[{"\<\"Amplitude\"\>", "\[Rule]", 
+       RowBox[{
+        SubsuperscriptBox["T", 
+         RowBox[{
+          FormBox[
+           FormBox["Col2",
+            TraditionalForm],
+           TraditionalForm], 
+          FormBox[
+           FormBox["Col3",
+            TraditionalForm],
+           TraditionalForm]}], 
+         FormBox[
+          FormBox["Glu4",
+           TraditionalForm],
+          TraditionalForm]], " ", 
+        RowBox[{"(", 
+         RowBox[{
+          FormBox[
+           FractionBox[
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{
+               FormBox["\<\"\[CurlyPhi]\"\>",
+                TraditionalForm], 
+               FormBox["\<\"(\"\>",
+                TraditionalForm], 
+               FormBox[
+                FormBox[
+                 SubscriptBox["k", "1"],
+                 TraditionalForm],
+                TraditionalForm], 
+               FormBox["\<\")\"\>",
+                TraditionalForm]}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{"\[Gamma]", "\[CenterDot]", 
+               FormBox[
+                RowBox[{
+                 SuperscriptBox[
+                  FormBox["\<\"\[CurlyEpsilon]\"\>",
+                   TraditionalForm], "*"], "(", 
+                 FormBox[
+                  SubscriptBox["k", "3"],
+                  TraditionalForm], ")"}],
+                TraditionalForm]}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{"\[Gamma]", "\[CenterDot]", "(", 
+               FormBox[
+                FormBox[
+                 RowBox[{
+                  FormBox[
+                   SubscriptBox["k", "1"],
+                   TraditionalForm], "+", 
+                  FormBox[
+                   SubscriptBox["k", "3"],
+                   TraditionalForm]}],
+                 TraditionalForm],
+                TraditionalForm], ")"}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{"\[Gamma]", "\[CenterDot]", 
+               FormBox[
+                RowBox[{
+                 FormBox["\<\"\[CurlyEpsilon]\"\>",
+                  TraditionalForm], "(", 
+                 FormBox["p",
+                  TraditionalForm], ")"}],
+                TraditionalForm]}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{
+               FormBox["\<\"\[CurlyPhi]\"\>",
+                TraditionalForm], 
+               FormBox["\<\"(\"\>",
+                TraditionalForm], 
+               FormBox[
+                RowBox[{"-", 
+                 FormBox[
+                  SubscriptBox["k", "2"],
+                  TraditionalForm]}],
+                TraditionalForm], 
+               FormBox["\<\")\"\>",
+                TraditionalForm]}], ")"}]}], 
+            InterpretationBox[
+             SuperscriptBox[
+              RowBox[{
+               FormBox["\<\"(\"\>",
+                TraditionalForm], 
+               FormBox[
+                FormBox[
+                 RowBox[{
+                  FormBox[
+                   SubscriptBox["k", "1"],
+                   TraditionalForm], "+", 
+                  FormBox[
+                   SubscriptBox["k", "3"],
+                   TraditionalForm]}],
+                 TraditionalForm],
+                TraditionalForm], 
+               FormBox["\<\")\"\>",
+                TraditionalForm]}], "2"],
+             SequenceForm[
+              FeynCalc`Pair[
+               FeynCalc`Momentum[$CellContext`k1 + $CellContext`k3, D], 
+               FeynCalc`Momentum[$CellContext`k1 + $CellContext`k3, D]]],
+             Editable->False]],
+           TraditionalForm], "-", 
+          FormBox[
+           FractionBox[
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{
+               FormBox["\<\"\[CurlyPhi]\"\>",
+                TraditionalForm], 
+               FormBox["\<\"(\"\>",
+                TraditionalForm], 
+               FormBox[
+                FormBox[
+                 SubscriptBox["k", "1"],
+                 TraditionalForm],
+                TraditionalForm], 
+               FormBox["\<\")\"\>",
+                TraditionalForm]}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{"\[Gamma]", "\[CenterDot]", 
+               FormBox[
+                RowBox[{
+                 FormBox["\<\"\[CurlyEpsilon]\"\>",
+                  TraditionalForm], "(", 
+                 FormBox["p",
+                  TraditionalForm], ")"}],
+                TraditionalForm]}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{"\[Gamma]", "\[CenterDot]", "(", 
+               FormBox[
+                FormBox[
+                 RowBox[{
+                  FormBox[
+                   SubscriptBox["k", "2"],
+                   TraditionalForm], "+", 
+                  FormBox[
+                   SubscriptBox["k", "3"],
+                   TraditionalForm]}],
+                 TraditionalForm],
+                TraditionalForm], ")"}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{"\[Gamma]", "\[CenterDot]", 
+               FormBox[
+                RowBox[{
+                 SuperscriptBox[
+                  FormBox["\<\"\[CurlyEpsilon]\"\>",
+                   TraditionalForm], "*"], "(", 
+                 FormBox[
+                  SubscriptBox["k", "3"],
+                  TraditionalForm], ")"}],
+                TraditionalForm]}], ")"}], ".", 
+             RowBox[{"(", 
+              RowBox[{
+               FormBox["\<\"\[CurlyPhi]\"\>",
+                TraditionalForm], 
+               FormBox["\<\"(\"\>",
+                TraditionalForm], 
+               FormBox[
+                RowBox[{"-", 
+                 FormBox[
+                  SubscriptBox["k", "2"],
+                  TraditionalForm]}],
+                TraditionalForm], 
+               FormBox["\<\")\"\>",
+                TraditionalForm]}], ")"}]}], 
+            InterpretationBox[
+             SuperscriptBox[
+              RowBox[{
+               FormBox["\<\"(\"\>",
+                TraditionalForm], 
+               FormBox[
+                FormBox[
+                 RowBox[{
+                  FormBox[
+                   SubscriptBox["k", "2"],
+                   TraditionalForm], "+", 
+                  FormBox[
+                   SubscriptBox["k", "3"],
+                   TraditionalForm]}],
+                 TraditionalForm],
+                TraditionalForm], 
+               FormBox["\<\")\"\>",
+                TraditionalForm]}], "2"],
+             SequenceForm[
+              FeynCalc`Pair[
+               FeynCalc`Momentum[$CellContext`k2 + $CellContext`k3, D], 
+               FeynCalc`Momentum[$CellContext`k2 + $CellContext`k3, D]]],
+             Editable->False]],
+           TraditionalForm]}], ")"}]}]}], ",", 
+      RowBox[{"\<\"Interference\"\>", "\[Rule]", 
+       FractionBox[
+        RowBox[{"4", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           TagBox["\[CurlyEpsilon]",
+            TraditionalForm], "-", "1"}], ")"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["N", "2"], "-", "1"}], ")"}], " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"-", 
+            RowBox[{"2", " ", 
+             SuperscriptBox["s12", "2"]}]}], "-", 
+           RowBox[{"2", " ", "s12", " ", 
+            RowBox[{"(", 
+             RowBox[{"s13", "+", "s23"}], ")"}]}], "+", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              TagBox["\[CurlyEpsilon]",
+               TraditionalForm], "-", "1"}], ")"}], " ", 
+            SuperscriptBox["s13", "2"]}], "+", 
+           RowBox[{"2", " ", 
+            TagBox["\[CurlyEpsilon]",
+             TraditionalForm], " ", "s13", " ", "s23"}], "+", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              TagBox["\[CurlyEpsilon]",
+               TraditionalForm], "-", "1"}], ")"}], " ", 
+            SuperscriptBox["s23", "2"]}]}], ")"}]}], 
+        RowBox[{"s13", " ", "s23"}]]}], ",", 
+      RowBox[{"\<\"Antenna\"\>", "\[Rule]", 
+       RowBox[{
+        RowBox[{"-", 
+         FractionBox[
+          RowBox[{"2", " ", 
+           TagBox["\[CurlyEpsilon]",
+            TraditionalForm]}], "q2"]}], "+", 
+        FractionBox[
+         RowBox[{"2", " ", 
+          SuperscriptBox["s12", "2"]}], 
+         RowBox[{"q2", " ", "s13", " ", "s23"}]], "+", 
+        FractionBox[
+         RowBox[{"2", " ", "s12"}], 
+         RowBox[{"q2", " ", "s13"}]], "+", 
+        FractionBox[
+         RowBox[{"2", " ", "s12"}], 
+         RowBox[{"q2", " ", "s23"}]], "-", 
+        FractionBox[
+         RowBox[{
+          TagBox["\[CurlyEpsilon]",
+           TraditionalForm], " ", "s23"}], 
+         RowBox[{"q2", " ", "s13"}]], "-", 
+        FractionBox[
+         RowBox[{
+          TagBox["\[CurlyEpsilon]",
+           TraditionalForm], " ", "s13"}], 
+         RowBox[{"q2", " ", "s23"}]], "+", 
+        FractionBox["s23", 
+         RowBox[{"q2", " ", "s13"}]], "+", 
+        FractionBox["s13", 
+         RowBox[{"q2", " ", "s23"}]]}]}]}], "\[RightAssociation]"}]}], "}"}], 
+  TraditionalForm]], "Output",
+ CellChangeTimes->{3.993544624776601*^9, 3.993545179104838*^9, 
+  3.993545253241466*^9},
+ CellLabel->"Out[7]=",ExpressionUUID->"a105a4e2-d954-4da0-bf22-270878994e98"]
+}, Open  ]],
+
+Cell["\<\
+The steps are given in terms of an association and each of the steps can be \
+accessed directly:\
+\>", "Text",
+ CellChangeTimes->{{3.993545195174148*^9, 
+  3.993545226330271*^9}},ExpressionUUID->"1cac1b87-0130-4ff0-a7d3-\
+1a07ab800d40"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"A30Amp", "=", 
+  RowBox[{"A30InterSteps", "[", "\"\<Amplitude\>\"", "]"}]}]], "Input",
+ CellChangeTimes->{{3.993545229271055*^9, 3.9935452628377953`*^9}},
+ CellLabel->"In[8]:=",ExpressionUUID->"b5d35b97-fcfa-4f43-bc7f-f4eedde3b742"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   SubsuperscriptBox["T", 
+    RowBox[{
+     FormBox[
+      FormBox["Col2",
+       TraditionalForm],
+      TraditionalForm], 
+     FormBox[
+      FormBox["Col3",
+       TraditionalForm],
+      TraditionalForm]}], 
+    FormBox[
+     FormBox["Glu4",
+      TraditionalForm],
+     TraditionalForm]], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     FormBox[
+      FractionBox[
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          FormBox["\<\"\[CurlyPhi]\"\>",
+           TraditionalForm], 
+          FormBox["\<\"(\"\>",
+           TraditionalForm], 
+          FormBox[
+           FormBox[
+            SubscriptBox["k", "1"],
+            TraditionalForm],
+           TraditionalForm], 
+          FormBox["\<\")\"\>",
+           TraditionalForm]}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{"\[Gamma]", "\[CenterDot]", 
+          FormBox[
+           RowBox[{
+            SuperscriptBox[
+             FormBox["\<\"\[CurlyEpsilon]\"\>",
+              TraditionalForm], "*"], "(", 
+            FormBox[
+             SubscriptBox["k", "3"],
+             TraditionalForm], ")"}],
+           TraditionalForm]}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{"\[Gamma]", "\[CenterDot]", "(", 
+          FormBox[
+           FormBox[
+            RowBox[{
+             FormBox[
+              SubscriptBox["k", "1"],
+              TraditionalForm], "+", 
+             FormBox[
+              SubscriptBox["k", "3"],
+              TraditionalForm]}],
+            TraditionalForm],
+           TraditionalForm], ")"}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{"\[Gamma]", "\[CenterDot]", 
+          FormBox[
+           RowBox[{
+            FormBox["\<\"\[CurlyEpsilon]\"\>",
+             TraditionalForm], "(", 
+            FormBox["p",
+             TraditionalForm], ")"}],
+           TraditionalForm]}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{
+          FormBox["\<\"\[CurlyPhi]\"\>",
+           TraditionalForm], 
+          FormBox["\<\"(\"\>",
+           TraditionalForm], 
+          FormBox[
+           RowBox[{"-", 
+            FormBox[
+             SubscriptBox["k", "2"],
+             TraditionalForm]}],
+           TraditionalForm], 
+          FormBox["\<\")\"\>",
+           TraditionalForm]}], ")"}]}], 
+       InterpretationBox[
+        SuperscriptBox[
+         RowBox[{
+          FormBox["\<\"(\"\>",
+           TraditionalForm], 
+          FormBox[
+           FormBox[
+            RowBox[{
+             FormBox[
+              SubscriptBox["k", "1"],
+              TraditionalForm], "+", 
+             FormBox[
+              SubscriptBox["k", "3"],
+              TraditionalForm]}],
+            TraditionalForm],
+           TraditionalForm], 
+          FormBox["\<\")\"\>",
+           TraditionalForm]}], "2"],
+        SequenceForm[
+         FeynCalc`Pair[
+          FeynCalc`Momentum[$CellContext`k1 + $CellContext`k3, D], 
+          FeynCalc`Momentum[$CellContext`k1 + $CellContext`k3, D]]],
+        Editable->False]],
+      TraditionalForm], "-", 
+     FormBox[
+      FractionBox[
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          FormBox["\<\"\[CurlyPhi]\"\>",
+           TraditionalForm], 
+          FormBox["\<\"(\"\>",
+           TraditionalForm], 
+          FormBox[
+           FormBox[
+            SubscriptBox["k", "1"],
+            TraditionalForm],
+           TraditionalForm], 
+          FormBox["\<\")\"\>",
+           TraditionalForm]}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{"\[Gamma]", "\[CenterDot]", 
+          FormBox[
+           RowBox[{
+            FormBox["\<\"\[CurlyEpsilon]\"\>",
+             TraditionalForm], "(", 
+            FormBox["p",
+             TraditionalForm], ")"}],
+           TraditionalForm]}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{"\[Gamma]", "\[CenterDot]", "(", 
+          FormBox[
+           FormBox[
+            RowBox[{
+             FormBox[
+              SubscriptBox["k", "2"],
+              TraditionalForm], "+", 
+             FormBox[
+              SubscriptBox["k", "3"],
+              TraditionalForm]}],
+            TraditionalForm],
+           TraditionalForm], ")"}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{"\[Gamma]", "\[CenterDot]", 
+          FormBox[
+           RowBox[{
+            SuperscriptBox[
+             FormBox["\<\"\[CurlyEpsilon]\"\>",
+              TraditionalForm], "*"], "(", 
+            FormBox[
+             SubscriptBox["k", "3"],
+             TraditionalForm], ")"}],
+           TraditionalForm]}], ")"}], ".", 
+        RowBox[{"(", 
+         RowBox[{
+          FormBox["\<\"\[CurlyPhi]\"\>",
+           TraditionalForm], 
+          FormBox["\<\"(\"\>",
+           TraditionalForm], 
+          FormBox[
+           RowBox[{"-", 
+            FormBox[
+             SubscriptBox["k", "2"],
+             TraditionalForm]}],
+           TraditionalForm], 
+          FormBox["\<\")\"\>",
+           TraditionalForm]}], ")"}]}], 
+       InterpretationBox[
+        SuperscriptBox[
+         RowBox[{
+          FormBox["\<\"(\"\>",
+           TraditionalForm], 
+          FormBox[
+           FormBox[
+            RowBox[{
+             FormBox[
+              SubscriptBox["k", "2"],
+              TraditionalForm], "+", 
+             FormBox[
+              SubscriptBox["k", "3"],
+              TraditionalForm]}],
+            TraditionalForm],
+           TraditionalForm], 
+          FormBox["\<\")\"\>",
+           TraditionalForm]}], "2"],
+        SequenceForm[
+         FeynCalc`Pair[
+          FeynCalc`Momentum[$CellContext`k2 + $CellContext`k3, D], 
+          FeynCalc`Momentum[$CellContext`k2 + $CellContext`k3, D]]],
+        Editable->False]],
+      TraditionalForm]}], ")"}]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.993545263647121*^9},
+ CellLabel->"Out[8]=",ExpressionUUID->"b92686cf-4406-4f1f-8a79-c44545f37686"]
+}, Open  ]],
+
+Cell["\<\
+We can also use and reform a number of stored results in AntCalc\
+\[CloseCurlyQuote]s cache system. Those stored results are accessed with\
+\>", "Text",
+ CellChangeTimes->{{3.9935453853356237`*^9, 
+  3.9935454425920563`*^9}},ExpressionUUID->"b899369d-1c33-4792-9b43-\
+506bdb5b5cc1"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"A30Stored", "=", 
+  RowBox[{"BuildAntenna", "[", 
+   RowBox[{"A", ",", "3", ",", "0", ",", 
+    RowBox[{"UseStoredResults", "->", "True"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.993545443916369*^9, 3.993545460140564*^9}},
+ CellLabel->"In[9]:=",ExpressionUUID->"fcefe0f0-4056-4318-af0a-b57527eedeed"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:11:03\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "1", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"resolving route setup\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:11:03", "] ", "BuildAntenna [", 1, "/", 5, "]: ", 
+    "resolving route setup", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545463593625*^9},
+ CellLabel->
+  "During evaluation of \
+In[9]:=",ExpressionUUID->"7fd8a8ac-d278-4ed3-be10-c984e2c05ce0"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:11:03\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "2", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building route data\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:11:03", "] ", "BuildAntenna [", 2, "/", 5, "]: ", 
+    "building route data", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.9935454635946693`*^9},
+ CellLabel->
+  "During evaluation of \
+In[9]:=",ExpressionUUID->"6350eac4-7185-402f-9768-4964853eb1e9"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:11:03\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "3", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"extracting public result\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:11:03", "] ", "BuildAntenna [", 3, "/", 5, "]: ", 
+    "extracting public result", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545463769079*^9},
+ CellLabel->
+  "During evaluation of \
+In[9]:=",ExpressionUUID->"089e4446-0e3e-4723-8caf-4190eda8da41"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:11:03\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "4", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building diagnostics\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:11:03", "] ", "BuildAntenna [", 4, "/", 5, "]: ", 
+    "building diagnostics", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545463769741*^9},
+ CellLabel->
+  "During evaluation of \
+In[9]:=",ExpressionUUID->"c526ac20-1991-4ea7-8b56-6dabbebb47fb"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:11:03\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"formatting public return\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:11:03", "] ", "BuildAntenna [", 5, "/", 5, "]: ", 
+    "formatting public return", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545463770133*^9},
+ CellLabel->
+  "During evaluation of \
+In[9]:=",ExpressionUUID->"b2d2e9b1-0f95-4c62-9795-859de8e5dc67"]
+}, Open  ]],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      TagBox["\[CurlyEpsilon]",
+       TraditionalForm]}], "q2"]}], "+", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["s12", "2"]}], 
+    RowBox[{"q2", " ", "s13", " ", "s23"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s23"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s23"}], 
+    RowBox[{"q2", " ", "s13"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s13"}], 
+    RowBox[{"q2", " ", "s23"}]], "+", 
+   FractionBox["s23", 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox["s13", 
+    RowBox[{"q2", " ", "s23"}]]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.993545463774496*^9},
+ CellLabel->"Out[9]=",ExpressionUUID->"5697bebb-d09b-4f6b-84f5-909a33d5fb14"]
+}, Open  ]],
+
+Cell["and the results can be reformed using", "Text",
+ CellChangeTimes->{{3.993545639661188*^9, 
+  3.993545657527969*^9}},ExpressionUUID->"54b4f0c2-5543-455f-8186-\
+d5ed845be264"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"A30Restore", "=", 
+  RowBox[{"BuildAntenna", "[", 
+   RowBox[{"A", ",", "3", ",", "0", ",", 
+    RowBox[{"StoreResults", "->", "True"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.9935456624153423`*^9, 3.993545691048395*^9}},
+ CellLabel->"In[11]:=",ExpressionUUID->"93d0f51a-9b40-44fd-8cf2-50bc3d25751c"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:14:51\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "1", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"resolving route setup\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:14:51", "] ", "BuildAntenna [", 1, "/", 5, "]: ", 
+    "resolving route setup", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545691478361*^9},
+ CellLabel->
+  "During evaluation of \
+In[11]:=",ExpressionUUID->"247f5ded-8b1b-4d7f-a6b1-89b84dfed814"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:14:51\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "2", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building route data\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:14:51", "] ", "BuildAntenna [", 2, "/", 5, "]: ", 
+    "building route data", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545691479176*^9},
+ CellLabel->
+  "During evaluation of \
+In[11]:=",ExpressionUUID->"e5802b3d-cf24-4e33-a980-4b583d50245d"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:14:51\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "3", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"extracting public result\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:14:51", "] ", "BuildAntenna [", 3, "/", 5, "]: ", 
+    "extracting public result", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545691656122*^9},
+ CellLabel->
+  "During evaluation of \
+In[11]:=",ExpressionUUID->"6ddcb892-146b-41af-a618-6c19a8f59938"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:14:51\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "4", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building diagnostics\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:14:51", "] ", "BuildAntenna [", 4, "/", 5, "]: ", 
+    "building diagnostics", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545691656822*^9},
+ CellLabel->
+  "During evaluation of \
+In[11]:=",ExpressionUUID->"919171a4-b583-49c0-9bd4-cca853db945b"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:14:51\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"formatting public return\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:14:51", "] ", "BuildAntenna [", 5, "/", 5, "]: ", 
+    "formatting public return", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545691657229*^9},
+ CellLabel->
+  "During evaluation of \
+In[11]:=",ExpressionUUID->"63fee85c-4b00-44fd-9e7b-ef4274edb9b1"]
+}, Open  ]],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"-", 
+    FractionBox[
+     RowBox[{"2", " ", 
+      TagBox["\[CurlyEpsilon]",
+       TraditionalForm]}], "q2"]}], "+", 
+   FractionBox[
+    RowBox[{"2", " ", 
+     SuperscriptBox["s12", "2"]}], 
+    RowBox[{"q2", " ", "s13", " ", "s23"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox[
+    RowBox[{"2", " ", "s12"}], 
+    RowBox[{"q2", " ", "s23"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s23"}], 
+    RowBox[{"q2", " ", "s13"}]], "-", 
+   FractionBox[
+    RowBox[{
+     TagBox["\[CurlyEpsilon]",
+      TraditionalForm], " ", "s13"}], 
+    RowBox[{"q2", " ", "s23"}]], "+", 
+   FractionBox["s23", 
+    RowBox[{"q2", " ", "s13"}]], "+", 
+   FractionBox["s13", 
+    RowBox[{"q2", " ", "s23"}]]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.993545691669566*^9},
+ CellLabel->"Out[11]=",ExpressionUUID->"bab1dfce-767a-4768-b390-c21e9ac988f1"]
+}, Open  ]],
+
+Cell["\<\
+Finally, A30 also presents with an experimental massive route, the only one \
+of its kind so far. It is called and works in the exact same way\
+\>", "Text",
+ CellChangeTimes->{{3.993545765221467*^9, 
+  3.9935458171659327`*^9}},ExpressionUUID->"a30e9cb3-dfc9-45a7-a4dc-\
+8bb1694b3380"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"mA30unintegrated", "=", 
+  RowBox[{"BuildAntenna", "[", 
+   RowBox[{"A", ",", "3", ",", "0", ",", 
+    RowBox[{"quarkMass", "->", "mQ"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.993545819087021*^9, 3.993545841527278*^9}},
+ CellLabel->"In[12]:=",ExpressionUUID->"bba9f021-fdb6-4036-87e0-2a5dec8faf06"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:17:22\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "1", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"resolving route setup\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:17:22", "] ", "BuildAntenna [", 1, "/", 5, "]: ", 
+    "resolving route setup", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.9935458427067957`*^9},
+ CellLabel->
+  "During evaluation of \
+In[12]:=",ExpressionUUID->"945e659b-dec0-4441-9dc1-c4fb64986067"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:17:22\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "2", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building route data\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:17:22", "] ", "BuildAntenna [", 2, "/", 5, "]: ", 
+    "building route data", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.99354584270796*^9},
+ CellLabel->
+  "During evaluation of \
+In[12]:=",ExpressionUUID->"a6bbf5bd-226a-4bc2-9df3-70fa2d813e51"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:17:25\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "3", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"extracting public result\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:17:25", "] ", "BuildAntenna [", 3, "/", 5, "]: ", 
+    "extracting public result", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.9935458454968777`*^9},
+ CellLabel->
+  "During evaluation of \
+In[12]:=",ExpressionUUID->"2fbbe8e5-ccec-4c23-9e43-51b8b7338c39"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:17:25\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "4", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"building diagnostics\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:17:25", "] ", "BuildAntenna [", 4, "/", 5, "]: ", 
+    "building diagnostics", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.993545845497592*^9},
+ CellLabel->
+  "During evaluation of \
+In[12]:=",ExpressionUUID->"a7f1a790-92c2-4e83-abed-7c5c9a4626c0"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"[\"\>", "\[InvisibleSpace]", "\<\"2026-07-20 15:17:25\"\>", 
+    "\[InvisibleSpace]", "\<\"] \"\>", 
+    "\[InvisibleSpace]", "\<\"BuildAntenna [\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"/\"\>", "\[InvisibleSpace]", "5", 
+    "\[InvisibleSpace]", "\<\"]: \"\>", 
+    "\[InvisibleSpace]", "\<\"formatting public return\"\>", 
+    "\[InvisibleSpace]", "\<\" \"\>", 
+    "\[InvisibleSpace]", "\<\"{A, 3, 0} with Component -> All\"\>"}],
+   SequenceForm[
+   "[", "2026-07-20 15:17:25", "] ", "BuildAntenna [", 5, "/", 5, "]: ", 
+    "formatting public return", " ", "{A, 3, 0} with Component -> All"],
+   Editable->False], TraditionalForm]], "Print",
+ CellChangeTimes->{3.9935458454979963`*^9},
+ CellLabel->
+  "During evaluation of \
+In[12]:=",ExpressionUUID->"2bfd942f-b62a-474d-9218-a6e08babbd4a"]
+}, Open  ]],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"8", " ", 
+       SuperscriptBox["mQ", "4"], " ", 
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["s13", "2"], "+", 
+         SuperscriptBox["s23", "2"]}], ")"}]}]}], "-", 
+     RowBox[{"2", " ", 
+      SuperscriptBox["mQ", "2"], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"s12", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           SuperscriptBox["s13", "2"], "-", 
+           RowBox[{"4", " ", "s13", " ", "s23"}], "+", 
+           SuperscriptBox["s23", "2"]}], ")"}]}], "+", 
+        SuperscriptBox["s13", "3"], "+", 
+        RowBox[{
+         SuperscriptBox["s13", "2"], " ", "s23"}], "+", 
+        RowBox[{"s13", " ", 
+         SuperscriptBox["s23", "2"]}], "+", 
+        SuperscriptBox["s23", "3"]}], ")"}]}], "+", 
+     RowBox[{"s13", " ", "s23", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"2", " ", 
+         SuperscriptBox["s12", "2"]}], "+", 
+        RowBox[{"2", " ", "s12", " ", 
+         RowBox[{"(", 
+          RowBox[{"s13", "+", "s23"}], ")"}]}], "+", 
+        SuperscriptBox["s13", "2"], "+", 
+        SuperscriptBox["s23", "2"]}], ")"}]}]}], ")"}], "/", 
+   RowBox[{"(", 
+    RowBox[{"4", " ", 
+     SuperscriptBox["s13", "2"], " ", 
+     SuperscriptBox["s23", "2"], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"4", " ", 
+        SuperscriptBox["mQ", "2"]}], "+", "s12", "+", "s13", "+", "s23"}], 
+      ")"}]}], ")"}]}], TraditionalForm]], "Output",
+ CellChangeTimes->{3.993545845510036*^9},
+ CellLabel->"Out[12]=",ExpressionUUID->"a077b258-e725-46c2-abd9-9c06db3be606"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{808, 749},
+WindowMargins->{{Automatic, -1761}, {Automatic, -643}},
+FrontEndVersion->"15.0 for Mac OS X ARM (64-bit) (May 19, 2026)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"bc0334be-d737-48ae-8472-3bfa982db6bd"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[576, 22, 204, 4, 120, "Title",ExpressionUUID->"625b0c42-e0de-4836-aae1-19452a845835"],
+Cell[783, 28, 329, 8, 124, "Text",ExpressionUUID->"bf60d082-e4d4-4270-add9-15a76e0328e5"],
+Cell[CellGroupData[{
+Cell[1137, 40, 198, 3, 36, "Input",ExpressionUUID->"a52004cd-5eb4-4357-b8ca-adcb33b88fbc"],
+Cell[CellGroupData[{
+Cell[1360, 47, 683, 21, 26, "Print",ExpressionUUID->"f81a6b41-a9c2-4554-86cf-d26b7702dfac"],
+Cell[2046, 70, 420, 9, 60, "Print",ExpressionUUID->"d5e54a75-3cd0-4522-a5a4-6587cd533a89"],
+Cell[2469, 81, 274, 7, 33, "Print",ExpressionUUID->"a7e4b1b0-a7bd-4efa-87fc-c1ae1028cb58"]
+}, Open  ]]
+}, Open  ]],
+Cell[2770, 92, 214, 5, 42, "Text",ExpressionUUID->"094cae32-051c-4b8c-b7ff-334360de2e05"],
+Cell[CellGroupData[{
+Cell[3009, 101, 292, 5, 36, "Input",ExpressionUUID->"6a46aff9-b003-4e89-8129-1de53419e844"],
+Cell[CellGroupData[{
+Cell[3326, 110, 918, 20, 43, "Print",ExpressionUUID->"ab84e7f1-7f03-4b4a-b825-44613b80d3ea"],
+Cell[4247, 132, 916, 20, 43, "Print",ExpressionUUID->"16f5a8c3-7d8d-4318-8aec-e43ccb4aae00"],
+Cell[5166, 154, 924, 20, 43, "Print",ExpressionUUID->"06b3b86d-eb6b-4952-8d74-1850d9b5ed7d"],
+Cell[6093, 176, 916, 20, 43, "Print",ExpressionUUID->"9d620c45-e3f3-4fbd-ac3a-d3a6914f76cd"],
+Cell[7012, 198, 924, 20, 43, "Print",ExpressionUUID->"6f1a0383-bd12-4c3f-bd9c-42eeaae68a04"]
+}, Open  ]],
+Cell[7951, 221, 1011, 33, 62, "Output",ExpressionUUID->"a9e6d473-93c9-4a3f-9025-0558303c08d1"]
+}, Open  ]],
+Cell[8977, 257, 580, 10, 151, "Text",ExpressionUUID->"a2f01957-58e8-45ae-9f1c-8175c128216e"],
+Cell[CellGroupData[{
+Cell[9582, 271, 337, 7, 36, "Input",ExpressionUUID->"b37ff6ac-2f23-492d-83e0-df77e247eb51"],
+Cell[9922, 280, 939, 29, 62, "Output",ExpressionUUID->"203f1d83-384e-4a54-bc94-fd50a88a4141"]
+}, Open  ]],
+Cell[10876, 312, 311, 8, 96, "Text",ExpressionUUID->"8643da18-902e-4045-9c50-37716956da2b"],
+Cell[CellGroupData[{
+Cell[11212, 324, 330, 6, 36, "Input",ExpressionUUID->"728b8f67-f07b-4830-a053-2960301c0525"],
+Cell[CellGroupData[{
+Cell[11567, 334, 891, 18, 25, "Print",ExpressionUUID->"e89ec746-48ea-4a0f-8d2c-d07823df82c7"],
+Cell[12461, 354, 887, 18, 25, "Print",ExpressionUUID->"659db648-da2f-483f-8cf4-f9d323291df3"],
+Cell[13351, 374, 711, 16, 25, "Print",ExpressionUUID->"39d87cf3-d63f-406a-8aab-4db7a4b6964f"],
+Cell[14065, 392, 17672, 352, 330, "Print",ExpressionUUID->"6e9b7c2e-3267-4c58-af7f-0331539652a1"],
+Cell[31740, 746, 1344, 38, 25, "Print",ExpressionUUID->"9f8500d8-9105-4fd8-ba03-bdf9b2091dad"],
+Cell[33087, 786, 897, 18, 25, "Print",ExpressionUUID->"a470e2bd-fee3-4000-bbeb-8e169809ef91"],
+Cell[33987, 806, 889, 18, 25, "Print",ExpressionUUID->"a630fcdf-a4e7-4d08-b409-7cdb3699c306"],
+Cell[34879, 826, 897, 18, 25, "Print",ExpressionUUID->"682798f5-7419-46c4-a872-7ec0c7a0762d"]
+}, Open  ]],
+Cell[35791, 847, 1035, 33, 62, "Output",ExpressionUUID->"56fa66f3-f791-4cd1-9a57-61e25ea86e61"]
+}, Open  ]],
+Cell[36841, 883, 317, 7, 69, "Text",ExpressionUUID->"af7206ae-0691-4c6a-b2f7-723850c69f68"],
+Cell[CellGroupData[{
+Cell[37183, 894, 434, 9, 62, "Input",ExpressionUUID->"bca8c44a-c34d-49a0-b23c-ce11d16e7916"],
+Cell[CellGroupData[{
+Cell[37642, 907, 916, 19, 25, "Print",ExpressionUUID->"bae97ac8-45a5-42ba-86a2-4e7c83251f69"],
+Cell[38561, 928, 912, 19, 25, "Print",ExpressionUUID->"7192682c-bd3e-4578-bd59-476ca5b123d1"],
+Cell[39476, 949, 921, 19, 25, "Print",ExpressionUUID->"67c7824f-2964-4fa9-ab0e-fdb9db590f56"],
+Cell[40400, 970, 914, 19, 25, "Print",ExpressionUUID->"efaa143b-2a79-42be-b41a-76003c277bca"],
+Cell[41317, 991, 922, 19, 25, "Print",ExpressionUUID->"49ef6da4-0f51-424f-9776-ca2c693c907b"]
+}, Open  ]],
+Cell[42254, 1013, 10170, 296, 258, "Output",ExpressionUUID->"a105a4e2-d954-4da0-bf22-270878994e98"]
+}, Open  ]],
+Cell[52439, 1312, 246, 6, 69, "Text",ExpressionUUID->"1cac1b87-0130-4ff0-a7d3-1a07ab800d40"],
+Cell[CellGroupData[{
+Cell[52710, 1322, 256, 4, 36, "Input",ExpressionUUID->"b5d35b97-fcfa-4f43-bc7f-f4eedde3b742"],
+Cell[52969, 1328, 5836, 194, 108, "Output",ExpressionUUID->"b92686cf-4406-4f1f-8a79-c44545f37686"]
+}, Open  ]],
+Cell[58820, 1525, 292, 6, 69, "Text",ExpressionUUID->"b899369d-1c33-4792-9b43-506bdb5b5cc1"],
+Cell[CellGroupData[{
+Cell[59137, 1535, 328, 6, 36, "Input",ExpressionUUID->"fcefe0f0-4056-4318-af0a-b57527eedeed"],
+Cell[CellGroupData[{
+Cell[59490, 1545, 869, 18, 25, "Print",ExpressionUUID->"7fd8a8ac-d278-4ed3-be10-c984e2c05ce0"],
+Cell[60362, 1565, 867, 18, 25, "Print",ExpressionUUID->"6350eac4-7185-402f-9768-4964853eb1e9"],
+Cell[61232, 1585, 875, 18, 25, "Print",ExpressionUUID->"089e4446-0e3e-4723-8caf-4190eda8da41"],
+Cell[62110, 1605, 867, 18, 25, "Print",ExpressionUUID->"c526ac20-1991-4ea7-8b56-6dabbebb47fb"],
+Cell[62980, 1625, 875, 18, 25, "Print",ExpressionUUID->"b2d2e9b1-0f95-4c62-9795-859de8e5dc67"]
+}, Open  ]],
+Cell[63870, 1646, 1011, 33, 62, "Output",ExpressionUUID->"5697bebb-d09b-4f6b-84f5-909a33d5fb14"]
+}, Open  ]],
+Cell[64896, 1682, 179, 3, 42, "Text",ExpressionUUID->"54b4f0c2-5543-455f-8186-d5ed845be264"],
+Cell[CellGroupData[{
+Cell[65100, 1689, 328, 6, 36, "Input",ExpressionUUID->"93d0f51a-9b40-44fd-8cf2-50bc3d25751c"],
+Cell[CellGroupData[{
+Cell[65453, 1699, 870, 18, 25, "Print",ExpressionUUID->"247f5ded-8b1b-4d7f-a6b1-89b84dfed814"],
+Cell[66326, 1719, 866, 18, 25, "Print",ExpressionUUID->"e5802b3d-cf24-4e33-a980-4b583d50245d"],
+Cell[67195, 1739, 876, 18, 25, "Print",ExpressionUUID->"6ddcb892-146b-41af-a618-6c19a8f59938"],
+Cell[68074, 1759, 868, 18, 25, "Print",ExpressionUUID->"919171a4-b583-49c0-9bd4-cca853db945b"],
+Cell[68945, 1779, 876, 18, 25, "Print",ExpressionUUID->"63fee85c-4b00-44fd-9e7b-ef4274edb9b1"]
+}, Open  ]],
+Cell[69836, 1800, 1012, 33, 62, "Output",ExpressionUUID->"bab1dfce-767a-4768-b390-c21e9ac988f1"]
+}, Open  ]],
+Cell[70863, 1836, 294, 6, 69, "Text",ExpressionUUID->"a30e9cb3-dfc9-45a7-a4dc-8bb1694b3380"],
+Cell[CellGroupData[{
+Cell[71182, 1846, 327, 6, 36, "Input",ExpressionUUID->"bba9f021-fdb6-4036-87e0-2a5dec8faf06"],
+Cell[CellGroupData[{
+Cell[71534, 1856, 872, 18, 25, "Print",ExpressionUUID->"945e659b-dec0-4441-9dc1-c4fb64986067"],
+Cell[72409, 1876, 865, 18, 25, "Print",ExpressionUUID->"a6bbf5bd-226a-4bc2-9df3-70fa2d813e51"],
+Cell[73277, 1896, 878, 18, 25, "Print",ExpressionUUID->"2fbbe8e5-ccec-4c23-9e43-51b8b7338c39"],
+Cell[74158, 1916, 868, 18, 25, "Print",ExpressionUUID->"a7f1a790-92c2-4e83-abed-7c5c9a4626c0"],
+Cell[75029, 1936, 878, 18, 25, "Print",ExpressionUUID->"2bfd942f-b62a-474d-9218-a6e08babbd4a"]
+}, Open  ]],
+Cell[75922, 1957, 1649, 48, 66, "Output",ExpressionUUID->"a077b258-e725-46c2-abd9-9c06db3be606"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

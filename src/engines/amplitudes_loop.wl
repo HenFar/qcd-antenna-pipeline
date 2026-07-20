@@ -142,8 +142,8 @@ MAmpOneLoop[numFinalParticles_ /; numFinalParticles >= 2, OptionsPattern[
        -> {Classes}, Model -> "SMQCD", ExcludeParticles -> excludedParticles
       ];
     If[optPrintDiag == True,
-      Paint[diagsLoop, ColumnsXRows -> {2, 2}, Numbering -> Simple, SheetHeader
-         -> None, ImageSize -> {512, 512}];
+      Print[Paint[diagsLoop, ColumnsXRows -> {2, 2}, Numbering -> Simple,
+        SheetHeader -> None, ImageSize -> {512, 512}]];
     ];
     ampLoop =
       With[{evalDiags = diagsLoop, evalOutMoms = outMoms, evalLoopMomentum
@@ -254,8 +254,8 @@ MAmpTwoLoop[numFinalParticles_ /; numFinalParticles == 2, OptionsPattern[
       InsertionLevel -> {Classes}, Model -> "SMQCD",
       ExcludeParticles -> excludedParticles];
     If[optPrintDiag == True,
-      Paint[diagsLoop, ColumnsXRows -> {3, 3}, Numbering -> Simple,
-        SheetHeader -> None, ImageSize -> {768, 768}];
+      Print[Paint[diagsLoop, ColumnsXRows -> {3, 3}, Numbering -> Simple,
+        SheetHeader -> None, ImageSize -> {768, 768}]];
     ];
     (* The profile-driven DropSumOver behavior is left visible at conversion
        time because it is part of how the project balances compactness against

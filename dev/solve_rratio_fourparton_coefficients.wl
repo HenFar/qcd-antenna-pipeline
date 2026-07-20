@@ -41,7 +41,7 @@ coefficientEquations[expr_] :=
     poles = Table[Coefficient[expr, eps, power] == 0, {power, -4, -1}];
     finiteResidual =
       SafeIntegratedResidualSimplify[
-        Coefficient[expr, eps, 0] - BuildRRatioSMQCDFiniteExpression[]
+        Coefficient[expr, eps, 0] - BuildRRatioSMQCDReferenceFiniteExpression[NNLO]
       ];
     Join[poles, {finiteResidual == 0}]
   ];
