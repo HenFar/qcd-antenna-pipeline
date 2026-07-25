@@ -16,8 +16,9 @@ IntegrateAntenna[obj, ...]
 
 The public implementation follows that build-then-integrate workflow. It is
 not allowed to use a distinct physics convention, hide an integration option,
-or substitute a cached expression for a computation that the corresponding
-direct route cannot perform.
+or substitute a one-shot cached expression for a computation that the
+corresponding direct route cannot perform. Cache controls are applied only to
+the canonical build and integration stages.
 
 ## Options and return forms
 

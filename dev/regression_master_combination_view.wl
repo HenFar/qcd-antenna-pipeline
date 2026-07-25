@@ -42,11 +42,8 @@ checks = <|
   "RawBackendCombinationIsUntouched" -> mixedRuntimeCombination ===
     -4 (d - 3) (d (eps - 2) - 4 eps + 4) LiteRed`j[NLOBasis123, 1, 1, 1, 0, 0] /
       ((d - 4)^2 q2),
-  "CacheKeySeparatesMasterReturnKind" ->
-    BuildAndIntegrateStoredResultKey[A, 3, 0,
-      <|"ReturnMasterCombination" -> False|>] =!=
-    BuildAndIntegrateStoredResultKey[A, 3, 0,
-      <|"ReturnMasterCombination" -> True|>]
+  "OneShotRouteHasNoIndependentCache" ->
+    !MemberQ[$StoredResultRouteKinds, "BuildAndIntegrateAntenna"]
 |>;
 observations = <||>;
 

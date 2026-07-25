@@ -53,15 +53,15 @@ Cell[BoxData[
      StripOnInput->False,
      FontWeight->Bold], "\[InvisibleSpace]", 
     StyleBox[
-     TemplateBox[{"\"0.1.0\"", 
-       StyleBox["\" \[Alpha] \"", "Text", StripOnInput -> False], "\"3\""},
+     TemplateBox[{"\"0.2.0\"", 
+       StyleBox["\" \[Alpha] \"", "Text", StripOnInput -> False], "\"1\""},
       "RowDefault"], "Text",
      StripOnInput->False]}],
    SequenceForm[
     Style["AntCalc ", "Text", Bold], 
     Style[
-     Row[{"0.1.0", 
-       Style[" \[Alpha] ", "Text"], "3"}], "Text"]],
+     Row[{"0.2.0", 
+       Style[" \[Alpha] ", "Text"], "1"}], "Text"]],
    Editable->False], TraditionalForm]], "Print",
  CellChangeTimes->{3.993543767124919*^9},
  CellLabel->
@@ -2124,4 +2124,3 @@ Cell[75922, 1957, 1649, 48, 66, "Output",ExpressionUUID->"a077b258-e725-46c2-abd
 }
 ]
 *)
-

@@ -297,9 +297,15 @@ The package now has an explicit inspection layer:
 - `ReturnRecord -> True`
 - `IntermediateSteps -> {...}`
 - `PrintIntermediateSteps -> True`
+- `PrintComponentLegend -> Automatic`
 
 `ReturnRecord -> True` returns an `AntennaRunRecord[...]` wrapper whose
 `"Result"` field matches the historical public return exactly.
+
+For an all-component list returned in an interactive notebook,
+`PrintComponentLegend -> Automatic` prints its component order (for example,
+`{Leading, Subleading, Nf}` for A31). Set it to `True` or `False` to force the
+legend on or off; records remain self-describing and do not print a legend.
 
 The design reason is transparency. Users should be able to ask for the final
 answer by default, but also recover already-computed intermediate objects

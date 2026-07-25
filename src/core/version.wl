@@ -7,14 +7,15 @@
    correctness barriers and must not be presented as release versions. Add a
    new entry here when advancing a release; never rewrite a released entry. *)
 
-$AntCalcReleaseHistory = {
-  <|"Version" -> "0.1.0-alpha.2", "Date" -> "2026-07-18",
-    "Stage" -> "Alpha", "Summary" -> "First tracked research release with the modular public build/integrate interface."
-   |>,
-  <|"Version" -> "0.1.0-alpha.3", "Date" -> "2026-07-19",
-    "Stage" -> "Alpha", "Summary" -> "Documentation, provenance, and validated-environment release."
-   |>
-  };
+$AntCalcReleaseHistory = {<|"Version" -> "0.1.0-alpha.2", "Date" -> "2026-07-18",
+   "Stage" -> "Alpha", "Summary" -> "First tracked research release with the modular public build/integrate interface."
+  |>, <|"Version" -> "0.1.0-alpha.3", "Date" -> "2026-07-19", "Stage" ->
+   "Alpha", "Summary" -> "Documentation, provenance, and validated-environment release."
+  |>, <|"Version" -> "0.1.0-alpha.4", "Date" -> "2026-07-23", "Stage" ->
+   "Alpha", "Summary" -> "Patches on badly working routes."
+  |>, <|"Version" -> "0.2.0-alpha.1", "Date" -> "2026-07-25", "Stage" ->
+   "Alpha", "Summary" -> "Public master-combination records, A22 state robustness, and component-legends milestone."
+  |>};
 
 $AntCalcVersion = Last[$AntCalcReleaseHistory]["Version"];
 
@@ -31,7 +32,7 @@ AntCalcVersionHistory[] :=
 AntCalcDisplayVersion::usage = "AntCalcDisplayVersion[] returns the typeset user-facing release version.";
 
 AntCalcDisplayVersion[] :=
-  Row[{"0.1.0", Style[" α ", "Text"], "3"}];
+  Row[{"0.2.0", Style[" α ", "Text"], "1"}];
 
 LiteRed2InstallationVersion::usage = "LiteRed2InstallationVersion[] reads the installed LiteRed2 release identity without loading LiteRed.";
 
@@ -68,6 +69,8 @@ AntCalcStartupBanner[] :=
 (* Keep the release date together when a narrow notebook wraps this line. 
   
   
+  
+  
   *)
     feynArtsVersion = StringReplace[feynArtsVersion, "27 Mar 2025" ->
        "27 Mar 2025"];
@@ -77,6 +80,8 @@ AntCalcStartupBanner[] :=
       ], "unavailable"];
     liteRedVersion = LiteRed2InstallationVersion[];
 (* Match FeynCalc's startup convention: notebook-owned Text styling and
+  
+  
   
   
   

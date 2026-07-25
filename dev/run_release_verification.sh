@@ -1,107 +1,86 @@
 #!/usr/bin/env bash
 
+# Final supported-massless acceptance gate.  Each case is executed in a new
+# Wolfram kernel so state contamination is observable rather than hidden.
+
 set -u
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-export ANTENNA_PIPELINE_ROOT="$ROOT"
 KERNEL_PATH="${WolframKernel:-/Applications/Wolfram.app/Contents/MacOS/WolframKernel}"
+TIMEOUT_SECONDS="${ANTCALC_RELEASE_TIMEOUT:-7200}"
+OUTPUT_DIR="${ANTCALC_RELEASE_OUTPUT_DIR:-$(mktemp -d /tmp/antcalc_release.XXXXXX)}"
+KEEP_OUTPUT="${ANTCALC_RELEASE_KEEP_OUTPUT:-0}"
 
-if ! command -v wolframscript >/dev/null 2>&1; then
-  echo "wolframscript was not found on PATH."
-  exit 1
+CASES=(
+  A20 A21 A30 A31All A22All A22Leading A22Breve
+  A40Leading A40Subleading B40 C40
+  RRatioLO RRatioNLO RRatioNNLO
+)
+
+if [ -n "${ANTCALC_RELEASE_CASES:-}" ]; then
+  IFS=',' read -r -a CASES <<< "$ANTCALC_RELEASE_CASES"
 fi
+
+mkdir -p "$OUTPUT_DIR"
 
 pass_count=0
 fail_count=0
+unvalidated_count=0
+inconclusive_count=0
 
 run_case() {
   local name="$1"
-  local body="$2"
-  local tmp
+  local output="$OUTPUT_DIR/$name.json"
+  local exit_code
 
-  tmp="$(mktemp /tmp/antenna_release_case.XXXXXX.wl)"
+  echo "Running fresh-kernel acceptance case: $name"
+  set +e
+  ANTCALC_ACCEPTANCE_CASE="$name" \
+  ANTCALC_ACCEPTANCE_OUTPUT="$output" \
+  ANTCALC_ACCEPTANCE_TIMEOUT="$TIMEOUT_SECONDS" \
+  perl -e 'alarm shift @ARGV; exec @ARGV' "$TIMEOUT_SECONDS" \
+    "$KERNEL_PATH" -script "$ROOT/dev/release_acceptance_worker.wl"
+  exit_code=$?
+  set -e
 
-  cat > "$tmp" <<'EOF'
-repoRoot = Environment["ANTENNA_PIPELINE_ROOT"];
-Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]];
-EOF
-  printf '%s\n' "$body" >> "$tmp"
-
-  echo "Running: $name"
-  if WolframKernel="$KERNEL_PATH" wolframscript -file "$tmp"; then
-    echo "$name | passed=True"
+  if [ "$exit_code" -eq 0 ]; then
+    echo "$name | status=Validated"
     pass_count=$((pass_count + 1))
+  elif [ "$exit_code" -eq 3 ]; then
+    echo "$name | status=Unvalidated"
+    unvalidated_count=$((unvalidated_count + 1))
+  elif [ "$exit_code" -eq 142 ]; then
+    echo "$name | status=InconclusiveTimeout"
+    inconclusive_count=$((inconclusive_count + 1))
   else
-    echo "$name | passed=False"
+    echo "$name | status=Fail"
     fail_count=$((fail_count + 1))
   fi
-
-  rm -f "$tmp"
 }
 
-run_case "BuildAntenna A20" \
-'result = BuildAntenna[A, 2, 0];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAntenna A30" \
-'result = BuildAntenna[A, 3, 0];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAndIntegrate A30" \
-'result = BuildAndIntegrateAntenna[A, 3, 0];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAndIntegrate A30 record" \
-'result = BuildAndIntegrateAntenna[A, 3, 0, ReturnRecord -> True];
-If[
-  AntennaRunRecordQ[result] &&
-  KeyExistsQ[AntennaRunRecordData[result], "Result"] &&
-  KeyExistsQ[AntennaRunRecordData[result], "IntermediateSteps"] &&
-  KeyExistsQ[AntennaRunRecordData[result], "Diagnostics"],
-  Exit[0],
-  Exit[1]
-];'
-
-run_case "BuildAndIntegrate A21" \
-'result = BuildAndIntegrateAntenna[A, 2, 1];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAndIntegrate A31" \
-'result = BuildAndIntegrateAntenna[A, 3, 1];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAndIntegrate A22" \
-'result = BuildAndIntegrateAntenna[A, 2, 2];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAndIntegrate A40 leading" \
-'result = BuildAndIntegrateAntenna[A, 4, 0, Component -> Leading];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAndIntegrate B40" \
-'result = BuildAndIntegrateAntenna[B, 4, 0];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildAndIntegrate C40" \
-'result = BuildAndIntegrateAntenna[C, 4, 0];
-If[result === $Failed, Exit[1], Exit[0]];'
-
-run_case "BuildRRatio SMQCD massless" \
-'result = BuildRRatio[SMQCD, quarkMass -> 0];
-If[result === $Failed, Exit[1], Exit[0]];'
+for case_name in "${CASES[@]}"; do
+  run_case "$case_name"
+done
 
 echo
-echo "=== RELEASE SCOPE ==="
-echo "This script checks only the supported massless release matrix."
-echo "Experimental massive A30 and D30 routes are intentionally excluded."
-
-echo
-echo "=== FINAL COUNTS ==="
-echo "NumPassed=$pass_count"
+echo "=== RELEASE ACCEPTANCE SUMMARY ==="
+echo "NumValidated=$pass_count"
 echo "NumFailed=$fail_count"
+echo "NumUnvalidated=$unvalidated_count"
+echo "NumInconclusiveTimeout=$inconclusive_count"
+echo "Machine-readable case reports: $OUTPUT_DIR"
+echo "Scope: supported massless routes only; massive A30 and D30 are excluded."
 
-if [ "$fail_count" -gt 0 ]; then
+if [ "$KEEP_OUTPUT" -ne 1 ] && [ "$fail_count" -eq 0 ] && [ "$unvalidated_count" -eq 0 ] && [ "$inconclusive_count" -eq 0 ]; then
+  echo "Set ANTCALC_RELEASE_KEEP_OUTPUT=1 to retain the per-case JSON evidence."
+fi
+
+if [ "$fail_count" -gt 0 ] || [ "$unvalidated_count" -gt 0 ]; then
   exit 1
+fi
+
+if [ "$inconclusive_count" -gt 0 ]; then
+  exit 2
 fi
 
 exit 0

@@ -9,6 +9,8 @@ substitute for the user manual.
 - [Architecture](architecture.md)
 - [Maintaining and adding routes](route-maintenance.md)
 - [Runtime masters and literature provenance](runtime-masters-and-provenance.md)
+- [A31/A22 provenance audit](a31-a22-provenance-audit.md)
+- [Ward-identity applicability matrix](ward-identity-applicability.md)
 - [Research-status ledger](research-status.md)
 
 The governing rule is simple: an experimental route may expose honest records

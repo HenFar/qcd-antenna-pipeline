@@ -151,7 +151,6 @@ $StoredResultRouteKinds = {
   "BuildAntenna",
   "BuildAntennaObject",
   "IntegrateAntenna",
-  "BuildAndIntegrateAntenna",
   "BuildRRatio",
   "TObject"
 };
@@ -180,8 +179,6 @@ StoredResultsSubdirectory["BuildAntennaObject"] := "build_objects";
 
 StoredResultsSubdirectory["IntegrateAntenna"] := "integrated";
 
-StoredResultsSubdirectory["BuildAndIntegrateAntenna"] := "build_and_integrate";
-
 StoredResultsSubdirectory["BuildRRatio"] := "rratio";
 
 StoredResultsSubdirectory["TObject"] := "tobjects";
@@ -196,9 +193,6 @@ StoredResultsRouteKindFromSubdirectory["build_objects"] :=
 
 StoredResultsRouteKindFromSubdirectory["integrated"] :=
   "IntegrateAntenna";
-
-StoredResultsRouteKindFromSubdirectory["build_and_integrate"] :=
-  "BuildAndIntegrateAntenna";
 
 StoredResultsRouteKindFromSubdirectory["rratio"] := "BuildRRatio";
 
@@ -261,7 +255,6 @@ NormalizeStoredResultKeyValue[value_] :=
 StoredResultRouteSemanticVersion["BuildAntenna"] := 5;
 StoredResultRouteSemanticVersion["BuildAntennaObject"] := 4;
 StoredResultRouteSemanticVersion["IntegrateAntenna"] := 4;
-StoredResultRouteSemanticVersion["BuildAndIntegrateAntenna"] := 5;
 StoredResultRouteSemanticVersion["BuildRRatio"] := 2;
 StoredResultRouteSemanticVersion["TObject"] := 4;
 StoredResultRouteSemanticVersion[_] := 1;
@@ -817,19 +810,9 @@ StoredResultInfo[IntegrateAntenna, obj_AntennaObject, opts___Rule] :=
 
 StoredResultInfo[BuildAndIntegrateAntenna, type_, numFinalParticles_,
    loopOrder_, opts___Rule] :=
-  Module[{optionsAssoc, root, requestOptions, key, label},
-    optionsAssoc = NormalizeStoredResultOptionAssociation[
-      Association[Flatten[{opts}]]
-    ];
-    root = Lookup[optionsAssoc, ResultsCacheRoot,
-      Lookup[optionsAssoc, "ResultsCacheRoot", Automatic]];
-    requestOptions = KeyDrop[optionsAssoc, {ResultsCacheRoot, "ResultsCacheRoot"}];
-    key = BuildAndIntegrateStoredResultKey[type, numFinalParticles, loopOrder,
-      requestOptions];
-    label = BuildAndIntegrateStoredResultLabel[type, numFinalParticles,
-      loopOrder, requestOptions];
-    StoredResultInfoRouteRequest["BuildAndIntegrateAntenna", label, key, root]
-  ];
+  <|"Found" -> False, "Reason" -> "NoOneShotCache",
+    "RouteKind" -> "BuildAndIntegrateAntenna",
+    "Message" -> "BuildAndIntegrateAntenna has no cache of its own; inspect the delegated BuildAntenna and IntegrateAntenna stages instead."|>;
 
 StoredResultInfo[BuildRRatio, model_Symbol, opts___Rule] :=
   Module[{optionsAssoc, root, requestOptions, key, label},

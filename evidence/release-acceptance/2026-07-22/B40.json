@@ -1,0 +1,47 @@
+{
+	"GeneratedAt":"2026-07-22T18:27:58",
+	"FreshKernel":true,
+	"UseStoredResults":false,
+	"StoreResults":false,
+	"Case":"B40",
+	"Key":"{Global`B, 4, 0}",
+	"Component":"All",
+	"Status":"Validated",
+	"ExecutionSucceeded":true,
+	"Build":{
+		"Seconds":9.125112,
+		"Succeeded":true
+	},
+	"IntegrableBuild":{
+		"Seconds":1.065314,
+		"Succeeded":true
+	},
+	"DirectIntegration":{
+		"Seconds":1.8010148e1,
+		"Succeeded":true
+	},
+	"OneShot":{
+		"Seconds":1.825226e1,
+		"Succeeded":true
+	},
+	"Comparison":{
+		"Method":"ExactSameQ",
+		"Passed":true
+	},
+	"Validation":{
+		"Tier":"ExternalLiterature",
+		"Scope":"PublicBuild;IntegrationComposition",
+		"Required":[
+			"ExactMatchQ"
+		],
+		"Observed":{
+			"ExactMatchQ":[
+				true,
+				true
+			]
+		},
+		"Checks":{
+			"ExactMatchQ":"Pass"
+		}
+	}
+}

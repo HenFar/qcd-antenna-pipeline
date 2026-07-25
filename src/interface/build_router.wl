@@ -123,6 +123,12 @@ RequestedIntermediateStepQ::usage =
 PrintIntermediateStepsAssociation::usage =
   "PrintIntermediateStepsAssociation[steps] prints the requested intermediate-stage association with simple section headers.";
 
+PrintComponentLegend::usage =
+  "PrintComponentLegend is an option for public antenna routes. Automatic prints a concise component-order legend only for interactive notebook calls returning an all-component list; True and False force the behavior on or off.";
+
+MaybePrintComponentLegend::usage =
+  "MaybePrintComponentLegend[result, returnRecord, metadata] prints the compact component-order legend when the public return and PrintComponentLegend option warrant it.";
+
 CollectBuildIntermediateSteps::usage =
   "CollectBuildIntermediateSteps[key, buildData, result, diagnostics, requestedSteps] collects the build-side stages requested for inspection.";
 
@@ -572,15 +578,20 @@ BuildLoopAntennaData[key_, OptionsPattern[]] :=
 (*************************************************)
 
 BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
-  Module[{profile, contribution, blankComponents, treeAmp, twoLoopAmp,
+  Module[{profile, antennaType, contribution, blankComponents, treeAmp, twoLoopAmp,
      oneLoopLeft, oneLoopRight, context, twoLoopTreeInterference,
      oneLoopSelfInterference, twoLoopExtraction, selfExtraction, components,
      diagnostics, interferences},
     profile = AntennaProfile[key];
+    antennaType = First[key];
     contribution = CanonicalAntennaComponentName[OptionValue["Contribution"]];
     blankComponents = <|"Lead" -> $Failed, "SubLead" -> $Failed,
       "QuarkLoop" -> $Failed, "Breve" -> $Failed|>;
-    If[key =!= {A, 2, 2},
+    (* LiteRed can precede Global` on $ContextPath after an IBP route.  A
+       notebook input A may then be a different symbol with the same public
+       name, so this route must follow the package-wide A-family convention
+       and match SymbolName rather than a context-sensitive literal A. *)
+    If[!MatchQ[key, {type_Symbol /; SymbolName[type] === "A", 2, 2}],
       Return[
         <|"Profile" -> profile, "Amplitude" -> Missing["NotImplemented"],
           "Interferences" -> <||>, "Components" -> blankComponents,
@@ -599,7 +610,7 @@ BuildTwoLoopAntennaData[key_, OptionsPattern[]] :=
     If[TrueQ[OptionValue["printDiagram"]],
       PrintAntennaTreeDiagrams[2, profile["AntennaType"]]
     ];
-    treeAmp = AntennaAmplitude[{A, 2, 0}];
+    treeAmp = AntennaAmplitude[{antennaType, 2, 0}];
     context = <|"BornInterference" -> profile["BornInterference"]|>;
     components = blankComponents;
     diagnostics = <|"ImplementationStatus" -> Lookup[profile,
@@ -741,6 +752,7 @@ Options[BuildAntenna] = {ReturnDiagnostics -> False, ReturnBuildData
   ApplyCasimirSubstitution -> True, ApplyDimReg -> True,
   LoopMomentum -> l, ReductionBackend -> Automatic, Component -> All,
   IntermediateSteps -> {}, PrintIntermediateSteps -> False,
+  PrintComponentLegend -> Automatic,
   LoopMomenta -> {l1, l2},
   BuildOutputBranch -> "Public",
   AllowPrototypeTargets -> False, UseSourceModelRoute -> False,
@@ -1000,7 +1012,12 @@ CollectIntegrationRecordStages[antenna_, rawIntegrated_, tTerms_,
     "RawIntegrated" -> rawIntegrated,
     "TTerms" -> tTerms,
     "FinalIntegrated" -> finalIntegrated,
-    "SelectedIntegrated" -> selectedIntegrated
+    "SelectedIntegrated" -> selectedIntegrated,
+    (* The raw IBP reduction is provenance data, not merely a transient
+       diagnostic.  IntegrationRunRecord promotes its master-combination
+       aliases from this stage.  Omitting it here made component-wise A22
+       records expose Missing[...], despite each reduction having completed. *)
+    "BackendDiagnostics" -> backendDiagnostics
   |>;
 
 PresentRecordStepValueQ[value_] :=
@@ -1111,6 +1128,22 @@ IntegrationMethodValue[diagnostics_Association] :=
   Lookup[Lookup[diagnostics, "Profile", <||>], "DefaultBackend",
     Missing["NotAvailable"]];
 
+(* A scalar IBP reduction has no list-level RawLiteRedCombination, so that
+   field is correctly recorded as Missing while RawMasterCombination remains
+   available.  Public consumers must choose the first usable stage rather
+   than merely the first key that happens to be present. *)
+BackendMasterCombination[backendDiagnostics_] :=
+  Module[{candidates},
+    If[!AssociationQ[backendDiagnostics],
+      Return[Missing["NotAvailable"]]
+    ];
+    candidates = Lookup[backendDiagnostics,
+      {"RawLiteRedCombination", "RawMasterCombination",
+       "MasterMappedExpression"}, Missing["NotAvailable"]];
+    SelectFirst[candidates, !MissingQ[#] && # =!= $Failed &,
+      Missing["NotAvailable"]]
+  ];
+
 IntegrationRecordIntermediateStepsView[routeKind_String,
    stages_Association, diagnostics_Association, metadata_Association:<||>] :=
   Module[{backendDiagnostics, masterCombination, dimensionExpression,
@@ -1120,11 +1153,7 @@ IntegrationRecordIntermediateStepsView[routeKind_String,
     If[!AssociationQ[backendDiagnostics],
       backendDiagnostics = <||>
     ];
-    masterCombination =
-      Lookup[backendDiagnostics, "RawLiteRedCombination",
-        Lookup[backendDiagnostics, "RawMasterCombination",
-          Lookup[backendDiagnostics, "MasterMappedExpression",
-          Missing["NotAvailable"]]]];
+    masterCombination = BackendMasterCombination[backendDiagnostics];
     masterCombination = MasterCombinationNormalForm[masterCombination];
     dimensionExpression =
       Lookup[backendDiagnostics, "MasterSubstitutedExpression",
@@ -1162,11 +1191,7 @@ IntegrationRecordAliases[stages_Association, diagnostics_Association] :=
     If[!AssociationQ[backendDiagnostics],
       backendDiagnostics = <||>
     ];
-    masterCombination =
-      Lookup[backendDiagnostics, "RawLiteRedCombination",
-        Lookup[backendDiagnostics, "RawMasterCombination",
-          Lookup[backendDiagnostics, "MasterMappedExpression",
-          Missing["NotAvailable"]]]];
+    masterCombination = BackendMasterCombination[backendDiagnostics];
     masterCombination = MasterCombinationNormalForm[masterCombination];
     <|
       "InputAntenna" -> Lookup[stages, "InputAntenna",
@@ -1312,6 +1337,28 @@ PrintIntermediateStepsAssociation[steps_Association] :=
         Print[#2]
       )&,
       steps
+    ];
+    Null
+  ];
+
+MaybePrintComponentLegend[result_, returnRecord_, metadata_Association:<||>] :=
+  Module[{key, component, setting, componentOrder, shouldPrint},
+    key = Lookup[metadata, "Key", Missing["UnknownKey"]];
+    component = Lookup[metadata, "SelectedComponent", All];
+    setting = Lookup[metadata, "PrintComponentLegend", Automatic];
+    componentOrder = AntennaComponentOrder[key];
+    shouldPrint =
+      Which[
+        TrueQ[setting], True,
+        TrueQ[setting === False], False,
+        setting === Automatic, $FrontEnd =!= Null,
+        True, False
+      ];
+    If[TrueQ[shouldPrint] && !TrueQ[returnRecord] && component === All &&
+        ListQ[result] && Length[componentOrder] > 1,
+      Print[""];
+      Print["[AntCalc] ", ToString[key, InputForm],
+        " component order: ", componentOrder]
     ];
     Null
   ];
@@ -1647,6 +1694,7 @@ FormatFreshBuildReturn[result_, diagnostics_, returnDiagnostics_,
         selectedSteps] > 0,
       PrintIntermediateStepsAssociation[selectedSteps]
     ];
+    MaybePrintComponentLegend[result, returnRecord, recordMetadata];
     If[TrueQ[returnDiagnostics],
       {result, diagnostics}
       ,
@@ -2076,7 +2124,8 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
       <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
         "ContributionsUsed" -> AntennaContributionsUsed[key, OptionValue["Component"]],
         "BuildOutputBranch" -> outputBranch,
-        "quarkMass" -> OptionValue["quarkMass"]|>;
+        "quarkMass" -> OptionValue["quarkMass"],
+        "PrintComponentLegend" -> OptionValue["PrintComponentLegend"]|>;
     (* Public build progress is required for every route, not only the
        historically long-running subset. *)
     progressActive = True;
@@ -2101,7 +2150,8 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
               <|"Key" -> key, "SelectedComponent" -> OptionValue["Component"],
                 "ContributionsUsed" -> AntennaContributionsUsed[key, OptionValue["Component"]],
                 "BuildOutputBranch" -> outputBranch,
-                "quarkMass" -> OptionValue["quarkMass"]|>]
+                "quarkMass" -> OptionValue["quarkMass"],
+                "PrintComponentLegend" -> OptionValue["PrintComponentLegend"]|>]
           ]
         ]
       ];
@@ -2135,6 +2185,7 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
               OptionValue["IntermediateSteps"]
             ],
             PrintIntermediateSteps -> OptionValue["PrintIntermediateSteps"],
+            PrintComponentLegend -> False,
             LoopMomenta -> OptionValue["LoopMomenta"],
             BuildOutputBranch -> outputBranch,
             AllowPrototypeTargets -> OptionValue["AllowPrototypeTargets"],

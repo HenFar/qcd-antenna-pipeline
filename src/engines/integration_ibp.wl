@@ -2546,8 +2546,58 @@ Options[IntegrateViaIBP] = {NumFinalParticles -> 3, NumLoops -> 0, BasisFamily
    NormalizeKinematicScale -> True};
 
 SummarizeIBPComponentDiagnostics[componentDiagnostics_List] :=
+  Module[{stageValues, aggregateOneStage, aggregateStage},
+    stageValues[diagnostic_Association, key_] :=
+      Module[{value, nestedDiagnostics},
+        value = Lookup[diagnostic, key, Missing["NotAvailable", key]];
+        nestedDiagnostics = Lookup[diagnostic, "ComponentDiagnostics", {}];
+        If[!MissingQ[value] && value =!= $Failed,
+          {value},
+          If[ListQ[nestedDiagnostics],
+            Flatten[stageValues[#, key]& /@ nestedDiagnostics],
+            {value}
+          ]
+        ]
+      ];
+    aggregateOneStage[key_] :=
+      Module[{values, usableValues, failedComponentQ},
+        values = Flatten[stageValues[#, key]& /@ componentDiagnostics];
+        failedComponentQ = AnyTrue[componentDiagnostics,
+          TrueQ[Lookup[#, "Failed", False]] &];
+        usableValues = Select[values, !MissingQ[#] && # =!= $Failed &];
+        (* Zero antenna subterms legitimately have no reduction-stage payload.
+           They must not erase the unreplaced masters of the nonzero terms. *)
+        Which[
+          failedComponentQ || AnyTrue[values, # === $Failed &],
+            Missing["IncompleteComponentStage", key],
+          Length[usableValues] === 0,
+            Missing["NotAvailable", key],
+          True,
+            Total[usableValues]
+        ]
+      ];
+    aggregateStage[key_, fallbackKeys_List:{}] :=
+      SelectFirst[
+        aggregateOneStage /@ Join[{key}, fallbackKeys],
+        !MissingQ[#] && # =!= $Failed &,
+        Missing["NotAvailable", key]
+      ];
   <|
     "ComponentDiagnostics" -> componentDiagnostics,
+    (* List-valued A22 reductions are combined before the public integration
+       boundary.  Keep the unreplaced master stages alongside the evaluated
+       series: otherwise ReturnMasterCombination sees only the summary and
+       incorrectly reports that no master combination exists. *)
+    "RawLiteRedCombination" -> aggregateStage["RawLiteRedCombination",
+      {"RawReducedTerms", "ReducedTerms"}],
+    "MasterMappedExpression" -> aggregateStage["MasterMappedExpression",
+      {"ReducedTerms"}],
+    "RawMasterCombination" -> aggregateStage["RawMasterCombination",
+      {"MasterMappedExpression", "ReducedTerms"}],
+    "MasterSubstitutedExpression" -> aggregateStage[
+      "MasterSubstitutedExpression"],
+    "RawReducedTerms" -> aggregateStage["RawReducedTerms"],
+    "ReducedTerms" -> aggregateStage["ReducedTerms"],
     "ConventionBridgeFactor" -> (Lookup[#, "ConventionBridgeFactor",
         Missing["NotAvailable"]]& /@ componentDiagnostics),
     "NormalizedBeforeSeries" -> (Lookup[#, "NormalizedBeforeSeries",
@@ -2556,7 +2606,8 @@ SummarizeIBPComponentDiagnostics[componentDiagnostics_List] :=
         Missing["NotAvailable"]]& /@ componentDiagnostics),
     "TimingDiagnostics" -> (Lookup[#, "TimingDiagnostics",
         Missing["NotAvailable"]]& /@ componentDiagnostics)
-  |>;
+  |>
+  ];
 
 IntegrateViaIBP[antenna_, OptionsPattern[]] :=
   Module[{family, profile, basisLoad, reduction, integrated, diagnostics,

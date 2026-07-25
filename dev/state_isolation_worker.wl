@@ -14,7 +14,7 @@ workerMode = SelectFirst[workerArgs, MemberQ[{"fresh", "contaminated"}, #]&,
 workerScenario = SelectFirst[
   workerArgs,
   MemberQ[{"A30ThenA40", "A30Sequential", "A21ThenA40", "A31ThenMX30",
-    "MX30ThenA31", "A40ThenA30"}, #]&,
+    "MX30ThenA31", "A40ThenA30", "C40ThenA31ThenA22"}, #]&,
   "A30ThenA40"
 ];
 workerTimeout = ToExpression[SelectFirst[workerArgs,
@@ -72,13 +72,21 @@ WorkerResultSignature[result_] :=
     pointRules = {q2 -> 17/5, s12 -> 7/5, s13 -> 11/5, s14 -> 13/5,
       s23 -> 19/5, s24 -> 23/5, s34 -> 29/5, SUNN -> 3,
       Nf -> 5, FeynCalc`Epsilon -> 1/17, Epsilon -> 1/17};
-    publicResult = If[MatchQ[result, {_, _Association}], First[result], result];
-    diagnostics = If[MatchQ[result, {_, diag_Association}], result[[2]], <||>];
+    recordQ = AntennaRunRecordQ[result];
+    publicResult = Which[
+      recordQ, AntennaRunRecordValue[result, "Result"],
+      MatchQ[result, {_, _Association}], First[result],
+      True, result
+    ];
+    diagnostics = Which[
+      recordQ, AntennaRunRecordValue[result, "Diagnostics"],
+      MatchQ[result, {_, diag_Association}], result[[2]],
+      True, <||>
+    ];
     pointValue = Quiet[Check[
       ToString[N[publicResult /. pointRules, 30], InputForm],
       "PointEvaluationFailed"
     ]];
-    recordQ = AntennaRunRecordQ[result];
     master = If[recordQ,
       AntennaRunRecordValue[result, "MasterCombination"],
       Missing["NoRunRecord"]
@@ -140,6 +148,18 @@ WorkerCall["A31Integrated"] :=
     UseStoredResults -> False, StoreResults -> False,
     ResultsCacheRoot -> workerCacheRoot];
 
+WorkerCall["C40MasterRecord"] :=
+  BuildAndIntegrateAntenna[C, 4, 0,
+    ReturnRecord -> True,
+    UseStoredResults -> False, StoreResults -> False,
+    ResultsCacheRoot -> workerCacheRoot];
+
+WorkerCall["A22MasterRecord"] :=
+  BuildAndIntegrateAntenna[A, 2, 2,
+    ReturnRecord -> True,
+    UseStoredResults -> False, StoreResults -> False,
+    ResultsCacheRoot -> workerCacheRoot];
+
 WorkerCall["MX30OpenMaster"] :=
   Block[{$MassiveA30ForceIBPMasterRoute = True},
     BuildAndIntegrateAntenna[A, 3, 0, quarkMass -> mQ,
@@ -155,6 +175,8 @@ WorkerScenarioCalls["A21ThenA40"] := {{"A21Integrated"}, "A40Build"};
 WorkerScenarioCalls["A31ThenMX30"] := {{"A31Integrated"}, "MX30OpenMaster"};
 WorkerScenarioCalls["MX30ThenA31"] := {{"MX30OpenMaster"}, "A31Integrated"};
 WorkerScenarioCalls["A40ThenA30"] := {{"A40Build"}, "A30Integrated"};
+WorkerScenarioCalls["C40ThenA31ThenA22"] :=
+  {{"C40MasterRecord", "A31Integrated"}, "A22MasterRecord"};
 
 {workerPredecessors, workerTarget} = WorkerScenarioCalls[workerScenario];
 workerPrintLog = {};

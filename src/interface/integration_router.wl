@@ -67,12 +67,6 @@ IntegrateAntennaStoredResultKey::usage =
 IntegrateAntennaStoredResultLabel::usage =
   "IntegrateAntennaStoredResultLabel[obj, options] builds the human-readable cache label for an IntegrateAntenna request.";
 
-BuildAndIntegrateStoredResultKey::usage =
-  "BuildAndIntegrateStoredResultKey[type, numFinalParticles, loopOrder, options] builds the cache key for a BuildAndIntegrateAntenna request.";
-
-BuildAndIntegrateStoredResultLabel::usage =
-  "BuildAndIntegrateStoredResultLabel[type, numFinalParticles, loopOrder, options] builds the human-readable cache label for a BuildAndIntegrateAntenna request.";
-
 FormatFreshIntegrationReturn::usage =
   "FormatFreshIntegrationReturn[result, diagnostics, returnDiagnostics, returnRecord, requestedSteps, printSteps, routeKind, recordStages, metadata] formats a fresh integration result in the public return shape.";
 
@@ -126,6 +120,7 @@ Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
    GenerateMissingBases -> False,
    ReturnTTerms -> False, Component -> All,
    IntermediateSteps -> {}, PrintIntermediateSteps -> False,
+   PrintComponentLegend -> Automatic,
    DetailedTimingDiagnostics -> False,
    UseStoredResults -> False, StoreResults -> False,
    ResultsCacheRoot -> Automatic, RefreshStoredResults -> False};
@@ -228,6 +223,7 @@ LegacyIntegrateAntennaObjectEntry[obj_AntennaObject, OptionsPattern[]] :=
       "ReturnTTerms" -> OptionValue["ReturnTTerms"],
       "IntermediateSteps" -> OptionValue["IntermediateSteps"],
       "PrintIntermediateSteps" -> OptionValue["PrintIntermediateSteps"],
+      "PrintComponentLegend" -> OptionValue["PrintComponentLegend"],
       "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"],
       "UseStoredResults" -> OptionValue["UseStoredResults"],
       "StoreResults" -> OptionValue["StoreResults"],
@@ -261,6 +257,7 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       "ReturnTTerms" -> OptionValue["ReturnTTerms"],
       "IntermediateSteps" -> OptionValue["IntermediateSteps"],
       "PrintIntermediateSteps" -> OptionValue["PrintIntermediateSteps"],
+      "PrintComponentLegend" -> OptionValue["PrintComponentLegend"],
       "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"],
       "UseStoredResults" -> OptionValue["UseStoredResults"],
       "StoreResults" -> OptionValue["StoreResults"],
@@ -379,47 +376,6 @@ IntegrateAntennaStoredResultLabel[obj_AntennaObject, options_Association] :=
     ]
   ];
 
-BuildAndIntegrateStoredResultKey[type_, numFinalParticles_, loopOrder_,
-   options_Association] :=
-  StoredResultKeyAssociation[
-    "BuildAndIntegrateAntenna",
-    <|
-      "Type" -> type,
-      "NumFinalParticles" -> numFinalParticles,
-      "LoopOrder" -> loopOrder,
-      "ApplyFeynCalcMS" -> Lookup[options, "ApplyFeynCalcMS", True],
-      "quarkMass" -> Lookup[options, "quarkMass", 0],
-      "PaVeEvaluation" -> Lookup[options, "PaVeEvaluation",
-        "PaXEvaluate"],
-      "ExpansionOrder" -> Lookup[options, "ExpansionOrder", Automatic],
-      "KinematicScale" -> Lookup[options, "KinematicScale", q2],
-      "NormalizeKinematicScale" -> Lookup[options,
-        "NormalizeKinematicScale", True],
-      "LoopMomentum" -> Lookup[options, "LoopMomentum", l],
-      "ApplyDimReg" -> Lookup[options, "ApplyDimReg", True],
-      "BasisFamily" -> Lookup[options, "BasisFamily", Automatic],
-      "BasisRoot" -> Lookup[options, "BasisRoot", Automatic],
-      "GenerateMissingBases" -> Lookup[options, "GenerateMissingBases",
-        False],
-      "ReturnTTerms" -> Lookup[options, "ReturnTTerms", False],
-      "ReturnMasterCombination" -> Lookup[options,
-        "ReturnMasterCombination", False],
-      "Component" -> Lookup[options, "Component", All],
-      "DetailedTimingDiagnostics" -> Lookup[options,
-        "DetailedTimingDiagnostics", False]
-    |>
-  ];
-
-BuildAndIntegrateStoredResultLabel[type_, numFinalParticles_, loopOrder_,
-   options_Association] :=
-  StringJoin[
-    "BuildAndIntegrateAntenna-",
-    StoredResultTypeLabel[type], "-",
-    ToString[numFinalParticles], "-",
-    ToString[loopOrder], "-",
-    CanonicalAntennaComponentName[Lookup[options, "Component", All]]
-  ];
-
 (* FormatFreshIntegrationReturn[result, diagnostics, ...]
    ======================================================
    Convert one freshly computed integration result into the requested public
@@ -450,6 +406,7 @@ FormatFreshIntegrationReturn[result_, diagnostics_, returnDiagnostics_,
         selectedSteps] > 0,
       PrintIntermediateStepsAssociation[selectedSteps]
     ];
+    MaybePrintComponentLegend[result, returnRecord, recordMetadata];
     If[TrueQ[returnDiagnostics],
       {result, diagnosticsWithMasterView}
       ,
@@ -496,10 +453,7 @@ MasterCombinationView[diagnostics_Association] :=
       (MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
         Lookup[profile, "MassSymbol", Lookup[diagnostics, "quarkMass", 0]] =!= 0) ||
       MemberQ[{"MX30", "MX30Basis123"}, basisFamily];
-    rawCombination = Lookup[backendDiagnostics, "RawLiteRedCombination",
-      Lookup[backendDiagnostics, "RawMasterCombination",
-        Lookup[backendDiagnostics, "MasterMappedExpression",
-        Missing["NotAvailable"]]]];
+    rawCombination = BackendMasterCombination[backendDiagnostics];
     rawCombination = MasterCombinationNormalForm[rawCombination];
     combination = PublicMasterCombinationDisplayForm[rawCombination];
     If[MatchQ[combination, Missing[__]],
@@ -756,15 +710,7 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
     ];
     backendDiagnostics =
       Lookup[diagnosticsWithMasterView, "BackendDiagnostics", Missing["NotAvailable"]];
-    masterCombination =
-      If[AssociationQ[backendDiagnostics],
-        Lookup[backendDiagnostics, "RawLiteRedCombination",
-          Lookup[backendDiagnostics, "RawMasterCombination",
-            Lookup[backendDiagnostics, "MasterMappedExpression",
-            Missing["NotAvailable"]]]]
-        ,
-        Missing["NotAvailable"]
-      ];
+    masterCombination = BackendMasterCombination[backendDiagnostics];
     masterCombination = PublicMasterCombinationDisplayForm[masterCombination];
     label =
       If[routeLabel === Automatic,
@@ -1846,6 +1792,7 @@ BuildAndIntegrateAntenna[type_, numFinalParticles_Integer, loopOrder_Integer,
       "ReturnTTerms" -> OptionValue["ReturnTTerms"],
       "IntermediateSteps" -> OptionValue["IntermediateSteps"],
       "PrintIntermediateSteps" -> OptionValue["PrintIntermediateSteps"],
+      "PrintComponentLegend" -> OptionValue["PrintComponentLegend"],
       "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"],
       "UseStoredResults" -> OptionValue["UseStoredResults"],
       "StoreResults" -> OptionValue["StoreResults"],
@@ -1899,7 +1846,13 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
       Switch[key,
         {a_Symbol /; SymbolName[a] === "A", 2, 1},
           paVeTarget = A21PaperPaVe /. D -> 4 - 2 Epsilon;
-          integratedTarget = A21IntegratedPaper;
+          (* The public result is deliberately truncated at the requested
+             expansion order.  Compare it to the target in that same
+             convention; comparing an O(eps^0) route to the target through
+             O(eps^2) would turn omitted higher-order terms into a false
+             validation failure. *)
+          integratedTarget = IntegratedAntennaSeries[A21IntegratedPaper,
+            expansionOrder];
           integratedResidual =
             integrated - integratedTarget //
             FunctionExpand //
@@ -2085,6 +2038,7 @@ IntegrateAntenna[input:(_AntennaObject | {___AntennaObject}), OptionsPattern[]] 
       "ReturnTTerms" -> OptionValue["ReturnTTerms"],
       "IntermediateSteps" -> OptionValue["IntermediateSteps"],
       "PrintIntermediateSteps" -> OptionValue["PrintIntermediateSteps"],
+      "PrintComponentLegend" -> OptionValue["PrintComponentLegend"],
       "DetailedTimingDiagnostics" -> OptionValue["DetailedTimingDiagnostics"],
       "UseStoredResults" -> OptionValue["UseStoredResults"],
       "StoreResults" -> OptionValue["StoreResults"],

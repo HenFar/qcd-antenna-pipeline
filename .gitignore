@@ -10,5 +10,6 @@ eps
 *.tmp
 *.swp
 dev/tmp_src_new_parity_cache/
+THESIS_READINESS_PLAN.md
 
 stored_results/rratio/*.wl

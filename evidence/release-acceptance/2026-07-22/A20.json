@@ -1,0 +1,32 @@
+{
+	"GeneratedAt":"2026-07-22T01:58:25",
+	"FreshKernel":true,
+	"UseStoredResults":false,
+	"StoreResults":false,
+	"Case":"A20",
+	"Key":"{A, 2, 0}",
+	"Status":"Validated",
+	"Build":{
+		"Seconds":0.122466,
+		"Succeeded":true
+	},
+	"Validation":{
+		"Tier":"ExternalLiterature",
+		"Scope":"PublicBuild",
+		"Required":[
+			"ExactMatchQ"
+		],
+		"Observed":{
+			"ExactMatchQ":[
+				true
+			]
+		},
+		"Checks":{
+			"ExactMatchQ":"Pass"
+		}
+	},
+	"Comparison":{
+		"Method":"NotApplicable",
+		"Passed":true
+	}
+}

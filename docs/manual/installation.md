@@ -21,9 +21,9 @@ The package has been exercised on macOS Apple Silicon and Windows Intel
 systems. This is evidence of tested environments, not a cross-platform runtime
 or memory guarantee.
 
-## Validated alpha-3 environment
+## Current alpha environment
 
-The alpha-3 release was verified with this symbolic-backend baseline:
+The current alpha release is exercised with this symbolic-backend baseline:
 
 ```text
 FeynCalc 10.2.1 · FeynArts 3.12 (27 Mar 2025) ·
@@ -87,9 +87,12 @@ bash dev/run_release_verification.sh
 ```
 
 It uses the checkout loader, excludes experimental massive `A30` and `D30`,
-and exercises representative public build, integration, record, and driver
-routes. It requires `wolframscript` on `PATH`; symbolic route duration depends
-on the local backend environment.
+and exercises the supported public build, integration, record, and driver
+matrix in fresh kernels. It distinguishes `Validated`, `Unvalidated`,
+`Failed`, and `InconclusiveTimeout`; only `Validated` gives a successful exit
+status. The per-case JSON records state the declared evidence tier and scope.
+It requires the configured `WolframKernel`; symbolic route duration depends on
+the local backend environment.
 
 The physics-validation harness is developer-facing:
 

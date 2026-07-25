@@ -14,7 +14,7 @@ explicitly experimental.
 
 ## Status
 
-Current development release: **AntCalc 0.1.0 α 3**.
+Current development release: **AntCalc 0.2.0 α 1**.
 
 The current defended target is the massless antenna workflow needed for the
 NNLO SMQCD R-ratio. See the [route-status
@@ -92,7 +92,7 @@ FeynCalc and its FeynArts/FeynHelpers environment. IBP-backed integration
 routes also require LiteRed2. AntCalc includes repository-owned basis and
 runtime-master artifacts required by its supported routes.
 
-The validated alpha-3 toolchain is:
+The current alpha toolchain is:
 
 ```text
 FeynCalc 10.2.1 · FeynArts 3.12 (27 Mar 2025) ·

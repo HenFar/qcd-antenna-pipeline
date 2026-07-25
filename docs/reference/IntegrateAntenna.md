@@ -27,10 +27,10 @@ option set. The latter builds an integrable object and delegates integration;
 it is not a different backend or convention path.
 
 The one-shot wrapper forwards the physics and backend controls to
-`IntegrateAntenna`. `ReturnDiagnostics` and `ReturnRecord` are applied at its
-outer return boundary, while cache controls are handled by the one-shot cache;
-these differences preserve the same public result semantics rather than define
-a second calculation route.
+`IntegrateAntenna`. `ReturnDiagnostics` and `ReturnRecord` are assembled at its
+outer return boundary, while cache controls are forwarded to the canonical build
+and integration stages. These presentation differences preserve the same public
+result semantics rather than define a second calculation route.
 
 ## Main options
 

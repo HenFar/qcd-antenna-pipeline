@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[      5507,        158]
-NotebookOptionsPosition[      4228,        129]
-NotebookOutlinePosition[      4624,        145]
-CellTagsIndexPosition[      4581,        142]
+NotebookDataLength[      5646,        161]
+NotebookOptionsPosition[      4366,        132]
+NotebookOutlinePosition[      4762,        148]
+CellTagsIndexPosition[      4719,        145]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -89,20 +89,21 @@ Cell[BoxData[
      StripOnInput->False,
      FontWeight->Bold], "\[InvisibleSpace]", 
     StyleBox[
-     TemplateBox[{"\"0.1.0\"", 
-       StyleBox["\" \[Alpha] \"", "Text", StripOnInput -> False], "\"3\""},
+     TemplateBox[{"\"0.2.0\"", 
+       StyleBox["\" \[Alpha] \"", "Text", StripOnInput -> False], "\"1\""},
       "RowDefault"], "Text",
      StripOnInput->False]}],
    SequenceForm[
     Style["AntCalc ", "Text", Bold], 
     Style[
-     Row[{"0.1.0", 
-       Style[" \[Alpha] ", "Text"], "3"}], "Text"]],
+     Row[{"0.2.0", 
+       Style[" \[Alpha] ", "Text"], "1"}], "Text"]],
    Editable->False], TraditionalForm]], "Print",
- CellChangeTimes->{3.99354733006559*^9},
+ CellChangeTimes->{3.99354733006559*^9, 3.993807948265992*^9, 
+  3.993808138760977*^9},
  CellLabel->
   "During evaluation of \
-In[5]:=",ExpressionUUID->"e78f0e2a-39bb-4e4e-a8d1-cdf3c98c5784"],
+In[5]:=",ExpressionUUID->"0c5e31d4-b047-46c9-9026-774c1d585e28"],
 
 Cell[BoxData[
  FormBox[
@@ -110,19 +111,21 @@ Cell[BoxData[
 \[NonBreakingSpace]Mar\[NonBreakingSpace]2025)  \[CenterDot]  FeynHelpers \
 2.0.0  \[CenterDot]  FeynCalcLegacy 1.0.0\"\>", "Text",
    StripOnInput->False], TraditionalForm]], "Print",
- CellChangeTimes->{3.9935473300663433`*^9},
+ CellChangeTimes->{3.99354733006559*^9, 3.993807948265992*^9, 
+  3.9938081387615843`*^9},
  CellLabel->
   "During evaluation of \
-In[5]:=",ExpressionUUID->"f82f4f2d-b4e9-420c-a25a-29c8e4dc2127"],
+In[5]:=",ExpressionUUID->"6cb232ce-1ea1-4e92-a7ac-d976432b490c"],
 
 Cell[BoxData[
  FormBox[
   StyleBox["\<\"LiteRed2 2.025\[Beta]\"\>", "Text",
    StripOnInput->False], TraditionalForm]], "Print",
- CellChangeTimes->{3.993547330066854*^9},
+ CellChangeTimes->{3.99354733006559*^9, 3.993807948265992*^9, 
+  3.99380813876199*^9},
  CellLabel->
   "During evaluation of \
-In[5]:=",ExpressionUUID->"3baa87ed-02bd-4f11-8d94-fe1deaa426c9"]
+In[5]:=",ExpressionUUID->"85f1b016-880d-4287-b66e-2629b37ea608"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -154,9 +157,9 @@ Cell[2153, 63, 403, 9, 151, "Text",ExpressionUUID->"d6b234d9-2f7a-4e2c-bd2f-7903
 Cell[CellGroupData[{
 Cell[2581, 76, 198, 3, 36, "Input",ExpressionUUID->"d8bf556d-49fa-40d2-ab55-35eb3721adb2"],
 Cell[CellGroupData[{
-Cell[2804, 83, 682, 21, 26, "Print",ExpressionUUID->"e78f0e2a-39bb-4e4e-a8d1-cdf3c98c5784"],
-Cell[3489, 106, 422, 9, 60, "Print",ExpressionUUID->"f82f4f2d-b4e9-420c-a25a-29c8e4dc2127"],
-Cell[3914, 117, 274, 7, 33, "Print",ExpressionUUID->"3baa87ed-02bd-4f11-8d94-fe1deaa426c9"]
+Cell[2804, 83, 729, 22, 26, "Print",ExpressionUUID->"0c5e31d4-b047-46c9-9026-774c1d585e28"],
+Cell[3536, 107, 468, 10, 60, "Print",ExpressionUUID->"6cb232ce-1ea1-4e92-a7ac-d976432b490c"],
+Cell[4007, 119, 319, 8, 33, "Print",ExpressionUUID->"85f1b016-880d-4287-b66e-2629b37ea608"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]]
@@ -165,4 +168,3 @@ Cell[3914, 117, 274, 7, 33, "Print",ExpressionUUID->"3baa87ed-02bd-4f11-8d94-fe1
 *)
 
 (* End of internal cache information *)
-

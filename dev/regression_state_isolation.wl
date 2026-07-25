@@ -12,21 +12,25 @@ kernelCandidates = DeleteCases[
 ];
 kernel = SelectFirst[kernelCandidates, StringQ[#] && FileExistsQ[#]&, $Failed];
 
-If[!FileExistsQ[kernel] || !FileExistsQ[workerPath],
+If[kernel === $Failed || !FileExistsQ[kernel] || !FileExistsQ[workerPath],
   Print["State-isolation regression cannot locate WolframKernel or its worker."];
   Exit[2]
 ];
 
+EnvironmentString[name_String] :=
+  With[{value = Environment[name]}, If[StringQ[value], value, ""]];
+
 allScenarios = {"A30ThenA40", "A30Sequential", "A21ThenA40", "A31ThenMX30",
-  "MX30ThenA31", "A40ThenA30"};
-requestedScenarios = StringSplit[Environment["ANTCALC_STATE_SCENARIOS"], ","];
+  "MX30ThenA31", "A40ThenA30", "C40ThenA31ThenA22"};
+requestedScenarios = StringSplit[EnvironmentString["ANTCALC_STATE_SCENARIOS"], ","];
 scenarios = Select[requestedScenarios, MemberQ[allScenarios, #]&];
 If[scenarios === {}, scenarios = allScenarios];
-timeoutSeconds = With[{requested = Environment["ANTCALC_STATE_TIMEOUT"]},
+timeoutSeconds = With[{requested = EnvironmentString["ANTCALC_STATE_TIMEOUT"]},
   If[StringMatchQ[requested, DigitCharacter..], ToExpression[requested], 300]
 ];
 
-ClearAll[NormalizeJSON, ReadWorkerReport, RunWorker, StateDelta, CompareScenario];
+ClearAll[NormalizeJSON, ReadWorkerReport, RunWorker, StateDelta, CompareScenario,
+  EnvironmentString];
 
 NormalizeJSON[value_Association] :=
   Association @ KeyValueMap[#1 -> NormalizeJSON[#2]&, value];
@@ -110,7 +114,12 @@ CompareScenario[scenario_String] :=
 report = <|"SchemaVersion" -> 1, "TimeoutSeconds" -> timeoutSeconds,
   "Scenarios" -> (CompareScenario /@ scenarios)|>;
 
-Print[ExportString[report, "JSON", "Compact" -> False]];
+jsonReport = Quiet[Check[ExportString[report, "JSON", "Compact" -> False], $Failed]];
+If[jsonReport === $Failed,
+  Print["State-isolation regression could not export its report as JSON."];
+  Exit[1]
+];
+Print[jsonReport];
 
 failed = Select[report["Scenarios"], !MemberQ[{"Pass", "InconclusiveBothTimedOut"}, #"Status"]&];
 If[Length[failed] > 0, Exit[1], Exit[0]];

@@ -32,8 +32,9 @@ The public defaults are `UseStoredResults -> False`,
 - Public and prototype build-output branches use different cache identities.
 - `BuildRRatio` and `TObject` cache identity also captures effective nested
   `BuildAndIntegrateAntenna` convention defaults.
-- One-shot integration forwards cache controls into its delegated build stage
-  as well as using its own top-level cache layer.
+- One-shot integration is a composition of `BuildAntenna` and
+  `IntegrateAntenna`. It forwards cache controls to those two stages and has
+  no separate `BuildAndIntegrateAntenna` cache entry.
 
 The main build, object, integration, one-shot, R-ratio, and `TObject` routes
 expose cache controls. Bulk helpers do not yet expose the full cache-option
