@@ -2,15 +2,14 @@
 
 [Manual index](index.md) · [Public API overview](public-api.md) · [Documentation home](../README.md)
 
-AntCalc is active research software. A callable route is not automatically a
-supported route: the tables below distinguish the defended massless release
-surface from experimental research tracks.
+AntCalc is active research software. A callable route is not necessarily
+supported. The tables separate the tested massless release surface from
+experimental work.
 
-Each route's release-verification metadata is available at runtime through
-`AntennaRouteProfileReport[A, 3, 0]["Verification"]`. It records the
-release, last verification date, evidence scope, and any qualification. The
-table below remains the human-readable public contract; profile metadata is
-the machine-readable evidence ledger behind it.
+Each route exposes release-verification metadata through
+`AntennaRouteProfileReport[A, 3, 0]["Verification"]`. It records the release,
+last verification date, evidence scope, and any qualification. The table is
+the public support contract; the profile data is its machine-readable record.
 
 ## Supported massless surface
 
@@ -29,8 +28,8 @@ the machine-readable evidence ledger behind it.
 
 For a multi-component route, `Component` selects one named public component;
 the component order and meaning are part of the route's public contract. The
-package does not treat a stored expression that happens to match a target as
-standalone evidence of correctness.
+package does not treat a stored expression that matches a target as evidence
+of correctness by itself.
 
 ## Experimental research tracks
 
@@ -40,8 +39,7 @@ standalone evidence of correctness.
 | `D30` | source-model and diagnostic work exists; validated public antenna extraction and integration are unfinished | experimental |
 
 Experimental routes can return diagnostics, partial results, or `$Failed`.
-They must not be used as if they carried the supported massless release
-guarantee.
+Do not treat experimental routes as supported massless routes.
 
 ## Contract principles
 

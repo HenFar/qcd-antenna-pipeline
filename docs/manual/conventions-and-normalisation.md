@@ -2,17 +2,16 @@
 
 [Manual index](index.md) · [Route status](route-status.md) · [Documentation home](../README.md)
 
-This page states the package-facing conventions used by supported AntCalc
-routes. It distinguishes public antenna definitions, colour coefficients,
-backend expressions, and experimental provenance bridges.
+This page states the conventions used by supported AntCalc routes. It separates
+public antenna definitions from colour coefficients, backend expressions, and
+experimental provenance bridges.
 
 ## Public convention boundary
 
-`BuildAntenna` is intended to return package-facing results in the package
-normalisation and renormalisation convention. `IntegrateAntenna` and
-`BuildAndIntegrateAntenna` preserve that convention. Bare, pre-counterterm, or
-route-native expressions are provenance objects; they are not a second public
-physics result.
+`BuildAntenna` returns results in the package normalisation and renormalisation
+convention. `IntegrateAntenna` and `BuildAndIntegrateAntenna` keep that
+convention. Bare, pre-counterterm, and route-native expressions are for
+provenance; they are not another public result.
 
 Build records retain a `Public`/`Prototype` boundary for inspection. The
 prototype branch is provisional and only supported for direct
@@ -40,8 +39,8 @@ The package declares one working continuation,
 D -> 4 - 2 Epsilon
 ```
 
-controlled by `ApplyDimReg`. This is a package-wide convention for supported
-workflows, not a menu of independently validated `CDR`, `HV`, `GDR`, or
+controlled by `ApplyDimReg`. This is the package-wide convention for supported
+workflows. The package does not independently validate `CDR`, `HV`, `GDR`, or
 external-state prescriptions.
 
 `q2` is the canonical public kinematic scale. The integration surface exposes
@@ -54,7 +53,7 @@ Loop construction and integration are separate normalisation layers. The build
 layer uses `LoopExpansionNormalization[1] = 8 Pi^2` and
 `LoopExpansionNormalization[2] = (8 Pi^2)^2` when mapping loop objects into the
 package expansion convention. A raw `PaVe` or IBP expression is therefore not
-automatically a public integrated antenna.
+a public integrated antenna.
 
 On relevant PaVe routes, `PaVeEvaluation -> "PaXEvaluate"` and
 `ApplyFeynCalcMS -> True` are the public defaults. The massless `A21` route

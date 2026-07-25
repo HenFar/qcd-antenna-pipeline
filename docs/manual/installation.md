@@ -4,18 +4,16 @@
 
 ## Requirements
 
-Supported AntCalc workflows need a Wolfram Language kernel and the
-high-energy-physics environment used by the package:
+Supported workflows need a Wolfram Language kernel and these packages:
 
 - FeynCalc;
 - the FeynArts and FeynHelpers components used through FeynCalc;
 - LiteRed2 for IBP-backed integration routes.
 
-Some routes also use Package-X through the FeynCalc/FeynHelpers environment.
-The repository ships basis and runtime-master artifacts in `bases/`,
-`generated_bases/`, and `masterIntegrals/master_values_runtime.wl`; retain them
-when copying or cloning the package. AntCalc does not rebuild the derivation
-layer merely to start a kernel session.
+Some routes use Package-X through FeynCalc/FeynHelpers. Keep `bases/`,
+`generated_bases/`, and `masterIntegrals/master_values_runtime.wl` when you
+copy or clone the package. AntCalc reads these runtime files at use time; it
+does not rebuild their derivations during startup.
 
 The package has been exercised on macOS Apple Silicon and Windows Intel
 systems. This is evidence of tested environments, not a cross-platform runtime
@@ -31,10 +29,9 @@ FeynHelpers 2.0.0 · FeynCalcLegacy 1.0.0
 LiteRed2 2.025 β
 ```
 
-The package records this baseline in `AntennaPipelineConventionReport[]`.
-The startup banner reports the versions actually found in the current kernel;
-that report is diagnostic information, not a claim that every arbitrary newer
-or older combination has been validated.
+`AntennaPipelineConventionReport[]` records this baseline. The startup banner
+reports the versions in the current kernel. It does not validate other version
+combinations.
 
 ## Install the paclet
 
@@ -46,8 +43,7 @@ archive = CreatePacletArchive[repoRoot, $TemporaryDirectory];
 PacletInstall[archive];
 ```
 
-If you are reinstalling a changed development build with the same paclet
-version, use:
+To reinstall a changed build with the same paclet version, use:
 
 ```wl
 PacletInstall[archive, ForceVersionInstall -> True];
@@ -60,22 +56,20 @@ Restart the kernel after installation, then load the package:
 << AntCalc`
 ```
 
-If a notebook kernel was already active when the paclet was installed,
-`PacletDataRebuild[]` followed by a kernel restart refreshes its paclet index.
+If the kernel was already running when you installed the paclet, run
+`PacletDataRebuild[]` and restart the kernel.
 
 ## Develop from a checkout
 
-During active source editing, use the repository loader instead of the
-installed paclet. It reads the saved checkout immediately:
+While editing source files, load the checkout instead of the installed paclet:
 
 ```wl
 repoRoot = "/path/to/antenna_pipeline";
 Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]]
 ```
 
-Use `<< AntCalc`` to test the packaged copy an external user would receive.
-Rebuild and reinstall that paclet after a coherent group of changes. A fresh
-kernel is the reliable way to ensure old definitions are not still resident.
+Use `<< AntCalc`` to test the packaged copy. Rebuild and reinstall it after
+changes. Start a new kernel so that old definitions cannot remain loaded.
 
 ## Verify an installation
 
@@ -86,13 +80,12 @@ cd /path/to/antenna_pipeline
 bash dev/run_release_verification.sh
 ```
 
-It uses the checkout loader, excludes experimental massive `A30` and `D30`,
-and exercises the supported public build, integration, record, and driver
-matrix in fresh kernels. It distinguishes `Validated`, `Unvalidated`,
-`Failed`, and `InconclusiveTimeout`; only `Validated` gives a successful exit
-status. The per-case JSON records state the declared evidence tier and scope.
-It requires the configured `WolframKernel`; symbolic route duration depends on
-the local backend environment.
+This command loads the checkout in fresh kernels. It excludes experimental
+massive `A30` and `D30`, and tests supported public build, integration, record,
+and driver calls. Results are `Validated`, `Unvalidated`, `Failed`, or
+`InconclusiveTimeout`; only `Validated` returns a successful exit status.
+Each JSON record states the evidence tier and scope. The command needs the
+configured `WolframKernel`; run time depends on the local backend.
 
 The physics-validation harness is developer-facing:
 
@@ -101,9 +94,8 @@ cd /path/to/antenna_pipeline
 bash dev/run_physics_validation.sh
 ```
 
-It reports explicit `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, or
-`NotAvailableYet` states; it is not a substitute for the release acceptance
-command.
+It reports `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, or
+`NotAvailableYet`. It does not replace the release-acceptance command.
 
 ## Troubleshooting
 

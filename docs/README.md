@@ -1,7 +1,8 @@
 # AntCalc documentation
 
-This is the documentation home for AntCalc. Choose the entry point that fits
-the task rather than reading the repository as one long manual.
+Choose the page that matches the task. The manual explains supported use; the
+reference defines functions and options; the developer pages describe internal
+design and maintenance.
 
 | If you want to… | Start here |
 |---|---|
@@ -12,6 +13,5 @@ the task rather than reading the repository as one long manual.
 | understand software and physics-source acknowledgement | [Citation and provenance](manual/citation-and-provenance.md) |
 | see how the former README was redistributed | [Migration ledger](migration-status.md) |
 
-The repository-level [README](../README.md) is the short project front door.
-The archived [README_old.md](../README_old.md) remains available during the
-documentation transition.
+The repository-level [README](../README.md) gives a short introduction.
+[README_old.md](../README_old.md) is archived material.

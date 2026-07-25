@@ -6,8 +6,8 @@
 BuildAntenna[type, numFinalParticles, loopOrder, opts]
 ```
 
-Builds one public unintegrated antenna. The route key is written directly, for
-example `BuildAntenna[A, 3, 0]` for massless tree-level `A30`.
+Builds a public unintegrated antenna. Write the route key directly; for
+example, `BuildAntenna[A, 3, 0]` selects massless tree-level `A30`.
 
 ## Normal returns
 
@@ -17,15 +17,14 @@ example `BuildAntenna[A, 3, 0]` for massless tree-level `A30`.
 - An integration-ready object or component-wise objects with
   `IntegrableForm -> True`.
 
-`BuildAntennaObject[...]` is the explicit convenience form for requesting one
-`AntennaObject`; it accepts the same build controls except `ReturnRecord`.
+`BuildAntennaObject[...]` returns one `AntennaObject`. It accepts the same
+build controls except `ReturnRecord`.
 
 ## Normal-use options
 
-`printDiagram -> True` is an inspection feature only: it renders the generated
-FeynArts diagram set and does not alter the amplitude, reduction, or returned
-antenna. Tree diagrams are rendered explicitly even when the corresponding
-Born amplitude was already memoized in the current kernel.
+`printDiagram -> True` renders the generated FeynArts diagrams. It does not
+change the amplitude, reduction, or returned antenna. Tree diagrams still
+render when the corresponding Born amplitude is already memoized.
 
 | Option | Default | Meaning |
 |---|---:|---|
@@ -64,8 +63,8 @@ The complete route-owned association remains available separately through
 | `PrintIntermediateSteps` | print the requested captured stages; retained for compatibility |
 | `ResultsCacheRoot`, `RefreshStoredResults` | cache-root and cache-refresh controls |
 
-`ReturnBuildData` and `ReturnAntennaObject` remain accepted only as deprecated
-compatibility aliases. They issue a message and should not be used in new code.
+`ReturnBuildData` and `ReturnAntennaObject` are deprecated compatibility
+aliases. They issue a message; do not use them in new code.
 Use `BuildAntenna[..., ReturnRecord -> True]["BuildData"]` for route-owned
 build data. Use `IntegrableForm -> True` for the composable integration input,
 or `BuildAntennaObject[...]` for one full object. Source contributions are
@@ -74,8 +73,7 @@ rather than selecting one directly.
 
 ## Derivation and prototype controls
 
-These options remain supported for expert investigation but are not ordinary
-public workflow controls:
+These options are for expert investigation, not normal public workflows:
 
 ```text
 RunPaperCheck, Verbose, prefactor, ApplyStripCouplings,
@@ -88,9 +86,9 @@ UseSourceModelRoute
 intentionally rejected with `BuildAntennaObject` or `IntegrableForm -> True`;
 these object forms retain the public branch.
 
-`LoopMomentum` and `LoopMomenta` are real backend inputs, not merely cosmetic
-replacement rules. Changing a completed expression afterwards is not generally
-equivalent to choosing the loop variable before FeynCalc/LiteRed processing.
+`LoopMomentum` and `LoopMomenta` are backend inputs. Replacing a loop variable
+after processing is not generally equivalent to selecting it before
+FeynCalc/LiteRed processing.
 
 ## Relevant stage names
 

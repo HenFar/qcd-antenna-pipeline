@@ -2,11 +2,9 @@
 
 [Documentation home](../README.md) · [Reference guide](../reference/README.md) · [Developer documentation](../development/README.md)
 
-This manual documents the public AntCalc interface, its supported physics
-scope, and the conventions required to interpret its results. It is organised
-after the model used by established Wolfram-language physics packages: concise
-package overview, task-oriented tutorials, and a function-by-function
-reference guide.
+This manual describes the public AntCalc interface, the supported routes, and
+the conventions used for returned results. Use the reference guide when you
+need a complete function or option contract.
 
 ## Start here
 
@@ -20,9 +18,8 @@ reference guide.
 
 ## Tutorials
 
-The [tutorials](../tutorials/README.md) are intentionally separate from the
-reference manual. They will be runnable, narrative workflows; compact scripts
-and notebooks in `examples/` will serve as their executable companions.
+The [tutorials](../tutorials/README.md) show complete runnable tasks. The
+reference pages remain the source for exact function and option behaviour.
 
 ## Reference and development material
 
@@ -31,7 +28,6 @@ and notebooks in `examples/` will serve as their executable companions.
 
 ## Documentation status
 
-This manual is replacing the former monolithic repository README. The old text
-is preserved as [README_old.md](../../README_old.md) during the transition.
-Where documents overlap, this manual will become the authoritative public
-description once the migration is complete.
+This manual replaces the former monolithic README. [README_old.md](../../README_old.md)
+is preserved as an archive. Where the pages differ, follow this manual and the
+function reference.

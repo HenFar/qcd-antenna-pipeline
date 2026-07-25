@@ -3,8 +3,7 @@
 [Documentation home](../README.md) · [Manual](../manual/index.md) · [Developer documentation](../development/README.md)
 
 Reference pages define public contracts, return forms, and supported options.
-They are intentionally distinct from tutorials, which explain complete
-workflows.
+Tutorials explain complete workflows.
 
 ## Core antenna workflow
 

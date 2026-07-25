@@ -6,7 +6,7 @@
 IntegrateAntenna[antennaObject, opts]
 ```
 
-Integrates an `AntennaObject` through its route-selected PaVe or IBP backend.
+Integrates an `AntennaObject` with its route-selected PaVe or IBP backend.
 Obtain an object with either:
 
 ```wl
@@ -14,9 +14,9 @@ BuildAntennaObject[A, 3, 0]
 BuildAntenna[A, 3, 0, IntegrableForm -> True]
 ```
 
-An ordered list of integrable objects is also accepted. It is exactly the
-lifted component-wise operation: `IntegrateAntenna[objects, opts]` has the
-same result and return shapes as `IntegrateAntenna[#, opts]& /@ objects`.
+It also accepts an ordered list of integrable objects.
+`IntegrateAntenna[objects, opts]` returns the same shapes as
+`IntegrateAntenna[#, opts]& /@ objects`.
 
 The ordinary result is an integrated scalar or ordered public component list.
 
@@ -26,11 +26,10 @@ The ordinary result is an integrated scalar or ordered public component list.
 option set. The latter builds an integrable object and delegates integration;
 it is not a different backend or convention path.
 
-The one-shot wrapper forwards the physics and backend controls to
-`IntegrateAntenna`. `ReturnDiagnostics` and `ReturnRecord` are assembled at its
-outer return boundary, while cache controls are forwarded to the canonical build
-and integration stages. These presentation differences preserve the same public
-result semantics rather than define a second calculation route.
+The one-shot wrapper forwards physics and backend controls to
+`IntegrateAntenna`. It assembles `ReturnDiagnostics` and `ReturnRecord` at its
+outer boundary and forwards cache controls to the build and integration stages.
+These return-shape differences do not create a second calculation route.
 
 ## Main options
 
@@ -45,13 +44,11 @@ result semantics rather than define a second calculation route.
 | `IntermediateSteps` | `{}` | request selected integration-stage data |
 | `UseStoredResults`, `StoreResults` | `False` | cache controls |
 
-`ReturnMasterCombination -> True` retains the IBP diagnostic payload needed to
-return the master combination on direct and one-shot calls alike. It does not
-invent a literature-basis relation. The printed basis legend is descriptive;
-the returned expression retains its runtime LiteRed syntax. Its coefficient
-functions use the public dimensional convention `d = 4 - 2 Epsilon` and the
-single public spelling `Epsilon`; raw LiteRed `d`/`eps` notation remains only
-in backend diagnostics.
+`ReturnMasterCombination -> True` returns the IBP master-combination payload
+when the route provides it. It does not derive a literature-basis relation. The
+returned expression keeps runtime LiteRed syntax; its coefficient functions use
+`d = 4 - 2 Epsilon` and the public spelling `Epsilon`. Raw LiteRed `d`/`eps`
+notation remains in backend diagnostics.
 
 ## Backend and convention controls
 
@@ -84,7 +81,6 @@ See [records and diagnostics](records-and-diagnostics.md) for return shapes
 and [conventions](../manual/conventions-and-normalisation.md) for the meaning
 of PaVe and IBP bridge factors.
 
-The A21 PaVe/Package-X scalar evaluation is a route-owned implementation
-choice (`"PaXEvaluate"` in the supported profile), not a public integration
-option. Direct raw-expression PaVe/IBP integration is not part of the public
-API; build an `AntennaObject` first.
+The A21 PaVe/Package-X scalar evaluation is route-owned (`"PaXEvaluate"` in
+the supported profile), not a public option. The public API does not integrate
+raw PaVe or IBP expressions; build an `AntennaObject` first.

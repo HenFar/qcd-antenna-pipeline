@@ -1,24 +1,23 @@
 # AntCalc
 
-AntCalc is a Wolfram Language package for building and integrating QCD antenna
-functions. Its public workflow is deliberately small:
+AntCalc is a Wolfram Language package that builds and integrates QCD antenna
+functions. The main workflow has two steps:
 
 ```wl
 BuildAntenna[...] → IntegrateAntenna[...]
 ```
 
-`BuildAndIntegrateAntenna[...]` is the corresponding one-shot convenience
-wrapper. AntCalc is active thesis research software: its supported massless
-routes are usable, while the massive `A30` and `D30` research tracks are
-explicitly experimental.
+`BuildAndIntegrateAntenna[...]` runs these steps in sequence. AntCalc is
+thesis research software. The massless routes listed as supported are the
+release surface; massive `A30` and `D30` remain experimental.
 
 ## Status
 
 Current development release: **AntCalc 0.2.0 α 1**.
 
-The current defended target is the massless antenna workflow needed for the
-NNLO SMQCD R-ratio. See the [route-status
-matrix](docs/manual/route-status.md) before relying on a route in a calculation.
+The current release target is the massless antenna workflow for the NNLO SMQCD
+R-ratio. Before using a route in a calculation, read the [route-status
+matrix](docs/manual/route-status.md).
 
 AntCalc is active, unpublished thesis research software. It is shared for
 evaluation and academic discussion; reuse, redistribution, and relicensing
@@ -70,7 +69,7 @@ intA30Direct = IntegrateAntenna[a30Object];
 
 ## Documentation
 
-The documentation is being migrated to a FeynCalc-like manual structure:
+Use these pages:
 
 - [Documentation home](docs/README.md)
 - [Manual index](docs/manual/index.md)
@@ -81,16 +80,14 @@ The documentation is being migrated to a FeynCalc-like manual structure:
 - [Citation and provenance](docs/manual/citation-and-provenance.md)
 - [Documentation migration ledger](docs/migration-status.md)
 
-The previous comprehensive document is retained during this transition as
-[README_old.md](README_old.md). It is archival material, not the preferred
-starting point for a new user.
+[README_old.md](README_old.md) is retained as an archive. Start with the
+manual instead.
 
 ## Dependencies
 
-Supported workflows require a compatible Wolfram Language installation with
-FeynCalc and its FeynArts/FeynHelpers environment. IBP-backed integration
-routes also require LiteRed2. AntCalc includes repository-owned basis and
-runtime-master artifacts required by its supported routes.
+Supported workflows require Wolfram Language, FeynCalc, FeynArts, and
+FeynHelpers. IBP-backed integration also requires LiteRed2. Keep the bundled
+basis and runtime-master files when copying or cloning the repository.
 
 The current alpha toolchain is:
 
@@ -102,7 +99,7 @@ LiteRed2 2.025 β
 
 ## Scope
 
-AntCalc does not presently claim a fully derived closed massive `A30` master
-substitution, a finished public `D30` antenna, or complete `SUSY`/`HiggsEFT`
-R-ratio workflows. These limits are described in the [route-status
-matrix](docs/manual/route-status.md).
+AntCalc does not currently provide a fully derived closed massive-`A30`
+master substitution, a public `D30` route, or complete `SUSY`/`HiggsEFT`
+R-ratio workflows. See the [route-status matrix](docs/manual/route-status.md)
+for the exact limits.
