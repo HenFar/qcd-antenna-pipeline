@@ -574,10 +574,11 @@ BuildRRatioStoredResultLabel[model_Symbol, options_Association] :=
     ToLowerCase[SymbolName[Unevaluated[model]]], "-",
     StringReplace[ToString[Lookup[options, "quarkMass", 0], InputForm],
       {" " -> "", "." -> "-", "/" -> "-"}], "-",
-    ToLowerCase[NormalizeBuildRRatioResultForm[
+    ToLowerCase @ NormalizeBuildRRatioResultForm[
       Lookup[options, "ResultForm", "ComputedFiniteCoefficient"]], "-",
-    ToLowerCase[ToString[NormalizeBuildRRatioMaxOrder[
-      Lookup[options, "maxOrder", NNLO]], InputForm]]]
+    ToLowerCase @ ToString[
+      NormalizeBuildRRatioMaxOrder[Lookup[options, "maxOrder", NNLO]],
+      InputForm]
   ];
 
 (* BuildRRatioSMQCDIngredients[masslessQuarkMass, options]

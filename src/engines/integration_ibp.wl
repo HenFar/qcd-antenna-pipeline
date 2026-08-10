@@ -114,6 +114,10 @@ A22TwoLoopTreeActiveDenominatorSignature::usage = "A22TwoLoopTreeActiveDenominat
 A22TwoLoopTreeExactTopologyLabel::usage = "A22TwoLoopTreeExactTopologyLabel[master, basis] maps an A22 master to the exact-topology label used by the encoded notebook data.";
 A22TwoLoopTreeValueForExactTopology::usage = "A22TwoLoopTreeValueForExactTopology[label] returns the encoded value for one A22 exact-topology class.";
 A22TwoLoopTreeExactTopologyLabels::usage = "A22TwoLoopTreeExactTopologyLabels[] returns the full list of encoded A22 exact-topology labels.";
+A22TwoLoopTreeCanonicalMasterForExactTopology::usage = "A22TwoLoopTreeCanonicalMasterForExactTopology[label] identifies an exact A22 loop topology with its Appendix-A.1 master class.";
+A22TwoLoopTreeCanonicalValueForExactTopology::usage = "A22TwoLoopTreeCanonicalValueForExactTopology[label] returns the literature-derived package-convention value for an identified A22 exact topology.";
+A22TwoLoopTreeCanonicalMasterRules::usage = "A22TwoLoopTreeCanonicalMasterRules[] returns the explicit label-to-literature-master substitution rules used for the A22 first-principles audit.";
+A22TwoLoopTreeCanonicalIdentificationReport::usage = "A22TwoLoopTreeCanonicalIdentificationReport[] records the loop shifts and Appendix-A.1 master assigned to each exact A22 topology label.";
 A22TwoLoopTreeSimplifySp::usage = "A22TwoLoopTreeSimplifySp[expr] applies the special scalar-product simplification rules used by the A22 tree/two-loop backend.";
 A22TwoLoopTreeRefinedMasterValue::usage = "A22TwoLoopTreeRefinedMasterValue[master, basis] returns the refined encoded value for one matched A22 tree/two-loop master.";
 A22TwoLoopTreeMasterRulesForBasis::usage = "A22TwoLoopTreeMasterRulesForBasis[basis] returns the basis-local master substitution rules used by the A22 tree/two-loop backend.";
@@ -160,6 +164,18 @@ IBPToSeries::usage = "IBPToSeries[reduced, profile] converts a reduced master co
 IBPToSeriesWithDiagnostics::usage = "IBPToSeriesWithDiagnostics[rawReduced, reduced, profile] converts a reduced master combination into a final series while recording timing and size diagnostics.";
 IBPReductionStages::usage = "IBPReductionStages[rawReduced, reduced, profile] returns the named post-reduction stages recorded in backend diagnostics.";
 IntegrateViaIBP::usage = "IntegrateViaIBP[antenna, ...] runs the full LiteRed-backed IBP integration pipeline.";
+A22LoopOnlyIBPReduction::usage =
+  "A22LoopOnlyIBPReduction[expr, ...] reduces an unintegrated A22 virtual expression over its loop momenta to an unreplaced LiteRed master combination. It deliberately performs neither phase-space integration nor master-value substitution.";
+A22InvariantOnlyReduction::usage =
+  "A22InvariantOnlyReduction[expr, ...] performs the A22 loop reduction and literature-master substitution while retaining the public Mandelstam invariant and applying neither phase-space integration nor T-terms.";
+A22LoopOnlyMasterLabels::usage =
+  "A22LoopOnlyMasterLabels[expr] returns the exact topology-labelled A22 loop masters appearing in an unreplaced reduction.";
+A22CompactLoopOnlyMasterCombination::usage =
+  "A22CompactLoopOnlyMasterCombination[terms] combines a list of unreplaced A22 loop-reduction terms into one exact-topology master linear combination.";
+A22LoopOnlyMasterDisplayForm::usage =
+  "A22LoopOnlyMasterDisplayForm[expr] renders an unreplaced A22 loop-only master combination with the public d = 4 - 2 Epsilon and Epsilon regulator spelling, without substituting any master value.";
+A22LoopOnlyMasterCatalogue::usage =
+  "A22LoopOnlyMasterCatalogue[rawReduced] records the exact LiteRed basis representatives, indices, propagator powers, and irreducible-numerator slots behind an unreplaced A22 loop-only reduction.";
 IBPConventionBridgeFactor::usage = "IBPConventionBridgeFactor[profile, applyFeynCalcMS, order] returns the explicit backend-to-public convention factor applied after IBP master substitution.";
 IBPConventionBridgeSeriesOrder::usage = "IBPConventionBridgeSeriesOrder[profile, order] returns the epsilon depth required to expand the backend-to-public convention bridge safely for a given IBP family.";
 NormalizeIBPIntegratedResult::usage = "NormalizeIBPIntegratedResult[withMasters, profile, applyFeynCalcMS, ...] applies IBP normalization, convention bridging, and optional kinematic-scale normalization before epsilon-series truncation.";
@@ -592,7 +608,7 @@ IBPProfile["X30"] :=
      "BasisRoot" -> DefaultIBPBasisRoot["X30"], "BasisPrefix" -> "NLO", "Topologies"
      -> Permutations[{1, 2, 3}], "LoopMomenta" -> {p1, p2}, "MomentumRules"
      -> MomentumRules[3], "PhaseSpace" -> PhaseSpace[3], "ExpansionOrder"
-     -> 0, "GenerateMissingBases" -> False|>;
+     -> 2, "GenerateMissingBases" -> False|>;
 
 IBPProfile["MX30"] :=
   <|"BasisFamily" -> "MX30", "NumFinalParticles" -> 3, "NumLoops" -> 0,
@@ -603,7 +619,7 @@ IBPProfile["MX30"] :=
     "MassSymbol" -> quarkMass,
     "InvariantBridgeRules" -> MX30InvariantBridgeRules[],
     "TopologyDenominators" -> MX30BasisTopologyAssociation[],
-    "ExpansionOrder" -> 0, "GenerateMissingBases" -> False,
+    "ExpansionOrder" -> 2, "GenerateMissingBases" -> False,
     "ImplementationStatus" -> "Implemented",
     "OpenMasterValuesQ" -> True,
     "IntegratedResultKind" -> "MasterCombination",
@@ -617,14 +633,14 @@ IBPProfile["MX30"] :=
       "This profile keeps the developer-facing MX30 open-master route available in symbolic master-combination mode.",
       "The massive cut structure, term-preparation bridge, and topology bases are now encoded explicitly in the profile.",
       "The package-owned MX30 readiness check reduces the massive A30 build output to a clean linear combination of LiteRed masters.",
-      "Public IntegrateAntenna and BuildAndIntegrateAntenna calls use the provenance-backed closed bibliography bridge unless the developer-only $MassiveA30ForceIBPMasterRoute flag is set."
+      "Public IntegrateAntenna and BuildAndIntegrateAntenna calls use the derived closed MX30 route unless the developer-only $MassiveA30ForceIBPMasterRoute flag is set."
     }|>;
 
 IBPProfile["X40"] :=
   <|"BasisFamily" -> "X40", "NumFinalParticles" -> 4, "NumLoops" -> 0,
      "BasisRoot" -> DefaultIBPBasisRoot["X40"], "BasisPrefix" -> "NNLO",
      "BasisClasses" -> {chain, box, hybrid}, "Topologies" -> Permutations[
-      {1, 2, 3, 4}], "LoopMomenta" -> {p1, p2, p3}, "MomentumRules" ->
+     {1, 2, 3, 4}], "LoopMomenta" -> {p1, p2, p3}, "MomentumRules" ->
      MomentumRules[4], "PhaseSpace" -> PhaseSpace[4], "ExpansionOrder"
      -> 0, "GenerateMissingBases" -> False|>;
 
@@ -640,9 +656,9 @@ IBPProfile["A31"] :=
         Table[<|"Basis" -> Symbol["A31BasisSuper" <> ToString[i]],
           "DirectoryName" -> "A31basisSuper" <> ToString[i]|>, {i, 2}]
       ], "LoopMomenta" -> {k1, k2, l}, "MomentumRules" ->
-      {p[1] -> k1, p[2] -> k2, p[3] -> -k1 - k2 + q},
+     {p[1] -> k1, p[2] -> k2, p[3] -> -k1 - k2 + q},
      "PhaseSpace" -> LiteRed`sp[k1, k1] LiteRed`sp[k2, k2] LiteRed`sp[
-        -k1 - k2 + q, -k1 - k2 + q], "ExpansionOrder" -> -2,
+        -k1 - k2 + q, -k1 - k2 + q], "ExpansionOrder" -> 0,
      "GenerateMissingBases" -> False|>;
 
 IBPProfile["X31"] :=
@@ -1139,14 +1155,11 @@ ExpandMX30NumeratorShiftedForms[expr_, mass_] :=
   ];
 
 MX30PublicMassSquareSymbol[mass_] :=
-  Module[{heldMass},
-    heldMass = Unevaluated[mass];
-    If[Head[heldMass] === Symbol,
-      Symbol[Context[heldMass] <> SymbolName[heldMass] <> "2"]
-      ,
-      heldMass^2
-    ]
-  ];
+  (* Keep the public forced-MX30 result in the same mass notation as the
+     closed massive-A30 literature bridge.  The former generated alias mQ2
+     is convenient internally but prevents direct equality checks against
+     expressions naturally written in mQ^2. *)
+  mass^2;
 
 MX30PublicizeValue[value_, profile_Association] :=
   Module[{mass, massSquareSymbol, publicRules},
@@ -1825,6 +1838,58 @@ A22TwoLoopTreeExactTopologyLabels[] :=
     A22A6Basis8LikeMI
   };
 
+(* The labels preserve the originating LiteRed family for diagnostics.  This
+   table is the separate physical identification layer: every representative
+   is an established unit-Jacobian shift image of one of the four virtual
+   masters in Appendix A.1 of hep-ph/0403057. *)
+A22TwoLoopTreeCanonicalMasterForExactTopology[label_] :=
+  Switch[label,
+    A22A22LOQQMI, A22LOMI,
+    A22A3Basis15LikeMI | A22A3SunsetMI | A22A3Basis7LikeMI |
+      A22A3Basis8LikeMI, A3MI,
+    A22A4NfLikeMI | A22A4Basis46LikeMI | A22A4Basis7LikeMI |
+      A22A4Basis8LikeMI, A4MI,
+    A22A6Basis8LikeMI, A6MI,
+    _, Missing["UnknownA22CanonicalMaster", label]
+  ];
+
+A22TwoLoopTreeCanonicalValueForExactTopology[label_] :=
+  Switch[A22TwoLoopTreeCanonicalMasterForExactTopology[label],
+    A22LOMI, A22TwoLoopTreeMasterValueA22LO[],
+    A3MI, A22TwoLoopTreeMasterValueA3[],
+    A4MI, A22TwoLoopTreeMasterValueA4[],
+    A6MI, A22TwoLoopTreeMasterValueA6[],
+    _, Missing["UnknownA22CanonicalValue", label]
+  ];
+
+A22TwoLoopTreeCanonicalMasterRules[] :=
+  (# -> A22TwoLoopTreeCanonicalValueForExactTopology[#])& /@
+    A22TwoLoopTreeExactTopologyLabels[];
+
+A22TwoLoopTreeCanonicalIdentificationReport[] :=
+  <|
+    A22A22LOQQMI -> <|"Master" -> A22LOMI, "Status" -> "Established",
+      "LoopShift" -> "factorised two bubbles; K = -l1 and L = l2"|>,
+    A22A3Basis15LikeMI -> <|"Master" -> A3MI, "Status" -> "Established",
+      "LoopShift" -> "L1 = l1 - q, L2 = l2 - k1"|>,
+    A22A3SunsetMI -> <|"Master" -> A3MI, "Status" -> "Established",
+      "LoopShift" -> "direct, up to q -> -q"|>,
+    A22A3Basis7LikeMI -> <|"Master" -> A3MI, "Status" -> "Established",
+      "LoopShift" -> "L1 = l1 - k1, L2 = l2 - (q - k1)"|>,
+    A22A3Basis8LikeMI -> <|"Master" -> A3MI, "Status" -> "Established",
+      "LoopShift" -> "L1 = l1 - k1, L2 = l2"|>,
+    A22A4NfLikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
+      "LoopShift" -> "K = l1, L = -l2 (with p1 = k1)"|>,
+    A22A4Basis46LikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
+      "LoopShift" -> "K = l1, L = k1 - l2 (with p1 = q - k1)"|>,
+    A22A4Basis7LikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
+      "LoopShift" -> "K = l1 + q, L = -l2 + q - k1"|>,
+    A22A4Basis8LikeMI -> <|"Master" -> A4MI, "Status" -> "Established",
+      "LoopShift" -> "K = l1 + q, L = -l2 + k1"|>,
+    A22A6Basis8LikeMI -> <|"Master" -> A6MI, "Status" -> "Established",
+      "LoopShift" -> "K = -l1, L = l2 (with p1 = k1 and p2 = q - k1)"|>
+  |>;
+
 A22TwoLoopTreeSimplifySp[expr_] :=
   Module[{e = expr // Expand, r1, r2, r3, r4, r5},
     r1 = e //. {LiteRed`sp[x_ + y_, z_] :> LiteRed`sp[x, z] + LiteRed`sp[y, z]};
@@ -2138,6 +2203,12 @@ A22TwoLoopTreeMasterValueA4NfLike[] :=
 A22TwoLoopTreeMasterValueA4Basis46Like[] :=
   A22TwoLoopTreeMasterValueA4[];
 
+(* The canonical topology map records that these representatives are related
+   to A4 by unit-Jacobian loop shifts.  Their relation to the established
+   stitched A22 integration normalisation has not yet been closed at the
+   master-value level, however.  Preserve the validated route-local values
+   here; the canonical mapping remains available for the loop-only audit and
+   must not silently alter the public integrated antenna. *)
 A22TwoLoopTreeMasterValueA4Basis7Like[] :=
   (Pi^4*(-18 + eps*(-90 + eps*(-342 + 33*Pi^2) +
         2*eps^3*(-390 + 55*Pi^2 + 52*Zeta[3]))))/(72*eps^2);
@@ -2171,6 +2242,14 @@ IBPMasterValues[profile_Association] :=
   Switch[profile["BasisFamily"],
     "X30",
       {R3 -> IBPPhaseSpaceMeasure[3]}
+    ,
+    "MX30",
+      (* The massive A30 runtime basis is closed by the explicit paper-I2
+         numerator reduction and the derived common cut factor
+         I_paper = -j_MX30/4.  Keep the rules route-owned: unlike the
+         massless generic families, their closed forms carry the massive
+         threshold hypergeometric dependence. *)
+      MassiveA30IntegratedRuntimeMasterRules[]
     ,
     "X40",
       IBPX40MasterCoefficientRules[]
@@ -2398,7 +2477,7 @@ NormalizeIBPIntegratedResult[withMasters_, profile_Association,
     epsSeries = Unique["eps"];
     scaleSymbol = OptionValue[KinematicScale];
     normalizedScaleQ = TrueQ[OptionValue[NormalizeKinematicScale]];
-    expansionOrder = Lookup[profile, "ExpansionOrder", 0];
+    expansionOrder = Lookup[profile, "ExpansionOrder", 2];
     baseNormalized =
       withMasters * IBPNormalization[profile] //
       ReplaceAll[#, {
@@ -2541,9 +2620,174 @@ IBPReductionStages[rawReduced_, reduced_, profile_Association,
 
 Options[IntegrateViaIBP] = {NumFinalParticles -> 3, NumLoops -> 0, BasisFamily
    -> "X30", BasisRoot -> Automatic, GenerateMissingBases -> False, ExpansionOrder
-   -> 0, ReturnDiagnostics -> False, DetailedTimingDiagnostics -> False,
+   -> 2, ReturnDiagnostics -> False, DetailedTimingDiagnostics -> False,
    MassSymbol -> Automatic, ApplyFeynCalcMS -> True, KinematicScale -> q2,
    NormalizeKinematicScale -> True};
+
+(* A22 loop-only reduction is intentionally separate from IntegrateViaIBP.
+   The latter completes the phase-space/integrated route by substituting master
+   values and normalising the result. Here we preserve the reduced loop
+   structure so it can compact the public unintegrated virtual expression and
+   expose the actual master basis. *)
+Options[A22LoopOnlyIBPReduction] = {Contribution -> TwoLoopTree,
+   BasisRoot -> Automatic, GenerateMissingBases -> False,
+   DetailedTimingDiagnostics -> False};
+
+A22LoopOnlyMasterLabels[expr_] :=
+  DeleteDuplicates @ Cases[expr,
+    Alternatives @@ A22TwoLoopTreeExactTopologyLabels[], Infinity];
+
+A22CompactLoopOnlyMasterCombination[terms_List] :=
+  Module[{combined, masters},
+    combined = Total[terms];
+    masters = A22LoopOnlyMasterLabels[combined];
+    Collect[combined, masters, Factor]
+  ];
+
+A22CompactLoopOnlyMasterCombination[term_] :=
+  A22CompactLoopOnlyMasterCombination[{term}];
+
+(* This is intentionally a presentation boundary, not an integration step:
+   it never replaces an exact-topology master by an integrated value. *)
+A22LoopOnlyMasterDisplayForm[expr_] :=
+  Module[{display, masters},
+    display = expr /. {
+      d -> 4 - 2 Epsilon,
+      eps -> Epsilon,
+      FeynCalc`Epsilon -> Epsilon
+    };
+    masters = A22LoopOnlyMasterLabels[display];
+    Collect[display, masters, Factor]
+  ];
+
+(* The public topology labels intentionally suppress dotted propagators and
+   irreducible numerators.  Preserve those details here before any literature
+   crosswalk is attempted. *)
+A22LoopOnlyMasterCatalogue[rawReduced_] :=
+  Module[{masters, describe},
+    masters = DeleteDuplicates @ Cases[rawReduced,
+      master_LiteRed`j :> master, Infinity];
+    describe[master_] :=
+      Module[{parts, basis, indices, denominators, label},
+        parts = List @@ master;
+        basis = First[parts];
+        indices = Rest[parts];
+        denominators = LiteRed`Ds[basis];
+        label = A22TwoLoopTreeExactTopologyLabel[master, basis];
+        <|
+          "TopologyLabel" -> label,
+          "LiteRedMaster" -> master,
+          "Basis" -> basis,
+          "Indices" -> indices,
+          "DenominatorPowers" -> Thread[denominators -> indices],
+          "ActiveDenominators" -> Pick[denominators, indices, _?(# > 0 &)],
+          "IrreducibleNumeratorSlots" ->
+            Pick[Range[Length[indices]], indices, _?(# < 0 &)]
+        |>
+      ];
+    GroupBy[describe /@ masters, Lookup[#, "TopologyLabel"] &]
+  ];
+
+A22LoopOnlyIBPReduction[expr_, OptionsPattern[]] :=
+  Module[{contribution, family, profile, basisLoad, reduction, reducedTerms,
+     compactMasterCombination, compactReconstructionQ, masterLabels},
+    contribution = CanonicalAntennaComponentName[OptionValue[Contribution]];
+    family = Switch[contribution,
+      "TwoLoopTree", "A22TwoLoopTree",
+      "OneLoopSelf", "A22OneLoopSelf",
+      _, $Failed
+    ];
+    If[family === $Failed,
+      Return[<|"Succeeded" -> False,
+        "Reason" -> "UnsupportedA22LoopOnlyContribution",
+        "Contribution" -> contribution|>]
+    ];
+    profile = MergeIBPProfileOptions[IBPProfile[family], <|
+        "BasisRoot" -> OptionValue[BasisRoot],
+        "GenerateMissingBases" -> OptionValue[GenerateMissingBases],
+        "DetailedTimingDiagnostics" -> OptionValue[DetailedTimingDiagnostics]
+      |>];
+    basisLoad = LoadIBPBases[profile];
+    If[!TrueQ[basisLoad["LoadedQ"]],
+      Return[<|"Succeeded" -> False, "Reason" -> "MissingIBPBases",
+        "Contribution" -> contribution, "Profile" -> profile,
+        "BasisLoad" -> basisLoad|>]
+    ];
+    reduction = ReduceAntennaIBP[expr, basisLoad["Bases"], profile,
+      OptionValue[DetailedTimingDiagnostics]];
+    reducedTerms = Lookup[reduction, "ReducedTerms", $Failed];
+    compactMasterCombination =
+      If[ListQ[reducedTerms],
+        A22CompactLoopOnlyMasterCombination[reducedTerms],
+        reducedTerms
+      ];
+    (* Collect is algebraically exact, but retain an explicit check in the
+       diagnostic record so a future presentation change cannot silently
+       alter the loop-only reduction. *)
+    compactReconstructionQ = If[ListQ[reducedTerms],
+      TrueQ[Together[Total[reducedTerms] - compactMasterCombination] === 0],
+      Missing["NotApplicable"]
+    ];
+    masterLabels = A22LoopOnlyMasterLabels[compactMasterCombination];
+    <|"Succeeded" -> True, "Contribution" -> contribution,
+      "Profile" -> profile, "BasisLoad" -> basisLoad,
+      "InputLeafCount" -> LeafCount[expr],
+      "RawReducedTerms" -> Lookup[reduction, "RawReducedTerms", $Failed],
+      "RawMasterCatalogue" -> A22LoopOnlyMasterCatalogue[
+        Lookup[reduction, "RawReducedTerms", $Failed]],
+      "MasterCombination" -> reducedTerms,
+      "CompactMasterCombination" -> compactMasterCombination,
+      "PublicCompactMasterCombination" ->
+        A22LoopOnlyMasterDisplayForm[compactMasterCombination],
+      "CompactReconstructionQ" -> compactReconstructionQ,
+      "MasterLabels" -> masterLabels,
+      "MasterCoefficientLeafCounts" -> AssociationThread[
+        ToString /@ masterLabels,
+        LeafCount[Coefficient[compactMasterCombination, #]]& /@ masterLabels
+      ],
+      "CompactMasterCombinationLeafCount" -> LeafCount[compactMasterCombination],
+      "UnmatchedTerms" -> Lookup[reduction, "UnmatchedTerms", {}],
+      "UnmatchedCount" -> Lookup[reduction, "UnmatchedCount",
+        Missing["NotAvailable"]],
+      "TimingDiagnostics" -> Lookup[reduction, "TimingDiagnostics", <||>]|>
+  ];
+
+(* This is the A22 counterpart of the scalar-integral build boundary used by
+   A31.  It performs loop integration only: unlike IntegrateAntenna, it does
+   not apply phase-space integration, T-terms, or q2 -> 1 normalization. *)
+Options[A22InvariantOnlyReduction] = Options[A22LoopOnlyIBPReduction];
+
+A22InvariantOnlyReduction[expr_, OptionsPattern[]] :=
+  Module[{loopOnly, profile, invariantExpression},
+    loopOnly = A22LoopOnlyIBPReduction[expr,
+      Contribution -> OptionValue[Contribution],
+      BasisRoot -> OptionValue[BasisRoot],
+      GenerateMissingBases -> OptionValue[GenerateMissingBases],
+      DetailedTimingDiagnostics -> OptionValue[DetailedTimingDiagnostics]
+    ];
+    If[!TrueQ[Lookup[loopOnly, "Succeeded", False]],
+      Return[loopOnly]
+    ];
+    profile = loopOnly["Profile"];
+    invariantExpression =
+      ReplaceAll[
+        loopOnly["CompactMasterCombination"],
+        IBPMasterValues[profile]
+      ] /. {
+          d -> 4 - 2 Epsilon,
+          eps -> Epsilon,
+          FeynCalc`Epsilon -> Epsilon,
+          q2 -> s12
+        } // Together // FullSimplify;
+    Join[loopOnly, <|
+      "InvariantExpression" -> invariantExpression,
+      "InvariantOnlyQ" -> FreeQ[invariantExpression,
+        l | l1 | l2 | LiteRed`j | FeynCalc`FeynAmpDenominator |
+          FeynAmpDenominator],
+      "KinematicInvariant" -> s12,
+      "Normalization" -> "LoopIntegratedOnly; no phase-space or T-term normalization"
+    |>]
+  ];
 
 SummarizeIBPComponentDiagnostics[componentDiagnostics_List] :=
   Module[{stageValues, aggregateOneStage, aggregateStage},

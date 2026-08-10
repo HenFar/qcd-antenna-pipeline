@@ -57,7 +57,7 @@ MassiveA30ThesisTarget::usage =
   "MassiveA30ThesisTarget[...] returns the thesis-facing massive A30 antenna target after the explicit massive invariant substitutions used in the reconstruction track.";
 
 MassiveA30ThesisAntenna::usage =
-  "MassiveA30ThesisAntenna[...] returns the thesis-facing massive A30 antenna reconstructed from the package-derived raw interference using the explicit normalization bridge validated in the dev track.";
+  "MassiveA30ThesisAntenna[...] returns the dimensionally continued massive A30 antenna reconstructed from the package-derived raw interference using the explicit normalization bridge. Its Epsilon -> 0 limit is the thesis-facing antenna target.";
 
 MassiveA30BuildData::usage =
   "MassiveA30BuildData[...] returns a BuildAntennaData-shaped association for the public massive A30 build route.";
@@ -339,7 +339,9 @@ MassiveA30ThesisTarget[OptionsPattern[]] :=
 (* MassiveA30ThesisAntenna[...]
    ============================
    Apply the explicit notebook-to-thesis normalization bridge to the raw route
-   interference. *)
+   interference.  Keep its d-dimensional numerator: setting Epsilon -> 0 here
+   makes the unintegrated paper check pass, but discards exactly the terms that
+   enter the all-epsilon reverse-unitarity reduction. *)
 MassiveA30ThesisAntenna[OptionsPattern[]] :=
   Module[{qm, rawInterference, thesisBornOnShell},
     qm = OptionValue[quarkMass];
@@ -351,11 +353,11 @@ MassiveA30ThesisAntenna[OptionsPattern[]] :=
     thesisBornOnShell =
       MassiveA30BornNormalizationPaper[] /. {
         mf -> qm,
-        epsilon -> 0,
+        epsilon -> Epsilon,
         q2 -> 2 qm ^ 2 + s12 + s13 + s23
       } // Together;
     (
-      ((4 / 9) rawInterference /. SUNN -> 3 /. Epsilon -> 0) /
+      ((4 / 9) rawInterference /. SUNN -> 3) /
       ((4 / 3) (colourNorm /. SUNN -> 3) thesisBornOnShell)
     ) /. q2 -> 2 qm ^ 2 + s12 + s13 + s23 // Together // Simplify
   ];
@@ -381,11 +383,11 @@ MassiveA30BuildData[OptionsPattern[]] :=
         ApplyDimReg -> OptionValue[ApplyDimReg]];
     paperResidual =
       Together[
-        thesisAntenna -
-        MassiveA30ThesisTarget[quarkMass -> qm,
-          ApplyStripCouplings -> OptionValue[ApplyStripCouplings],
-          ApplyCasimirSubstitution -> OptionValue[ApplyCasimirSubstitution],
-          ApplyDimReg -> OptionValue[ApplyDimReg]]
+        (thesisAntenna /. Epsilon -> 0) -
+          MassiveA30ThesisTarget[quarkMass -> qm,
+            ApplyStripCouplings -> OptionValue[ApplyStripCouplings],
+            ApplyCasimirSubstitution -> OptionValue[ApplyCasimirSubstitution],
+            ApplyDimReg -> OptionValue[ApplyDimReg]]
       ];
     <|
       "Profile" -> profile,
@@ -400,7 +402,7 @@ MassiveA30BuildData[OptionsPattern[]] :=
           "MassiveA30Route" -> True,
           "quarkMass" -> qm,
           "NormalizationBridge" ->
-            "Notebook-style raw interference, four-dimensional thesis numerator, s123 -> s12 + s13 + s23, and package-to-thesis normalization factor 4/3 * colourNorm.",
+            "Notebook-style d-dimensional raw interference, s123 -> s12 + s13 + s23, and package-to-thesis normalization factor 4/3 * colourNorm. The Epsilon -> 0 limit is checked against the thesis target.",
           "ThesisResidual" -> paperResidual,
           "ThesisExactMatchQ" -> TrueQ[paperResidual === 0]
         |>

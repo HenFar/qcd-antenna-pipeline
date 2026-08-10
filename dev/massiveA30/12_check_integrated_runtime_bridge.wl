@@ -40,7 +40,7 @@ Print["Runtime residual: ", InputForm[runtimeResidual]];
 Print["Runtime match: ", runtimeMatchQ];
 
 If[
-  record["IntegratedResultKind"] =!= "ClosedBibliographyBridgeSeries" ||
+  record["IntegratedResultKind"] =!= "ClosedDerivedMX30Series" ||
   record["OpenMasterValuesQ"] =!= False ||
   !runtimeMatchQ,
   Exit[1];

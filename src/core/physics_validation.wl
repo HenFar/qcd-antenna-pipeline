@@ -411,7 +411,7 @@ BuildIntegratedPoleValidationReport[key_List, result_, diagnostics_Association,
 
 Options[AntennaPhysicsValidationReport] = {
   quarkMass -> 0,
-  "ExpansionOrder" -> 0,
+  "ExpansionOrder" -> Automatic,
   Component -> All,
   "EvaluateUnavailableRoutes" -> False,
   "UseStoredResults" -> True,

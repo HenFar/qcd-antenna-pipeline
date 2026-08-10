@@ -210,7 +210,7 @@ ExtractAntennaComponents[interference_, profile_Association, context_Association
           <|"Components" -> components, "Diagnostics" -> diagnostics|>
             
         ,
-        "TreeColorCoefficients",
+        "TreeColourCoefficients",
           norm =
             interference / (bornInterference colorNorm) //
             Simplify //

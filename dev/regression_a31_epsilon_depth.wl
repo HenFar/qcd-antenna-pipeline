@@ -10,10 +10,16 @@ repoRoot = DirectoryName[DirectoryName[$InputFileName]];
 Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]];
 
 ClearAll[A31LaurentMinimumPower, A31MasterAvailabilityOrder,
-  A31MasterDiagnosticAssociations];
+  A31UsableMasterDiagnosticQ, A31MasterDiagnosticAssociations];
 
 A31LaurentMinimumPower[expression_] :=
   Module[{eps, expanded, terms, powers},
+    (* An absent master has exactly zero coefficient.  Mathematica assigns
+       Exponent[0, eps] = -Infinity; this is not a non-Laurent coefficient and
+       requires no terms from that master's series. *)
+    If[expression === 0,
+      Return[Infinity]
+    ];
     eps = FeynCalc`Epsilon;
     expanded = Quiet[Check[Normal[Series[expression, {eps, 0, 0}]], $Failed]];
     If[expanded === $Failed,
@@ -36,19 +42,54 @@ A31MasterAvailabilityOrder[qMI | qkMI] := Infinity;
 A31MasterAvailabilityOrder[qsMI] := 0;
 A31MasterAvailabilityOrder[master_] := Missing["UnknownMaster", master];
 
-(* Public wrappers have changed diagnostic nesting more than once.  The
-   reduction-stage association itself is stable, so find it by its two
-   required fields rather than by a presentation-layer path. *)
-A31MasterDiagnosticAssociations[expression_] :=
-  DeleteDuplicatesBy[
-    Cases[expression,
-      candidate_Association /;
-        AssociationQ[Lookup[candidate, "Profile", Missing["Absent"]]] &&
-        !MissingQ[Lookup[candidate, "MasterMappedExpression",
-          Missing["Absent"]]] :> candidate,
-      Infinity
-    ],
-    ToString[Lookup[#, "MasterMappedExpression"], InputForm]&
+(* The public one-shot route deliberately collects diagnostics by component.
+   Each component's backend payload owns the reduction profile and the raw
+   master-mapped expression needed for this audit.  Prefer that explicit
+   public structure: a recursive association scan can accidentally select a
+   presentation or summary association when diagnostic nesting evolves. *)
+A31UsableMasterDiagnosticQ[candidate_Association] :=
+  Module[{profile, masterMapped},
+    profile = Lookup[candidate, "Profile", Missing["ProfileUnavailable"]];
+    masterMapped = Lookup[candidate, "MasterMappedExpression",
+      Missing["MasterMappedExpressionUnavailable"]];
+    AssociationQ[profile] && !MissingQ[masterMapped] && masterMapped =!= $Failed
+  ];
+
+A31UsableMasterDiagnosticQ[_] := False;
+
+A31MasterDiagnosticAssociations[diagnostics_Association] :=
+  Module[{componentDiagnostics, direct, fallback},
+    componentDiagnostics = Lookup[diagnostics, "ComponentDiagnostics",
+      Missing["ComponentDiagnosticsUnavailable"]];
+    direct =
+      If[AssociationQ[componentDiagnostics],
+        Cases[Normal[componentDiagnostics],
+          Rule[component_, componentDiagnostic_Association] :>
+            With[{backend = Lookup[componentDiagnostic, "BackendDiagnostics",
+                Missing["BackendDiagnosticsUnavailable"]]},
+              If[A31UsableMasterDiagnosticQ[backend],
+                Join[<|"Component" -> component|>, backend],
+                Nothing
+              ]
+            ],
+          {1}
+        ],
+        {}
+      ];
+    If[Length[direct] > 0,
+      Return[direct]
+    ];
+    (* Compatibility fallback for legacy public wrappers.  It is deliberately
+       secondary to the explicit component map above. *)
+    fallback = DeleteDuplicatesBy[
+      Cases[diagnostics,
+        candidate_Association /; A31UsableMasterDiagnosticQ[candidate] :>
+          candidate,
+        Infinity
+      ],
+      ToString[Lookup[#, "MasterMappedExpression"], InputForm]&
+    ];
+    fallback
   ];
 
 Module[{result, diagnostics, masterDiagnostics, masters, finalOrder,
@@ -101,13 +142,17 @@ Module[{result, diagnostics, masterDiagnostics, masters, finalOrder,
                 FeynCalc`Epsilon]},
               master -> Module[{minimumPower, requiredThrough, availableThrough},
                 minimumPower = A31LaurentMinimumPower[coefficient];
-                requiredThrough = If[IntegerQ[minimumPower],
-                  finalOrder - minimumPower, Missing["Undetermined"]];
+                requiredThrough = Which[
+                  minimumPower === Infinity, -Infinity,
+                  IntegerQ[minimumPower], finalOrder - minimumPower,
+                  True, Missing["Undetermined"]
+                ];
                 availableThrough = A31MasterAvailabilityOrder[master];
                 <|"NormalizedCoefficientMinimumEpsilonPower" -> minimumPower,
                   "RequiredMasterSeriesThrough" -> requiredThrough,
                   "RuntimeMasterAvailableThrough" -> availableThrough,
-                  "SufficientQ" -> TrueQ[availableThrough === Infinity] ||
+                  "SufficientQ" -> TrueQ[minimumPower === Infinity] ||
+                    TrueQ[availableThrough === Infinity] ||
                     (IntegerQ[requiredThrough] && IntegerQ[availableThrough] &&
                       availableThrough >= requiredThrough)|>
               ]

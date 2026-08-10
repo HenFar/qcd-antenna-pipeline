@@ -68,8 +68,8 @@ RouteMassHandlingProfile[key_] :=
     {A, 3, 0},
       <|
         "DefaultquarkMass" -> 0,
-        "MassiveSupportStatus" -> "ExperimentalMassiveA30Branch",
-        "MassHandlingNote" -> "Massless A30 is supported; nonzero quarkMass selects the experimental massive A30 branch."
+        "MassiveSupportStatus" -> "BetaMassiveA30Extension",
+        "MassHandlingNote" -> "Massless A30 is supported; nonzero quarkMass selects the beta massive A30 extension."
       |>
     ,
     {D, 3, 0},

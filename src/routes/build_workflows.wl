@@ -139,10 +139,10 @@ BuildTreeRouteData[key_, options_Association] :=
             "Diagnostics" -> extraction["Diagnostics"]
           |>
         ,
-        "ColorOrderedAntenna",
+        "ColourOrderedAntenna",
           fullInterference = ResolveTreeSelfInterferenceRoute[key, amp, profile];
           fullExtraction = ExtractAntennaComponents[fullInterference, profile, context];
-          colorOrderedData = ColorOrderedAntenna[
+          colorOrderedData = ColourOrderedAntenna[
             amp,
             AntennaAmplitude[{A, 2, 0}],
             profile["NumFinalParticles"],
@@ -200,7 +200,7 @@ BuildTreeRouteData[key_, options_Association] :=
             "Diagnostics" -> diagnostics
           |>
         ,
-        "SectorSymmetrizedInterference",
+        "SectorSymmetrisedInterference",
           split = SplitAmplitudeBySectors[amp, profile];
           sectors = profile["ProductionSectors"];
           sectorInterference =

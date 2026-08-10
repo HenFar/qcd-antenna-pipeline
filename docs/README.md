@@ -14,4 +14,4 @@ design and maintenance.
 | see how the former README was redistributed | [Migration ledger](migration-status.md) |
 
 The repository-level [README](../README.md) gives a short introduction.
-[README_old.md](../README_old.md) is archived material.
+[dev/README_old.md](../dev/README_old.md) is archived development material.

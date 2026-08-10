@@ -115,7 +115,7 @@ ExtractLoopAntennaComponents[interference_, profile_Association, context_Associa
           <|"Components" -> components, "Diagnostics" -> diagnostics,
              "NormalizedInterference" -> antenna|>
         ,
-        "LoopColorCoefficients",
+        "LoopColourCoefficients",
           colorCanonicalAntenna =
             antenna //
             Together //

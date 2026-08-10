@@ -78,9 +78,11 @@ is displayed or returned. `MasterCombinationView["RawExpression"]` and the
 backend `RawLiteRedCombination` retain LiteRed's original symbols for exact
 runtime provenance.
 
-For massive `A30`, a dotted runtime master to literature numerator-master
-relation remains provisional. A matching final expression does not turn that
-bridge into a derived basis relation.
+For massive `A30`, the paper numerator master is reduced explicitly into the
+MX30 basis and the common cut conversion is derived as
+`I_paper = -j_MX30/4`. The runtime rules therefore substitute both MX30
+masters directly; the raw master-combination view remains available for
+provenance.
 
 ## Current intermediate-stage interface
 

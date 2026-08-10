@@ -23,7 +23,7 @@ A4SGamma[] :=
 A4LoopDefinition =
   HoldForm[
     Integrate[
-      1 / (k^2 (k - p1 - p2)^2 (k - l)^2 l^2 (l - p1)^2 (l - p1 - p2)^2),
+      1 / (k^2 l^2 (k - p1 - p2)^2 (k - l - p1)^2),
       ddk ddl / (2 Pi)^(2 d)
     ]
   ];

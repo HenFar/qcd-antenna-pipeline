@@ -59,9 +59,9 @@ record. `src/routes/build_workflows.wl` owns physical orchestration.
 The `Production` profile field selects the construction story:
 
 - `SelfInterference`: build amplitude, form self-interference, extract;
-- `ColorOrderedAntenna`: use the colour-ordered reconstruction layer;
+- `ColourOrderedAntenna`: use the colour-ordered reconstruction layer;
 - `SectorSelfInterference`: construct and interfere route-relevant sectors;
-- `SectorSymmetrizedInterference`: combine a sector decomposition through its
+- `SectorSymmetrisedInterference`: combine a sector decomposition through its
   required symmetrised interference.
 
 Extraction is profile-driven too: it depends on metadata such as `Extraction`,

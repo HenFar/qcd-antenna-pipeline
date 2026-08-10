@@ -27,7 +27,7 @@ workerCacheRoot = FileNameJoin[{$TemporaryDirectory,
 ClearAll[WorkerStateSnapshot, WorkerResultSignature, WorkerRun, WorkerCall];
 
 WorkerStateSnapshot[] :=
-  Module[{momenta, scalarProducts, globals, liteRedBases},
+  Module[{momenta, scalarProducts, globals, liteRedBases, resolvedPublicA},
     momenta = {k1, k2, k3, k4};
     scalarProducts = Association @ Flatten@Table[
       ToString[{momenta[[i]], momenta[[j]]}, InputForm] ->
@@ -49,9 +49,15 @@ WorkerStateSnapshot[] :=
         InputForm],
       "NotLoaded"
     ];
+    (* Resolve A at runtime rather than relying on the symbol parsed when this
+       script was loaded.  This recreates the context-path condition that once
+       made A22 reject an A symbol after LiteRed had been loaded. *)
+    resolvedPublicA = ToExpression["A"];
     <|
+      "CurrentContext" -> $Context,
       "ScalarProducts" -> scalarProducts,
       "ContextPath" -> $ContextPath,
+      "RuntimePublicAContext" -> Context[resolvedPublicA],
       "ManagedOptions" -> <|
         "BuildAntenna" -> ToString[Options[BuildAntenna], InputForm],
         "BuildAntennaObject" -> ToString[Options[BuildAntennaObject], InputForm],
@@ -68,7 +74,7 @@ WorkerStateSnapshot[] :=
 
 WorkerResultSignature[result_] :=
   Module[{pointRules, pointValue, recordQ, master, publicResult, diagnostics,
-     targetAgreement},
+     targetAgreement, masterAvailableQ, contractSatisfiedQ},
     pointRules = {q2 -> 17/5, s12 -> 7/5, s13 -> 11/5, s14 -> 13/5,
       s23 -> 19/5, s24 -> 23/5, s34 -> 29/5, SUNN -> 3,
       Nf -> 5, FeynCalc`Epsilon -> 1/17, Epsilon -> 1/17};
@@ -95,6 +101,12 @@ WorkerResultSignature[result_] :=
       "ExactMatchQ", Lookup[Lookup[diagnostics, "PaperDiagnostics", <||>],
         "A40ExactMatchQ", Missing["NotAvailable"]]];
     If[MissingQ[targetAgreement], targetAgreement = "NotAvailable"];
+    masterAvailableQ = !MissingQ[master] && master =!= $Failed;
+    contractSatisfiedQ =
+      If[recordQ,
+        masterAvailableQ && publicResult =!= $Failed,
+        publicResult =!= $Failed
+      ];
     <|
       "InputFormHash" -> Hash[ToString[publicResult, InputForm], "SHA256"],
       "FixedPhysicalPoint" -> pointValue,
@@ -102,6 +114,8 @@ WorkerResultSignature[result_] :=
       "RunRecordQ" -> recordQ,
       "OpenMasterCombinationHash" -> If[MissingQ[master], "NotAvailable",
         Hash[ToString[master, InputForm], "SHA256"]],
+      "MasterCombinationAvailableQ" -> masterAvailableQ,
+      "ContractSatisfiedQ" -> contractSatisfiedQ,
       "FailedQ" -> TrueQ[result === $Failed],
       "TimedOutQ" -> TrueQ[result === $TimedOut]
     |>
@@ -121,7 +135,7 @@ WorkerRun[label_String, expr_] :=
   ];
 
 WorkerCall["A30Integrated"] :=
-  BuildAndIntegrateAntenna[A, 3, 0, ExpansionOrder -> 0,
+  BuildAndIntegrateAntenna[A, 3, 0,
     ReturnDiagnostics -> True,
     UseStoredResults -> False, StoreResults -> False,
     ResultsCacheRoot -> workerCacheRoot];
@@ -137,13 +151,13 @@ WorkerCall["A40Build"] :=
     ResultsCacheRoot -> workerCacheRoot];
 
 WorkerCall["A21Integrated"] :=
-  BuildAndIntegrateAntenna[A, 2, 1, ExpansionOrder -> 0,
+  BuildAndIntegrateAntenna[A, 2, 1,
     ReturnDiagnostics -> True,
     UseStoredResults -> False, StoreResults -> False,
     ResultsCacheRoot -> workerCacheRoot];
 
 WorkerCall["A31Integrated"] :=
-  BuildAndIntegrateAntenna[A, 3, 1, ExpansionOrder -> -2,
+  BuildAndIntegrateAntenna[A, 3, 1,
     ReturnDiagnostics -> True,
     UseStoredResults -> False, StoreResults -> False,
     ResultsCacheRoot -> workerCacheRoot];
@@ -155,7 +169,7 @@ WorkerCall["C40MasterRecord"] :=
     ResultsCacheRoot -> workerCacheRoot];
 
 WorkerCall["A22MasterRecord"] :=
-  BuildAndIntegrateAntenna[A, 2, 2,
+  BuildAndIntegrateAntenna[ToExpression["A"], 2, 2,
     ReturnRecord -> True,
     UseStoredResults -> False, StoreResults -> False,
     ResultsCacheRoot -> workerCacheRoot];

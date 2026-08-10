@@ -55,9 +55,9 @@ route profiles/stories, and the effective build/integration/one-shot defaults.
 
 `AntennaRouteProfileReport[A, 3, 0]["Verification"]` additionally
 returns the release-verification ledger for that route: release identity, last
-verification date, evidence scope, and qualifications such as the experimental
-massive A30 branch. This metadata records evidence; it never promotes a cached
-result or a provisional bridge into a supported physics claim.
+verification date, evidence scope, and qualifications such as the beta massive
+A30 extension. This metadata records evidence; it never promotes a cached
+result into a supported physics claim.
 
 ## Package-wide defaults
 

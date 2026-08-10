@@ -16,14 +16,16 @@ Internal`WithLocalSettings[
   second = BuildAntenna[A, 2, 0,
     UseStoredResults -> True, StoreResults -> False,
     ResultsCacheRoot -> cacheRoot, ReturnDiagnostics -> True];
-  <|"Regression" -> "BuildStoredResultContract",
+  report = <|"Regression" -> "BuildStoredResultContract",
     "Checks" -> <|
       "FirstResultStored" -> !TrueQ[Lookup[first[[2]], "StoredResultCache",
         <||>]["LoadedFromStoredResults"]],
       "SecondCallLoadedStoredResult" -> TrueQ[Lookup[second[[2]],
         "StoredResultCache", <||>]["LoadedFromStoredResults"]],
       "ResultsMatch" -> first[[1]] === second[[1]]
-    |>|>,
+    |>|>;
+  Print[report];
+  report,
   If[DirectoryQ[cacheRoot], DeleteDirectory[cacheRoot,
     DeleteContents -> True]]
 ]

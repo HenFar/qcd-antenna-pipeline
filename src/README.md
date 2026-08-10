@@ -1,6 +1,6 @@
 `src/` is the canonical runtime source tree for the package. This directory is
 the release-owned implementation of the public API loaded by
-[AntennaPipeline.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/AntennaPipeline.wl).
+[AntennaPipeline.wl](../AntennaPipeline.wl).
 
 The architectural goal of `src/` is simple:
 
@@ -28,9 +28,9 @@ The runtime under `src/` is release-complete for the massless package target:
 - `BuildAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO]`
 - `BuildAndIntegrateAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO, ...]`
 
-The runtime also contains two experimental branches:
+The runtime also contains a beta extension and an experimental branch:
 
-- massive `A30`
+- massive `A30` (beta)
 - `D30`
 
 Those branches are kept inside `src/` because they are genuine runtime code,
@@ -175,7 +175,7 @@ not fork the implementation story.
 ### `BuildAllAntennae[...]` and `BuildAndIntegrateAllAntennae[...]`
 
 These are convenience wrappers defined in
-[interface/build_all_antennae.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/interface/build_all_antennae.wl).
+[interface/build_all_antennae.wl](interface/build_all_antennae.wl).
 They enumerate the current SMQCD release-owned antenna list through `LO`,
 `NLO`, or `NNLO` and delegate to `BuildAntenna[...]` or
 `BuildAndIntegrateAntenna[...]` for each item.
@@ -213,17 +213,17 @@ integrand or how `A22` is stitched from multiple physical sources.
 
 ### `core/`
 
-- [core/setup.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/core/setup.wl)
+- [core/setup.wl](core/setup.wl)
   initializes the shared runtime environment
-- [core/kinematics_and_utilities.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/core/kinematics_and_utilities.wl)
+- [core/kinematics_and_utilities.wl](core/kinematics_and_utilities.wl)
   defines invariant and simplification helpers
-- [core/profiles.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/core/profiles.wl)
+- [core/profiles.wl](core/profiles.wl)
   is the physics-facing routing table
-- [core/result_cache.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/core/result_cache.wl)
+- [core/result_cache.wl](core/result_cache.wl)
   owns stored-result policy and reconstruction
-- [core/diagnostics.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/core/diagnostics.wl)
+- [core/diagnostics.wl](core/diagnostics.wl)
   centralizes validation and comparison helpers
-- [core/d30_effective_model.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/core/d30_effective_model.wl)
+- [core/d30_effective_model.wl](core/d30_effective_model.wl)
   contains the specialized D30 source-model machinery
 
 ### `engines/`
@@ -241,32 +241,33 @@ operations.
 
 ### `routes/`
 
-- [routes/build_workflows.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/routes/build_workflows.wl)
+- [routes/build_workflows.wl](routes/build_workflows.wl)
   owns the build-side family workflows
-- [routes/integration_workflows.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/routes/integration_workflows.wl)
+- [routes/integration_workflows.wl](routes/integration_workflows.wl)
   owns the integration-side workflow selection
-- [routes/route_catalog.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/routes/route_catalog.wl)
+- [routes/route_catalog.wl](routes/route_catalog.wl)
   stores route descriptions attached to diagnostics/records
 - the `massive_a30_*.wl` files isolate the massive provenance-aware runtime
   branch
 
 ### `interface/`
 
-- [interface/build_router.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/interface/build_router.wl)
+- [interface/build_router.wl](interface/build_router.wl)
   exposes the build-side public API
-- [interface/integration_router.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/interface/integration_router.wl)
+- [interface/integration_router.wl](interface/integration_router.wl)
   exposes the integration-side public API
-- [interface/rratio_driver.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/interface/rratio_driver.wl)
+- [interface/rratio_driver.wl](interface/rratio_driver.wl)
   builds the massless `SMQCD` NNLO `R`-ratio from the validated public routes
-- [interface/paper_targets.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/src/interface/paper_targets.wl)
+- [interface/paper_targets.wl](interface/paper_targets.wl)
   stores comparison targets used by diagnostics
 
 ## Special Runtime Branches
 
-### Massive A30
+### Massive A30 (beta)
 
 The massive `A30` runtime branch is real code and therefore lives in `src/`,
-not in `dev/`. But it is still experimental at integration level.
+not in `dev/`. It is a beta route with a derived MX30 master closure, qualified
+through `ExpansionOrder -> 2`; it is not part of the stable massless surface.
 
 Its split files exist for a reason:
 
@@ -275,11 +276,10 @@ Its split files exist for a reason:
 - `massive_a30_reconstruction.wl`
   rebuilds the unintegrated antenna through the package chain
 - `massive_a30_integrated.wl`
-  records the current integrated bibliography bridge and the open master-basis
-  investigation
+  records the integrated provenance layer and derived MX30 master-basis closure
 
-The design reason is honesty. The package should not pretend the integrated
-massive branch is closed when it is not.
+The design reason is traceability: the package retains the derivation chain
+while exposing the closed beta result through the public route.
 
 ### D30
 
@@ -313,7 +313,7 @@ without rerunning heavy routes.
 
 ## Loader Policy
 
-[AntennaPipeline.wl](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/AntennaPipeline.wl)
+[AntennaPipeline.wl](../AntennaPipeline.wl)
 is the only canonical runtime loader. It loads only from `src/`.
 
 Any archival compatibility tree now belongs under `dev/` as provenance, not as

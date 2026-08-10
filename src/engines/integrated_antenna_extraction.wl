@@ -89,9 +89,9 @@ A22TTermResiduals::usage =
 A22IntegratedResiduals::usage =
   "A22IntegratedResiduals[result, ...] computes diagnostic residuals for final integrated A22 antennae.";
 
-Options[IntegratedAntennaTTerms] = {ExpansionOrder -> 0, Component -> All};
+Options[IntegratedAntennaTTerms] = {ExpansionOrder -> 2, Component -> All};
 
-Options[ExtractIntegratedAntenna] = {ExpansionOrder -> 0};
+Options[ExtractIntegratedAntenna] = {ExpansionOrder -> 2, Component -> All};
 
 (* A31PaperConventionFactor[]
    ==========================
@@ -205,6 +205,32 @@ IntegratedAntennaTTerms[{a_Symbol /; SymbolName[a] === "A", 3, 1}, integratedRaw
     IntegratedAntennaSeries[#, order]& /@ tTerms
   ];
 
+(* A31 scalar route: the raw colour coefficients can be reduced independently.
+   Apply exactly the counterterm belonging to the requested coefficient before
+   returning its one-component T term. *)
+IntegratedAntennaTTerms[{a_Symbol /; SymbolName[a] === "A", 3, 1}, integratedRaw_, OptionsPattern[]] :=
+  Module[{eps, order, dependencyOrder, integratedA30, rawPaper, component},
+    eps = FeynCalc`Epsilon;
+    order = OptionValue["ExpansionOrder"];
+    component = CanonicalAntennaComponentName[OptionValue["Component"]];
+    dependencyOrder = IntegratedAntennaDependencyExpansionOrder[order];
+    integratedA30 = IntegratedLowerAntenna[{a, 3, 0}, dependencyOrder];
+    rawPaper = A31PaperConventionFactor[] integratedRaw;
+    Switch[component,
+      "Leading",
+        IntegratedAntennaSeries[rawPaper - 11/(6 eps) integratedA30, order]
+      ,
+      "Subleading",
+        IntegratedAntennaSeries[rawPaper, order]
+      ,
+      "Nf",
+        IntegratedAntennaSeries[rawPaper - (-2/(6 eps)) integratedA30, order]
+      ,
+      _,
+        integratedRaw
+    ]
+  ];
+
 (* A22 TwoLoopTree: {Leading, Subleading, Nf} list from a combined run.
    UV coupling renormalization: T_ren = T_bare - (beta0/eps) * A21, decomposed by colour.
    Leading gets -(11/6)/eps, Subleading gets nothing, Nf gets +(1/3)/eps. *)
@@ -279,6 +305,33 @@ ExtractIntegratedAntenna[{a_Symbol /; SymbolName[a] === "A", 3, 1}, tTerms_List,
     IntegratedAntennaSeries[#, order]& /@ finalAntennae
   ];
 
+(* A31 scalar route: mirror the appropriate slot of the combined extraction.
+   The common A21 A30 product is therefore retained without reducing the
+   unrelated raw colour components. *)
+ExtractIntegratedAntenna[{a_Symbol /; SymbolName[a] === "A", 3, 1}, tTerm_, OptionsPattern[]] :=
+  Module[{order, dependencyOrder, integratedA21, integratedA30, product,
+     component},
+    order = OptionValue["ExpansionOrder"];
+    component = CanonicalAntennaComponentName[OptionValue["Component"]];
+    dependencyOrder = IntegratedAntennaDependencyExpansionOrder[order];
+    integratedA21 = IntegratedLowerAntenna[{a, 2, 1}, dependencyOrder];
+    integratedA30 = IntegratedLowerAntenna[{a, 3, 0}, dependencyOrder];
+    product = IntegratedAntennaSeries[integratedA21 integratedA30, order];
+    Switch[component,
+      "Leading",
+        IntegratedAntennaSeries[tTerm - product, order]
+      ,
+      "Subleading",
+        IntegratedAntennaSeries[-(tTerm + product), order]
+      ,
+      "Nf",
+        IntegratedAntennaSeries[tTerm, order]
+      ,
+      _,
+        tTerm
+    ]
+  ];
+
 (* For A22 the matched colour-bracket objects are already the final public
    integrated antenna components in this project:
    {A22, tildeA22, hatA22} come from the tree/two-loop T object, while
@@ -309,9 +362,9 @@ A31TTermTargets[order_Integer] :=
       1/eps^4 + 3/eps^3 + (93/8 - 4 Pi^2/3)/eps^2 +
         (79/2 - 15 Pi^2/4 - 53 Zeta[3]/3)/eps +
         (1069/8 - 697 Pi^2/48 - 91 Zeta[3]/2 + 19 Pi^4/72),
-      (* The arXiv v2 TeX prints 19/2 here.  The closure-normalized value
-         19/12 is required by the paper's own NNLO pole cancellation and is
-         retained as the package reference convention. *)
+      (* The older arXiv v2 TeX printed 19/2 here. The corrected arXiv v3
+         source, Eq. (5.20), has 19/12, matching the public convention and
+         the paper's NNLO pole cancellation. *)
       1/(3 eps^3) + 1/(2 eps^2) +
         (19/12 - 7 Pi^2/36)/eps +
         (109/24 - 7 Pi^2/24 - 25 Zeta[3]/9)

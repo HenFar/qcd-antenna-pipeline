@@ -2,7 +2,7 @@
 
 [Documentation home](README.md) · [Manual](manual/index.md) · [Developer documentation](development/README.md)
 
-`README_old.md` is preserved as the source archive while the documentation is
+`dev/README_old.md` is preserved as the source archive while the documentation is
 being reorganised. This ledger records where each substantive section belongs;
 it prevents a shorter README from becoming an accidental loss of technical or
 scientific information. A migrated entry means its core content has a new
@@ -25,7 +25,7 @@ rewritten into the public manual.
 | Shared terminology | [manual/glossary.md](manual/glossary.md) | migrated |
 | Narrative, runnable walkthroughs | `docs/tutorials/` and `examples/` | authored separately |
 
-During the transition, consult [README_old.md](../README_old.md) for archival
+During the transition, consult [dev/README_old.md](../dev/README_old.md) for archival
 detail or historical implementation notes that do not belong in the stable
 manual. A document is removed from that archive only after its destination has
 been reviewed.

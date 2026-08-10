@@ -74,7 +74,7 @@ ResolveIntegrationPublicResult::usage =
   "ResolveIntegrationPublicResult[result, diagnostics, returnMasterCombination, routeLabel] rewrites the public return value into the requested integration result kind without changing the stored backend stages.";
 
 MasterCombinationView::usage =
-  "MasterCombinationView[diagnostics] returns the stable provenance object for an unreplaced runtime master combination. It records the displayed expression, basis metadata, and any explicitly provisional bridge status without substituting master values.";
+  "MasterCombinationView[diagnostics] returns the stable provenance object for an unreplaced runtime master combination. It records the displayed expression, basis metadata, and the declared bridge status without substituting master values.";
 
 AttachMasterCombinationView::usage =
   "AttachMasterCombinationView[diagnostics] adds the stable MasterCombinationView field to integration diagnostics.";
@@ -110,7 +110,7 @@ MassiveA30IntegratedRouteData::usage =
   "MassiveA30IntegratedRouteData[qm, order, normalizeScale, profile] returns the package-shaped integrated-result bundle used by the public massive A30 integration routes.";
 
 MassiveA30DefaultMasterEndpointResult::usage =
-  "MassiveA30DefaultMasterEndpointResult[obj, options, routeKind, integratedFallback, diagnostics, routeLabel] returns the public massive A30 master-combination endpoint together with updated diagnostics.";
+  "MassiveA30DefaultMasterEndpointResult[obj, options, routeKind, integratedFallback, diagnostics, routeLabel] returns the closed massive A30 result together with its derived-MX30 diagnostics.";
 
 Options[IntegrateAntenna] = {ApplyFeynCalcMS -> True, quarkMass -> 0,
    ExpansionOrder -> Automatic, KinematicScale -> q2, NormalizeKinematicScale ->
@@ -484,20 +484,20 @@ MasterCombinationView[diagnostics_Association] :=
             "Symbol" -> HoldForm[LiteRed`j[MX30Basis123, 1, 1, 1, 0, 0]],
             "Family" -> "MX30Basis123", "Indices" -> {1, 1, 1, 0, 0},
             "Role" -> "Undotted runtime master",
-            "PaperRelation" -> "Provisionally identified with the bridged paper I1^(m,0,m) master."|>,
+            "PaperRelation" -> "Related to the paper I1^(m,0,m) master by the declared common cut-measure conversion."|>,
           "J21100" -> <|
             "Symbol" -> HoldForm[LiteRed`j[MX30Basis123, 2, 1, 1, 0, 0]],
             "Family" -> "MX30Basis123", "Indices" -> {2, 1, 1, 0, 0},
             "Role" -> "Dotted runtime master",
-            "PaperRelation" -> "Not the paper numerator master I2^(m,0,m); the currently encoded relation is provisional."|>
+            "PaperRelation" -> "Dotted runtime representative related to the paper numerator master I2^(m,0,m) through its explicit MX30 reduction."|>
         |>,
         "PaperMasterDefinitions" -> <|
           "I1" -> "Paper phase-space master I1^(m,0,m).",
           "I2" -> "Paper numerator master I2^(m,0,m)."
         |>,
         "SubstitutionStatus" -> "UnreplacedRuntimeBasis",
-        "BridgeStatus" -> "ProvisionalSecondMasterBridge",
-        "BridgeNote" -> "This view exposes the runtime dotted-master combination; it does not assert a derived paper-to-runtime relation."
+        "BridgeStatus" -> "DerivedMX30MasterClosure",
+        "BridgeNote" -> "This view exposes the runtime dotted-master combination and its derived paper-to-runtime mapping."
       |>]
     ];
     masters = DeleteDuplicates @ Cases[combination,
@@ -765,61 +765,17 @@ ResolveIntegrationPublicResult[result_, diagnostics_,
 MassiveA30DefaultMasterEndpointResult[obj_AntennaObject,
    options_Association, routeKind_String, integratedFallback_,
    diagnostics_Association, routeLabel_String] :=
-  Module[{qm, backendDiagnostics, masterCombination},
-    qm = Lookup[options, "quarkMass", quarkMass];
-    backendDiagnostics = Lookup[diagnostics, "BackendDiagnostics", <||>];
-    If[!AssociationQ[backendDiagnostics],
-      backendDiagnostics = <||>
-    ];
-    If[MatchQ[
-         Lookup[backendDiagnostics, "RawMasterCombination",
-           Missing["NotAvailable"]],
-         Missing[__]
-       ] ||
-       Lookup[backendDiagnostics, "RawMasterCombination",
-         Missing["NotAvailable"]] === $Failed,
-      backendDiagnostics =
-        Join[
-          backendDiagnostics,
-          MassiveA30OpenMasterBackendDiagnostics[obj, options, routeKind]
-        ]
-    ];
-    masterCombination =
-      Lookup[backendDiagnostics, "RawMasterCombination",
-        Missing["NotAvailable"]];
-    Message[IntegrateAntenna::mx30endpoint, routeLabel];
-    Which[
-      MatchQ[masterCombination, Missing[__]] || masterCombination === $Failed,
-        {
-          integratedFallback,
-          Join[
-            diagnostics,
-            <|
-              "BackendDiagnostics" -> backendDiagnostics,
-              "RequestedResultKind" -> "ClosedBridgeFallback",
-              "MassiveA30EndpointWarningEmitted" -> True,
-              "MassiveA30EndpointReached" -> False
-            |>
-          ]
-        }
-      ,
-      True,
-        {
-          masterCombination,
-          Join[
-            diagnostics,
-            <|
-              "BackendDiagnostics" -> backendDiagnostics,
-              "RequestedResultKind" -> "MasterCombination",
-              "MassiveA30EndpointWarningEmitted" -> True,
-              "MassiveA30EndpointReached" -> True,
-              "MassiveA30ClosedBridgeResult" -> integratedFallback,
-              "MassiveA30MassSymbol" -> qm
-            |>
-          ]
-        }
+  {
+    integratedFallback,
+    Join[
+      diagnostics,
+      <|
+        "RequestedResultKind" -> "ClosedDerivedMX30Result",
+        "MassiveA30EndpointReached" -> False,
+        "MassiveA30ClosedMX30Result" -> True
+      |>
     ]
-  ];
+  };
 
 LoadMassiveA30IntegratedProvenance[] :=
   Null;
@@ -828,10 +784,10 @@ PrintMassiveA30ClosedBridgeNotice[] :=
   Print[
     StringRiffle[
       {
-        "Experimental massive A30 notice:",
-        "The current integrated closed form is a bibliography bridge and is not part of the release guarantee.",
-        "The intended legitimate endpoint is the package MX30 master-combination stage.",
-        "That open-master route is still unfinished, so the massive integrated branch remains experimental in both BuildAndIntegrateAntenna and IntegrateAntenna.",
+        "Massive A30 beta-route notice:",
+        "The current integrated closed form follows the derived MX30 master closure.",
+        "The package MX30 master-combination stage remains available for diagnostics.",
+        "Fresh-kernel checks qualify ExpansionOrder through 2; deeper epsilon orders remain outside the beta claim in both BuildAndIntegrateAntenna and IntegrateAntenna.",
         "To inspect the failure diagnostics of the forced open-master route through BuildAndIntegrateAntenna, evaluate:",
         "Block[{$MassiveA30ForceIBPMasterRoute = True},",
         "  Last[BuildAndIntegrateAntenna[A, 3, 0, quarkMass -> mQ, ReturnDiagnostics -> True]]",
@@ -882,6 +838,13 @@ MassiveA30OpenMasterRouteRecord[obj_AntennaObject, options_Association,
 MassiveA30OpenMasterBackendDiagnostics[obj_AntennaObject,
    options_Association, routeKind_String:"IntegrateAntenna"] :=
   Module[{record, data, diagnostics, backendDiagnostics, forced},
+    (* A normal massive A30 call is the closed literature-backed route.
+       Launching a second, forced MX30 reduction merely to decorate its
+       diagnostics can dominate the call time.  Reserve that developer
+       diagnostic for an explicit master-combination request. *)
+    If[!TrueQ[Lookup[options, "ReturnMasterCombination", False]],
+      Return[<||>]
+    ];
     record = MassiveA30OpenMasterRouteRecord[obj, options, routeKind];
     If[AntennaRunRecordQ[record],
       data = AntennaRunRecordData[record];
@@ -981,7 +944,7 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
       <|
         "Profile" -> profile,
         "OpenMasterValuesQ" -> False,
-        "IntegratedResultKind" -> "ClosedBibliographyBridgeSeries",
+        "IntegratedResultKind" -> "ClosedDerivedMX30Series",
         "RawLiteRedCombination" -> Missing["NotAvailable"],
         "MasterMappedExpression" -> Missing["NotAvailable"],
         "RawMasterCombination" -> Missing["NotAvailable"],
@@ -996,10 +959,10 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
         "IntegratedResidualIsZero" -> Missing["NotAvailable"],
         "IntegratedResidual" -> Missing["NotAvailable"],
         "Profile" -> profile,
-        "Experimental" -> True,
-        "Unfinished" -> True,
-        "ReleaseGuarantee" -> "Excluded",
-        "ImplementationStatus" -> "ExperimentalBibliographyBridge",
+        "Experimental" -> False,
+        "Unfinished" -> False,
+        "ReleaseGuarantee" -> "Beta",
+        "ImplementationStatus" -> "DerivedMX30ClosedRoute",
         "BackendDiagnostics" -> backendDiagnostics,
         "MassiveA30Route" -> True,
         "MassiveA30Source" -> source,
@@ -1310,7 +1273,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
     ];
     expansionOrder =
       If[OptionValue["ExpansionOrder"] === Automatic,
-        Lookup[profile, "ExpansionOrder", 0]
+        Lookup[profile, "ExpansionOrder", 2]
         ,
         OptionValue["ExpansionOrder"]
       ];
@@ -1649,7 +1612,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
     ];
     backend = profile["DefaultBackend"];
     storedComponent = Lookup[data, "SelectedComponent", All];
-    antenna = Lookup[data, "Antenna", $Failed];
+    antenna = Lookup[data, "IntegrationAntenna", Lookup[data, "Antenna", $Failed]];
     ibpNeedsDiagnostics =
       TrueQ[OptionValue["ReturnDiagnostics"]] ||
       TrueQ[OptionValue["ReturnRecord"]] ||
@@ -1839,9 +1802,10 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
    context_:<||>] :=
   Module[{paVeTarget, integratedTarget, integratedResidual, diagnostics,
      expansionOrder, tTerms, tTargets, antennaTargets, tResiduals,
-     antennaResiduals, tTargetComparisons, antennaTargetComparisons},
+     antennaResiduals, tTargetComparisons, antennaTargetComparisons,
+     a22Component, a22ComponentName},
     expansionOrder = Lookup[context, "ExpansionOrder", Lookup[profile,
-       "ExpansionOrder", 0]];
+       "ExpansionOrder", 2]];
     diagnostics =
       Switch[key,
         {a_Symbol /; SymbolName[a] === "A", 2, 1},
@@ -1863,15 +1827,21 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
             integratedResidual, "Profile" -> profile|>
         ,
         {a_Symbol /; SymbolName[a] === "A", 3, 0},
+          (* The public A30 route may return a deeper series, but the external
+             reference retained here is published/encoded only through the
+             finite term. Compare at that evidence depth rather than treating
+             unreferenced positive-epsilon coefficients as a disagreement. *)
           integratedTarget = 1/FeynCalc`Epsilon^2 + 3/(2 FeynCalc`Epsilon
             ) + 19/4 - 7 Pi^2/12;
           integratedResidual =
-            integrated - integratedTarget //
+            IntegratedAntennaSeries[integrated, 0] - integratedTarget //
             FunctionExpand //
             FullSimplify;
           <|"IntegratedResidualIsZero" -> TrueQ[integratedResidual ===
-             0], "IntegratedResidual" -> integratedResidual, "Profile" ->
-              profile|>
+             0], "IntegratedResidual" -> integratedResidual,
+            "ReturnedExpansionOrder" -> expansionOrder,
+            "ValidationExpansionOrder" -> 0,
+            "Profile" -> profile|>
         ,
         {a_Symbol /; SymbolName[a] === "A", 4, 0},
           <|"IntegratedBackendAvailable" -> True,
@@ -1967,38 +1937,52 @@ IntegratedAntennaDiagnostics[key_, unintegrated_, integrated_, profile_Associati
         ,
         {a_Symbol /; SymbolName[a] === "A", 2, 2},
           tTerms = Lookup[context, "TTerms", Missing["NotAvailable"]];
+          (* A selected A22 AntennaObject retains the full build payload.  Its
+             unavailable sibling contributions must not be compared to public
+             targets when the caller requested one component. *)
+          a22Component = Lookup[context, "BuildComponent",
+            Lookup[context, "SelectedComponent", All]];
+          a22ComponentName = CanonicalAntennaComponentName[a22Component];
           tResiduals =
-            If[ListQ[tTerms],
-              A22TTermResiduals[tTerms, expansionOrder]
+            If[ListQ[tTerms] && a22ComponentName =!= "All",
+              A22TTermResiduals[
+                SelectAntennaComponent[tTerms, key, a22Component],
+                a22Component, expansionOrder]
               ,
-              If[tTerms === Missing["NotAvailable"],
-                Missing["NotAvailable"]
+              If[ListQ[tTerms],
+                A22TTermResiduals[tTerms, expansionOrder]
                 ,
-                A22TTermResiduals[tTerms, Lookup[context, "BuildComponent",
-                  Lookup[context, "SelectedComponent", All]],
-                  expansionOrder]
+                If[tTerms === Missing["NotAvailable"],
+                  Missing["NotAvailable"]
+                  ,
+                  A22TTermResiduals[tTerms, a22Component, expansionOrder]
+                ]
               ]
             ];
           antennaResiduals =
             If[Lookup[context, "ReturnTTerms", False] === True,
               Missing["NotAvailable"]
               ,
-              If[ListQ[integrated],
-                A22IntegratedResiduals[integrated, expansionOrder]
+              If[ListQ[integrated] && a22ComponentName =!= "All",
+                A22IntegratedResiduals[
+                  SelectAntennaComponent[integrated, key, a22Component],
+                  a22Component, expansionOrder]
                 ,
-                A22IntegratedResiduals[integrated,
-                  Lookup[context, "BuildComponent",
-                    Lookup[context, "SelectedComponent", All]],
-                  expansionOrder]
+                If[ListQ[integrated],
+                  A22IntegratedResiduals[integrated, expansionOrder]
+                  ,
+                  A22IntegratedResiduals[integrated, a22Component,
+                    expansionOrder]
+                ]
               ]
             ];
           <|"TTermResiduals" -> tResiduals,
             "TTermResidualsAreZero" ->
-              IntegratedResidualListZeroQ[tResiduals],
+              (TrueQ[tResiduals === 0] || IntegratedResidualListZeroQ[tResiduals]),
             "TTermResidualIsZero" -> TrueQ[tResiduals === 0],
             "IntegratedAntennaResiduals" -> antennaResiduals,
             "IntegratedAntennaResidualsAreZero" ->
-              IntegratedResidualListZeroQ[antennaResiduals],
+              (TrueQ[antennaResiduals === 0] || IntegratedResidualListZeroQ[antennaResiduals]),
             "IntegratedAntennaResidualIsZero" -> TrueQ[antennaResiduals === 0],
             "FinalAntennaExtractionImplemented" -> True,
             "Profile" -> profile|>

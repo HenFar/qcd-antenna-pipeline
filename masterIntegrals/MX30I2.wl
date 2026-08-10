@@ -27,7 +27,7 @@ MX30I2Source[] :=
     "Context" -> "Integrated massive final-final A30 antenna",
     "GeneratedBasis" -> "MX30Basis123",
     "BackendMaster" -> "j[MX30Basis123, 2, 1, 1, 0, 0]",
-    "Status" -> "ProvisionalRuntimeBridgeDerived"
+    "Status" -> "DerivedRuntimeBridge"
   |>;
 
 MX30I2ExpectedDenominators[] :=
@@ -54,7 +54,7 @@ MX30I2CutDefinition =
   ];
 
 MX30I2PhysicalRole =
-  "The dotted massive runtime master chosen by the current LiteRed basis. It is not the same object as the paper numerator master I2^(m,0,m), so its current closed form must be bridged through the actual package master combination.";
+  "The dotted massive runtime master chosen by the current LiteRed basis. It is not the paper numerator master I2^(m,0,m), but its closed form is derived from the explicit numerator reduction and the common MX30 cut-measure factor.";
 
 MX30I2BackendRelation =
   HoldForm[
@@ -100,7 +100,7 @@ MX30I2IntegratedTargetCheck[] :=
   |>;
 
 MX30I2CandidateStrategy =
-  "Define the current dotted-master candidate by solving the actual package master combination against the bridged integrated literature target after identifying the undotted runtime master with the bridged paper I1^(m,0,m) master.";
+  "Reduce the paper numerator master explicitly in MX30Basis123, then apply the common conversion I_paper = -j_MX30/4 verified independently from the undotted and dotted runtime coefficients.";
 
 MX30I2Report[] :=
   <|

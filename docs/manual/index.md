@@ -28,6 +28,6 @@ reference pages remain the source for exact function and option behaviour.
 
 ## Documentation status
 
-This manual replaces the former monolithic README. [README_old.md](../../README_old.md)
-is preserved as an archive. Where the pages differ, follow this manual and the
+This manual replaces the former monolithic README. [dev/README_old.md](../../dev/README_old.md)
+is preserved as a development archive. Where the pages differ, follow this manual and the
 function reference.

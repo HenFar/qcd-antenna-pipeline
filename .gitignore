@@ -11,5 +11,6 @@ eps
 *.swp
 dev/tmp_src_new_parity_cache/
 THESIS_READINESS_PLAN.md
+evidence/bonn-short-audit-*/
 
 stored_results/rratio/*.wl

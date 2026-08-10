@@ -54,7 +54,7 @@ MX30I1CutDefinition =
   ];
 
 MX30I1PhysicalRole =
-  "The undotted three-cut massive QQbar g phase-space master. This is the package-basis master that matches the literature phase-space master I1^(m,0,m) after the explicit paper-to-package bridge.";
+  "The undotted three-cut massive QQbar g phase-space master. In the declared MX30 cut convention it obeys j[MX30Basis123,1,1,1,0,0] = -4 I1^(m,0,m).";
 
 MX30I1BackendRelation =
   HoldForm[

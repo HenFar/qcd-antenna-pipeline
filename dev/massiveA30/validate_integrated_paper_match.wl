@@ -45,7 +45,7 @@ bridgeEncodedQ =
   TrueQ[bridgeReport["BridgeResidual"] === 0];
 
 runtimeMatchQ =
-  publicRecord["IntegratedResultKind"] === "ClosedBibliographyBridgeSeries" &&
+  publicRecord["IntegratedResultKind"] === "ClosedDerivedMX30Series" &&
   publicRecord["OpenMasterValuesQ"] === False &&
   TrueQ[publicRuntimeResidual === 0];
 basisRelationEncodedQ =

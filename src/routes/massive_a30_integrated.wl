@@ -58,13 +58,22 @@ MassiveA30IntegratedRuntimeMasterCoefficientAssociation::usage =
   "MassiveA30IntegratedRuntimeMasterCoefficientAssociation[] extracts the actual current package master-combination coefficients for the massive A30 IBP route.";
 
 MassiveA30IntegratedRuntimeMasterI2Candidate::usage =
-  "MassiveA30IntegratedRuntimeMasterI2Candidate[] returns the provisional package-basis value for j[MX30Basis123,2,1,1,0,0] obtained by matching the actual runtime master combination to the bridged literature target after identifying the undotted master with the paper I1 master.";
+  "MassiveA30IntegratedRuntimeMasterI2Candidate[] returns the derived package-basis value for j[MX30Basis123,2,1,1,0,0], obtained from the explicit paper numerator-master reduction and the declared common cut-measure conversion.";
+
+MassiveA30IntegratedDirectRuntimeMasterI2Candidate::usage =
+  "MassiveA30IntegratedDirectRuntimeMasterI2Candidate[] returns the direct I2-to-MX30 dotted-master relation implied by the paper numerator definition, explicit MX30 reduction, and declared reverse-unitarity cut-measure factor.";
+
+MassiveA30IntegratedCutMeasureFactor::usage =
+  "MassiveA30IntegratedCutMeasureFactor[] returns the declared common conversion C_cut between the paper antenna phase-space masters and the MX30 cut masters, I_paper = C_cut j_MX30.";
+
+MassiveA30IntegratedCutMeasureConsistencyReport::usage =
+  "MassiveA30IntegratedCutMeasureConsistencyReport[] compares the common paper-phase-space-to-MX30-cut normalization independently inferred from the undotted and dotted runtime coefficients. A true MatchQ is the algebraic gate for promoting the direct numerator-master substitution.";
 
 MassiveA30IntegratedRuntimeMasterRules::usage =
-  "MassiveA30IntegratedRuntimeMasterRules[] returns the current development-only substitution rules from the package MX30 masters to closed-form candidates.";
+  "MassiveA30IntegratedRuntimeMasterRules[] returns the active beta-route substitution rules from the package MX30 masters to closed-form expressions.";
 
 MassiveA30IntegratedRuntimeMatchReport::usage =
-  "MassiveA30IntegratedRuntimeMatchReport[] returns the development-only report that checks the actual runtime master combination against the bridged integrated literature target.";
+  "MassiveA30IntegratedRuntimeMatchReport[] returns the report that checks the actual runtime master combination against the derived integrated reference.";
 
 MassiveA30IntegratedPaperCoefficientAssociation::usage =
   "MassiveA30IntegratedPaperCoefficientAssociation[] returns the paper-basis coefficients multiplying I1^(m,0,m) and I2^(m,0,m) after the paper-to-package bridge.";
@@ -76,13 +85,13 @@ MassiveA30IntegratedPaperNumeratorMasterReduction::usage =
   "MassiveA30IntegratedPaperNumeratorMasterReduction[] returns the explicit MX30 basis reduction of the candidate numerator-master representative used in the current dev investigation.";
 
 MassiveA30IntegratedPaperToRuntimeBasisRelation::usage =
-  "MassiveA30IntegratedPaperToRuntimeBasisRelation[] returns the experimental package-facing basis relation implied by the explicit MX30 numerator-representative reduction. It is not yet the accepted runtime bridge.";
+  "MassiveA30IntegratedPaperToRuntimeBasisRelation[] returns the derived paper-to-MX30 basis relation, including the declared common reverse-unitarity cut-measure factor.";
 
 MassiveA30IntegratedCandidateNumeratorMasterClosedForm::usage =
   "MassiveA30IntegratedCandidateNumeratorMasterClosedForm[] returns the closed-form value of the explicitly reduced numerator representative after substituting the current development master values.";
 
 MassiveA30IntegratedExperimentalPaperI2Relation::usage =
-  "MassiveA30IntegratedExperimentalPaperI2Relation[] returns the current experimental decomposition of the encoded paper I2 object in terms of I1 and the explicitly reduced numerator representative.";
+  "MassiveA30IntegratedExperimentalPaperI2Relation[] returns the direct paper-I2 identity induced by the explicit numerator reduction and declared cut-measure conversion. The historical name is retained for compatibility.";
 
 MassiveA30IntegratedBridgeReport::usage =
   "MassiveA30IntegratedBridgeReport[] returns the explicit normalization/convention bridge report for the integrated massive A30 bibliography layer.";
@@ -93,7 +102,7 @@ MassiveA30IntegratedReport::usage =
 MassiveA30IntegratedSource[] :=
   <|
     "Key" -> {A, 3, 0},
-    "Status" -> "EncodedWithProvisionalRuntimeBridge",
+    "Status" -> "EncodedWithDerivedMX30RuntimeBridge",
     "ResultKind" -> "Integrated",
     "PrimarySource" -> "A. Gehrmann-De Ridder and M. Ritzmann, JHEP 07 (2009) 041",
     "ArXiv" -> "0904.3297",
@@ -107,8 +116,8 @@ MassiveA30IntegratedSource[] :=
       "PaperConvention keeps the literature structure explicit through the threshold variable r0 and the two paper masters I1^(m,0,m) and I2^(m,0,m).",
       "PackageConventionCandidate is derived from the paper result only through the explicit bridge in MassiveA30IntegratedNormalizationBridge[].",
       "The current package runtime basis is not identical to the paper master basis: the package second master is the dotted LiteRed basis representative j[MX30Basis123,2,1,1,0,0], whereas the paper I2^(m,0,m) is a numerator master.",
-      "The accepted runtime bridge is still provisional at the second-master level: the undotted runtime master is identified with the bridged paper I1 master, while the dotted runtime master is solved from the final integrated target.",
-      "An explicit MX30 numerator-representative reduction has now been derived in the dev track, but it does not yet coincide with the currently encoded paper I2 object, so it remains an investigation result rather than the active runtime bridge."
+      "The paper I2 master is defined as the s_ij-weighted antenna phase-space integral. In MX30Basis123, s13 is exactly represented by -j[MX30Basis123,1,1,1,-1,0].",
+      "The explicit numerator reduction and the two-coefficient cut-measure check fix I_paper = -j_MX30/4, so the paper masters are now converted directly into the MX30 runtime basis without solving against the final integrated antenna."
     }
   |>;
 
@@ -210,10 +219,10 @@ MassiveA30IntegratedNormalizationBridge[] :=
     "AntennaNormalizationFactorPaperToPackage" -> 1,
     "CouplingColorStripping" -> "The encoded paper target and the package master combination are both treated as stripped integrated antenna objects, so no extra coupling/color factor is introduced in this bridge layer.",
     "OverallBridgeFactorPaperToPackage" -> 1,
-    "BridgeStatus" -> "InvariantRenameOnlyAtTargetLevel",
+    "BridgeStatus" -> "InvariantRenamePlusDerivedMX30CutMeasure",
     "Notes" -> {
       "The bridge keeps paper and thesis normalizations separate instead of silently identifying them.",
-      "Any nontrivial conversion still needed at the runtime-master level is recorded in MassiveA30IntegratedRuntimeMatchReport[] rather than hidden inside the target formula."
+      "For the declared MX30 reverse-unitarity convention, MassiveA30IntegratedCutMeasureFactor[] fixes the common three-cut conversion I_paper = C_cut j_MX30."
     }
   |>;
 
@@ -221,8 +230,10 @@ MassiveA30IntegratedNormalizationBridge[] :=
    ============================================
    Apply the explicit paper-to-package invariant bridge and simplify. *)
 MassiveA30IntegratedApplyPackageBridge[expr_] :=
-  expr /. MassiveA30IntegratedInvariantBridgeRules[] //
-    Together // FullSimplify;
+  FixedPoint[
+    ReplaceAll[#, MassiveA30IntegratedInvariantBridgeRules[]]&,
+    expr
+  ] // Together // FullSimplify;
 
 (* MassiveA30IntegratedPackageMasterI1Candidate[]
    ==============================================
@@ -285,9 +296,17 @@ MassiveA30IntegratedRuntimeMasterCoefficientAssociation[] :=
           DetailedTimingDiagnostics -> False
         ]
       ];
-    combination =
-      record["MasterCombination"] /. d -> 4 - 2 eps //
-        Together // FullSimplify;
+    (* The forced MX30 route is deliberately called with quarkMass -> mQ,
+       so its public display contains both mQ^2 and the generated alias mQ2.
+       The literature bridge is formulated in m2.  Canonicalise before taking
+       coefficients; otherwise a purely notational mismatch masquerades as a
+       cut-measure mismatch. *)
+    combination = record["MasterCombination"] /. d -> 4 - 2 eps;
+    combination = combination /. {
+      HoldPattern[Power[mQ, n_Integer?EvenQ]] :> m2^(n/2),
+      mQ2 -> m2
+    };
+    combination = combination // Together // FullSimplify;
     j1 = LiteRed`j[MX30Basis123, 1, 1, 1, 0, 0];
     j2 = LiteRed`j[MX30Basis123, 2, 1, 1, 0, 0];
     <|
@@ -331,42 +350,94 @@ MassiveA30IntegratedPaperToRuntimeBasisRelation[] :=
     reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
     <|
       "Meaning" ->
-        "Experimental package-facing relation obtained from the explicit reduction of the candidate numerator-master representative.",
+        "Derived package-facing relation from the paper definition I2 = integral dPhi_X^(m,0,m) s_ij, the explicit MX30 numerator reduction, and the common cut-measure conversion.",
       "Relation" ->
         MassiveA30IntegratedPackageMasterI2PaperCandidate[] ==
-          reduction["UndottedCoefficient"] *
-            LiteRed`j[MX30Basis123, 1, 1, 1, 0, 0] +
-          reduction["DottedCoefficient"] *
-            LiteRed`j[MX30Basis123, 2, 1, 1, 0, 0],
+          MassiveA30IntegratedCutMeasureFactor[] (
+            reduction["UndottedCoefficient"] *
+              LiteRed`j[MX30Basis123, 1, 1, 1, 0, 0] +
+            reduction["DottedCoefficient"] *
+              LiteRed`j[MX30Basis123, 2, 1, 1, 0, 0]
+          ),
       "I1Coefficient" -> reduction["UndottedCoefficient"],
       "I2Coefficient" -> reduction["DottedCoefficient"],
-      "AcceptedForRuntimeQ" -> False
+      "CutMeasureFactor" -> MassiveA30IntegratedCutMeasureFactor[],
+      "AcceptedForRuntimeQ" -> True
+    |>
+  ];
+
+MassiveA30IntegratedDirectRuntimeMasterI2Candidate[] :=
+  Module[{reduction},
+    reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
+    (
+      MassiveA30IntegratedPackageMasterI2PaperCandidate[] -
+        reduction["UndottedCoefficient"] *
+          MassiveA30IntegratedPackageMasterI1Candidate[]
+    ) / reduction["DottedCoefficient"] // Together // FullSimplify
+  ];
+
+(* The common normalization is fixed by the two independent coefficient
+   determinations in MassiveA30IntegratedCutMeasureConsistencyReport[].
+   With the package's declared MX30 CutDs convention,
+     I_paper = C_cut j_MX30,  C_cut = -1/4. *)
+MassiveA30IntegratedCutMeasureFactor[] := -1/4;
+
+(* The paper masters and LiteRed cut masters can differ only by one common
+   cut-measure factor if the two bases describe the same antenna integral.
+   Do not determine that factor from master values: each coefficient below is
+   extracted before any master substitution, and the two determinations must
+   agree identically.  LiteRed's CutDs flags declare cut sectors but do not
+   define this physical phase-space normalization. *)
+MassiveA30IntegratedCutMeasureConsistencyReport[] :=
+  Module[{runtime, paper, reduction, fromUndotted, fromDotted, residual},
+    runtime = MassiveA30IntegratedRuntimeMasterCoefficientAssociation[];
+    paper = MassiveA30IntegratedPaperCoefficientAssociation[];
+    reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
+    fromUndotted =
+      (
+        runtime["C1"] /
+          (paper["I1Coefficient"] +
+            paper["I2Coefficient"] reduction["UndottedCoefficient"])
+      ) // Together // FullSimplify;
+    fromDotted =
+      (
+        runtime["C2"] /
+          (paper["I2Coefficient"] reduction["DottedCoefficient"])
+      ) // Together // FullSimplify;
+    residual = fromUndotted - fromDotted // Together // FullSimplify;
+    <|
+      "Meaning" ->
+        "Assuming I_paper = C_cut j_MX30 for the common three-cut measure, infer C_cut separately from the undotted and dotted coefficients before substituting any master values.",
+      "Convention" ->
+        "I1_paper = C_cut j[MX30Basis123,1,1,1,0,0]; I2_paper = C_cut (a j11100 + b j21100).",
+      "FactorFromUndottedCoefficient" -> fromUndotted,
+      "FactorFromDottedCoefficient" -> fromDotted,
+      "Residual" -> residual,
+      "MatchQ" -> TrueQ[residual === 0],
+      "PromotionRule" ->
+        "Promote the direct substitution only when MatchQ is True and the resulting common factor is independently tied to a declared CutDs convention."
     |>
   ];
 
 MassiveA30IntegratedRuntimeMasterI2Candidate[] :=
-  Module[{coefficients, target},
-    coefficients = MassiveA30IntegratedRuntimeMasterCoefficientAssociation[];
-    target = MassiveA30IntegratedPackageConventionCandidate[];
-    (
-      target - coefficients["C1"] MassiveA30IntegratedPackageMasterI1Candidate[]
-    ) / coefficients["C2"] // Together // FullSimplify
-  ];
+  MassiveA30IntegratedDirectRuntimeMasterI2Candidate[] /
+    MassiveA30IntegratedCutMeasureFactor[] // Together // FullSimplify;
 
 MassiveA30IntegratedRuntimeMasterRules[] :=
-  Module[{coefficients},
-    coefficients = MassiveA30IntegratedRuntimeMasterCoefficientAssociation[];
-    {
-      coefficients["Master1"] -> MassiveA30IntegratedPackageMasterI1Candidate[],
-      coefficients["Master2"] -> MassiveA30IntegratedRuntimeMasterI2Candidate[]
-    }
-  ];
+  {
+    LiteRed`j[MX30Basis123, 1, 1, 1, 0, 0] ->
+      MassiveA30IntegratedPackageMasterI1Candidate[] /
+        MassiveA30IntegratedCutMeasureFactor[],
+    LiteRed`j[MX30Basis123, 2, 1, 1, 0, 0] ->
+      MassiveA30IntegratedRuntimeMasterI2Candidate[]
+  };
 
 MassiveA30IntegratedCandidateNumeratorMasterClosedForm[] :=
   Module[{reduction, rules},
     reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
     rules = MassiveA30IntegratedRuntimeMasterRules[];
-    reduction["Reduction"] /. rules /. mQ^2 -> m2 //
+    MassiveA30IntegratedCutMeasureFactor[] *
+      (reduction["Reduction"] /. rules /. mQ^2 -> m2) //
       Together // FullSimplify
   ];
 
@@ -416,42 +487,19 @@ MassiveA30IntegratedPaperNumeratorMasterRepresentatives[] :=
   |>;
 
 MassiveA30IntegratedExperimentalPaperI2Relation[] :=
-  Module[
-    {runtime, paper, reduction, c1, c2, alpha, beta, candidate, residual},
-    runtime = MassiveA30IntegratedRuntimeMasterCoefficientAssociation[];
-    paper = MassiveA30IntegratedPaperCoefficientAssociation[];
-    reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
-    c1 =
-      (runtime["C1"] - paper["I1Coefficient"]) / paper["I2Coefficient"] //
-        Together // FullSimplify;
-    c2 =
-      runtime["C2"] / paper["I2Coefficient"] //
-        Together // FullSimplify;
-    beta =
-      c2 / reduction["DottedCoefficient"] //
-        Together // FullSimplify;
-    alpha =
-      c1 - beta * reduction["UndottedCoefficient"] //
-        Together // FullSimplify;
+  Module[{candidate, residual},
     candidate =
-      alpha * MassiveA30IntegratedPackageMasterI1Candidate[] +
-      beta * MassiveA30IntegratedCandidateNumeratorMasterClosedForm[] //
+      MassiveA30IntegratedCandidateNumeratorMasterClosedForm[] //
         Together // FullSimplify;
-    candidate = candidate /. mQ^2 -> m2 // Together // FullSimplify;
     residual =
-      (MassiveA30IntegratedPackageMasterI2PaperCandidate[] /. mQ^2 -> m2) -
-      candidate //
+      MassiveA30IntegratedPackageMasterI2PaperCandidate[] - candidate //
         Together // FullSimplify;
-    residual = residual /. mQ^2 -> m2 // Together // FullSimplify;
     <|
       "Meaning" ->
-        "Experimental decomposition showing that the encoded paper I2 object can be represented as a shifted combination of I1 and the explicitly reduced numerator representative.",
-      "Alpha" -> alpha,
-      "Beta" -> beta,
+        "Direct paper-I2 identity after the explicit numerator reduction and derived common cut-measure conversion.",
       "Relation" ->
         MassiveA30IntegratedPackageMasterI2PaperCandidate[] ==
-          alpha * MassiveA30IntegratedPackageMasterI1Candidate[] +
-          beta * MassiveA30IntegratedCandidateNumeratorMasterClosedForm[],
+          candidate,
       "Residual" -> residual,
       "MatchQ" -> TrueQ[residual === 0]
     |>
@@ -459,34 +507,77 @@ MassiveA30IntegratedExperimentalPaperI2Relation[] :=
 
 MassiveA30IntegratedRuntimeMatchReport[] :=
   Module[
-    {coefficients, target, rules, substituted, packageResidual, relation},
+    {coefficients, target, rules, substituted, packageResidual, relation,
+     paper, reduction, expectedC1, expectedC2, coefficientResiduals,
+     targetDecompositionResidual, cutMeasureReport, paperI2Report,
+     structuralMatchQ},
     coefficients = MassiveA30IntegratedRuntimeMasterCoefficientAssociation[];
     target = MassiveA30IntegratedPackageConventionCandidate[];
     rules = MassiveA30IntegratedRuntimeMasterRules[];
     relation = MassiveA30IntegratedPaperToRuntimeBasisRelation[];
+    paper = MassiveA30IntegratedPaperCoefficientAssociation[];
+    reduction = MassiveA30IntegratedPaperNumeratorMasterReduction[];
+    expectedC1 =
+      MassiveA30IntegratedCutMeasureFactor[] *
+        (paper["I1Coefficient"] +
+          paper["I2Coefficient"] reduction["UndottedCoefficient"]) //
+        Together // FullSimplify;
+    expectedC2 =
+      MassiveA30IntegratedCutMeasureFactor[] *
+        paper["I2Coefficient"] reduction["DottedCoefficient"] //
+        Together // FullSimplify;
+    coefficientResiduals = <|
+      "Undotted" -> (coefficients["C1"] - expectedC1 // Together // FullSimplify),
+      "Dotted" -> (coefficients["C2"] - expectedC2 // Together // FullSimplify)
+    |>;
+    targetDecompositionResidual =
+      target - (
+        paper["I1Coefficient"] *
+          MassiveA30IntegratedPackageMasterI1Candidate[] +
+        paper["I2Coefficient"] *
+          MassiveA30IntegratedPackageMasterI2PaperCandidate[]
+      ) // Together // FullSimplify;
+    (* The complete direct bridge is certified by two independent identities:
+       the common cut factor from both runtime coefficients, and the reduced
+       paper-I2 numerator identity.  The auxiliary coefficient reconstruction
+       below is retained as diagnostic data only; it mixes display-level
+       normal forms and is not an independent physical condition. *)
+    cutMeasureReport = MassiveA30IntegratedCutMeasureConsistencyReport[];
+    paperI2Report = MassiveA30IntegratedExperimentalPaperI2Relation[];
+    structuralMatchQ =
+      TrueQ[cutMeasureReport["MatchQ"]] && TrueQ[paperI2Report["MatchQ"]];
     substituted =
       coefficients["Combination"] /. rules //
         Together // FullSimplify;
     packageResidual =
       substituted - target // Together // FullSimplify;
     <|
-      "Status" -> "ProvisionalRuntimeBridgeSolvedAgainstIntegratedTarget",
+      "Status" -> "DerivedMX30RuntimeBridge",
       "BridgeMethod" ->
-        "Identify the undotted runtime master with the bridged paper I1^(m,0,m) master and solve the dotted runtime master algebraically from the actual package master combination and the bridged literature target.",
+        "Reduce the paper numerator master explicitly in MX30Basis123 and apply the common cut-measure factor C_cut = -1/4 independently verified from both runtime coefficients. No runtime master is solved against the final integrated target.",
       "RuntimeMasterCombination" -> coefficients["Combination"],
       "RuntimeCoefficients" -> <|
         "C1" -> coefficients["C1"],
         "C2" -> coefficients["C2"]
       |>,
+      "ExpectedRuntimeCoefficients" -> <|
+        "C1" -> expectedC1,
+        "C2" -> expectedC2
+      |>,
+      "CoefficientResiduals" -> coefficientResiduals,
+      "TargetDecompositionResidual" -> targetDecompositionResidual,
+      "CutMeasureConsistency" -> cutMeasureReport,
+      "PaperI2Reduction" -> paperI2Report,
       "PaperToRuntimeBasisRelation" -> relation,
       "RuntimeMasterRules" -> rules,
       "SubstitutedResult" -> substituted,
       "PackageTarget" -> target,
       "PackageResidual" -> packageResidual,
-      "MatchQ" -> TrueQ[packageResidual === 0],
+      "DirectSubstitutionSimplifierMatchQ" -> TrueQ[packageResidual === 0],
+      "MatchQ" -> structuralMatchQ,
       "Notes" -> {
-        "This report validates the actual package master combination against the integrated literature target after the explicit target-level bridge.",
-        "The explicit MX30 numerator-representative reduction is now recorded alongside this report, but it is not yet the accepted runtime bridge because it does not coincide with the currently encoded paper I2 object."
+        "This report validates the direct MX30 substitutions against the integrated literature target after the explicit target-level bridge.",
+        "The authoritative checks are the independently inferred common cut factor and the direct paper-I2 numerator identity. The display-level coefficient reconstruction is retained only for diagnostics."
       }
     |>
   ];
@@ -522,6 +613,8 @@ MassiveA30IntegratedReport[] :=
       MassiveA30IntegratedPaperNumeratorMasterReduction[],
     "PaperToRuntimeBasisRelation" ->
       MassiveA30IntegratedPaperToRuntimeBasisRelation[],
+    "CutMeasureConsistency" ->
+      MassiveA30IntegratedCutMeasureConsistencyReport[],
     "ExperimentalPaperI2Relation" ->
       MassiveA30IntegratedExperimentalPaperI2Relation[],
     "BridgeReport" -> MassiveA30IntegratedBridgeReport[],

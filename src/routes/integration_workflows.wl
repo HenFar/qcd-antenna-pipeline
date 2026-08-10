@@ -322,9 +322,9 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     expansionOrder =
       If[Lookup[options, "ExpansionOrder", Automatic] === Automatic,
-        Lookup[profile, "ExpansionOrder", 0]
+        Lookup[profile, "ExpansionOrder", 2]
         ,
-        Lookup[options, "ExpansionOrder", 0]
+        Lookup[options, "ExpansionOrder", 2]
       ];
 (* Massive A30 is currently a special route: unless the caller explicitly
 
@@ -502,13 +502,23 @@ IntegrateRouteObject[obj_, options_Association] :=
     ];
     backend = profile["DefaultBackend"];
     storedComponent = Lookup[data, "SelectedComponent", All];
-(* A selected AntennaObject is a public view, not a different integration
-
-   problem.  In particular, the A31 extraction contains common terms that
-
-   must be assembled before a colour component is selected. *)
-    antenna = Lookup[data, "FullAntenna", Lookup[data, "Antenna", $Failed
-      ]];
+(* Selected A31/A40 calls reduce only the requested raw component.  A31's
+   scalar post-processing below restores its component-specific counterterm
+   and common A21 A30 extraction term; Component -> All retains the combined
+   payload and existing list-valued path. *)
+    antenna =
+      If[
+        MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] &&
+          componentName =!= "All",
+        SelectAntennaComponent[
+          Lookup[data, "IntegrationFullAntenna",
+            Lookup[data, "FullAntenna", Lookup[data, "Antenna", $Failed]]],
+          key,
+          componentInput
+        ],
+        Lookup[data, "IntegrationFullAntenna",
+          Lookup[data, "FullAntenna", Lookup[data, "Antenna", $Failed]]]
+      ];
 (* The unreplaced master combination is a backend diagnostic payload.  A
 
    direct public ReturnMasterCombination request must therefore retain the
@@ -593,7 +603,11 @@ IntegrateRouteObject[obj_, options_Association] :=
         $Failed
         ,
         IntegratedAntennaTTerms[key, rawIntegrated, ExpansionOrder ->
-           expansionOrder, Component -> All]
+           expansionOrder, Component -> If[
+             MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] && componentName =!= "All",
+             componentInput,
+             All
+           ]]
       ];
     If[TrueQ[progressActive],
       heavyIntegrationProgressPrint[routeKind, key, componentInput, contributionInput,
@@ -607,15 +621,22 @@ IntegrateRouteObject[obj_, options_Association] :=
           tTerms
           ,
           ExtractIntegratedAntenna[key, tTerms, ExpansionOrder -> expansionOrder
-            ]
+            , Component -> If[
+              MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] && componentName =!= "All",
+              componentInput,
+              All
+            ]]
         ]
       ];
     If[TrueQ[progressActive],
       heavyIntegrationProgressPrint[routeKind, key, componentInput, contributionInput,
          4, 6, "extracting integrated result"]
     ];
+    (* Direct A31/A40 component routes are scalar by this point, so each is
+       already the requested result. *)
     selectedIntegrated = SelectAntennaComponent[finalIntegrated, key,
-       componentInput];
+       If[MemberQ[{{A, 3, 1}, {A, 4, 0}}, key] && componentName =!= "All",
+          All, componentInput]];
     If[TrueQ[progressActive],
       heavyIntegrationProgressPrint[routeKind, key, componentInput, contributionInput,
          5, 6, "collecting diagnostics"]
@@ -725,6 +746,7 @@ BuildAndIntegrateCombinedRecord[key_, result_, diagnostics_Association,
       If[Length[integrationRecords] === 1 &&
           AntennaRunRecordQ[First[integrationRecords]],
         KeyTake[AntennaRunRecordData[First[integrationRecords]], {
+          "IntegratedResultKind", "OpenMasterValuesQ",
           "RawLiteRedCombination", "MasterMappedExpression",
           "RawMasterCombination", "MasterCombination",
           "MasterCombinationView", "MasterSubstitutedExpression",

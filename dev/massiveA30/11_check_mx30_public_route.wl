@@ -70,13 +70,13 @@ Print["BuildAndIntegrate intermediate steps = ", Keys[intermediateSteps]];
 If[
   integratedResult === $Failed ||
   Lookup[integratedDiagnostics, "Failed", False] === True ||
-  integratedRecord["IntegratedResultKind"] =!= "ClosedBibliographyBridgeSeries" ||
+  integratedRecord["IntegratedResultKind"] =!= "ClosedDerivedMX30Series" ||
   integratedRecord["OpenMasterValuesQ"] =!= False ||
   !AssociationQ[integratedBridgeReport] ||
   !FreeQ[integratedResult, _LiteRed`j, Infinity] ||
   result === $Failed ||
   Lookup[diagnostics, "Failed", False] === True ||
-  record["IntegratedResultKind"] =!= "ClosedBibliographyBridgeSeries" ||
+  record["IntegratedResultKind"] =!= "ClosedDerivedMX30Series" ||
   record["OpenMasterValuesQ"] =!= False ||
   !AssociationQ[bridgeReport] ||
   !FreeQ[result, _LiteRed`j, Infinity] ||

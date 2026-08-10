@@ -1,5 +1,9 @@
 # AntCalc
 
+> **New in 0.3.0 β1:** massive `A30` now has a derived MX30 master-basis
+> closure and an end-to-end integrated route; invariant-only `A22` builds are
+> also available. `D30` remains an experimental research track.
+
 AntCalc is a Wolfram Language package that builds and integrates QCD antenna
 functions. The main workflow has two steps:
 
@@ -8,20 +12,21 @@ BuildAntenna[...] → IntegrateAntenna[...]
 ```
 
 `BuildAndIntegrateAntenna[...]` runs these steps in sequence. AntCalc is
-thesis research software. The massless routes listed as supported are the
-release surface; massive `A30` and `D30` remain experimental.
+thesis research software. The massless routes are the stable release surface;
+massive `A30` is a beta extension and `D30` remains experimental.
 
 ## Status
 
-Current development release: **AntCalc 0.2.0 α 1**.
+Current development release: **AntCalc 0.3.0 β1**.
 
 The current release target is the massless antenna workflow for the NNLO SMQCD
-R-ratio. Before using a route in a calculation, read the [route-status
-matrix](docs/manual/route-status.md).
+R-ratio, with a beta massive-`A30` extension. Before using a route in a
+calculation, read the [route-status matrix](docs/manual/route-status.md).
 
 AntCalc is active, unpublished thesis research software. It is shared for
 evaluation and academic discussion; reuse, redistribution, and relicensing
-require the author's permission.
+require prior written permission from the relevant rights holder or holders.
+See [NOTICE](NOTICE) for the current distribution position.
 
 ## Install and load
 
@@ -80,7 +85,7 @@ Use these pages:
 - [Citation and provenance](docs/manual/citation-and-provenance.md)
 - [Documentation migration ledger](docs/migration-status.md)
 
-[README_old.md](README_old.md) is retained as an archive. Start with the
+[dev/README_old.md](dev/README_old.md) is retained as a development archive. Start with the
 manual instead.
 
 ## Dependencies
@@ -89,7 +94,7 @@ Supported workflows require Wolfram Language, FeynCalc, FeynArts, and
 FeynHelpers. IBP-backed integration also requires LiteRed2. Keep the bundled
 basis and runtime-master files when copying or cloning the repository.
 
-The current alpha toolchain is:
+The current beta toolchain is:
 
 ```text
 FeynCalc 10.2.1 · FeynArts 3.12 (27 Mar 2025) ·
@@ -99,7 +104,8 @@ LiteRed2 2.025 β
 
 ## Scope
 
-AntCalc does not currently provide a fully derived closed massive-`A30`
-master substitution, a public `D30` route, or complete `SUSY`/`HiggsEFT`
-R-ratio workflows. See the [route-status matrix](docs/manual/route-status.md)
-for the exact limits.
+AntCalc does not currently provide a public `D30` route or complete
+`SUSY`/`HiggsEFT` R-ratio workflows. The massive-`A30` beta route has a derived
+master substitution and fresh-kernel qualification through
+`ExpansionOrder -> 2`; deeper epsilon orders are not yet claimed. See the
+[route-status matrix](docs/manual/route-status.md) for the exact limits.

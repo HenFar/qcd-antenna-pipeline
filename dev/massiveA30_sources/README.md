@@ -102,13 +102,13 @@ What is not yet justified strongly enough to count as finished:
 
 So if you use this directory now, the correct workflow is:
 
-1. Use [`reconstruction.wl`](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/dev/massiveA30_sources/reconstruction.wl)
+1. Use [`reconstruction.wl`](reconstruction.wl)
    for the genuine build-side massive antenna reconstruction.
-2. Use [`integrated.wl`](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/dev/massiveA30_sources/integrated.wl)
+2. Use [`integrated.wl`](integrated.wl)
    to inspect the encoded integrated literature result and the explicit bridge
    to package convention.
 3. Use the scripts in
-   [`dev/massiveA30/`](/Users/henriquefarinha/Library/CloudStorage/Dropbox/msc_thesis/thesis_docs/codexAlley/antenna_pipeline/dev/massiveA30)
+   [`dev/massiveA30/`](../../dev/massiveA30)
    to generate the `MX30` bases, reduce the package-built antenna, and inspect
    the remaining basis-matching problem.
 4. Treat the final integrated closed result as bibliography/provenance rather

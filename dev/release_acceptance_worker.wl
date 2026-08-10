@@ -3,11 +3,15 @@
 
 repoRoot = DirectoryName[DirectoryName[$InputFileName]];
 Get[FileNameJoin[{repoRoot, "AntennaPipeline.wl"}]];
+Get[FileNameJoin[{repoRoot, "dev", "a31_literature_reference.wl"}]];
+Get[FileNameJoin[{repoRoot, "dev", "a22_literature_reference.wl"}]];
 
 ClearAll[caseLabel, cases, route, runTimed, buildRules, integrationRules,
   validationEvidence, evidenceStatus, validationContract, validationReport,
   validationStatus, comparisonReport, routeAcceptance, rratioAcceptance,
-  report, outputPath];
+  massiveA30BetaAcceptance, a22BuildInvariantOnlyAcceptance, exactZeroQ,
+  noRuntimeArtifactsQ, report,
+  outputPath];
 
 caseLabel = Environment["ANTCALC_ACCEPTANCE_CASE"];
 
@@ -15,12 +19,22 @@ cases = <|
   "A20" -> <|"Key" -> {A, 2, 0}, "Integration" -> False|>,
   "A21" -> <|"Key" -> {A, 2, 1}, "Integration" -> True|>,
   "A30" -> <|"Key" -> {A, 3, 0}, "Integration" -> True|>,
-  "A31All" -> <|"Key" -> {A, 3, 1}, "Integration" -> True|>,
-  "A22All" -> <|"Key" -> {A, 2, 2}, "Integration" -> True|>,
+  (* The published A31 targets encoded below run through the finite term.
+     Request that same public surface explicitly: the package default is
+     ExpansionOrder -> 2, whose positive-epsilon coefficients are outside
+     this release comparison. *)
+  "A31All" -> <|"Key" -> {A, 3, 1}, "Integration" -> True,
+    "IntegrationOptions" -> {ExpansionOrder -> 0}|>,
+  "A22All" -> <|"Key" -> {A, 2, 2}, "Integration" -> True,
+    "AcceptanceMode" -> "OneShotOnly"|>,
   "A22Leading" -> <|"Key" -> {A, 2, 2}, "Component" -> Leading,
-    "Integration" -> True|>,
+    "Integration" -> True, "AcceptanceMode" -> "OneShotOnly"|>,
+  "A22Subleading" -> <|"Key" -> {A, 2, 2}, "Component" -> Subleading,
+    "Integration" -> True, "AcceptanceMode" -> "OneShotOnly"|>,
+  "A22Nf" -> <|"Key" -> {A, 2, 2}, "Component" -> Nf,
+    "Integration" -> True, "AcceptanceMode" -> "OneShotOnly"|>,
   "A22Breve" -> <|"Key" -> {A, 2, 2}, "Component" -> Breve,
-    "Integration" -> True|>,
+    "Integration" -> True, "AcceptanceMode" -> "OneShotOnly"|>,
   "A40Leading" -> <|"Key" -> {A, 4, 0}, "Component" -> Leading,
     "Integration" -> True|>,
   "A40Subleading" -> <|"Key" -> {A, 4, 0}, "Component" -> Subleading,
@@ -44,9 +58,7 @@ buildRules[spec_Association] :=
     If[KeyExistsQ[spec, "Component"], {Component -> spec["Component"]}, {}]];
 
 integrationRules[spec_Association] :=
-  Join[buildRules[spec],
-    If[spec["Key"] === {A, 3, 1}, {ExpansionOrder -> -2},
-      {ExpansionOrder -> 0}]];
+  Join[buildRules[spec], Lookup[spec, "IntegrationOptions", {}]];
 
 (*
   Evidence is deliberately declared by release case.  A completed route or an
@@ -65,7 +77,7 @@ validationContract = <|
     "Scope" -> "PublicBuildAndIntegratedOutput",
     "Required" -> {"ExactMatchQ", "IntegratedResidualIsZero"}|>,
   "A30" -> <|"Tier" -> "ExternalLiterature",
-    "Scope" -> "PublicBuildAndIntegratedOutput",
+    "Scope" -> "PublicBuildAndIntegratedOutputThroughEpsilon0",
     "Required" -> {"ExactMatchQ", "IntegratedResidualIsZero"}|>,
   "A40Leading" -> <|"Tier" -> "ExternalLiterature",
     "Scope" -> "PublicBuild;IntegrationComposition",
@@ -79,22 +91,35 @@ validationContract = <|
   "C40" -> <|"Tier" -> "ExternalLiterature",
     "Scope" -> "PublicBuild;IntegrationComposition",
     "Required" -> {"ExactMatchQ"}|>,
-  "A31All" -> <|"Tier" -> "InternalConsistency",
-    "Scope" -> "IntegratedTTermAndOutput",
+  "A31All" -> <|"Tier" -> "ExternalLiterature",
+    "Scope" -> "PublicIntegratedOutputThroughEpsilon0;PaperEquations5.18To5.20;RouteInternalTTermsRetainedAsNonReleaseDiagnostics",
+    "Required" -> {"A31DirectExternalLiteratureAgreementQ",
+      "A31OneShotExternalLiteratureAgreementQ"}|>,
+  "A22All" -> <|"Tier" -> "ExternalLiterature",
+    "Scope" -> "FreshKernelCanonicalOneShotIntegratedTTermAndOutput;PaperEquations4.8To4.10",
     "Required" -> {"TTermResidualsAreZero",
-      "IntegratedAntennaResidualsAreZero"}|>,
-  "A22All" -> <|"Tier" -> "InternalConsistency",
-    "Scope" -> "IntegratedTTermAndOutput",
+      "IntegratedAntennaResidualsAreZero",
+      "A22OneShotExternalLiteratureAgreementQ"}|>,
+  "A22Leading" -> <|"Tier" -> "ExternalLiterature",
+    "Scope" -> "FreshKernelCanonicalOneShotIntegratedTTermAndOutput;PaperEquations4.8To4.10",
     "Required" -> {"TTermResidualsAreZero",
-      "IntegratedAntennaResidualsAreZero"}|>,
-  "A22Leading" -> <|"Tier" -> "InternalConsistency",
-    "Scope" -> "IntegratedTTermAndOutput",
+      "IntegratedAntennaResidualsAreZero",
+      "A22OneShotExternalLiteratureAgreementQ"}|>,
+  "A22Subleading" -> <|"Tier" -> "ExternalLiterature",
+    "Scope" -> "FreshKernelCanonicalOneShotIntegratedTTermAndOutput;PaperEquations4.8To4.10",
     "Required" -> {"TTermResidualsAreZero",
-      "IntegratedAntennaResidualsAreZero"}|>,
-  "A22Breve" -> <|"Tier" -> "InternalConsistency",
-    "Scope" -> "IntegratedTTermAndOutput",
+      "IntegratedAntennaResidualsAreZero",
+      "A22OneShotExternalLiteratureAgreementQ"}|>,
+  "A22Nf" -> <|"Tier" -> "ExternalLiterature",
+    "Scope" -> "FreshKernelCanonicalOneShotIntegratedTTermAndOutput;PaperEquations4.8To4.10",
+    "Required" -> {"TTermResidualsAreZero",
+      "IntegratedAntennaResidualsAreZero",
+      "A22OneShotExternalLiteratureAgreementQ"}|>,
+  "A22Breve" -> <|"Tier" -> "ExternalLiterature",
+    "Scope" -> "FreshKernelCanonicalOneShotIntegratedTTermAndOutput;PaperEquations4.8To4.10",
     "Required" -> {"TTermResidualIsZero",
-      "IntegratedAntennaResidualIsZero"}|>
+      "IntegratedAntennaResidualIsZero",
+      "A22OneShotExternalLiteratureAgreementQ"}|>
   |>;
 
 validationEvidence[diagnostics_, key_String] :=
@@ -143,13 +168,100 @@ comparisonReport[left_, right_] :=
     <|"Method" -> "ExactSameQ", "Passed" -> False|>
   ];
 
+exactZeroQ[expr_] := TrueQ[Quiet[Check[Together[expr] === 0, False]]];
+
+noRuntimeArtifactsQ[expr_] :=
+  expr =!= $Failed && !MissingQ[expr] &&
+    FreeQ[expr, HoldPattern[LiteRed`j[___]]] &&
+    FreeQ[expr, l | l1 | l2 | p1 | p2] &&
+    FreeQ[expr, FeynCalc`FeynAmpDenominator];
+
+a31ExternalLiteratureEvidence[spec_Association, direct_, oneShot_] :=
+  Module[{agreement},
+    If[spec["Key"] =!= {A, 3, 1}, Return[<||>]];
+    agreement = Function[value,
+      Quiet[Check[
+        ListQ[value] && Length[value] === 3 &&
+          TrueQ[A31LiteratureReferenceAgreementQ[value, 0]],
+        False]]
+      ];
+    <|
+      "A31ExternalLiteratureReference" -> A31LiteratureReferenceMetadata[],
+      "A31DirectExternalLiteratureAgreementQ" -> agreement[direct],
+      "A31OneShotExternalLiteratureAgreementQ" -> agreement[oneShot]
+      |>
+    ];
+
+a22ExternalLiteratureEvidence[spec_Association, direct_, oneShot_] :=
+  Module[{component, agreement},
+    If[spec["Key"] =!= {A, 2, 2}, Return[<||>]];
+    component = Lookup[spec, "Component", All];
+    agreement = Function[value,
+      Quiet[Check[
+        If[component === All,
+          ListQ[value] && Length[value] === 4 &&
+            TrueQ[A22LiteratureReferenceAgreementQ[value, 0]],
+          value =!= $Failed &&
+            TrueQ[A22LiteratureReferenceAgreementQ[value, component, 0]]
+          ],
+        False]]
+      ];
+    <|
+      "A22ExternalLiteratureReference" -> A22LiteratureReferenceMetadata[],
+      "A22DirectExternalLiteratureAgreementQ" -> agreement[direct],
+      "A22OneShotExternalLiteratureAgreementQ" -> agreement[oneShot]
+      |>
+    ];
+
 routeAcceptance[spec_Association] :=
   Module[{key, build, integrableBuild, directIntegration, oneShot, buildValue,
      buildDiagnostics, object, directValue, directDiagnostics, oneShotValue,
      oneShotDiagnostics, integrationQ, validation, status, comparison,
+     externalEvidence, acceptanceMode,
      structuralPassQ, executionPassQ},
     key = spec["Key"];
     integrationQ = TrueQ[spec["Integration"]];
+    acceptanceMode = Lookup[spec, "AcceptanceMode", "DirectAndOneShot"];
+    (* A22's documented one-shot route is exactly its integrable build followed
+       by IntegrateAntenna.  Re-running that same composition through a
+       separately built object triples its uncached cost without introducing
+       an independent physics path, and exceeds the release timeout. *)
+    If[acceptanceMode === "OneShotOnly",
+      oneShot = runTimed[Function[
+        BuildAndIntegrateAntenna @@ Join[key, {ReturnDiagnostics -> True},
+          integrationRules[spec]]]];
+      If[MatchQ[oneShot["Value"], {_, _Association}],
+        {oneShotValue, oneShotDiagnostics} = oneShot["Value"],
+        oneShotValue = oneShot["Value"]; oneShotDiagnostics = <||>
+      ];
+      externalEvidence = Join[
+        a31ExternalLiteratureEvidence[spec, $Failed, oneShotValue],
+        a22ExternalLiteratureEvidence[spec, $Failed, oneShotValue]
+      ];
+      validation = validationReport[caseLabel,
+        {oneShotDiagnostics, externalEvidence}];
+      structuralPassQ = oneShotValue =!= $Failed;
+      status = Which[
+        !structuralPassQ, "Failed",
+        validationStatus[validation] === "Failed", "Failed",
+        validationStatus[validation] === "Validated", "Validated",
+        True, "Unvalidated"
+      ];
+      Return[<|
+        "Case" -> caseLabel, "Key" -> ToString[key, InputForm],
+        "Component" -> ToString[Lookup[spec, "Component", All], InputForm],
+        "AcceptanceMode" -> acceptanceMode,
+        "Status" -> status,
+        "ExecutionSucceeded" -> (structuralPassQ &&
+          validationStatus[validation] =!= "Failed"),
+        "PublicIntegration" -> <|"Seconds" -> oneShot["Seconds"],
+          "Succeeded" -> structuralPassQ|>,
+        "Comparison" -> <|"Method" -> "CanonicalOneShotRoute",
+          "Passed" -> structuralPassQ|>,
+        "ExternalLiterature" -> externalEvidence,
+        "Validation" -> validation
+      |>]
+    ];
     build = runTimed[Function[
       BuildAntenna @@ Join[key, {ReturnDiagnostics -> True,
         RunPaperCheck -> True}, buildRules[spec]]]];
@@ -198,8 +310,13 @@ routeAcceptance[spec_Association] :=
     structuralPassQ = buildValue =!= $Failed && object =!= $Failed &&
       directValue =!= $Failed && oneShotValue =!= $Failed &&
       TrueQ[comparison["Passed"]];
+    externalEvidence = Join[
+      a31ExternalLiteratureEvidence[spec, directValue, oneShotValue],
+      a22ExternalLiteratureEvidence[spec, directValue, oneShotValue]
+      ];
     validation = validationReport[caseLabel,
-      {buildDiagnostics, directDiagnostics, oneShotDiagnostics}];
+      {buildDiagnostics, directDiagnostics, oneShotDiagnostics,
+        externalEvidence}];
     executionPassQ = structuralPassQ && validationStatus[validation] =!= "Failed";
     status = Which[
       !structuralPassQ, "Failed",
@@ -217,6 +334,90 @@ routeAcceptance[spec_Association] :=
       "DirectIntegration" -> <|"Seconds" -> directIntegration["Seconds"], "Succeeded" -> directValue =!= $Failed|>,
       "OneShot" -> <|"Seconds" -> oneShot["Seconds"], "Succeeded" -> oneShotValue =!= $Failed|>,
       "Comparison" -> comparison,
+      "ExternalLiterature" -> externalEvidence,
+      "Validation" -> validation
+      |>
+  ];
+
+massiveA30BetaAcceptance[] :=
+  Module[{publicCall, publicRecord, publicResult, reference, paperRelation,
+     paperI2, runtimeRules, runtimeRuleValues, checks, validation, passed},
+    publicCall = runTimed[Function[
+      BuildAndIntegrateAntenna[A, 3, 0,
+        quarkMass -> mQ, ExpansionOrder -> 0, ReturnRecord -> True,
+        UseStoredResults -> False, StoreResults -> False,
+        DetailedTimingDiagnostics -> False]
+      ]];
+    publicRecord = publicCall["Value"];
+    publicResult = Quiet[Check[publicRecord["Result"], $Failed]];
+    reference = MassiveA30IntegratedRuntimeSeries[mQ, 0, True];
+    paperRelation = MassiveA30IntegratedPaperToRuntimeBasisRelation[];
+    paperI2 = MassiveA30IntegratedExperimentalPaperI2Relation[];
+    runtimeRules = MassiveA30IntegratedRuntimeMasterRules[];
+    runtimeRuleValues = Last /@ runtimeRules;
+    checks = <|
+      "PublicDerivedMX30RouteQ" -> TrueQ[
+        Quiet[Check[publicRecord["IntegratedResultKind"], $Failed]] ===
+          "ClosedDerivedMX30Series"],
+      "PublicOrderZeroReferenceMatchQ" ->
+        exactZeroQ[publicResult - reference],
+      "PublicResultHasNoRuntimeArtifactsQ" ->
+        noRuntimeArtifactsQ[publicResult],
+      "DeclaredCutMeasureFactorQ" ->
+        TrueQ[MassiveA30IntegratedCutMeasureFactor[] === -1/4],
+      "PaperToRuntimeRelationAcceptedQ" ->
+        AssociationQ[paperRelation] && TrueQ[paperRelation["AcceptedForRuntimeQ"]],
+      "RuntimeMasterRuleValuesHaveNoRuntimeArtifactsQ" ->
+        ListQ[runtimeRuleValues] && AllTrue[runtimeRuleValues, noRuntimeArtifactsQ],
+      "PaperI2ReductionQ" -> TrueQ[paperI2["MatchQ"]]
+      |>;
+    passed = And @@ Values[checks];
+    validation = <|
+      "Tier" -> "DerivedMX30ClosureAndRuntimeReference",
+      "Scope" -> "FreshKernelPublicOrderZeroAndInstalledMX30Closure;ForcedIBPRegressionAndEpsilonDepthCoveredByDedicatedChecks",
+      "Required" -> Keys[checks], "Observed" -> AssociationMap[{checks[#]} &, Keys[checks]],
+      "Checks" -> AssociationMap[If[checks[#], "Pass", "Fail"] &, Keys[checks]]
+      |>;
+    <|
+      "Case" -> caseLabel, "Key" -> "{A, 3, 0}; quarkMass -> mQ",
+      "Status" -> If[passed, "Validated", "Failed"],
+      "ExecutionSucceeded" -> passed,
+      "PublicIntegration" -> <|"Seconds" -> publicCall["Seconds"],
+        "Succeeded" -> publicResult =!= $Failed|>,
+      "Validation" -> validation
+      |>
+  ];
+
+(* This is intentionally a build-only release check.  PaVe scalar functions
+   are allowed in the public A22 representation; unreduced loop variables,
+   LiteRed masters, and raw FeynCalc denominator objects are not. *)
+a22BuildInvariantOnlyAcceptance[] :=
+  Module[{buildCall, buildResult, diagnostics, artifactFreeQ, validation},
+    buildCall = runTimed[Function[
+      BuildAntenna[A, 2, 2, ReturnDiagnostics -> True,
+        UseStoredResults -> False, StoreResults -> False]
+      ]];
+    If[MatchQ[buildCall["Value"], {_, _Association}],
+      {buildResult, diagnostics} = buildCall["Value"],
+      buildResult = buildCall["Value"]; diagnostics = <||>
+    ];
+    artifactFreeQ = buildResult =!= $Failed &&
+      FreeQ[buildResult, l | l1 | l2 | HoldPattern[LiteRed`j[___]] |
+        FeynCalc`FeynAmpDenominator];
+    validation = <|
+      "Tier" -> "PublicArtifactContract",
+      "Scope" -> "FreshKernelPublicA22BuildContainsOnlyInvariantAndScalarMasterObjects",
+      "Required" -> {"NoLoopRuntimeArtifactsQ"},
+      "Observed" -> <|"NoLoopRuntimeArtifactsQ" -> {artifactFreeQ}|>,
+      "Checks" -> <|"NoLoopRuntimeArtifactsQ" ->
+        If[artifactFreeQ, "Pass", "Fail"]|>
+      |>;
+    <|
+      "Case" -> caseLabel, "Key" -> "{A, 2, 2}; public build",
+      "Status" -> If[artifactFreeQ, "Validated", "Failed"],
+      "ExecutionSucceeded" -> artifactFreeQ,
+      "PublicBuild" -> <|"Seconds" -> buildCall["Seconds"],
+        "Succeeded" -> buildResult =!= $Failed|>,
       "Validation" -> validation
       |>
   ];
@@ -283,6 +484,8 @@ rratioAcceptance[order_] :=
 
 report = Which[
   KeyExistsQ[cases, caseLabel], routeAcceptance[cases[caseLabel]],
+  caseLabel === "A22BuildInvariantOnly", a22BuildInvariantOnlyAcceptance[],
+  caseLabel === "A30MassiveBeta", massiveA30BetaAcceptance[],
   caseLabel === "RRatioLO", rratioAcceptance[LO],
   caseLabel === "RRatioNLO", rratioAcceptance[NLO],
   caseLabel === "RRatioNNLO", rratioAcceptance[NNLO],

@@ -19,9 +19,9 @@ The package has been exercised on macOS Apple Silicon and Windows Intel
 systems. This is evidence of tested environments, not a cross-platform runtime
 or memory guarantee.
 
-## Current alpha environment
+## Current beta environment
 
-The current alpha release is exercised with this symbolic-backend baseline:
+The current beta release is exercised with this symbolic-backend baseline:
 
 ```text
 FeynCalc 10.2.1 · FeynArts 3.12 (27 Mar 2025) ·
@@ -80,9 +80,11 @@ cd /path/to/antenna_pipeline
 bash dev/run_release_verification.sh
 ```
 
-This command loads the checkout in fresh kernels. It excludes experimental
-massive `A30` and `D30`, and tests supported public build, integration, record,
-and driver calls. Results are `Validated`, `Unvalidated`, `Failed`, or
+This command loads the checkout in fresh kernels. Its release-acceptance slice
+covers the stable massless surface and the beta massive-`A30` public MX30
+closure; `D30` remains experimental. The expensive forced-MX30 IBP regression
+is deliberately separate from this release gate. It tests public build,
+integration, record, and driver calls. Results are `Validated`, `Unvalidated`, `Failed`, or
 `InconclusiveTimeout`; only `Validated` returns a successful exit status.
 Each JSON record states the evidence tier and scope. The command needs the
 configured `WolframKernel`; run time depends on the local backend.
@@ -103,8 +105,9 @@ It reports `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, or
   incompatible FeynCalc, FeynArts, or FeynHelpers installation.
 - An IBP failure can indicate missing basis directories or runtime-master
   artifacts.
-- A `$Failed` result from massive `A30` or `D30` is not necessarily an
-  installation error: these routes are experimental.
+- A `$Failed` result from `D30` is not necessarily an installation error: that
+  route is experimental. For beta massive `A30`, retain the route diagnostics
+  and master-basis report when reporting an issue.
 - Bulk helpers currently reject nonzero `quarkMass`, lowercase `maxOrder`, and
   unsupported models such as `SUSY` and `HiggsEFT`.
 - If derivation-side master-integral files change, refresh and validate the

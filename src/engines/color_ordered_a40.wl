@@ -8,7 +8,7 @@
       amplitude and Born amplitude analyzed here.
     - src/core/kinematics_and_utilities.wl through KinematicRules,
       ApplyFeynCalcRules, and GluonColourBasisNorm.
-    - src/routes/build_workflows.wl, which uses ColorOrderedAntenna[...] for the
+    - src/routes/build_workflows.wl, which uses ColourOrderedAntenna[...] for the
       special A40 route.
 
   Why this file exists:
@@ -67,8 +67,8 @@ SafeDoPolarizationSums::usage =
 ColorStrippedInterference::usage =
   "ColorStrippedInterference[ampLeft, ampRight, numFinalParticles] computes the spin-summed color-stripped interference used by the ordered A40 route.";
 
-ColorOrderedAntenna::usage =
-  "ColorOrderedAntenna[amp4, bornAmp] builds the paper-style color-ordered A40 antenna from the full-color amplitude and Born normalization.";
+ColourOrderedAntenna::usage =
+  "ColourOrderedAntenna[amp4, bornAmp] builds the paper-style colour-ordered A40 antenna from the full-colour amplitude and Born normalisation.";
 
 (* ColorTensorFreeQ[expr]
    ======================
@@ -265,11 +265,11 @@ ColorStrippedInterference[ampLeft_, ampRight_, numFinalParticles_] :=
     final
   ];
 
-(* ColorOrderedAntenna[amp, bornAmp, numFinalParticles, spec]
+(* ColourOrderedAntenna[amp, bornAmp, numFinalParticles, spec]
    ==========================================================
    Build the paper-style color-ordered A40 antenna by squaring the selected
    partial amplitude and normalizing it to the color-stripped Born square. *)
-ColorOrderedAntenna[amp_, bornAmp_, numFinalParticles_, spec_Association
+ColourOrderedAntenna[amp_, bornAmp_, numFinalParticles_, spec_Association
   ] :=
   Module[{numGluons, orderedData, bornData, partialSq, bornSq, antenna
     },

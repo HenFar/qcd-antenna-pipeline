@@ -4,7 +4,7 @@
 
 AntCalc is active research software. A callable route is not necessarily
 supported. The tables separate the tested massless release surface from
-experimental work.
+experimental work and beta extensions.
 
 Each route exposes release-verification metadata through
 `AntennaRouteProfileReport[A, 3, 0]["Verification"]`. It records the release,
@@ -31,15 +31,19 @@ the component order and meaning are part of the route's public contract. The
 package does not treat a stored expression that matches a target as evidence
 of correctness by itself.
 
-## Experimental research tracks
+## Beta and experimental research tracks
 
 | Route | Current scope | Status |
 |---|---|---|
-| massive `A30` | package-derived unintegrated result and runtime-master reduction; paper/runtime second-master relation remains incomplete | experimental |
+| massive `A30` | dimensionally continued build, explicit MX30 numerator reduction, derived common cut factor, closed integrated route, and fresh-kernel epsilon-depth qualification through order 2 | beta |
 | `D30` | source-model and diagnostic work exists; validated public antenna extraction and integration are unfinished | experimental |
 
-Experimental routes can return diagnostics, partial results, or `$Failed`.
-Do not treat experimental routes as supported massless routes.
+The massive `A30` beta route has passed end-to-end public and forced-MX30
+checks, plus fresh uncached runs at `ExpansionOrder -> 0`, `1`, and `2`. Each
+matched its corresponding runtime reference and retained no runtime masters or
+loop objects. Deeper epsilon orders are not yet claimed. Experimental routes
+can return diagnostics, partial results, or `$Failed`; `D30` must not be
+treated as supported.
 
 ## Contract principles
 
@@ -51,13 +55,12 @@ Do not treat experimental routes as supported massless routes.
   In particular, the sign associated with the `tilde A4^0` colour coefficient
   is not absorbed into the public antenna definition.
 - Diagnostic records and intermediate-stage views expose provenance; they do
-  not upgrade an experimental bridge into a validated route.
+  not by themselves upgrade an experimental route into a validated one.
 
 ## Current non-goals
 
 AntCalc does not currently claim:
 
-- a fully internal closed massive-`A30` master-substitution derivation;
 - a finished public `D30` antenna or integration route;
 - general `SUSY` or `HiggsEFT` R-ratio workflows;
 - universal support for every research/provenance script under `dev/`.

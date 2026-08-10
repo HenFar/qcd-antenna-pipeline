@@ -105,6 +105,12 @@ BuildAntennaPrototypeResult::usage =
 A31PublicBuildComponents::usage =
   "A31PublicBuildComponents[key, data, options] builds the package-facing renormalized A31 component association while preserving the prototype branch separately.";
 
+ResolveA22LowerAntenna::usage =
+  "ResolveA22LowerAntenna[key, options] rebuilds the unintegrated lower A21 antenna used solely for the A22 public build-side UV-counterterm skin.";
+
+A22PublicBuildComponents::usage =
+  "A22PublicBuildComponents[key, data, options] returns the loop-integrated, Mandelstam-only public A22 components with the invariant A21 UV counterterm attached, while leaving the prototype integration payload unchanged.";
+
 AntennaComponentOrder::usage =
   "AntennaComponentOrder[key] returns the canonical component ordering used when a route has multiple public components.";
 
@@ -1412,6 +1418,88 @@ A31PublicBuildComponents[key_, data_Association, options_Association] :=
     |>
   ];
 
+(* The A22 public unintegrated result must carry the same coupling-
+   renormalisation convention that is visible after integration.  The actual
+   integrated subtraction remains in IntegratedAntennaTTerms; this build-side
+   expression is a presentation skin and is deliberately kept out of the
+   AntennaObject integration payload below. *)
+ResolveA22LowerAntenna[key_, options_Association] :=
+  Module[{keyType, lowerData, loopMomenta},
+    keyType = First[key];
+    loopMomenta = Lookup[options, "LoopMomenta", {l1, l2}];
+    lowerData =
+      BuildRouteBuildData[
+        {keyType, 2, 1},
+        <|
+          "printDiagram" -> False,
+          "prefactor" -> Lookup[options, "prefactor", 1],
+          "quarkMass" -> Lookup[options, "quarkMass", 0],
+          "ApplyStripCouplings" -> Lookup[options, "ApplyStripCouplings",
+            AllCouplings],
+          "ApplyCasimirSubstitution" -> Lookup[options,
+            "ApplyCasimirSubstitution", True],
+          "ApplyDimReg" -> Lookup[options, "ApplyDimReg", True],
+          "LoopMomentum" -> First[loopMomenta],
+          "ReductionBackend" -> Lookup[options, "ReductionBackend",
+            Automatic]
+        |>
+      ];
+    Lookup[Lookup[lowerData, "Components", <||>], "Antenna", $Failed]
+  ];
+
+A22PublicBuildComponents[key_, data_Association, options_Association] :=
+  Module[{prototypeComponents, lowerAntenna, eps, renormalizedComponents,
+     loopReduction, reduceComponent, invariantComponents},
+    prototypeComponents =
+      Lookup[data, "PrototypeComponents", Lookup[data, "Components", <||>]];
+    lowerAntenna = ResolveA22LowerAntenna[key, options];
+    eps = Epsilon;
+    If[lowerAntenna === $Failed || !AssociationQ[prototypeComponents],
+      Return[prototypeComponents]
+    ];
+    renormalizedComponents = Join[
+      prototypeComponents,
+      <|
+        "Lead" -> Simplify[
+          prototypeComponents["Lead"] - 11/(6 eps) lowerAntenna
+        ],
+        "QuarkLoop" -> Simplify[
+          prototypeComponents["QuarkLoop"] - (-2/(6 eps)) lowerAntenna
+        ]
+      |>
+    ];
+    (* The lower A21 counterterm is already loop-free at build level.  Reduce
+       only the genuine A22 loop source, then attach that invariant counterterm
+       after the master substitution. *)
+    reduceComponent[name_String, contribution_] :=
+      A22InvariantOnlyReduction[prototypeComponents[name],
+        Contribution -> contribution];
+    loopReduction = <|
+      "Lead" -> reduceComponent["Lead", TwoLoopTree],
+      "SubLead" -> reduceComponent["SubLead", TwoLoopTree],
+      "QuarkLoop" -> reduceComponent["QuarkLoop", TwoLoopTree],
+      "Breve" -> reduceComponent["Breve", OneLoopSelf]
+    |>;
+    If[!And @@ (TrueQ[Lookup[#, "InvariantOnlyQ", False]]& /@
+        Values[loopReduction]),
+      Return[renormalizedComponents]
+    ];
+    invariantComponents = AssociationMap[
+      loopReduction[#]["InvariantExpression"]&,
+      {"Lead", "SubLead", "QuarkLoop", "Breve"}
+    ];
+    invariantComponents = Join[invariantComponents, <|
+      "Lead" -> Simplify[
+        invariantComponents["Lead"] - 11/(6 eps) (lowerAntenna /. q2 -> s12)
+      ],
+      "QuarkLoop" -> Simplify[
+        invariantComponents["QuarkLoop"] - (-2/(6 eps))
+          (lowerAntenna /. q2 -> s12)
+      ]
+    |>];
+    Join[renormalizedComponents, invariantComponents]
+  ];
+
 BuildOutputBoundaryAssociation[key_, data_Association,
    options_Association:<||>] :=
   Module[{profile, conventionProfile, existingBoundary, publicBranch,
@@ -1433,6 +1521,11 @@ BuildOutputBoundaryAssociation[key_, data_Association,
       Which[
         MatchQ[key, {type_Symbol /; SymbolName[type] === "A", 3, 1}],
           A31PublicBuildComponents[key,
+            Join[data, <|"PrototypeComponents" -> prototypeComponents|>],
+            options]
+        ,
+        MatchQ[key, {type_Symbol /; SymbolName[type] === "A", 2, 2}],
+          A22PublicBuildComponents[key,
             Join[data, <|"PrototypeComponents" -> prototypeComponents|>],
             options]
         ,
@@ -1778,12 +1871,28 @@ AntennaFullExpression[obj_AntennaObject] :=
    IntegrateAntenna[...]. *)
 MakeAntennaObject[key_, data_Association, component_] :=
   Module[{fullResult, selectedResult, prototypeFullResult,
-     prototypeSelectedResult},
-    fullResult = BuildAntennaResult[key, data];
+     prototypeSelectedResult, integrationFullResult, integrationSelectedResult},
     prototypeFullResult = BuildAntennaPrototypeResult[key, data];
+    (* An A22 AntennaObject is expressly an integration payload, not the
+       separately available invariant-only BuildAntenna expression. *)
+    fullResult =
+      If[MatchQ[key, {type_Symbol /; SymbolName[type] === "A", 2, 2}],
+        prototypeFullResult,
+        BuildAntennaResult[key, data]
+      ];
     selectedResult = SelectAntennaComponent[fullResult, key, component];
     prototypeSelectedResult =
       SelectAntennaComponent[prototypeFullResult, key, component];
+    (* A22's public build result includes an unintegrated UV skin.  Its
+       integration layer must consume the pre-skin prototype payload because
+       it applies the authoritative integrated-A21 subtraction itself. *)
+    integrationFullResult =
+      If[MatchQ[key, {type_Symbol /; SymbolName[type] === "A", 2, 2}],
+        prototypeFullResult,
+        fullResult
+      ];
+    integrationSelectedResult =
+      SelectAntennaComponent[integrationFullResult, key, component];
     If[selectedResult === $Failed,
       Return[$Failed]
     ];
@@ -1796,6 +1905,8 @@ MakeAntennaObject[key_, data_Association, component_] :=
         "PrototypeFullAntenna" -> prototypeFullResult,
         "Antenna" -> selectedResult,
         "PrototypeAntenna" -> prototypeSelectedResult,
+        "IntegrationFullAntenna" -> integrationFullResult,
+        "IntegrationAntenna" -> integrationSelectedResult,
         "SelectedComponent" -> component,
         "SelectedComponentName" -> CanonicalAntennaComponentName[component],
         "ContributionsUsed" -> AntennaContributionsUsed[key, component]
@@ -2255,19 +2366,29 @@ BuildAntenna[type_, numFinalParticles_, loopOrder_, OptionsPattern[]] :=
           "UseSourceModelRoute" -> OptionValue["UseSourceModelRoute"]
         |>
       ];
-    data = NormalizeBuildDataOutputBoundary[key, data, <|
-        "printDiagram" -> OptionValue["printDiagram"],
-        "prefactor" -> OptionValue["prefactor"],
-        "quarkMass" -> OptionValue["quarkMass"],
-        "ApplyStripCouplings" -> OptionValue["ApplyStripCouplings"],
-        "ApplyCasimirSubstitution" -> OptionValue[
-          "ApplyCasimirSubstitution"],
-        "ApplyDimReg" -> OptionValue["ApplyDimReg"],
-        "LoopMomentum" -> OptionValue["LoopMomentum"],
-        "ReductionBackend" -> reductionBackend,
-        "LoopMomenta" -> OptionValue["LoopMomenta"],
-        "Component" -> OptionValue["Component"]
-      |>];
+    (* A22 has two intentionally separate public surfaces.  A direct
+       BuildAntenna expression is projected to its invariant-only physical
+       form, whereas an AntennaObject remains the fast route-native payload
+       consumed by IntegrateAntenna, which owns the IBP reduction.  Do not
+       construct A22's expensive public boundary merely to discard it when
+       IntegrableForm or BuildAntennaObject was requested. *)
+    If[!(integrableRequested &&
+        MatchQ[key, {routeType_Symbol /; SymbolName[routeType] === "A", 2,
+          2}]),
+      data = NormalizeBuildDataOutputBoundary[key, data, <|
+          "printDiagram" -> OptionValue["printDiagram"],
+          "prefactor" -> OptionValue["prefactor"],
+          "quarkMass" -> OptionValue["quarkMass"],
+          "ApplyStripCouplings" -> OptionValue["ApplyStripCouplings"],
+          "ApplyCasimirSubstitution" -> OptionValue[
+            "ApplyCasimirSubstitution"],
+          "ApplyDimReg" -> OptionValue["ApplyDimReg"],
+          "LoopMomentum" -> OptionValue["LoopMomentum"],
+          "ReductionBackend" -> reductionBackend,
+          "LoopMomenta" -> OptionValue["LoopMomenta"],
+          "Component" -> OptionValue["Component"]
+        |>]
+    ];
     If[TrueQ[progressActive],
       buildRouteProgressPrint[key, OptionValue["Component"],
         All, 3, 5, "extracting public result"]

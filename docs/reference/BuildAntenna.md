@@ -20,6 +20,12 @@ example, `BuildAntenna[A, 3, 0]` selects massless tree-level `A30`.
 `BuildAntennaObject[...]` returns one `AntennaObject`. It accepts the same
 build controls except `ReturnRecord`.
 
+For `A22`, these are deliberately different surfaces: an ordinary direct
+`BuildAntenna[A, 2, 2]` call performs the loop-only projection required for
+its invariant-only public expression. `IntegrableForm -> True` and
+`BuildAntennaObject[...]` instead return the fast route-native integration
+payload; `IntegrateAntenna` performs its IBP reduction exactly once.
+
 ## Normal-use options
 
 `printDiagram -> True` renders the generated FeynArts diagrams. It does not

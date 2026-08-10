@@ -69,19 +69,45 @@ pattern; the prototype branch retains pre-counterterm route-native components
 for provenance. The public integrated `A31` components match their encoded
 targets after the master-convention repair.
 
+The public `A22` build branch analogously presents an unintegrated lower-`A21`
+UV-counterterm skin in its leading and `N_f` components. Its `AntennaObject`
+retains the pre-skin prototype expression for integration, where the
+authoritative integrated-`A21` subtraction is applied once in the T-term
+layer. This prevents a public build correction from being counted twice by the
+validated integrated route.
+
+The final public integrated slots are compared to `hep-ph/0505111v3`,
+Eqs. (5.18)--(5.20), at the package scale convention `s123 = 1`. They are
+the paper's integrated `A_3^1`, `\tilde A_3^1`, and `\hat A_3^1` objects; the
+route's intermediate T-terms are not public comparison objects.
+
 For `A22`, the supported integrated object is the paper-facing
 `T_{qq}^{(6)}` component set, not an unspecified package-internal final
 antenna. The two-loop route is handled through dedicated master-integral
 machinery rather than a generic PaVe basis.
 
+Its four public slots use the convention of `hep-ph/0403057v2`: `Leading`,
+`Subleading`, and `Nf` are the `N`, `1/N`, and `N_f` brackets in Eq. (4.9),
+while `Breve` is the one-loop self-interference of Eq. (4.10). The common
+`(N - 1/N) T_{q\bar q}^{(2)}` factor shown in Eqs. (4.8)--(4.9) is assembled
+outside those component slots.
+
 ## Massive A30
 
-The unintegrated massive `A30` route is package-derived. Its integrated route
-can reduce to the runtime `MX30` master basis, but the relation between the
-dotted runtime second master and the literature numerator master has not been
-derived internally. Any closed literature comparison remains a documented
-experimental bridge, not a validated runtime derivation. See the [route
-status](route-status.md) and the later research documentation.
+The unintegrated massive `A30` route is package-derived. Its integrated beta
+route reduces to the `MX30` basis and uses the derived common cut-measure
+conversion
+
+```text
+I_paper = - j_MX30 / 4.
+```
+
+Together with the explicit reduction of the paper numerator master, this gives
+the active dotted-master substitution rather than a backwards-fitted closed
+form. Fresh-kernel public results through `ExpansionOrder -> 2` are checked
+against their runtime references; deeper epsilon orders remain outside the
+beta support claim. See the [route status](route-status.md) for the support
+boundary.
 
 ## Inspecting convention state
 

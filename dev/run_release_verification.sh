@@ -12,8 +12,8 @@ OUTPUT_DIR="${ANTCALC_RELEASE_OUTPUT_DIR:-$(mktemp -d /tmp/antcalc_release.XXXXX
 KEEP_OUTPUT="${ANTCALC_RELEASE_KEEP_OUTPUT:-0}"
 
 CASES=(
-  A20 A21 A30 A31All A22All A22Leading A22Breve
-  A40Leading A40Subleading B40 C40
+  A20 A21 A30 A31All A22All A22BuildInvariantOnly A22Leading A22Subleading A22Nf A22Breve
+  A40Leading A40Subleading B40 C40 A30MassiveBeta
   RRatioLO RRatioNLO RRatioNNLO
 )
 
@@ -69,7 +69,7 @@ echo "NumFailed=$fail_count"
 echo "NumUnvalidated=$unvalidated_count"
 echo "NumInconclusiveTimeout=$inconclusive_count"
 echo "Machine-readable case reports: $OUTPUT_DIR"
-echo "Scope: supported massless routes only; massive A30 and D30 are excluded."
+echo "Scope: supported massless routes plus the beta massive-A30 closure; D30 is excluded."
 
 if [ "$KEEP_OUTPUT" -ne 1 ] && [ "$fail_count" -eq 0 ] && [ "$unvalidated_count" -eq 0 ] && [ "$inconclusive_count" -eq 0 ]; then
   echo "Set ANTCALC_RELEASE_KEEP_OUTPUT=1 to retain the per-case JSON evidence."

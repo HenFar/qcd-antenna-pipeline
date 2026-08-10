@@ -41,14 +41,47 @@ and integration plumbing from imported targets and master values. Literature
 expressions are comparison/provenance data unless the route has a documented
 derivation to the corresponding runtime basis.
 
+## A22 external release contract
+
+The massless A22 release checks fresh, uncached direct integration and the
+`BuildAndIntegrateAntenna` wrapper against an independent transcription in
+[`dev/a22_literature_reference.wl`](../../dev/a22_literature_reference.wl).
+That contract is `hep-ph/0403057v2`, Eqs. (4.8)--(4.10): its `Leading`,
+`Subleading`, and `Nf` slots are the `N`, `1/N`, and `N_f` brackets of
+Eq. (4.9), and `Breve` is the one-loop self-interference in Eq. (4.10).
+The paper's common `(N - 1/N) T_{q\bar q}^{(2)}` factor is deliberately not
+included in any public component slot. Equation (A.1) records the common
+two-loop loop-normalisation convention.
+
+The external reference is deliberately separate from `A22TTermTargets` and
+the route's internal residual diagnostics. This makes its agreement a genuine
+release-evidence check rather than an assertion that a route matches itself.
+
+## A31 external release contract
+
+The massless A31 release compares freshly integrated public output with the
+independent reference in
+[`dev/a31_literature_reference.wl`](../../dev/a31_literature_reference.wl).
+It transcribes `hep-ph/0505111v3`, Eqs. (5.18)--(5.20), which define the
+integrated leading, subleading, and `N_f` one-loop antennae (with their
+definition in Eq. (2.35)). The public integration surface sets `s123 = 1`, so
+the paper's common `(s123)^(-2 epsilon)` factor is one. Route-local A31
+T-terms remain internal bookkeeping and are not the external comparison
+object.
+
+The corrected v3 source gives the `19/12` single-pole coefficient in Eq.
+(5.20). This supersedes the older v2 TeX typo and is the convention used by
+the runtime and the source contract.
+
 ## Massive A30
 
 The massive route has a real runtime `MX30` reduction and a legitimate
-unintegrated antenna. Its first runtime master has a natural bridged paper
-identification. Its second runtime master is dotted while the paper basis uses
-a numerator master. The latter relation remains provisional until a direct
-reduction derives it. Do not solve that relation backwards from agreement with
-a closed paper expression.
+unintegrated antenna. The paper numerator master is explicitly reduced in the
+MX30 basis, and independent coefficient comparisons fix the common cut-measure
+conversion to `I_paper = -j_MX30/4`. The resulting undotted and dotted runtime
+master rules are active in the beta integration route. The retained reports
+record this derivation chain; they are not a fit performed from the final
+closed expression.
 
 ## Repository roles
 

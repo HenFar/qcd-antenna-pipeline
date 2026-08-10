@@ -137,7 +137,7 @@ BuildAllAntennae[model_, OptionsPattern[]] :=
 (* build and integrate all antennae *)
 
 Options[BuildAndIntegrateAntennaOrderFromList] = {quarkMass -> 0, ExpansionOrder
-     -> 0};
+     -> Automatic};
 
 BuildAndIntegrateAntennaOrderFromList[list_, OptionsPattern[]] :=
     Module[{qM, eO, listLength, builtAntennaeList},
@@ -158,7 +158,7 @@ BuildAndIntegrateAntennaOrderFromList[list_, OptionsPattern[]] :=
         builtAntennaeList
     ];
 
-Options[BuildAndIntegrateAllAntennae] = {ExpansionOrder -> 0, maxOrder
+Options[BuildAndIntegrateAllAntennae] = {ExpansionOrder -> Automatic, maxOrder
      -> NNLO, quarkMass -> 0};
 
 BuildAndIntegrateAllAntennae[model_, OptionsPattern[]] :=
