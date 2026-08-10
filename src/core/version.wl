@@ -16,7 +16,8 @@ $AntCalcReleaseHistory = {<|"Version" -> "0.3.0-alpha.1", "Date" -> "2026-07-18"
    -> "0.2.0-alpha.1", "Date" -> "2026-07-25", "Stage" -> "Alpha", "Summary"
    -> "Public master-combination records, A22 state robustness, and component-legends milestone."
   |>, <|"Version" -> "0.3.0-beta.1", "Date" -> "2026-08-06", "Stage" ->
-   "Beta", "Summary" -> "Derived massive A30 MX30 closure, invariant-only A22 builds, and beta-route public integration."|>};
+   "Beta", "Summary" -> "Derived massive A30 MX30 closure, invariant-only A22 builds, and beta-route public integration."
+  |>};
 
 $AntCalcVersion = Last[$AntCalcReleaseHistory]["Version"];
 
@@ -33,7 +34,7 @@ AntCalcVersionHistory[] :=
 AntCalcDisplayVersion::usage = "AntCalcDisplayVersion[] returns the typeset user-facing release version.";
 
 AntCalcDisplayVersion[] :=
-  Row[{"0.3.0", Style[" β ", "Text"], "1"}];
+  Row[{"0.3.0", Style[" β ", "Text"], "2 - Thesis Version"}];
 
 LiteRed2InstallationVersion::usage = "LiteRed2InstallationVersion[] reads the installed LiteRed2 release identity without loading LiteRed.";
 
@@ -68,6 +69,9 @@ AntCalcStartupBanner[] :=
     feynArtsVersion = Quiet @ Check[ToString[FeynArts`$FeynArtsVersion
       ], "FeynArts unavailable"];
 (* Keep the release date together when a narrow notebook wraps this line.
+  
+  
+  
 
 
 
@@ -83,6 +87,9 @@ AntCalcStartupBanner[] :=
       ], "unavailable"];
     liteRedVersion = LiteRed2InstallationVersion[];
 (* Match FeynCalc's startup convention: notebook-owned Text styling and
+  
+  
+  
 
 
 
