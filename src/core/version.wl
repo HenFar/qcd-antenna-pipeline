@@ -7,7 +7,7 @@
    correctness barriers and must not be presented as release versions. Add a
    new entry here when advancing a release; never rewrite a released entry. *)
 
-$AntCalcReleaseHistory = {<|"Version" -> "0.3.0-alpha.1", "Date" -> "2026-07-18",
+$AntCalcReleaseHistory = {<|"Version" -> "0.3.0-beta.2", "Date" -> "2026-07-18",
    "Stage" -> "Alpha", "Summary" -> "First tracked research release with the modular public build/integrate interface."
   |>, <|"Version" -> "0.1.0-alpha.3", "Date" -> "2026-07-19", "Stage" ->
    "Alpha", "Summary" -> "Documentation, provenance, and validated-environment release."
@@ -72,6 +72,7 @@ AntCalcStartupBanner[] :=
   
   
   
+  
 
 
 
@@ -87,6 +88,7 @@ AntCalcStartupBanner[] :=
       ], "unavailable"];
     liteRedVersion = LiteRed2InstallationVersion[];
 (* Match FeynCalc's startup convention: notebook-owned Text styling and
+  
   
   
   
