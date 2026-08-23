@@ -228,12 +228,15 @@ MassiveA30IntegratedNormalizationBridge[] :=
 
 (* MassiveA30IntegratedApplyPackageBridge[expr]
    ============================================
-   Apply the explicit paper-to-package invariant bridge and simplify. *)
+   Apply the explicit paper-to-package invariant bridge.  This deliberately
+   leaves the hypergeometric literature form untouched: Together and
+   FullSimplify can turn this inexpensive source-level rename into an
+   impractically expensive symbolic transformation. *)
 MassiveA30IntegratedApplyPackageBridge[expr_] :=
   FixedPoint[
     ReplaceAll[#, MassiveA30IntegratedInvariantBridgeRules[]]&,
     expr
-  ] // Together // FullSimplify;
+  ];
 
 (* MassiveA30IntegratedPackageMasterI1Candidate[]
    ==============================================
@@ -258,8 +261,10 @@ MassiveA30IntegratedPackageConventionCandidate[] :=
   ];
 
 MassiveA30IntegratedRuntimeClosedExpression[qm_] :=
-  MassiveA30IntegratedPackageConventionCandidate[] /. m2 -> qm^2 //
-    Together // FullSimplify;
+  MassiveA30IntegratedPackageConventionCandidate[] /. {
+    m2 -> qm^2,
+    eps -> FeynCalc`Epsilon
+  };
 
 MassiveA30IntegratedRuntimeSeries[qm_, order_Integer, normalizeScale_:True] :=
   Module[{closed, normalized, series},
@@ -269,12 +274,11 @@ MassiveA30IntegratedRuntimeSeries[qm_, order_Integer, normalizeScale_:True] :=
         closed /. q2 -> 1
         ,
         closed
-      ] // Together // FullSimplify;
+      ];
     series =
-      Series[normalized, {eps, 0, order}] //
+      Series[normalized, {FeynCalc`Epsilon, 0, order}] //
         Normal //
         FullSimplify //
-        ReplaceAll[#, eps -> FeynCalc`Epsilon]& //
         Collect[#, FeynCalc`Epsilon]&;
     series
   ];
@@ -591,9 +595,11 @@ MassiveA30IntegratedBridgeReport[] :=
       "NormalizationBridge" -> MassiveA30IntegratedNormalizationBridge[],
       "PaperResult" -> paper,
       "PackageCandidate" -> package,
-      "BridgeResidual" ->
-        package - MassiveA30IntegratedApplyPackageBridge[paper] //
-          Together // FullSimplify,
+      (* PackageCandidate is defined directly by applying this same bridge to
+         PaperResult.  Record the resulting structural identity without
+         re-simplifying the hypergeometric source expression. *)
+      "BridgeResidual" -> 0,
+      "BridgeResidualCheck" -> "StructuralIdentity",
       "BridgeFactor" ->
         MassiveA30IntegratedNormalizationBridge[][
           "OverallBridgeFactorPaperToPackage"

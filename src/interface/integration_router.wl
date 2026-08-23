@@ -925,9 +925,9 @@ MassiveA30OpenMasterBackendDiagnostics[obj_AntennaObject,
     |>
   ];
 
-MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
+MassiveA30IntegratedRouteData[qm_, order_, normalizeScale_,
    profile_Association] :=
-  Module[{closed, normalized, series, source, bridgeReport,
+  Module[{closed, normalized, result, resultKind, source, bridgeReport,
      backendDiagnostics, diagnostics},
     LoadMassiveA30IntegratedProvenance[];
     closed = MassiveA30IntegratedRuntimeClosedExpression[qm];
@@ -936,21 +936,30 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
         closed /. q2 -> 1
         ,
         closed
-      ] // Together // FullSimplify;
-    series = MassiveA30IntegratedRuntimeSeries[qm, order, normalizeScale];
+      ];
+    (* The literature result is an all-epsilon closed form.  Do not expand it
+       unless the caller has supplied an explicit integer ExpansionOrder. *)
+    result =
+      If[IntegerQ[order],
+        MassiveA30IntegratedRuntimeSeries[qm, order, normalizeScale],
+        normalized
+      ];
+    resultKind = If[IntegerQ[order], "ClosedDerivedMX30Series",
+      "ClosedLiteratureAllEpsilon"];
     source = MassiveA30IntegratedSource[];
     bridgeReport = MassiveA30IntegratedBridgeReport[];
     backendDiagnostics =
       <|
         "Profile" -> profile,
         "OpenMasterValuesQ" -> False,
-        "IntegratedResultKind" -> "ClosedDerivedMX30Series",
+        "IntegratedResultKind" -> resultKind,
         "RawLiteRedCombination" -> Missing["NotAvailable"],
         "MasterMappedExpression" -> Missing["NotAvailable"],
         "RawMasterCombination" -> Missing["NotAvailable"],
         "MasterSubstitutedExpression" -> closed,
         "NormalizedBeforeSeries" -> normalized,
-        "SeriesResult" -> series,
+        "SeriesResult" -> If[IntegerQ[order], result,
+          Missing["ExpansionNotRequested"]],
         "MassiveA30Source" -> source,
         "MassiveA30BridgeReport" -> bridgeReport
       |>;
@@ -969,10 +978,10 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
         "MassiveA30BridgeReport" -> bridgeReport
       |>;
     <|
-      "RawIntegrated" -> series,
-      "TTerms" -> series,
-      "FinalIntegrated" -> series,
-      "SelectedIntegrated" -> series,
+      "RawIntegrated" -> result,
+      "TTerms" -> result,
+      "FinalIntegrated" -> result,
+      "SelectedIntegrated" -> result,
       "BackendDiagnostics" -> backendDiagnostics,
       "Diagnostics" -> diagnostics
     |>
@@ -1272,10 +1281,14 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
           "ImplementationStatus" -> "ExperimentalTwoLoopTree"|>]
     ];
     expansionOrder =
-      If[OptionValue["ExpansionOrder"] === Automatic,
-        Lookup[profile, "ExpansionOrder", 2]
-        ,
-        OptionValue["ExpansionOrder"]
+      If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
+          quarkMassOpt =!= 0 &&
+          OptionValue["ExpansionOrder"] === Automatic,
+        Automatic,
+        If[OptionValue["ExpansionOrder"] === Automatic,
+          Lookup[profile, "ExpansionOrder", 2],
+          OptionValue["ExpansionOrder"]
+        ]
       ];
     If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
         quarkMassOpt =!= 0 &&

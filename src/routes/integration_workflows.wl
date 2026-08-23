@@ -321,10 +321,14 @@ IntegrateRouteObject[obj_, options_Association] :=
          1, 6, "resolving route profile"]
     ];
     expansionOrder =
-      If[Lookup[options, "ExpansionOrder", Automatic] === Automatic,
-        Lookup[profile, "ExpansionOrder", 2]
-        ,
-        Lookup[options, "ExpansionOrder", 2]
+      If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
+          quarkMassOpt =!= 0 &&
+          Lookup[options, "ExpansionOrder", Automatic] === Automatic,
+        Automatic,
+        If[Lookup[options, "ExpansionOrder", Automatic] === Automatic,
+          Lookup[profile, "ExpansionOrder", 2],
+          Lookup[options, "ExpansionOrder", 2]
+        ]
       ];
 (* Massive A30 is currently a special route: unless the caller explicitly
 
