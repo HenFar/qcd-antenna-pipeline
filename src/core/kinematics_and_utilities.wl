@@ -4,9 +4,6 @@
 (* Communicates with:
    - src/core/setup.wl, whose propagator and coupling conventions are consumed
      by ApplyFeynCalcRules and StripCouplings.
-   - src/core/d30_effective_model.wl, which reuses KinematicRules,
-     SafeDoPolarizationSums, and ApplyFeynCalcRules while reconstructing the
-     effective-source D30 antenna.
    - src/engines/amplitudes_tree.wl and src/engines/amplitudes_loop.wl, which
      use StripCouplings and MakeAmplitudeObject to package raw amplitudes.
    - src/engines/interference_tree.wl and src/engines/interference_loop.wl,

@@ -17,6 +17,7 @@ integratedRecord =
   IntegrateAntenna[
     obj,
     quarkMass -> mQ,
+    ExpansionOrder -> 0,
     ReturnRecord -> True,
     UseStoredResults -> False,
     StoreResults -> False,
@@ -28,6 +29,7 @@ record =
   BuildAndIntegrateAntenna[
     A, 3, 0,
     quarkMass -> mQ,
+    ExpansionOrder -> 0,
     ReturnRecord -> True,
     UseStoredResults -> False,
     StoreResults -> False,

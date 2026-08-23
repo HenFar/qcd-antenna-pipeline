@@ -20,7 +20,7 @@ combination.
 | `B40`, `C40` | NotApplicable | These routes do not expose external-gluon amplitudes in the initial validator’s scope. |
 | Massless SMQCD R-ratio | NotApplicable | It is an assembled inclusive observable, not a single external-gluon amplitude. |
 
-Massive A30, D30, massive four-parton routes, and initial-state families are
+Massive A30, massive four-parton routes, and initial-state families are
 outside the supported thesis scope; no statement here promotes their
 experimental diagnostics to supported validation.
 

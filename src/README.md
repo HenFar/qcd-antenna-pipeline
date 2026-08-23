@@ -28,10 +28,9 @@ The runtime under `src/` is release-complete for the massless package target:
 - `BuildAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO]`
 - `BuildAndIntegrateAllAntennae[SMQCD, maxOrder -> LO|NLO|NNLO, ...]`
 
-The runtime also contains a beta extension and an experimental branch:
+The runtime also contains a beta extension:
 
 - massive `A30` (beta)
-- `D30`
 
 Those branches are kept inside `src/` because they are genuine runtime code,
 not just provenance material, but they are not part of the package release
@@ -56,7 +55,6 @@ Each layer answers a different question.
 - profiles and routing metadata
 - diagnostics helpers
 - cache helpers
-- specialized shared support such as the D30 source-model utilities
 
 This layer exists so that normalization choices, profile metadata, and cache
 policy are defined once and reused consistently. The design reason is
@@ -223,8 +221,6 @@ integrand or how `A22` is stitched from multiple physical sources.
   owns stored-result policy and reconstruction
 - [core/diagnostics.wl](core/diagnostics.wl)
   centralizes validation and comparison helpers
-- [core/d30_effective_model.wl](core/d30_effective_model.wl)
-  contains the specialized D30 source-model machinery
 
 ### `engines/`
 
@@ -240,6 +236,10 @@ These files are intentionally the closest to raw FeynArts/FeynCalc/LiteRed
 operations.
 
 ### `routes/`
+
+Route physics is edited in `routes/families/`: one declaration file per
+supported family. `route_resolution.wl` selects a named variant and exposes
+the resolved funnel and adapter through `AntennaRouteReport[...]`.
 
 - [routes/build_workflows.wl](routes/build_workflows.wl)
   owns the build-side family workflows
@@ -268,6 +268,10 @@ operations.
 The massive `A30` runtime branch is real code and therefore lives in `src/`,
 not in `dev/`. It is a beta route with a derived MX30 master closure, qualified
 through `ExpansionOrder -> 2`; it is not part of the stable massless surface.
+With the default `ExpansionOrder -> Automatic`, its public result remains in
+the compact all-epsilon literature form (under the declared paper-to-package
+invariant bridge).  Supplying an explicit integer `ExpansionOrder` requests a
+derived epsilon-series representation instead.
 
 Its split files exist for a reason:
 
@@ -280,15 +284,6 @@ Its split files exist for a reason:
 
 The design reason is traceability: the package retains the derivation chain
 while exposing the closed beta result through the public route.
-
-### D30
-
-`D30` is the exploratory source-model branch. Its special logic lives mainly in
-`core/d30_effective_model.wl` plus route/interface support.
-
-The design reason is physical separation: the D30 route does not share the same
-source-model origin as the finished massless `A`, `B`, and `C` families, so it
-needs a dedicated place where those assumptions remain visible.
 
 ## Records And Intermediate Steps
 

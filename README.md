@@ -2,7 +2,7 @@
 
 > **New in 0.3.0 β1:** massive `A30` now has a derived MX30 master-basis
 > closure and an end-to-end integrated route; invariant-only `A22` builds are
-> also available. `D30` remains an experimental research track.
+> also available.
 
 AntCalc is a Wolfram Language package that builds and integrates QCD antenna
 functions. The main workflow has two steps:
@@ -13,7 +13,7 @@ BuildAntenna[...] → IntegrateAntenna[...]
 
 `BuildAndIntegrateAntenna[...]` runs these steps in sequence. AntCalc is
 thesis research software. The massless routes are the stable release surface;
-massive `A30` is a beta extension and `D30` remains experimental.
+massive `A30` is a beta extension.
 
 ## Status
 
@@ -104,7 +104,7 @@ LiteRed2 2.025 β
 
 ## Scope
 
-AntCalc does not currently provide a public `D30` route or complete
+AntCalc does not currently provide a public initial-state route or complete
 `SUSY`/`HiggsEFT` R-ratio workflows. The massive-`A30` beta route has a derived
 master substitution and fresh-kernel qualification through
 `ExpansionOrder -> 2`; deeper epsilon orders are not yet claimed. See the

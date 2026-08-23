@@ -1,4 +1,0 @@
-fine-count:13
-fine-labels:{FineFamily6Sum, FineFamily7Sum, FineFamily8Sum, FineFamily9Sum, FineFamily10Sum, FineFamily6Difference, FineFamily7Difference, FineFamily8Difference, FineFamily9Difference, FineFamily10Difference, GluonFirstMembers, GluonSecondMembers, GluonFirstMinusSecond}
-selection-head:Missing
-selection-missing:Missing[TimedOut]

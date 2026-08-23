@@ -7,8 +7,6 @@
      every later layer sees a consistent FeynCalc/FeynArts environment.
    - src/core/kinematics_and_utilities.wl,
      which consumes the propagator and coupling substitutions defined here.
-   - src/core/d30_effective_model.wl, which
-     reuses CasimirSubs while reducing effective-source interference terms.
    - The engine files under `src/engines/`, which rely on the globally initialized
      FeynCalc session, renamed symbols, and denominator normalization rules.
 

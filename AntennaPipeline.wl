@@ -30,9 +30,6 @@ Get[FileNameJoin[{packageRoot, "src", "core", "version.wl"}]];
 
 Get[FileNameJoin[{packageRoot, "src", "core", "setup.wl"}]];
 
-Get[FileNameJoin[{packageRoot, "src", "core", "d30_effective_model.wl"
-   }]];
-
 Get[FileNameJoin[{packageRoot, "src", "core", "result_cache.wl"}]];
 
 Get[FileNameJoin[{packageRoot, "src", "core", "kinematics_and_utilities.wl"
@@ -64,10 +61,20 @@ Get[FileNameJoin[{packageRoot, "src", "engines", "extraction_loop.wl"
 Get[FileNameJoin[{packageRoot, "src", "engines", "color_ordered_a40.wl"
    }]];
 
-Get[FileNameJoin[{packageRoot, "src", "engines", "color_ordered_d30.wl"
-   }]];
-
 Get[FileNameJoin[{packageRoot, "src", "routes", "route_catalog.wl"}]];
+
+Get[FileNameJoin[{packageRoot, "src", "routes", "route_resolution.wl"}]];
+
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "A20.wl"}]];
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "A30.wl"}]];
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "A21.wl"}]];
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "A31.wl"}]];
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "A22.wl"}]];
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "A40.wl"}]];
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "B40.wl"}]];
+Get[FileNameJoin[{packageRoot, "src", "routes", "families", "C40.wl"}]];
+
+InstallAntennaRouteCompatibilityFacades[];
 
 Get[FileNameJoin[{packageRoot, "src", "routes", "massive_a30_unintegrated.wl"
    }]];

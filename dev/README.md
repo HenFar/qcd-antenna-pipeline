@@ -65,7 +65,6 @@ The main structured research areas are:
   release-residual diagnosis
 - [massiveA30/](massiveA30)
 - [massiveA30_sources/](massiveA30_sources)
-- [d30/](d30)
 - [src_legacy_flat_2026-06-14/](src_legacy_flat_2026-06-14)
 
 Top-level `regression_*.wl` scripts protect focused public contracts. Other

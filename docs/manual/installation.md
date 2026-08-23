@@ -82,7 +82,7 @@ bash dev/run_release_verification.sh
 
 This command loads the checkout in fresh kernels. Its release-acceptance slice
 covers the stable massless surface and the beta massive-`A30` public MX30
-closure; `D30` remains experimental. The expensive forced-MX30 IBP regression
+closure. The expensive forced-MX30 IBP regression
 is deliberately separate from this release gate. It tests public build,
 integration, record, and driver calls. Results are `Validated`, `Unvalidated`, `Failed`, or
 `InconclusiveTimeout`; only `Validated` returns a successful exit status.
@@ -104,9 +104,7 @@ It reports `Pass`, `Fail`, `KnownIssue`, `RouteEvaluationFailed`, or
 - A load failure in `src/core/setup.wl` usually indicates a missing or
   incompatible FeynCalc, FeynArts, or FeynHelpers installation.
 - An IBP failure can indicate missing basis directories or runtime-master
-  artifacts.
-- A `$Failed` result from `D30` is not necessarily an installation error: that
-  route is experimental. For beta massive `A30`, retain the route diagnostics
+  artifacts. For beta massive `A30`, retain the route diagnostics
   and master-basis report when reporting an issue.
 - Bulk helpers currently reject nonzero `quarkMass`, lowercase `maxOrder`, and
   unsupported models such as `SUSY` and `HiggsEFT`.

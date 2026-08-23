@@ -36,7 +36,7 @@ VerifyWardIdentity[A, 3, 1, ReturnDiagnostics -> True]
 The validator replaces an external gluon polarisation by its momentum in a
 full unsquared amplitude. Current verified scope is massless `A30`, both
 applicable `A40` gluons, and raw one-loop `A31`; `A20`, `A22`, `B40`, and
-`C40` report `NotApplicable`. Massive `A30` and `D30` are outside this scope.
+`C40` report `NotApplicable`. Massive `A30` is outside this scope.
 The `A31` check can take substantially longer and does not write stored-result
 artifacts.
 

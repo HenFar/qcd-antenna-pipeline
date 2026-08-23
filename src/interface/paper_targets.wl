@@ -50,27 +50,6 @@ A30Paper = \!\(TraditionalForm\`
 \*FractionBox[\(2\), \(s13\)] - 
 \*FractionBox[\(2\), \(s23\)]\);
 
-(* D30OrderedPaperTerm[sab, sac, sbc]
-   ==================================
-   Return one ordered D30 literature contribution before the symmetrized sum is
-   assembled in D30Paper. *)
-D30OrderedPaperTerm[sab_, sac_, sbc_] :=
-  (
-    2 q2^2 sac / (sab sbc) +
-    2 q2^2 sab / (sac sbc) +
-    (sac sbc + sbc^2) / sab +
-    (sab sbc) / sac +
-    (2 sab sac) / sbc +
-    (5 q2) / 2 +
-    sbc / 2
-  ) / q2^2;
-
-D30Paper =
-  (
-    D30OrderedPaperTerm[s12, s13, s23] +
-    D30OrderedPaperTerm[s13, s12, s23]
-  ) // Together // Simplify;
-
 A40Paper =
   1 / s1234 * (eps * (-s12 * s13 ^ -1 * s14 * s24 ^ -1 * s234 ^ -1 - 
     s12 * s13 ^ -1 * s23 * s24 ^ -1 * s134 ^ -1 - s12 * s13 ^ -1 * s24 ^ 

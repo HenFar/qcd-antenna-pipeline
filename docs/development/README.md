@@ -7,6 +7,8 @@ contract. They are for route maintainers and thesis/research readers, not a
 substitute for the user manual.
 
 - [Architecture](architecture.md)
+- [Editing routes](editing-routes.md)
+- [Route map](route-map.md)
 - [Maintaining and adding routes](route-maintenance.md)
 - [Runtime masters and literature provenance](runtime-masters-and-provenance.md)
 - [A31/A22 provenance audit](a31-a22-provenance-audit.md)

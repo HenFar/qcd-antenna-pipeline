@@ -450,8 +450,8 @@ MasterCombinationView[diagnostics_Association] :=
     basisFamily = Lookup[profile, "BasisFamily",
       Lookup[backendDiagnostics, "BasisFamily", Missing["NotAvailable"]]];
     massiveA30Q =
-      (MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
-        Lookup[profile, "MassSymbol", Lookup[diagnostics, "quarkMass", 0]] =!= 0) ||
+      MassiveA30ResolvedRouteQ[key, <|"quarkMass" ->
+        Lookup[profile, "MassSymbol", Lookup[diagnostics, "quarkMass", 0]]|>] ||
       MemberQ[{"MX30", "MX30Basis123"}, basisFamily];
     rawCombination = BackendMasterCombination[backendDiagnostics];
     rawCombination = MasterCombinationNormalForm[rawCombination];
@@ -925,32 +925,46 @@ MassiveA30OpenMasterBackendDiagnostics[obj_AntennaObject,
     |>
   ];
 
-MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
+MassiveA30IntegratedRouteData[qm_, order_, normalizeScale_,
    profile_Association] :=
-  Module[{closed, normalized, series, source, bridgeReport,
+  Module[{closed, normalized, result, source, bridgeReport, sourceFormQ,
      backendDiagnostics, diagnostics},
     LoadMassiveA30IntegratedProvenance[];
     closed = MassiveA30IntegratedRuntimeClosedExpression[qm];
+    (* The literature result is a closed epsilon-dependent expression.  Keep
+       that form for the default public route so it remains directly
+       comparable to the source.  An epsilon series is an opt-in derived
+       representation, requested only by supplying ExpansionOrder explicitly. *)
+    sourceFormQ = order === Automatic;
     normalized =
-      If[TrueQ[normalizeScale],
+      If[sourceFormQ,
+        closed
+        ,
+        If[TrueQ[normalizeScale],
         closed /. q2 -> 1
         ,
         closed
-      ] // Together // FullSimplify;
-    series = MassiveA30IntegratedRuntimeSeries[qm, order, normalizeScale];
+        ]
+      ];
+    result =
+      If[sourceFormQ,
+        closed,
+        MassiveA30IntegratedRuntimeSeries[qm, order, normalizeScale]
+      ];
     source = MassiveA30IntegratedSource[];
     bridgeReport = MassiveA30IntegratedBridgeReport[];
     backendDiagnostics =
       <|
         "Profile" -> profile,
         "OpenMasterValuesQ" -> False,
-        "IntegratedResultKind" -> "ClosedDerivedMX30Series",
+        "IntegratedResultKind" -> If[sourceFormQ,
+          "ClosedDerivedMX30Expression", "ClosedDerivedMX30Series"],
         "RawLiteRedCombination" -> Missing["NotAvailable"],
         "MasterMappedExpression" -> Missing["NotAvailable"],
         "RawMasterCombination" -> Missing["NotAvailable"],
         "MasterSubstitutedExpression" -> closed,
         "NormalizedBeforeSeries" -> normalized,
-        "SeriesResult" -> series,
+        "SeriesResult" -> result,
         "MassiveA30Source" -> source,
         "MassiveA30BridgeReport" -> bridgeReport
       |>;
@@ -969,10 +983,10 @@ MassiveA30IntegratedRouteData[qm_, order_Integer, normalizeScale_,
         "MassiveA30BridgeReport" -> bridgeReport
       |>;
     <|
-      "RawIntegrated" -> series,
-      "TTerms" -> series,
-      "FinalIntegrated" -> series,
-      "SelectedIntegrated" -> series,
+      "RawIntegrated" -> result,
+      "TTerms" -> result,
+      "FinalIntegrated" -> result,
+      "SelectedIntegrated" -> result,
       "BackendDiagnostics" -> backendDiagnostics,
       "Diagnostics" -> diagnostics
     |>
@@ -1242,8 +1256,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
     MaybeWarnHeavyIntegrationRoute[key, Lookup[data, "SelectedComponent", All],
       Lookup[data, "Contribution", All]];
     profile = AntennaIntegrationProfile[key];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
-        quarkMassOpt =!= 0,
+    If[MassiveA30ResolvedRouteQ[key, <|"quarkMass" -> quarkMassOpt|>],
       profile = Join[profile, <|"BasisFamily" -> "MX30",
         "MassSymbol" -> quarkMassOpt|>]
     ];
@@ -1277,8 +1290,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
         ,
         OptionValue["ExpansionOrder"]
       ];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
-        quarkMassOpt =!= 0 &&
+    If[MassiveA30ResolvedRouteQ[key, <|"quarkMass" -> quarkMassOpt|>] &&
         TrueQ[OptionValue["ReturnMasterCombination"]] &&
         !TrueQ[$MassiveA30ForceIBPMasterRoute],
       Return[
@@ -1316,8 +1328,7 @@ LegacyIntegrateAntennaObjectImplementation[obj_AntennaObject, OptionsPattern[]] 
         ]
       ]
     ];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] &&
-        quarkMassOpt =!= 0 &&
+    If[MassiveA30ResolvedRouteQ[key, <|"quarkMass" -> quarkMassOpt|>] &&
         !TrueQ[$MassiveA30ForceIBPMasterRoute],
       Module[{routeData, antennaLocal, openMasterBackendDiagnostics},
         antennaLocal = Lookup[data, "Antenna", $Failed];

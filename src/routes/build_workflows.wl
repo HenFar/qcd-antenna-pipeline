@@ -8,9 +8,8 @@
      the tree-level production pipeline.
    - src/interface/build_router.wl, which wraps these raw build-data records in
      the public API.
-   - src/routes/massive_a30_reconstruction.wl and
-     src/routes/massive_a30_unintegrated.wl for the special D30 / massive-A30
-     branches.
+   - route declarations under src/routes/families/, which select any
+     family-local adapter without leaking antenna-name checks into funnels.
 
    Why this file exists:
    The engines know how to perform one physical step at a time.  This layer is
@@ -74,33 +73,22 @@ BuildRouteBuildData[key_, options_Association] :=
 
    Notes
      Although this function is named “tree”, it also owns the route-level
-     special cases that replace the standard massless tree source with a custom
-     reconstruction, such as the massive A30 branch and the D30 source-model
-     route.  Those are still tree-level build stories even though their physics
-     inputs differ from the default A/B/C source. *)
+   declared adapters that replace the standard tree source with a custom
+   reconstruction.  The funnel dispatches by adapter, never by family name. *)
 BuildTreeRouteData[key_, options_Association] :=
   Module[{profile, amp, context, fullInterference, fullExtraction, split,
      sectors, sectorInterference, extraction, colorOrderedData, diagnostics,
      referenceSector, referenceProfile, referenceInterference,
-     referenceExtraction, output, quarkMassOpt},
-    profile = AntennaProfile[key];
-    quarkMassOpt = Lookup[options, "quarkMass", 0];
-    If[key === {D, 3, 0},
-      Return[
-        If[TrueQ[Lookup[options, "AllowPrototypeTargets", False]] &&
-            !TrueQ[Lookup[options, "UseSourceModelRoute", False]],
-          BuildD30PaperBuildData[key,
-            quarkMass -> quarkMassOpt,
-            ApplyStripCouplings -> Lookup[options, "ApplyStripCouplings", AllCouplings],
-            ApplyCasimirSubstitution -> Lookup[options, "ApplyCasimirSubstitution", True],
-            ApplyDimReg -> Lookup[options, "ApplyDimReg", True],
-            AllowPrototypeTargets -> True]
-          ,
-          BuildD30SourceBuildData[key]
-        ]
-      ]
+     referenceExtraction, output, quarkMassOpt, resolved},
+    resolved = ResolveAntennaRoute[key, options];
+    If[!TrueQ[Lookup[resolved, "Resolved", False]],
+      Return[<|"Profile" -> <|"Key" -> key|>, "Components" -> <||>,
+        "Diagnostics" -> <|"Failed" -> True, "Reason" -> Lookup[resolved, "Reason", "UnsupportedRoute"]|>|>]
     ];
-    If[key === {A, 3, 0} && quarkMassOpt =!= 0,
+    profile = Join[AntennaProfile[key], Lookup[resolved, "Build", <||>]];
+    quarkMassOpt = Lookup[options, "quarkMass", 0];
+    If[Lookup[Lookup[resolved, "Build", <||>], "Adapter", "None"] ===
+        "MassiveA30Reconstruction",
       LoadMassiveA30Reconstruction[];
       Return[
         MassiveA30BuildData[

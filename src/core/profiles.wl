@@ -11,8 +11,6 @@
     - src/engines/interference_tree.wl through InterfereMAmplitudes[...], which
       supplies the Born/self-interference objects cached by
       AntennaSelfInterference[...].
-    - src/core/d30_effective_model.wl through D30EffectiveModelName[], which is
-      referenced by the D30 tree-level profile metadata.
     - src/routes/build_workflows.wl, which uses AntennaProfile[...] to choose
       the correct production and extraction workflow for a requested antenna.
     - src/routes/integration_workflows.wl and src/interface/integration_router.wl,
@@ -177,12 +175,6 @@ BuildAntennaConventionProfile[key_] :=
         <|"ConventionModel" -> "PackagePublicBuildBoundary", "RenormalizationStatus"
            -> "PublicCountertermSkinImplemented", "PrototypeExposureStatus" -> "NoStablePublicPrototypeOption",
            "CurrentImplementationNote" -> "The public A22 build branch applies the unintegrated lower-A21 UV-counterterm skin. AntennaObject integration retains the pre-skin prototype payload, so the authoritative integrated-A21 counterterm is applied exactly once in the integration layer."
-          |>
-      ,
-      {D, 3, 0},
-        <|"ConventionModel" -> "ModelOwnedSourceBridge", "RenormalizationStatus"
-           -> "ModelOwnedInProgress", "PrototypeExposureStatus" -> "PrototypeTargetRouteAvailable",
-           "CurrentImplementationNote" -> "AllowPrototypeTargets and UseSourceModelRoute control which D30 branch is exposed, so this route already distinguishes default and prototype-facing paths."
           |>
       ,
       _,
@@ -399,98 +391,6 @@ AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 2}] :=
      decomposition rather than one scalar,
    - sector-based production for B40/C40 where phase-space singular structure
      and quark-pair symmetry make a one-shot build less usable. *)
-
-AntennaProfile[{A, 2, 0}] :=
-  <|"Key" -> {A, 2, 0}, "Name" -> "A20", "AntennaType" -> A, "NumFinalParticles"
-     -> 2, "Production" -> "SelfInterference", "Extraction" -> "BornScalar",
-     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
-    {A, 2, 0}]|>;
-
-AntennaProfile[{A, 3, 0}] :=
-  <|"Key" -> {A, 3, 0}, "Name" -> "A30", "AntennaType" -> A, "NumFinalParticles"
-     -> 3, "Production" -> "SelfInterference", "Extraction" -> "TreeColourCoefficients",
-     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
-    {A, 3, 0}]|>;
-
-AntennaProfile[{A, 4, 0}] :=
-  <|"Key" -> {A, 4, 0}, "Name" -> "A40", "AntennaType" -> A, "NumFinalParticles"
-     -> 4, "Production" -> "ColourOrderedAntenna", "Extraction" -> "TreeColourCoefficients",
-     "ColourNorm" -> colourNorm, "ColorOrderedSpec" -> <|"Name" -> "A40",
-     "Ordering" -> {1, 3, 4, 2}, "NumGluons" -> 2|>, "ConventionProfile"
-    -> BuildAntennaConventionProfile[{A, 4, 0}]|>;
-
-AntennaProfile[{B, 4, 0}] :=
-  <|"Key" -> {B, 4, 0}, "Name" -> "B40", "AntennaType" -> B, "NumFinalParticles"
-     -> 4, "Production" -> "SectorSelfInterference", "Extraction" -> "ColourNormScalar",
-     "ColourNorm" -> colourNorm, "ProductionSectors" -> {"PrimaryCurrent",
-     "PrimaryCurrent"}, "SectorDefinitions" -> <|"PrimaryCurrent" -> {{s34
-    }, {s134, s234}}, "SecondaryCurrent" -> {{s12}, {s123, s124}}|>, "ConventionProfile"
-     -> BuildAntennaConventionProfile[{B, 4, 0}]|>;
-
-AntennaProfile[{C, 4, 0}] :=
-  <|"Key" -> {C, 4, 0}, "Name" -> "C40", "AntennaType" -> C, "NumFinalParticles"
-     -> 4, "Production" -> "SectorSymmetrisedInterference", "Extraction"
-    -> "MinusTwoColourNormOverSUNN", "ColourNorm" -> colourNorm, "ProductionSectors"
-     -> {"DirectPrimary", "ExchangePrimary"}, "ReferenceSquareSector" ->
-    "DirectPrimary", "ReferenceSquareProfile" -> {B, 4, 0}, "SectorDefinitions"
-     -> <|"DirectPrimary" -> {{s34}, {s134, s234}}, "DirectSecondary" ->
-    {{s12}, {s123, s124}}, "ExchangePrimary" -> {{s23}, {s123, s234}}, "ExchangeSecondary"
-     -> {{s14}, {s124, s134}}|>, "ConventionProfile" -> BuildAntennaConventionProfile[
-    {C, 4, 0}]|>;
-
-AntennaProfile[{D, 3, 0}] :=
-  <|"Key" -> {D, 3, 0}, "Name" -> "D30", "AntennaType" -> D, "NumFinalParticles"
-     -> 3, "Production" -> "OrderedColorStrippedSource", "Extraction" ->
-    "ColourNormScalar", "ColourNorm" -> 1, "SourceModel" -> D30EffectiveModelName[
-    ], "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>, "ImplementationStatus"
-     -> "ModelOwnedOrderedSourceRouteInProgress", "ConventionProfile" ->
-    BuildAntennaConventionProfile[{D, 3, 0}]|>;
-
-AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 2, 0}] :=
-  <|"Key" -> {type, 2, 0}, "Name" -> "A20", "AntennaType" -> type, "NumFinalParticles"
-     -> 2, "Production" -> "SelfInterference", "Extraction" -> "BornScalar",
-     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
-    {A, 2, 0}]|>;
-
-AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 3, 0}] :=
-  <|"Key" -> {type, 3, 0}, "Name" -> "A30", "AntennaType" -> type, "NumFinalParticles"
-     -> 3, "Production" -> "SelfInterference", "Extraction" -> "TreeColourCoefficients",
-     "ColourNorm" -> colourNorm, "ConventionProfile" -> BuildAntennaConventionProfile[
-    {A, 3, 0}]|>;
-
-AntennaProfile[{type_Symbol /; SymbolName[type] === "A", 4, 0}] :=
-  <|"Key" -> {type, 4, 0}, "Name" -> "A40", "AntennaType" -> type, "NumFinalParticles"
-     -> 4, "Production" -> "ColourOrderedAntenna", "Extraction" -> "TreeColourCoefficients",
-     "ColourNorm" -> colourNorm, "ColorOrderedSpec" -> <|"Name" -> "A40",
-     "Ordering" -> {1, 3, 4, 2}, "NumGluons" -> 2|>, "ConventionProfile"
-    -> BuildAntennaConventionProfile[{A, 4, 0}]|>;
-
-AntennaProfile[{type_Symbol /; SymbolName[type] === "B", 4, 0}] :=
-  <|"Key" -> {type, 4, 0}, "Name" -> "B40", "AntennaType" -> type, "NumFinalParticles"
-     -> 4, "Production" -> "SectorSelfInterference", "Extraction" -> "ColourNormScalar",
-     "ColourNorm" -> colourNorm, "ProductionSectors" -> {"PrimaryCurrent",
-     "PrimaryCurrent"}, "SectorDefinitions" -> <|"PrimaryCurrent" -> {{s34
-    }, {s134, s234}}, "SecondaryCurrent" -> {{s12}, {s123, s124}}|>, "ConventionProfile"
-     -> BuildAntennaConventionProfile[{B, 4, 0}]|>;
-
-AntennaProfile[{type_Symbol /; SymbolName[type] === "C", 4, 0}] :=
-  <|"Key" -> {type, 4, 0}, "Name" -> "C40", "AntennaType" -> type, "NumFinalParticles"
-     -> 4, "Production" -> "SectorSymmetrisedInterference", "Extraction"
-    -> "MinusTwoColourNormOverSUNN", "ColourNorm" -> colourNorm, "ProductionSectors"
-     -> {"DirectPrimary", "ExchangePrimary"}, "ReferenceSquareSector" ->
-    "DirectPrimary", "ReferenceSquareProfile" -> {B, 4, 0}, "SectorDefinitions"
-     -> <|"DirectPrimary" -> {{s34}, {s134, s234}}, "DirectSecondary" ->
-    {{s12}, {s123, s124}}, "ExchangePrimary" -> {{s23}, {s123, s234}}, "ExchangeSecondary"
-     -> {{s14}, {s124, s134}}|>, "ConventionProfile" -> BuildAntennaConventionProfile[
-    {C, 4, 0}]|>;
-
-AntennaProfile[{type_Symbol /; SymbolName[type] === "D", 3, 0}] :=
-  <|"Key" -> {type, 3, 0}, "Name" -> "D30", "AntennaType" -> type, "NumFinalParticles"
-     -> 3, "Production" -> "OrderedColorStrippedSource", "Extraction" ->
-    "ColourNormScalar", "ColourNorm" -> 1, "SourceModel" -> D30EffectiveModelName[
-    ], "ColorOrderedSpec" -> <|"Name" -> "D30", "NumGluons" -> 1|>, "ImplementationStatus"
-     -> "ModelOwnedOrderedSourceRouteInProgress", "ConventionProfile" ->
-    BuildAntennaConventionProfile[{D, 3, 0}]|>;
 
 (* AntennaAmplitude[key]
    =====================

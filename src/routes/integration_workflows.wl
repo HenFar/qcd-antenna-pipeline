@@ -190,7 +190,7 @@ IntegrateRouteObject[obj_, options_Association] :=
      loaded, computed, computedResult, computedDiagnostics, optionsAssoc,
      recordStages, recordMetadata, diagnosticsWithMetadata, ibpNeedsDiagnostics,
      quarkMassOpt, routeKind, progressActive, finishProgress, publicResult,
-     publicDiagnostics},
+     publicDiagnostics, resolved, requestedExpansionOrder},
     routeKind = Lookup[options, "RouteKind", "IntegrateAntenna"];
     If[!AntennaObjectQ[obj],
       diagnostics = <|"Failed" -> True, "Reason" -> "InvalidAntennaObject"
@@ -294,11 +294,11 @@ IntegrateRouteObject[obj_, options_Association] :=
     quarkMassOpt = Lookup[options, "quarkMass", 0];
     MaybeWarnHeavyIntegrationRoute[key, Lookup[data, "SelectedComponent",
        All], AntennaInternalContribution[key, Lookup[data, "SelectedComponent", All]]];
-    profile = AntennaIntegrationProfile[key];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] && quarkMassOpt
-       =!= 0,
-      profile = Join[profile, <|"BasisFamily" -> "MX30", "MassSymbol"
-         -> quarkMassOpt|>]
+    resolved = ResolveAntennaRoute[key, options];
+    profile = Join[AntennaIntegrationProfile[key], Lookup[resolved, "Integration", <||>]];
+    If[Lookup[Lookup[resolved, "Integration", <||>], "Adapter", "None"] ===
+        "MassiveA30MX30Bridge",
+      profile = Join[profile, <|"MassSymbol" -> quarkMassOpt|>]
     ];
     contribution = CanonicalAntennaComponentName[contributionInput];
     componentName = CanonicalAntennaComponentName[componentInput];
@@ -306,13 +306,13 @@ IntegrateRouteObject[obj_, options_Association] :=
        6/6 "finished" line afterwards: it adds no state information and
        separates the master-basis legend from the single terminal stage. *)
     finishProgress := Null;
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] && contribution
-       === "OneLoopSelf",
+    If[Lookup[Lookup[resolved, "Integration", <||>], "Adapter", "None"] ===
+        "A22Contributions" && contribution === "OneLoopSelf",
       profile = Join[profile, <|"BasisFamily" -> "A22OneLoopSelf", "ImplementationStatus"
          -> "ExperimentalOneLoopSelfOnly"|>]
     ];
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 2, 2}] && contribution
-       === "TwoLoopTree",
+    If[Lookup[Lookup[resolved, "Integration", <||>], "Adapter", "None"] ===
+        "A22Contributions" && contribution === "TwoLoopTree",
       profile = Join[profile, <|"BasisFamily" -> "A22TwoLoopTree", "ImplementationStatus"
          -> "ExperimentalTwoLoopTree"|>]
     ];
@@ -320,23 +320,24 @@ IntegrateRouteObject[obj_, options_Association] :=
       heavyIntegrationProgressPrint[routeKind, key, componentInput, contributionInput,
          1, 6, "resolving route profile"]
     ];
+    requestedExpansionOrder = Lookup[options, "ExpansionOrder", Automatic];
     expansionOrder =
-      If[Lookup[options, "ExpansionOrder", Automatic] === Automatic,
+      If[requestedExpansionOrder === Automatic,
         Lookup[profile, "ExpansionOrder", 2]
         ,
-        Lookup[options, "ExpansionOrder", 2]
+        requestedExpansionOrder
       ];
 (* Massive A30 is currently a special route: unless the caller explicitly
 
    forces the IBP master route, the package uses the dedicated integrated
 
    bridge module rather than the generic backend path. *)
-    If[MatchQ[key, {a_Symbol /; SymbolName[a] === "A", 3, 0}] && quarkMassOpt
-       =!= 0 && !TrueQ[$MassiveA30ForceIBPMasterRoute],
+    If[Lookup[Lookup[resolved, "Integration", <||>], "Adapter", "None"] ===
+        "MassiveA30MX30Bridge" && !TrueQ[$MassiveA30ForceIBPMasterRoute],
       Module[{routeData, antennaLocal, openMasterBackendDiagnostics},
 
         antennaLocal = Lookup[data, "Antenna", $Failed];
-        routeData = MassiveA30IntegratedRouteData[quarkMassOpt, expansionOrder,
+        routeData = MassiveA30IntegratedRouteData[quarkMassOpt, requestedExpansionOrder,
            Lookup[options, "NormalizeKinematicScale", False], profile];
         rawIntegrated = routeData["RawIntegrated"];
         tTerms = routeData["TTerms"];

@@ -100,7 +100,7 @@ fresh-kernel acceptance run, not an unresolved master mapping.
 
 ## Experimental inspection
 
-The massive A30 beta branch and the experimental D30 branch remain callable
+The massive A30 beta branch remains callable
 for diagnostics. Only the former has a derived integrated master closure;
 neither branch should be confused with a cached-result claim.
 
@@ -116,7 +116,7 @@ BuildAntenna[D, 3, 0, ReturnRecord -> True]
 Related derivation and source-route material is under
 [`dev/massiveA30`](../../dev/massiveA30),
 [`dev/massiveA30_sources`](../../dev/massiveA30_sources), and
-the current D30 scratch material under [`dev/scratch/d30`](../../dev/scratch/d30).
+the retained historical source material under `dev/`.
 
 ## Benchmarking is not acceptance
 

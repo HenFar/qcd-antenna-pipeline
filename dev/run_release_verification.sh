@@ -69,7 +69,7 @@ echo "NumFailed=$fail_count"
 echo "NumUnvalidated=$unvalidated_count"
 echo "NumInconclusiveTimeout=$inconclusive_count"
 echo "Machine-readable case reports: $OUTPUT_DIR"
-echo "Scope: supported massless routes plus the beta massive-A30 closure; D30 is excluded."
+echo "Scope: supported massless routes plus the beta massive-A30 closure."
 
 if [ "$KEEP_OUTPUT" -ne 1 ] && [ "$fail_count" -eq 0 ] && [ "$unvalidated_count" -eq 0 ] && [ "$inconclusive_count" -eq 0 ]; then
   echo "Set ANTCALC_RELEASE_KEEP_OUTPUT=1 to retain the per-case JSON evidence."

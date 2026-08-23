@@ -8,7 +8,7 @@
      RunAntennaDiagnostics[...].
    - src/interface/integration_router.wl through BuildAndIntegrateAntenna[...]
      in the loop-level regression checks.
-   - src/routes/build_workflows.wl and the D30 route files, whose outputs are
+   - src/routes/build_workflows.wl, whose outputs are
      validated by PaperDiagnosticsFor[...].
 
    Why this file exists:
@@ -266,9 +266,6 @@ PaperCheckAvailableQ[key_] :=
     {A, 3, 0},
       ValueQ[A30Paper]
     ,
-    {D, 3, 0},
-      ValueQ[D30Paper]
-    ,
     {A, 4, 0},
       ValueQ[A40Paper] && ValueQ[tA40Paper]
     ,
@@ -298,11 +295,6 @@ PaperDiagnosticsFor[{A, 2, 0}, result_] :=
 PaperDiagnosticsFor[{A, 3, 0}, result_] :=
   <|"PaperCheckAvailable" -> True, "ExactMatchQ" -> TestEqualAntennaeQ[
     A30Paper, result, 3]|>;
-
-PaperDiagnosticsFor[{D, 3, 0}, result_] :=
-  <|"PaperCheckAvailable" -> True, "ExactMatchQ" -> TestEqualAntennaeQ[
-    D30Paper, result, 3], "NumericResidual" -> ExactNumericResidual[D30Paper,
-     result, 3]|>;
 
 PaperDiagnosticsFor[{A, 4, 0}, result_List] :=
   <|"PaperCheckAvailable" -> True, "A40ExactMatchQ" -> TestEqualAntennaeQ[

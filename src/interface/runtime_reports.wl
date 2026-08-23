@@ -76,7 +76,7 @@ RouteMassHandlingProfile[key_] :=
       <|
         "DefaultquarkMass" -> 0,
         "MassiveSupportStatus" -> "NotApplicable",
-        "MassHandlingNote" -> "D30 is a source-model route rather than a quark-mass branch split."
+        "MassHandlingNote" -> "Nonzero quark masses are resolved through named route variants."
       |>
     ,
     _,
